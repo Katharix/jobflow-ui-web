@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "JobFlow-UI-Web": {
+    "jobflow-ui-web": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -67,10 +67,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "JobFlow-UI-Web:build:production"
+              "buildTarget": "jobflow-ui-web:build:production"
             },
             "development": {
-              "buildTarget": "JobFlow-UI-Web:build:development"
+              "buildTarget": "jobflow-ui-web:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -78,7 +78,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "JobFlow-UI-Web:build"
+            "buildTarget": "jobflow-ui-web:build"
           }
         },
         "test": {

@@ -14,16 +14,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'JobFlow-UI-Web' title`, () => {
+  it(`should have the 'job-flow-ui-web' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('JobFlow-UI-Web');
+    expect(app.title).toEqual('job-flow-ui-web');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, JobFlow-UI-Web');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, job-flow-ui-web');
   });
 });
