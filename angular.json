@@ -30,9 +30,17 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/assets/css/tobii.min.css",
+              "src/assets/css/materialdesignicons.min.css",
+              "src/assets/css/swiper-bundle.min.css",
+              "src/assets/css/pe-icon-7-stroke.min.css",
+              "src/_variables.scss",
               "src/styles.scss"
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+            ],
             "server": "src/main.server.ts",
             "prerender": true,
             "ssr": {
@@ -95,9 +103,24 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/assets/css/tobii.min.css",
+              "src/assets/css/materialdesignicons.min.css",
+              "src/assets/css/swiper-bundle.min.css",
+              "src/assets/css/pe-icon-7-stroke.min.css",
+              "src/_variables.scss",
+              "src/_helper.scss",
+              "src/_components.scss",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "src/assets/js/shuffle.min.js",
+              "src/assets/js/tobii.min.js",
+              "src/assets/js/tobii.js",
+              "src/assets/js/swiper-bundle.min.js",
+              "src/assets/js/app.js",
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+            ]
           }
         }
       }
