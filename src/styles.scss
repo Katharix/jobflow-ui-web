@@ -2,6 +2,10 @@
 @import"_helper";
 @import "_components";
 
+html, body {
+  overflow-x: hidden; /* Ensures scrolling works */
+}
+
 body {
     font-family: 'Raleway', sans-serif;
     letter-spacing: 1px;
