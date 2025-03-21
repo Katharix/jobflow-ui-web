@@ -1,0 +1,21 @@
+<div>
+    <button *ngIf="showSignUp" (click)="signUp()" id="sign-up-button">Sign Up</button>
+  
+    <div *ngIf="isCreatingAccount" id="creating-connected-account">Creating connected account...</div>
+  
+    <div *ngIf="isError" id="error" class="error">An error occurred. Please try again.</div>
+  
+    <div *ngIf="connectedAccountId" id="connected-account-id">
+      Your connected account ID is: <code class="bold">{{ connectedAccountId }}</code>
+    </div>
+  
+    <button *ngIf="showAddInfo" (click)="createAccountLinkAndRedirect()" id="add-information-button">
+      Add Information
+    </button>
+  
+    <div *ngIf="isAddingInfo" id="adding-onboarding-information">Adding onboarding information...</div>
+  
+    <h2 *ngIf="showDetailsSubmitted" id="details-submitted-title">Details Submitted</h2>
+    <h3 *ngIf="showDetailsSubmitted" id="details-submitted-subtitle">Thank you for submitting your details.</h3>
+  </div>
+  
