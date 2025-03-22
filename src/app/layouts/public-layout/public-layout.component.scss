@@ -1,6 +1,6 @@
-@import "_variables";
-@import"_helper";
-@import "_components";
+@import 'variables';
+@import"helper";
+@import "components";
 
 html, body {
   overflow-x: hidden; /* Ensures scrolling works */

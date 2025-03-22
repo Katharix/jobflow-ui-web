@@ -17,7 +17,19 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/styles"
+              ]
+            },
             "outputPath": "dist/job-flow-ui-web",
+            "allowedCommonJsDependencies": [
+              "feather-icons",
+              "sweetalert2",
+              "apexcharts",
+              "quill-delta",
+              "dropzone"
+            ],
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -35,10 +47,10 @@
               "src/assets/css/materialdesignicons.min.css",
               "src/assets/css/swiper-bundle.min.css",
               "src/assets/css/pe-icon-7-stroke.min.css",
-              "src/_variables.scss",
-              "src/styles.scss"
+              "src/styles/styles.scss"
             ],
             "scripts": [
+              "node_modules/apexcharts/dist/apexcharts.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
             ],
             "server": "src/main.server.ts",
@@ -108,10 +120,7 @@
               "src/assets/css/materialdesignicons.min.css",
               "src/assets/css/swiper-bundle.min.css",
               "src/assets/css/pe-icon-7-stroke.min.css",
-              "src/_variables.scss",
-              "src/_helper.scss",
-              "src/_components.scss",
-              "src/styles.scss"
+              "src/styles/styles.scss"
             ],
             "scripts": [
               "src/assets/js/shuffle.min.js",

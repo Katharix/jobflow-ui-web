@@ -1,10 +1,11 @@
 import { isPlatformBrowser } from '@angular/common';
 import { AfterViewInit, Component, HostListener, Inject, PLATFORM_ID, Renderer2 } from '@angular/core';
+import { RouterModule } from '@angular/router';
 declare var bootstrap: any
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [],
+  imports: [RouterModule ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
