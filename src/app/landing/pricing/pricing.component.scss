@@ -6,10 +6,10 @@
 /*------ App pricing ------*/
 .app-pricing {
     .gym-pricing-box {
-      border: 1px solid rgba($muted, 0.1);
+      border: 1px solid rgba($text-muted, 0.1);
       border-radius: 6px 6px 0px 0px;
       .gym-pricing-title {
-        border-bottom: 1px solid rgba($muted, 0.1);
+        border-bottom: 1px solid rgba($text-muted, 0.1);
         h4 {
           font-weight: 600;
           letter-spacing: 2px;
@@ -30,7 +30,7 @@
       }
     }
     .gym-pricing-box-active {
-      border: 1px solid rgba($muted, 0.1);
+      border: 1px solid rgba($text-muted, 0.1);
       border-radius: 6px 6px 0px 0px;
       .gym-pricing-title-active {
         border-radius: 6px 6px 0px 0px;

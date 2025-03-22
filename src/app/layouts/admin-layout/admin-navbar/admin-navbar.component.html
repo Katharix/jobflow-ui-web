@@ -1,253 +1,261 @@
-<div class="navbar-custom">
-    <div class="topbar">
-        <div class="topbar-menu d-flex align-items-center gap-lg-2 gap-1">
-
-            <!-- Brand Logo -->
-            <div class="logo-box">
-                <!-- Brand Logo Light -->
-                <a href="index.html" class="logo-light">
-                    <img src="assets/images/logo-light.png" alt="logo" class="logo-lg" height="22">
-                    <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm" height="22">
-                </a>
-
-                <!-- Brand Logo Dark -->
-                <a href="index.html" class="logo-dark">
-                    <img src="assets/images/logo-dark.png" alt="dark logo" class="logo-lg" height="22">
-                    <img src="assets/images/logo-sm.png" alt="small logo" class="logo-sm" height="22">
-                </a>
-            </div>
-
-            <!-- Sidebar Menu Toggle Button -->
-            <button class="button-toggle-menu">
-                <i class="mdi mdi-menu"></i>
-            </button>
+<nav class="navbar">
+    <div class="navbar-content">
+  
+      <div class="logo-mini-wrapper">
+        <img src="images/logo-mini-light.png" class="logo-mini logo-mini-light" alt="logo">
+        <img src="images/logo-mini-dark.png" class="logo-mini logo-mini-dark" alt="logo">
+      </div>
+  
+      <form class="search-form">
+        <div class="input-group">
+          <div class="input-group-text">
+            <i class="feather icon-search"></i>
+          </div>
+          <input type="text" class="form-control" id="navbarForm" placeholder="Search here...">
         </div>
-
-        <ul class="topbar-menu d-flex align-items-center gap-4">
-
-            <li class="d-none d-md-inline-block">
-                <a class="nav-link" href="" data-bs-toggle="fullscreen">
-                    <i class="mdi mdi-fullscreen font-size-24"></i>
-                </a>
-            </li>
-
-            <li class="dropdown">
-                <a class="nav-link dropdown-toggle waves-effect waves-light arrow-none" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                    <i class="mdi mdi-magnify font-size-24"></i>
-                </a>
-                <div class="dropdown-menu dropdown-menu-animated dropdown-menu-end dropdown-lg p-0">
-                    <form class="p-3">
-                        <input type="search" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
-                    </form>
+      </form>
+  
+      <ul class="navbar-nav">
+        <li class="theme-switcher-wrapper nav-item">
+          <input type="checkbox" (change)="onThemeCheckboxChange($event)" value="" id="theme-switcher">
+          <label for="theme-switcher">
+            <div class="box">
+              <div class="ball"></div>
+              <div class="icons">
+                <i class="feather icon-sun"></i>
+                <i class="feather icon-moon"></i>
+              </div>
+            </div>
+          </label>
+        </li>
+        <li class="nav-item" ngbDropdown>
+          <a class="nav-link" ngbDropdownToggle id="languageDropdown" role="button">
+            <img src="images/flags/us.svg" class="w-20px" title="us" alt="us">
+            <span class="ms-2 d-none d-md-inline-block">English</span>
+          </a>
+          <div ngbDropdownMenu aria-labelledby="languageDropdown">
+            <a ngbDropdownItem class="py-2 d-flex"> <img src="images/flags/us.svg" class="w-20px me-1" title="us" alt="us"> <span class="ms-2"> English </span></a>
+            <a ngbDropdownItem class="py-2 d-flex"> <img src="images/flags/fr.svg" class="w-20px me-1" title="fr" alt="fr"> <span class="ms-2"> French </span></a>
+            <a ngbDropdownItem class="py-2 d-flex"> <img src="images/flags/de.svg" class="w-20px me-1" title="de" alt="de"> <span class="ms-2"> German </span></a>
+            <a ngbDropdownItem class="py-2 d-flex"> <img src="images/flags/pt.svg" class="w-20px me-1" title="pt" alt="pt"> <span class="ms-2"> Portuguese </span></a>
+            <a ngbDropdownItem class="py-2 d-flex"> <img src="images/flags/es.svg" class="w-20px me-1" title="es" alt="es"> <span class="ms-2"> Spanish </span></a>
+          </div>
+        </li>
+        <li class="nav-item nav-apps" ngbDropdown>
+          <a class="nav-link" ngbDropdownToggle id="appsDropdown">
+            <i class="link-icon feather icon-grid"></i>
+          </a>
+          <div ngbDropdownMenu class="px-0" aria-labelledby="appsDropdown">
+            <div class="px-3 py-2 d-flex align-items-center justify-content-between border-bottom">
+              <p class="mb-0 fw-bold">Web Apps</p>
+              <a href="javascript:;" class="text-secondary">Edit</a>
+            </div>
+            <div class="row g-0 p-1">
+              <div class="col-3 text-center">
+                <a routerLink="/apps/chat" class="dropdown-item d-flex flex-column align-items-center justify-content-center w-70px h-70px"><i class="feather icon-message-square icon-lg mb-1"></i><p class="fs-12px">Chat</p></a>
+              </div>
+              <div class="col-3 text-center">
+                <a routerLink="/apps/calendar" class="dropdown-item d-flex flex-column align-items-center justify-content-center w-70px h-70px"><i class="feather icon-calendar icon-lg mb-1"></i><p class="fs-12px">Calendar</p></a>
+              </div>
+              <div class="col-3 text-center">
+                <a routerLink="/apps/email/inbox" class="dropdown-item d-flex flex-column align-items-center justify-content-center w-70px h-70px"><i class="feather icon-mail icon-lg mb-1"></i><p class="fs-12px">Email</p></a>
+              </div>
+              <div class="col-3 text-center">
+                <a routerLink="/general/profile" class="dropdown-item d-flex flex-column align-items-center justify-content-center w-70px h-70px"><i class="feather icon-instagram icon-lg mb-1"></i><p class="fs-12px">Profile</p></a>
+              </div>
+            </div>
+            <div class="px-3 py-2 d-flex align-items-center justify-content-center border-top">
+              <a href="" (click)="false">View all</a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item nav-messages" ngbDropdown>
+          <a class="nav-link" ngbDropdownToggle id="messageDropdown">
+            <i class="link-icon feather icon-mail"></i>
+          </a>
+          <div ngbDropdownMenu class="px-0" aria-labelledby="messageDropdown">
+            <div class="px-3 py-2 d-flex align-items-center justify-content-between border-bottom">
+              <p>9 New Messages</p>
+              <a href="" (click)="false" class="text-secondary">Clear all</a>
+            </div>
+            <div class="p-1">
+              <a href="" (click)="false" class="dropdown-item d-flex align-items-center py-2">
+                <div class="me-3">
+                  <img class="w-30px h-30px rounded-circle" src="https://placehold.co/30x30" alt="user">
                 </div>
-            </li>
-
-
-            <li class="dropdown d-none d-md-inline-block">
-                <a class="nav-link dropdown-toggle waves-effect waves-light arrow-none" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                    <img src="assets/images/flags/us.jpg" alt="user-image" class="me-0 me-sm-1" height="18">
-                </a>
-                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated">
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">
-                        <img src="assets/images/flags/germany.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle">German</span>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">
-                        <img src="assets/images/flags/italy.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle">Italian</span>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">
-                        <img src="assets/images/flags/spain.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle">Spanish</span>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">
-                        <img src="assets/images/flags/russia.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle">Russian</span>
-                    </a>
-
+                <div class="d-flex justify-content-between flex-grow-1">
+                  <div class="me-4">
+                    <p>Leonardo Payne</p>
+                    <p class="fs-12px text-secondary">Project status</p>
+                  </div>
+                  <p class="fs-12px text-secondary">2 min ago</p>
+                </div>	
+              </a>
+              <a href="" (click)="false" class="dropdown-item d-flex align-items-center py-2">
+                <div class="me-3">
+                  <img class="w-30px h-30px rounded-circle" src="https://placehold.co/30x30" alt="user">
                 </div>
-            </li>
-
-            <li class="dropdown notification-list">
-                <a class="nav-link dropdown-toggle waves-effect waves-light arrow-none" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                    <i class="mdi mdi-bell font-size-24"></i>
-                    <span class="badge bg-danger rounded-circle noti-icon-badge">9</span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated dropdown-lg py-0">
-                    <div class="p-2 border-top-0 border-start-0 border-end-0 border-dashed border">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h6 class="m-0 font-size-16 fw-semibold"> Notification</h6>
-                            </div>
-                            <div class="col-auto">
-                                <a href="javascript: void(0);" class="text-dark text-decoration-underline">
-                                    <small>Clear All</small>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="px-1" style="max-height: 300px;" data-simplebar>
-
-                        <h5 class="text-muted font-size-13 fw-normal mt-2">Today</h5>
-                        <!-- item-->
-
-                        <a href="javascript:void(0);" class="dropdown-item p-0 notify-item card unread-noti shadow-none mb-1">
-                            <div class="card-body">
-                                <span class="float-end noti-close-btn text-muted"><i class="mdi mdi-close"></i></span>
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="notify-icon bg-primary">
-                                            <i class="mdi mdi-comment-account-outline"></i>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 text-truncate ms-2">
-                                        <h5 class="noti-item-title fw-semibold font-size-14">Datacorp <small class="fw-normal text-muted ms-1">1 min ago</small></h5>
-                                        <small class="noti-item-subtitle text-muted">Caleb Flakelar commented on Admin</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item p-0 notify-item card read-noti shadow-none mb-1">
-                            <div class="card-body">
-                                <span class="float-end noti-close-btn text-muted"><i class="mdi mdi-close"></i></span>
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="notify-icon bg-info">
-                                            <i class="mdi mdi-account-plus"></i>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 text-truncate ms-2">
-                                        <h5 class="noti-item-title fw-semibold font-size-14">Admin <small class="fw-normal text-muted ms-1">1 hours ago</small></h5>
-                                        <small class="noti-item-subtitle text-muted">New user registered</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-
-                        <h5 class="text-muted font-size-13 fw-normal mt-0">Yesterday</h5>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item p-0 notify-item card read-noti shadow-none mb-1">
-                            <div class="card-body">
-                                <span class="float-end noti-close-btn text-muted"><i class="mdi mdi-close"></i></span>
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="notify-icon">
-                                            <img src="assets/images/users/avatar-2.jpg" class="img-fluid rounded-circle" alt="" />
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 text-truncate ms-2">
-                                        <h5 class="noti-item-title fw-semibold font-size-14">Cristina Pride <small class="fw-normal text-muted ms-1">1 day ago</small></h5>
-                                        <small class="noti-item-subtitle text-muted">Hi, How are you? What about our next meeting</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-
-                        <h5 class="text-muted font-size-13 fw-normal mt-0">30 Dec 2021</h5>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item p-0 notify-item card read-noti shadow-none mb-1">
-                            <div class="card-body">
-                                <span class="float-end noti-close-btn text-muted"><i class="mdi mdi-close"></i></span>
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="notify-icon bg-primary">
-                                            <i class="mdi mdi-comment-account-outline"></i>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 text-truncate ms-2">
-                                        <h5 class="noti-item-title fw-semibold font-size-14">Datacorp</h5>
-                                        <small class="noti-item-subtitle text-muted">Caleb Flakelar commented on Admin</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item p-0 notify-item card read-noti shadow-none mb-1">
-                            <div class="card-body">
-                                <span class="float-end noti-close-btn text-muted"><i class="mdi mdi-close"></i></span>
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="notify-icon">
-                                            <img src="assets/images/users/avatar-4.jpg" class="img-fluid rounded-circle" alt="" />
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 text-truncate ms-2">
-                                        <h5 class="noti-item-title fw-semibold font-size-14">Karen Robinson</h5>
-                                        <small class="noti-item-subtitle text-muted">Wow ! this admin looks good and awesome design</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-
-                        <div class="text-center">
-                            <i class="mdi mdi-dots-circle mdi-spin text-muted h3 mt-0"></i>
-                        </div>
-                    </div>
-
-                    <!-- All-->
-                    <a href="javascript:void(0);" class="dropdown-item text-center text-primary notify-item border-top border-light py-2">
-                        View All
-                    </a>
-
+                <div class="d-flex justify-content-between flex-grow-1">
+                  <div class="me-4">
+                    <p>Carl Henson</p>
+                    <p class="fs-12px text-secondary">Client meeting</p>
+                  </div>
+                  <p class="fs-12px text-secondary">30 min ago</p>
+                </div>	
+              </a>
+              <a href="" (click)="false" class="dropdown-item d-flex align-items-center py-2">
+                <div class="me-3">
+                  <img class="w-30px h-30px rounded-circle" src="https://placehold.co/30x30" alt="user">
                 </div>
-            </li>
-
-            <li class="nav-link" id="theme-mode">
-                <i class="bx bx-moon font-size-24"></i>
-            </li>
-
-            <li class="dropdown">
-                <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                    <img src="assets/images/users/avatar-4.jpg" alt="user-image" class="rounded-circle">
-                    <span class="ms-1 d-none d-md-inline-block">
-                        Jamie D. <i class="mdi mdi-chevron-down"></i>
-                    </span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-end profile-dropdown ">
-                    <!-- item-->
-                    <div class="dropdown-header noti-title">
-                        <h6 class="text-overflow m-0">Welcome !</h6>
-                    </div>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <i class="fe-user"></i>
-                        <span>My Account</span>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <i class="fe-settings"></i>
-                        <span>Settings</span>
-                    </a>
-
-                    <!-- item-->
-                    <a href="pages-lock-screen.html" class="dropdown-item notify-item">
-                        <i class="fe-lock"></i>
-                        <span>Lock Screen</span>
-                    </a>
-
-                    <div class="dropdown-divider"></div>
-
-                    <!-- item-->
-                    <a href="pages-login.html" class="dropdown-item notify-item">
-                        <i class="fe-log-out"></i>
-                        <span>Logout</span>
-                    </a>
-
+                <div class="d-flex justify-content-between flex-grow-1">
+                  <div class="me-4">
+                    <p>Jensen Combs</p>
+                    <p class="fs-12px text-secondary">Project updates</p>
+                  </div>
+                  <p class="fs-12px text-secondary">1 hrs ago</p>
+                </div>	
+              </a>
+              <a href="" (click)="false" class="dropdown-item d-flex align-items-center py-2">
+                <div class="me-3">
+                  <img class="w-30px h-30px rounded-circle" src="https://placehold.co/30x30" alt="user">
                 </div>
-            </li>
-
-        </ul>
+                <div class="d-flex justify-content-between flex-grow-1">
+                  <div class="me-4">
+                    <p>Amiah Burton</p>
+                    <p class="fs-12px text-secondary">Project deatline</p>
+                  </div>
+                  <p class="fs-12px text-secondary">2 hrs ago</p>
+                </div>	
+              </a>
+              <a href="" (click)="false" class="dropdown-item d-flex align-items-center py-2">
+                <div class="me-3">
+                  <img class="w-30px h-30px rounded-circle" src="https://placehold.co/30x30" alt="user">
+                </div>
+                <div class="d-flex justify-content-between flex-grow-1">
+                  <div class="me-4">
+                    <p>Yaretzi Mayo</p>
+                    <p class="fs-12px text-secondary">New record</p>
+                  </div>
+                  <p class="fs-12px text-secondary">5 hrs ago</p>
+                </div>	
+              </a>
+            </div>
+            <div class="px-3 py-2 d-flex align-items-center justify-content-center border-top">
+              <a href="" (click)="false">View all</a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item nav-notifications" ngbDropdown>
+          <a class="nav-link" ngbDropdownToggle id="notificationDropdown">
+            <i class="link-icon feather icon-bell"></i>
+            <div class="indicator">
+              <div class="circle"></div>
+            </div>
+          </a>
+          <div ngbDropdownMenu class="px-0" aria-labelledby="notificationDropdown">
+            <div class="px-3 py-2 d-flex align-items-center justify-content-between border-bottom">
+              <p>6 New Notifications</p>
+              <a href="" (click)="false" class="text-secondary">Clear all</a>
+            </div>
+            <div class="p-1">
+              <a href="" (click)="false" class="dropdown-item d-flex align-items-center py-2">
+                <div class="w-30px h-30px d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
+                  <i class="feather icon-gift icon-sm text-white"></i>
+                </div>
+                <div class="flex-grow-1 me-2">
+                  <p>New Order Recieved</p>
+                  <p class="fs-12px text-secondary">30 min ago</p>
+                </div>	
+              </a>
+              <a href="" (click)="false" class="dropdown-item d-flex align-items-center py-2">
+                <div class="w-30px h-30px d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
+                  <i class="feather icon-alert-circle icon-sm text-white"></i>
+                </div>
+                <div class="flex-grow-1 me-2">
+                  <p>Server Limit Reached!</p>
+                  <p class="fs-12px text-secondary">1 hrs ago</p>
+                </div>	
+              </a>
+              <a href="" (click)="false" class="dropdown-item d-flex align-items-center py-2">
+                <div class="w-30px h-30px d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
+                  <img class="w-30px h-30px rounded-circle" src="https://placehold.co/30x30" alt="userr">
+                </div>
+                <div class="flex-grow-1 me-2">
+                  <p>New customer registered</p>
+                  <p class="fs-12px text-secondary">2 sec ago</p>
+                </div>	
+              </a>
+              <a href="" (click)="false" class="dropdown-item d-flex align-items-center py-2">
+                <div class="w-30px h-30px d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
+                  <i class="feather icon-layers icon-sm text-white"></i>
+                </div>
+                <div class="flex-grow-1 me-2">
+                  <p>Apps are ready for update</p>
+                  <p class="fs-12px text-secondary">5 hrs ago</p>
+                </div>	
+              </a>
+              <a href="" (click)="false" class="dropdown-item d-flex align-items-center py-2">
+                <div class="w-30px h-30px d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
+                  <i class="feather icon-download icon-sm text-white"></i>
+                </div>
+                <div class="flex-grow-1 me-2">
+                  <p>Download completed</p>
+                  <p class="fs-12px text-secondary">6 hrs ago</p>
+                </div>	
+              </a>
+            </div>
+            <div class="px-3 py-2 d-flex align-items-center justify-content-center border-top">
+              <a href="" (click)="false">View all</a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item nav-profile" ngbDropdown>
+          <a class="nav-link" ngbDropdownToggle id="profileDropdown">
+            <img class="w-30px h-30px ms-1 rounded-circle" src="https://placehold.co/30x30" alt="profile">
+          </a>
+          <div ngbDropdownMenu class="px-0" aria-labelledby="profileDropdown">
+            <div class="d-flex flex-column align-items-center border-bottom px-5 py-3">
+              <div class="mb-3">
+                <img class="w-80px h-80px rounded-circle" src="https://placehold.co/80x80" alt="">
+              </div>
+              <div class="text-center">
+                <p class="tx-16 fw-bolder">Amiah Burton</p>
+                <p class="fs-12px text-secondary">amiahburton&#64;gmail.com</p>
+              </div>
+            </div>
+            <ul class="list-unstyled p-1">
+              <li>
+                <a routerLink="/general/profile" class="dropdown-item py-2 d-flex ms-0">
+                  <i class="feather icon-user me-2 icon-md"></i>
+                  <span>Profile</span>
+                </a>
+              </li>
+              <li>
+                <a href="" (click)="false" class="dropdown-item py-2 d-flex ms-0">
+                  <i class="feather icon-edit me-2 icon-md"></i>
+                  <span>Edit Profile</span>
+                </a>
+              </li>
+              <li>
+                <a href="" (click)="false" class="dropdown-item py-2 d-flex ms-0">
+                  <i class="feather icon-repeat me-2 icon-md"></i>
+                  <span>Switch User</span>
+                </a>
+              </li>
+              <li>
+                <a href="" (click)="onLogout($event)" class="dropdown-item py-2 d-flex ms-0">
+                  <i class="feather icon-log-out me-2 icon-md"></i>
+                  <span>Log Out</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+  
+      <a href="" class="sidebar-toggler" (click)="toggleSidebar($event)">
+        <i class="feather icon-menu"></i>
+      </a>
+      
     </div>
-</div>
+  </nav>
