@@ -1,0 +1,44 @@
+// 
+// General
+// 
+
+
+body {
+    font-family: $font-primary !important;
+    font-size: $base-font !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: $font-secondary !important;
+}
+
+a {
+    text-decoration: none !important;
+    outline: none !important;
+}
+
+p {
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+}
+
+html {
+    scroll-padding-top: 59px !important; /* height of sticky header */
+}
+
+.row > * {
+    position: relative !important;
+}
+
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1140px !important;
+    }
+}
+
+

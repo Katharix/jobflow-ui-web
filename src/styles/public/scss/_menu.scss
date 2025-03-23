@@ -1,0 +1,180 @@
+// 
+// menu.scss
+// 
+
+
+
+.navbar-custom {
+  padding: 20px 0px;
+  width: 100%;
+  border-radius: 0px;
+  z-index: 999;
+  margin-bottom: 0px;
+  transition: all 0.5s ease-in-out;
+  font-family: $font-secondary;
+  .navbar-nav {
+      li {
+          a {
+              line-height: 26px;
+              color: $white;
+              font-size: 16px;
+              transition: all 0.5s;
+              background-color: transparent !important;
+              padding: 6px 0;
+              margin: 0 15px;
+              font-weight: 500;
+              &:hover, &.active {
+                  color: $primary !important;
+              }
+          }
+      }
+      .nav-link {
+          padding-right: 0px;
+          padding-left: 0px;
+      }        
+  }
+  &.navbar-dark {
+      .nav-item {
+          .nav-link {
+              color: $dark;
+          }
+      }
+
+      .nav-btn {
+          .nav-link {
+              color: $dark;
+          }
+      }
+      .logo {
+          .logo-light {
+              display: none;
+          }
+          .logo-dark {
+              display: inline-block;
+          }
+      }
+  }
+
+}
+
+.navbar-toggler {
+  font-size: 24px;
+  margin-top: 5px;
+  margin-bottom: 0px;
+  color: $white;
+  &:focus{
+      outline: none;
+  }
+}
+
+.navbar-btn{
+  margin: 0 15px;
+  font-size: 12px;
+  border-color: transparent;
+  transition: all 0.5s;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  &:hover{
+      color: $white;
+  }
+}
+
+.nav{
+  .open{
+      >a, >a:focus, >a:hover{
+          background-color: transparent;
+          border-color: $blue;
+      }
+  }
+}
+
+
+/********** navbar sticky *********/
+
+.nav-sticky {
+  &.navbar-custom {
+      margin-top: 0px;
+      background-color: $white;
+      box-shadow: 0 0 7px 0 rgba($black, 0.2);
+      color: $dark !important;
+      .navbar-nav {
+          margin-top: 0px;
+          li {
+              a {
+                  color: $dark;
+              }
+          }
+          
+      }
+  }
+}
+
+.logo {
+  .logo-light {
+      display: inline-block;
+  }
+  .logo-dark {
+      display: none;
+  }
+}
+
+.nav-sticky {
+  .logo {
+      .logo-dark {
+          display: inline-block;
+      }
+      .logo-light {
+          display:none;
+      }
+      
+  }
+}
+
+/********* Responsive *********/
+
+@media (min-width: 200px) and (max-width: 768px) {
+  .navbar-custom {
+      margin-top: 0px;
+      padding: 10px 0px !important;
+      background-color: $white !important;
+      box-shadow: 0 10px 33px rgba($dark, .1);
+      color: $dark !important;
+      .navbar-nav {
+          margin-top: 0px;
+          li {
+              a {
+                  transition: all 0.4s;
+                  color: $dark !important;
+                  margin: 0px;
+              }
+              &.active {
+                  a{
+                      border-color: transparent;
+                  }
+              }
+          }
+      }
+      >.container {
+          width: 90%;
+      }
+  }
+
+  .navbar-toggler {
+      font-size: 24px;
+      margin-top: 0px;
+      margin-bottom: 0px;
+      color: $dark;
+  }
+  .navbar-btn{
+      margin: 0px;
+  }
+  .logo {
+      .logo-light {
+          display: none;
+      }
+      .logo-dark {
+          display: block;
+      }
+  }
+}

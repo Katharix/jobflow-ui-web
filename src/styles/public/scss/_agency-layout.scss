@@ -1,0 +1,212 @@
+// 
+// Agency Layout
+// 
+
+.bg-home-agency {
+    background-image: linear-gradient(#ffefed 2px, transparent 2px), linear-gradient(to right, #ffefed 2px, transparent 2px);
+    background-size: 85px 85px;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 67%;
+        bottom: 0;
+        right: 0;
+        background-color: rgba($primary , 0.2);
+    }
+
+    .home-center {
+        padding: 189px 0px 180px 0px;
+    }
+}
+
+.agency-home-title {
+    max-width: 780px;
+}
+
+.play-icon {
+    height: 74px;
+    width: 74px;
+    line-height: 74px;
+    text-align: center;
+    border-radius: 50%;
+    display: inline-block;
+    color: $white;
+}
+
+/******** agency-about ********/
+
+.agency-about-img {
+    position: relative;
+
+    img {
+        border-radius: 12px;
+    }
+}
+
+.agency-about-img-desc {
+    position: absolute;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    background: rgba($black, 0.7);
+}
+
+/******** agency-services ********/
+
+.agency-services-box {
+    overflow: hidden;
+}
+
+.agency-services-icon {
+    i {
+        font-size: 36px;
+        color: $gray-600;
+    }
+}
+
+/******** agency-work ********/
+
+.container-filter {
+    li {
+        list-style: none;
+
+        a {
+            display: block;
+            font-size: 12px;
+            color: $gray-600 !important;
+            background: $gray-100;
+            border: 1px solid darken($gray-100, 4%);
+            padding: 17px 15px;
+            margin: 18px 3px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border-radius: 7px;
+            -webkit-transition: all 0.6s;
+        }
+    }
+}
+
+.container-filter,
+.busi-container-filter {
+    li {
+        a {
+
+            &:hover,
+            &.active {
+                color: $white !important;
+                border: 1px solid;
+            }
+        }
+    }
+}
+
+.item-box {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    border-radius: 8px;
+
+    a {
+        display: inline-block;
+    }
+
+    &:hover {
+        .item-mask {
+            opacity: 1;
+            visibility: visible;
+            cursor: pointer;
+
+            .item-caption {
+                bottom: 50%;
+                transform: translateY(50%);
+                opacity: 1;
+            }
+        }
+
+        .item-container {
+            transform: scale(1.1);
+            transition: all 2s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+            width: 100%;
+        }
+    }
+}
+
+.item-container {
+    transform: scale(1);
+    -ms-transform: scale(1);
+    -webkit-transform: scale(1);
+    width: 100%;
+    transition: all 2s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+    -moz-transition: all 2s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+    -webkit-transition: all 2s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+    -o-transition: all 2s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+}
+
+.item-mask {
+    background: none repeat scroll 0 0 rgba($black, 0.7);
+    position: absolute;
+    transition: all 0.5s ease-in-out 0s;
+    -moz-transition: all 0.5s ease-in-out 0s;
+    -webkit-transition: all 0.5s ease-in-out 0s;
+    -o-transition: all 0.5s ease-in-out 0s;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    border-radius: 8px;
+
+    p {
+        font-size: 11px;
+        letter-spacing: 1.5px;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .item-caption {
+        position: absolute;
+        bottom: -60px;
+        left: 0px;
+        right: 0px;
+        padding-left: 30px;
+        padding-right: 30px;
+        transition: all 0.5s ease-in-out 0s;
+        -moz-transition: all 0.5s ease-in-out 0s;
+        -webkit-transition: all 0.5s ease-in-out 0s;
+        -o-transition: all 0.5s ease-in-out 0s;
+        opacity: 0;
+    }
+}
+
+.filter-box {
+    display: none;
+}
+
+.show {
+    display: block;
+}
+
+.tab-active:hover {
+    background-color: #ddd;
+}
+
+.tab-active.active {
+    background-color: #666;
+    color: white;
+}
+
+/******** agency-pricing ********/
+
+.pricing-table-agency {
+    box-shadow: 0 10px 50px rgba($dark, 0.03), 0 10px 40px rgba($black, 0.03);
+    border-radius: 12px;
+}
+
+.pricing-title {
+    overflow: hidden;
+}

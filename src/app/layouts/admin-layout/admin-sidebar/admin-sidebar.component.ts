@@ -25,10 +25,10 @@ import { FeatherIconDirective } from '../../../core/feather-icon/feather-icon.di
 })
 export class AdminSidebarComponent implements OnInit, AfterViewInit {
   @ViewChild('sidebarToggler')
-    sidebarToggler!: ElementRef;
+    sidebarToggler: ElementRef;
 
   menuItems: MenuItem[] = [];
-  @ViewChild('sidebarMenu') sidebarMenu!: ElementRef;
+  @ViewChild('sidebarMenu') sidebarMenu: ElementRef;
 
   constructor(@Inject(DOCUMENT) private document: Document, private renderer: Renderer2, router: Router) { 
     router.events.forEach((event) => {

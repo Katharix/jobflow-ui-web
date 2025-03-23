@@ -1,0 +1,76 @@
+<footer class="footer-part bg-dark py-5 pb-4">
+    <div class="container">
+      <div class="row mt-5 pb-5 justify-content-between g-3">
+        <div class="col-lg-3">
+          <div class="footer-about">
+            <div class="logo mb-4">
+              <a class="logo text-uppercase" href="index.html">
+                <img src="/assets/public/images/logo-light.png" alt="" class="logo-light" style="height: 30px;" />
+                <img src="/assets/public/images/logo-dark.png" alt="" class="logo-dark" style="height: 30px;" />
+              </a>
+            </div>
+            <p class="text-white mb-4">Comprehensive report, data visualization , and insights to analyze your business.
+            </p>
+            <a href="#!" class="btn btn-primary btn-sm">Subscribe</a>
+          </div>
+        </div>
+  
+        @for (item of footerLinks; track $index) {
+        <div class="col-lg-2">
+          <h5 class="text-white fw-medium">{{item.title}}</h5>
+          <ul class="mt-4">
+            @for (link of item.links; track $index) {
+            <li>
+              <a href="javascript:void(0);" class="ms-0">{{link}}</a>
+            </li>
+            }
+          </ul>
+        </div>
+        }
+  
+      </div>
+      <hr class="border-primary">
+      <div class="row align-items-center justify-content-between g-3">
+        <div class="col-lg-5">
+          <p class="m-0 fs-6 text-white-50">
+            {{currentYear}}
+            © Skywave - Design crafted by ❤️ <a href="javascript:void(0);" class="text-white">{{credits.name}}</a>
+          </p>
+        </div>
+        <div class="col-lg-4 text-lg-center">
+          <ul class="d-flex gap-2 m-0 align-items-center justify-content-center">
+            <li class="m-0">
+              <div class="icon d-flex rounded-circle align-items-center justify-content-center">
+                <a href="javascript:void(0);" class="text-dark f-18"><i class="ti ti-brand-facebook"></i></a>
+              </div>
+            </li>
+            <li class="m-0">
+              <div class="icon d-flex rounded-circle align-items-center justify-content-center">
+                <a href="javascript:void(0);" class="text-dark f-18"><i class="ti ti-brand-x"></i></a>
+              </div>
+            </li>
+            <li class="m-0">
+              <div class="icon d-flex rounded-circle align-items-center justify-content-center">
+                <a href="javascript:void(0);" class="text-dark f-18"><i class="ti ti-brand-youtube"></i></a>
+              </div>
+            </li>
+            <li class="m-0">
+              <div class="icon d-flex rounded-circle align-items-center justify-content-center">
+                <a href="javascript:void(0);" class="text-dark f-18"><i class="ti ti-brand-instagram"></i></a>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="col-lg-3 text-lg-center">
+          <div class="row g-3">
+            <div class="col-lg-6">
+              <a href="javascript:void(0);" class="text-white">Terms Of Us</a>
+            </div>
+            <div class="col-lg-6">
+              <a href="javascript:void(0);" class="text-white">Privacy Policy</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>

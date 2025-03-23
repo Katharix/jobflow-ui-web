@@ -1,0 +1,167 @@
+// 
+// Components
+// 
+
+.btn {
+  padding: 12px 25px;
+  transition: all 0.5s;
+  font-weight: 500;
+  border-radius: 30px;
+  font-family: $font-secondary;
+  box-shadow: none !important;
+
+  &.btn-sm {
+      padding: 7px 18px;
+  }
+
+  @each $color,
+  $value in $theme-colors {
+      &.btn-#{$color} {
+          background-color: #{$value} !important;
+          border: 1px solid #{$value} !important;
+          border-bottom: 3px solid #{darken($value, 5%)} !important;
+          color: $white !important;
+
+          &:hover,
+          &:focus,
+          &.focus,
+          &:active,
+          &.active {
+              background-color: #{darken($value, 7%)} !important;
+              border:1px solid #{darken($value, 7%)} !important;
+              border-bottom: 3px solid #{darken($value, 10%)} !important;
+          }
+      }
+
+      &.btn-outline-#{$color} {
+          border: 1px solid #{$value} !important;
+          color: #{$value} !important;
+      }
+  }
+
+  &.btn-light,
+  &.btn-white {
+      background-color: $white;
+      border: 1px solid $white;
+      border-bottom: 3px solid darken($white, 12%) !important;
+      color: $primary !important;
+
+      &:hover,
+      &:focus,
+      &.focus,
+      &:active,
+      &.active {
+          background-color: darken($white, 7%) !important;
+          border-color: darken($white, 7%) !important;
+          border-bottom: 3px solid darken($white, 15%) !important;
+      }
+  }
+
+  &.btn-outline-light,
+  &.btn-outline-white {
+      border: 1px solid $white !important;
+      color: $white !important;
+      text-transform: uppercase;
+
+      &:hover,
+      &:focus,
+      &.focus,
+      &:active,
+      &.active {
+          background-color: $white;
+          color: $dark !important;
+      }
+  }
+}
+
+// Modal-box
+.modal {
+  .video-modal {
+      border: 0;
+      background-color: transparent;
+
+      .video-box {
+          position: relative;
+      }
+
+      .btn-close {
+          width: 26px;
+          height: 26px;
+          background-color: rgba($white, 0.5);
+          border-radius: 6px;
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          opacity: 0;
+          z-index: 3;
+
+          video {
+              &:focus {
+                  outline: none;
+              }
+          }
+      }
+
+      &:hover {
+          .btn-close {
+              opacity: 0.5;
+          }
+      }
+  }
+
+  .btn-close {
+      &:focus {
+          box-shadow: none;
+      }
+  }
+}
+
+// Mixin for generating background subtle classes
+@mixin bg-value-subtle($value) {
+  $variable-name: "#{$prefix}#{$value}-bg-subtle";
+
+  .bg-#{$value}-subtle {
+      background-color: rgba(#{$value}, 0.5) !important;
+  }
+}
+
+
+
+
+@each $color, $value in $theme-colors {
+  .bg-#{$color} {
+      background-color: #{$value} !important;
+  }
+  .text-#{$color} {
+      color: #{$value} !important;
+  }
+
+  .btn-#{$color} {
+      background-color: #{$value} !important;
+  }
+
+  .border-#{$color} {
+      border-color: #{$value} !important;
+  }
+
+  .btn-outline-#{$color} {
+      color: #{$value} !important;
+      border: 1px solid #{$value} !important;
+
+      &:hover {
+          background-color: #{$value} !important;
+          color: $light !important;
+      }
+
+      &:active {
+          background-color: #{$value} !important;
+          color: $light !important;
+      }
+
+      &:focus {
+          background-color: #{$value} !important;
+          color: $light !important;
+      }
+  }
+
+}

@@ -1,0 +1,124 @@
+
+
+/* Theme Name: Skywave - IT Solution & Technology HTML Landing Template
+   Author: MarkeyThemes
+   File Description: Default template color
+*/
+
+.text-custom,
+.btn-outline,
+.open > .dropdown-toggle.btn-primary,
+.btn-white,
+.btn-outline-white:hover,
+.btn-outline-white:focus,
+.btn-outline-white:active,
+.btn-outline-white.active,
+.btn-outline-white.focus,
+.open > .dropdown-toggle.btn-outline-white,
+.btn-white:hover,
+.btn-white:focus,
+.btn-white:active,
+.btn-white.active,
+.btn-white.focus,
+.open > .dropdown-toggle.btn-white,
+.navbar-btn,
+.navbar-custom .navbar-nav li.active a,
+.navbar-custom .navbar-nav li a:hover,
+.navbar-custom .navbar-nav li a:active,
+.nav-sticky.navbar-custom .navbar-nav li.active a,
+.nav-sticky.navbar-custom .navbar-nav li a:hover,
+.nav-sticky.navbar-custom .navbar-nav li a:active,
+.busi-team-icons li a:hover
+{
+    color: $primary;
+}
+
+.bg-custom,
+.btn-primary,
+.navbar-btn:hover,
+.play-icon,
+.container-filter li a:hover,
+.container-filter li a.active,
+.busi-container-filter li a:hover,
+.busi-container-filter li a.active,
+.footer-startup .footer-icons li a:hover,
+.app-team-social-icon a:hover
+{
+	background: $primary;
+}
+
+
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.btn-primary.focus,
+.open > .dropdown-toggle.btn-primary,
+.container-filter li a:hover,
+.container-filter li a.active,
+.footer-startup .footer-icons li a:hover,
+.busi-container-filter li a:hover,
+.busi-container-filter li a.active,
+.app-team-social-icon a:hover{
+	border-color: $primary;
+}
+
+.app-border-right {
+    border-right: 3px solid $primary;
+}
+
+.app-border-left {
+    border-left: 3px solid $primary;
+}
+
+.arrow-right{
+    border-left: 14px solid $primary;
+}
+
+.arrow-left{
+    border-right: 14px solid $primary;
+}
+
+.startup-pricing-table-active {
+    border: 2px solid rgba($primary, 0.4);
+    border-top: 16px solid rgba($primary, 0.4);
+}
+
+.soft-team-content{
+    border-bottom: 2px solid $primary;
+}
+
+.navbar-btn {
+    background-color: rgba($primary, 0.2);
+}
+
+.feautures-icon i,
+.app-testi-icon i,
+.services-icon:after,
+.busi-services-icon i{
+    background: lighten($primary, 48%);
+}
+
+.testi-icon i{
+    color: lighten($primary, 48%);
+}
+
+.btn-primary {
+    border-bottom: 3px solid darken($primary, 5%) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.btn-primary.focus,
+.open > .dropdown-toggle.btn-primary {
+    background-color: darken($primary, 7%);
+    border-color: darken($primary, 7%);
+    border-bottom-color: darken($primary, 10%);
+}
+
+.spinner {
+  border-left: 5px solid $primary;
+}

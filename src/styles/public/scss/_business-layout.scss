@@ -1,0 +1,87 @@
+// 
+// Business Layout
+// 
+
+
+/******** Business-home ********/
+.bg-home-3{
+    background-image: url("/images/business.jpg");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 200px 0;
+    position: relative;
+}
+/******** Business-about ********/
+
+.busi-services-box{
+    box-shadow: 0 10px 50px rgba($gray-800, 0.03), 0 10px 40px rgba($black, 0.03);
+}
+
+.busi-about-content {
+    h3{
+        max-width: 660px;
+        line-height: 1.4;
+    }
+}
+
+.busi-services-icon {
+    i{
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        text-align: center;
+        line-height: 60px;
+        top: 24px;
+        right: 48px;
+        border-radius: 50%;
+    }
+}
+
+/******** Business-portfolio ********/
+
+.busi-container-filter {
+    li {
+        list-style: none;
+        display: inline-block;
+        a {
+            display: block;
+            font-size: 11px;
+            color: $gray-600 !important;
+            background-color: $gray-100;
+            border: 1px solid darken($gray-100, 4%);
+            padding: 0px 15px;
+            margin: 5px 3px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            line-height: 34px;
+            border-radius: 3px;
+            -webkit-transition: all 0.6s;
+        }
+    }
+}
+
+/******** Business-testi ********/
+
+.busi-testi-box {
+    box-shadow: 0 10px 50px rgba($gray-800, 0.03), 0 10px 40px rgba($black, 0.03);
+}
+
+.busi-testi-icon {
+    i {
+        position: absolute;
+        right: 30px;
+        top: -18px;
+        color: darken($gray-100, 5%);
+    }
+}
+
+/******** Business-team ********/
+
+.busi-team-img {
+    img{
+        border-radius: 8px;
+        max-width: 120px;
+    }
+}

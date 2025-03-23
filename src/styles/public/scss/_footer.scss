@@ -1,0 +1,67 @@
+//
+// _footer.scss
+//
+
+.footer-part {
+    p {
+        font-size: 17px;
+    }
+
+    li {
+        margin-bottom: 17px;
+        a {
+            font-size: 16px;
+            color: $gray-500;
+
+            &:hover {
+                color: $primary !important;
+            }
+        }
+    }
+
+    .form-button {
+        form {
+            position: relative;
+        }
+        input {
+            padding: 13px 16px;
+            box-shadow: none;
+            border-color: transparent;
+            background-color: $gray-800;
+            color: $light;
+            &::placeholder {
+                color: $light;
+            }
+        }
+        a {
+            background-color: $gray-800;
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 5px;
+            color: $white;
+            position: absolute;
+            right: 0;
+            font-size: 20px;
+        }
+    }
+
+    .contact-f{
+        i{
+            font-size: 30px;
+            color: $white;
+            margin-right: 16px;
+            display: flex;
+            align-items: start;
+        }
+    }
+    .icon{
+        background-color: $gray-200 !important;
+        height: 40px !important;
+        width: 40px !important;
+    }
+}
+
+ul{
+    list-style: none !important;
+    padding: 0 !important;
+}

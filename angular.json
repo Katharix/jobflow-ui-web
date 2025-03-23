@@ -43,16 +43,9 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/assets/css/tobii.min.css",
-              "src/assets/css/materialdesignicons.min.css",
-              "src/assets/css/swiper-bundle.min.css",
-              "src/assets/css/pe-icon-7-stroke.min.css",
-              "src/styles/styles.scss"
+              "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/apexcharts/dist/apexcharts.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
             ]
           },
           "configurations": {
@@ -111,20 +104,9 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/assets/css/tobii.min.css",
-              "src/assets/css/materialdesignicons.min.css",
-              "src/assets/css/swiper-bundle.min.css",
-              "src/assets/css/pe-icon-7-stroke.min.css",
-              "src/styles/styles.scss"
+              "src/styles.scss"
             ],
             "scripts": [
-              "src/assets/js/shuffle.min.js",
-              "src/assets/js/tobii.min.js",
-              "src/assets/js/tobii.js",
-              "src/assets/js/swiper-bundle.min.js",
-              "src/assets/js/app.js",
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
             ]
           }
         }

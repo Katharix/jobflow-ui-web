@@ -1,0 +1,245 @@
+// 
+// App Layout
+// 
+
+
+/********** App-home ***********/
+
+.bg-home-app {
+    position: relative;
+    background-color: rgba($primary,  0.05);
+    background-image: url("/images/bg-img-5.jpg");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    .home-center {
+        padding: 189px 0px 180px 0px;
+    }
+}
+
+.app-home-title {
+    h1{
+        line-height: 1.4;
+    }
+}
+
+.bg-app-overlay {
+    position: absolute;
+    background: url("/images/bg-app-overlay.png");
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+}
+
+.swiper {
+    width: 100%;
+    height: 100%;
+  }
+
+  .swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+/********** App-features ***********/
+
+.app-features-box {
+    box-shadow: 0 10px 50px rgba($gray-800, 0.03), 0 10px 40px rgba($black, 0.03);
+    border-radius: 5px;
+}
+
+.app-border-right {
+    border-right: 3px solid;
+}
+
+.app-border-left {
+    border-left: 3px solid;
+}
+
+.arrow-right{
+    position: absolute;
+    right: 1px;
+    border-left: 14px solid;
+    border-top: 14px solid transparent;
+    border-bottom: 14px solid transparent;
+}
+
+.arrow-left{
+    position: absolute;
+    left: 1px;
+    border-right: 14px solid;
+    border-top: 14px solid transparent;
+    border-bottom: 14px solid transparent;
+}
+
+.bg-app-gradient{
+    background: linear-gradient(to right, $gray-800, $gray-600); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+/********** App-screenshot *********/
+
+.screenshot-item {
+    padding: 0 15px;
+}
+
+.screenshot-img {
+    border: 10px solid $white;
+    display: block;
+    box-shadow: 0 1px 15px rgba($gray-500, 0.35);
+}
+
+.screenshot-demo-slider {
+    .tns-outer  {
+        .tns-nav {
+            margin-top: 8px;
+            text-align: center;
+        }
+    }
+}
+
+.screenshot-slider {
+    .tns-item {
+        padding: 0 !important;
+    }
+}
+
+.mfp-arrow {
+    background-color: transparent;
+    outline: none !important;
+}
+
+/********** App-testi *********/
+
+.app-testi-icon i{
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    background: rgba($primary, 0.5);
+    border-radius: 50%;
+}
+
+.testimonial-slider {
+    .tns-outer  {
+        .tns-nav {
+            text-align: center;
+        }
+    }
+}
+
+/********** App-team *********/
+
+.app-team-box {
+    position: relative;
+    -webkit-transition: all 0.4s ease;
+    -o-transition: all 0.4s ease;
+    transition: all 0.4s ease;
+    overflow:  hidden;
+
+    &:hover {
+        .app-team-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+        .app-team-content{
+            bottom: 50%;
+            transform: translateY(50%);
+            opacity: 1;
+        }
+    }
+}
+
+.app-team-box-img {
+    > img {
+        width: 100%;
+        border-radius: 6px;
+    }
+}
+
+
+.app-team-overlay {
+    background: none repeat scroll 0 0 rgba($black, 0.7);
+    position: absolute;
+    transition: all 0.5s ease-in-out 0s;
+    -moz-transition: all 0.5s ease-in-out 0s;
+    -webkit-transition: all 0.5s ease-in-out 0s;
+    -o-transition: all 0.5s ease-in-out 0s;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.app-team-content {
+    position: absolute;
+    bottom: -60px;
+    left: 0px;
+    right: 0px;
+    padding-left: 30px;
+    padding-right: 30px;
+    transition: all 0.5s ease-in-out 0s;
+    -moz-transition: all 0.5s ease-in-out 0s;
+    -webkit-transition: all 0.5s ease-in-out 0s;
+    -o-transition: all 0.5s ease-in-out 0s;
+    opacity: 0;
+}
+
+
+.app-team-social-icon {
+    a {
+        height: 35px;
+        width: 35px;
+        display: inline-block;
+        line-height: 33px;
+        font-size: 14px;
+        color: $white;
+        border: 1px solid $white;
+        border-radius: 50%;
+        transition: all 0.5s;
+        &:hover {
+            border: 1px solid;
+        }
+    }
+}
+
+/********** App-team *********/
+
+.app-pricing-table {
+    box-shadow: 0 10px 50px rgba($gray-800, 0.03), 0 10px 40px rgba($black, 0.03);
+    border-radius: 8px;
+}
+
+/********* Responsive ***********/
+
+@media (min-width: 200px) and (max-width: 768px) {
+    .bg-home-app{
+        height: auto;
+    }
+    .arrow-left,
+    .arrow-right { 
+        display: none;
+    }
+    .app-home-title {
+        h1{
+            font-size: 30px;
+        }
+    }
+}

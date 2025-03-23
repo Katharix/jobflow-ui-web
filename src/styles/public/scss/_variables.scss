@@ -1,0 +1,61 @@
+// 
+// variables.scss
+// 
+
+/** Google font **/
+@import url('https://fonts.googleapis.com/css2?family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap');
+
+
+
+// Color variables
+
+$white:               #fff;
+$gray-100:            #f8f9fa;
+$gray-200:            #eff1f5;
+$gray-300:            #e2e7f1;
+$gray-400:            #ced4da;
+$gray-500:            #7c8bad;
+$gray-600:            #6c757d;
+$gray-700:            #536976;
+$gray-800:            #292E49;
+$gray-900:            #0f1f3e;
+$black:               #000;
+
+$blue:                #337ab7;
+$green:               #13ce67;
+$cyan:                #4bbbce;
+$yallow:              #fdba45;
+$red:                 #f58967;
+
+
+$primary:             $red;
+$secondary:           $gray-700;
+$info:                $cyan;
+$warning:             $yallow;
+$success:             $green;
+$danger:              $red;
+$light:               $gray-100;
+$dark:                $gray-900;
+$white:               $white;
+$blue:                $blue;
+
+
+$theme-colors: (
+    "primary":        $primary,
+    "secondary":      $secondary,
+    "info":           $info,
+    "warning":        $warning,
+    "success":        $success,
+    "danger":         $danger,
+    "dark":           $dark,
+    "light":          $light,
+    "white":          $white,
+);
+
+$dark-blue:          #1f222b;
+$bg-overlay:         #36404e;
+
+$base-font: 16px;
+
+$font-primary:          "Rethink Sans", sans-serif;
+$font-secondary:        "Rethink Sans", sans-serif;
