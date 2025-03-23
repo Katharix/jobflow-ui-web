@@ -1,7 +1,3 @@
-// Light theme variables
-
-
-
 // Bootstrap base colors
 $white:        #fff !default;
 $gray-100:     #f8f9fa !default;
@@ -41,10 +37,53 @@ $warning:         #fbbc06 !default;
 $danger:          #ff3366 !default;
 $light:           $gray-200 !default;
 $dark:            $gray-900 !default;
-//
-// --- Bootstrap Theme Colors --- //
 
 
+$gray-100:            #f8f9fa;
+$gray-200:            #eff1f5;
+$gray-300:            #e2e7f1;
+$gray-400:            #ced4da;
+$gray-500:            #7c8bad;
+$gray-600:            #6c757d;
+$gray-700:            #536976;
+$gray-800:            #292E49;
+$gray-900:            #0f1f3e;
+$black:               #000;
+
+$blue:                #0D1044;
+$green:               #78BC61;
+$cyan:                #0A99E5;
+$yellow:              #E3A932;
+$red:                 #A22C29;
+
+
+$primary:             $yellow;
+$secondary:           $gray-700;
+$info:                $cyan;
+$warning:             $yellow;
+$success:             $green;
+$danger:              $red;
+$light:               $gray-100;
+$dark:                $gray-900;
+$white:               $white;
+$blue:                $blue;
+
+
+$theme-colors: (
+    "primary":        $primary,
+    "secondary":      $secondary,
+    "info":           $info,
+    "warning":        $warning,
+    "success":        $success,
+    "danger":         $danger,
+    "dark":           $dark,
+    "light":          $light,
+    "white":          $white,
+);
+$dark-blue:          #1f222b;
+$bg-overlay:         #36404e;
+
+$base-font: 16px;
 
 // Social colors
 $social-colors: (
@@ -168,7 +207,6 @@ $position-values: (
 
 $prefix:                      bs- !default;
 
-
 // Body
 //
 // Settings for the `<body>` element.
@@ -231,7 +269,10 @@ $component-hover-bg:          rgba($secondary, .2);         // custom variable
 // Font, line-height, and color for body text, headings, and more.
 
 // Font family
-$font-family-sans-serif:           "Roboto", Helvetica, sans-serif !default;
+$font-family-sans-serif: "Plus Jakarta Sans", Helvetica, sans-serif !default;
+$font-primary:          "Plus Jakarta Sans", sans-serif;
+$font-secondary:        "Plus Jakarta Sans", sans-serif;
+
 
 $font-size-base:              		 0.875rem !default;   // 14px
 $font-size-lg:               	 		 1rem !default;       // 16px

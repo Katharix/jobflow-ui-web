@@ -1,0 +1,51 @@
+<section class="section" id="features">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-7">
+          <div class="title text-center mb-5">
+            <p class="d-flex align-items-center justify-content-center mb-4">
+              <span class="icon bg-primary rounded d-flex justify-content-center align-items-center">
+                <i class="ti ti-key text-white f-18"></i>
+              </span>
+              <i class="ti ti-line-dashed text-primary fs-5"></i>
+              <span class="badge bg-light border text-primary py-2 px-3 f-14">Features</span>
+            </p>
+            <h3>Tools That Make You Look Like a Pro (Because You Are)</h3>
+            <p class="text-muted">
+              From easy job scheduling to quick invoicing and real-time client updates, Job Flow packs powerful features into a
+              simple interface — so you can focus on doing great work, not chasing paperwork.
+            </p>            
+          </div>
+        </div>
+      </div>
+  
+      <!-- Row 1 Features -->
+      <div class="row mt-4 g-3">
+        <div *ngFor="let feature of featuresRow1; let i = index" class="col-lg-3 col-4">
+          <div class="features-box text-center" [ngClass]="{ 'border-end': i !== 3 }">
+            <div class="features-icon mb-3">
+              <img [src]="feature.imgSrc" alt="{{ feature.title }}">
+            </div>
+            <div class="features-desc rounded">
+              <h5 class="mb-0 f-16">{{ feature.title }}</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Row 2 Features -->
+      <div class="row mt-5 g-3">
+        <div *ngFor="let feature of featuresRow2; let i = index" class="col-lg-3 col-4">
+          <div class="features-box text-center" [ngClass]="{ 'border-end': i !== 3 }">
+            <div class="features-icon mb-3">
+              <img [src]="feature.imgSrc" alt="{{ feature.title }}">
+            </div>
+            <div class="features-desc rounded">
+              <h5 class="mb-0 f-16">{{ feature.title }}</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+    </div>
+  </section>

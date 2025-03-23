@@ -22,6 +22,11 @@ export class PricingComponent {
 
   // Get formatted price depending on billing type (monthly or annual)
   getPrice(plan: PricingPlan): string {
-    return this.isAnnual ? `$${(plan.price * 12).toFixed(2)} / Year` : `$${plan.price.toFixed(2)} / Month`;
+    if (this.isAnnual) {
+      return `$${plan.annualPrice.toFixed(0)} / Year`;
+    } else {
+      return `$${plan.price.toFixed(0)} / Month`;
+    }
   }
+  
 }

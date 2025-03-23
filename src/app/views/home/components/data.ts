@@ -102,30 +102,51 @@ export const testimonials: Testimonial[] = [
 
 export const plans: PricingPlan[] = [
   {
-    name: 'Basic',  
-    price: 20.99,
+    name: 'Go',
+    price: 29,
+    annualPrice: 278,
     duration: 'Month',
-    savings: 'Save 50%',
-    description: '1 Month Free',
+    savings: 'Save $70',
+    description: 'Just what you need to get rolling.',
     badge: 'bg-success-subtle text-success',
-    buttonClass: 'btn-primary'
+    buttonClass: 'btn-primary',
+    features: [
+      'Basic job scheduling',
+      'Invoicing & payments',
+      'Client contact list',
+      'Email notifications',
+    ]
   },
   {
-    name: 'Advanced',
-    price: 80.99,
+    name: 'Flow',
+    price: 59,
+    annualPrice: 564,
     duration: 'Month',
-    savings: 'Save 60%',
-    description: '1 Month Free',
+    savings: 'Save $144',
+    description: 'Everything you need to run the show.',
     badge: 'bg-success-subtle text-success',
-    buttonClass: 'btn-info'
-  },  
+    buttonClass: 'btn-info',
+    features: [
+      'Everything in Go',
+      'Team & crew assignments',
+      'Calendar view with drag-and-drop',
+      'Text message reminders'
+    ]
+  },
   {
-    name: 'Advanced',
-    price: 80.99,
+    name: 'Max',
+    price: 89,
+    annualPrice: 864,
     duration: 'Month',
-    savings: 'Save 60%',
-    description: '1 Month Free',
+    savings: 'Save $204',
+    description: 'For crews that don’t slow down.',
     badge: 'bg-success-subtle text-success',
-    buttonClass: 'btn-info'
+    buttonClass: 'btn-info',
+    features: [
+      'Everything in Flow',
+      'Custom branding (logo, colors)',
+      'Automated job follow-ups',
+      'Priority email & chat support'
+    ]
   }
 ];

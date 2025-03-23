@@ -11,7 +11,7 @@ import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './public-navbar.component.scss'
 })
 export class PublicNavbarComponent {
-  navLinks=["home","features","services","reviews","pricing","contact","login"]
+  navLinks=["home","features","pricing","contact"]
 
   @Input() navbarLight?: boolean
   isCollapsed = false;

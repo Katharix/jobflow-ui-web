@@ -9,12 +9,11 @@
 .bg-home-software {
     position: relative;
     background-size: cover;
-    background-image: url("/images/map-bg.png");
+    background-image: url("/assets/public/images/bg-software.png");
     background-color: rgba($primary, 0.05);
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
-
     .home-center {
         padding: 230px 0px 180px 0px;
     }
@@ -23,7 +22,7 @@
 /******** software-features ********/
 
 .bg-soft {
-    background-image: url("/images/bg-software.png");
+    background-image: url("/assets/public/images/bg-software.png");
     background-color: $dark-blue;
 }
 

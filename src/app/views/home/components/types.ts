@@ -30,7 +30,9 @@ export type Feature = {
   export type PricingPlan = {
     name: string;
     price: number;
+    annualPrice: number;
     duration: string;
+    features: string[],
     savings: string;
     description: string;
     badge: string;
