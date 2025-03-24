@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../../services/auth.service';
 import { Auth, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
 import { doc, getDoc, Firestore, collection, getDocs } from '@angular/fire/firestore';
+import { OrganizationService } from '../../../../services/organization.service';
 
 
 @Component({
@@ -25,21 +26,26 @@ export class LoginComponent implements OnInit {
   password = '';
   error: string | null = null;
   
-  constructor(private firestore: Firestore,private auth: Auth,private router: Router, private route: ActivatedRoute, private authService: AuthService) {}
-
+  constructor(
+    private firestore: Firestore,
+    private auth: Auth,
+    private router: Router, 
+    private route: ActivatedRoute, 
+    private authService: AuthService,
+    private organizationService: OrganizationService
+  ) {}
+  organizations: any[] = [];
   ngOnInit(): void {
-    this.testFirestoreRead();
     // Get the return URL from the route parameters, or default to '/'
+    this.organizationService.getAllOrganizations().subscribe({
+      next: (data) => {
+        this.organizations = data as any[]; 
+        console.log(data);
+      },
+      error: (err) => console.error(err)
+    });
+    
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-  }
-  async testFirestoreRead() {
-    try {
-      const usersCollection = collection(this.firestore, 'users');
-      const snapshot = await getDocs(usersCollection);
-      console.log('✅ Firestore read success:', snapshot.docs.map(doc => doc.data()));
-    } catch (err) {
-      console.error('🔥 Firestore test read failed:', err);
-    }
   }
 
   async onLoggedin(e: Event) {
