@@ -2,7 +2,8 @@ import { Routes } from '@angular/router';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { HomeComponent } from './views/home/home.component';
-import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { authGuard } from './services/auth.guard';
+import { DashboardComponent } from './views/admin-views/dashboard/dashboard.component';
 
 export const routes: Routes = [
     {
@@ -16,8 +17,10 @@ export const routes: Routes = [
       {
         path: 'admin',
         component: AdminLayoutComponent,
+        canActivate: [authGuard],
+        data: { roles: ['organizationAdmin', 'katharixAdmin'] },
         children: [
-        //   { path: '', component: AdminDashboardComponent },
+             { path: '', component: DashboardComponent },
         //   { path: 'users', component: AdminUsersComponent }
         ]
       },

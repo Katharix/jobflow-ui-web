@@ -15,11 +15,14 @@
                 <form class="forms-sample">
                   <div class="mb-3">
                     <label for="exampleInputEmail1" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email" value="admin@demo.com">
+                    <input type="email" [(ngModel)]="email" class="form-control" placeholder="Email" name="email" required>
                   </div>
                   <div class="mb-3">
                     <label for="exampleInputPassword1" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="exampleInputPassword1" autocomplete="current-password" placeholder="Password" value="12345678">
+                    <input type="password" [(ngModel)]="password" class="form-control" placeholder="Password" name="password" required>
+                  </div>
+                  <div *ngIf="error" class="alert alert-danger mt-3">
+                    {{ error }}
                   </div>
                   <div class="form-check mb-3">
                     <input type="checkbox" class="form-check-input" id="authCheck">
@@ -29,9 +32,9 @@
                   </div>
                   <div>
                     <button type="submit" class="btn btn-primary me-2 mb-2 mb-md-0" (click)="onLoggedin($event)">Login</button>
-                    <button type="button" class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0">
-                      <i class="feather icon-twitter btn-icon-prepend"></i>
-                      Login with twitter
+                    <button type="button" class="btn btn-outline-info" (click)="loginWithGoogle()">
+                      <i class="feather icon-mail me-1 btn-icon-prepend"></i>
+                      Sign in with Google
                     </button>
                   </div>
                   <a routerLink="/auth/register" class="d-block mt-3 text-secondary">Not a user? Sign up</a>
