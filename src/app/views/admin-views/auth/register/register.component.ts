@@ -69,11 +69,12 @@ export class RegisterComponent {
         next: (data) => {
           org = data;
           console.log(data);
+          this.router.navigate(['/admin']);
         },
         error: (err) => console.error(err)
       });
 
-      this.router.navigate(['/admin']);
+      
     } catch (err: any) {
       console.error('Registration Error:', err);
       this.error = err.message;
