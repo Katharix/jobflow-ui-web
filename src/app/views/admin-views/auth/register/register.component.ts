@@ -8,6 +8,7 @@ import { OrganizationService } from '../../../../services/organization.service';
 import { Organization, OrganizationDto } from '../../../../models/organization';
 import { OrganizationTypeService } from '../../../../services/organization-type.service';
 import { OrganizationType } from '../../../../models/organization-type';
+import { StripeService } from '../../../../services/stripe.service';
 
 @Component({
   selector: 'app-register',
@@ -30,7 +31,8 @@ export class RegisterComponent implements OnInit {
     private firestore: Firestore,
     private router: Router,
     private orgService: OrganizationService,
-    private organizationTypeService: OrganizationTypeService
+    private organizationTypeService: OrganizationTypeService,
+    private stripeService: StripeService
   ) { }
 
   ngOnInit(): void {
@@ -53,7 +55,6 @@ export class RegisterComponent implements OnInit {
   }
 
   async register() {
-    console.log('Register clicked');
     this.error = '';
     const role = 'SuperAdmin';
 
@@ -79,7 +80,7 @@ export class RegisterComponent implements OnInit {
       const orgDto: OrganizationDto = {
         organizationName: this.organizationName,
         firebaseUid: uid,
-        organizationTypeId:  this.selectedOrganizationTypeId,
+        organizationTypeId: this.selectedOrganizationTypeId,
         userRole: role,
         emailAddress: this.email
       }
@@ -108,10 +109,10 @@ export class RegisterComponent implements OnInit {
       .then(async (result) => {
         const user = result.user;
         const additionalInfo = getAdditionalUserInfo(result);
-        
+
         const isNewUser = additionalInfo?.isNewUser;
         console.log('Is new user?', isNewUser);
-        
+
         if (isNewUser) {
           try {
             const uid = user.uid;
@@ -131,10 +132,10 @@ export class RegisterComponent implements OnInit {
             }
             let org: Organization;
             this.orgService.registerOrganization(orgDto).subscribe({
-              next: (data) => {
+              next: async (data) => {
                 org = data;
-                console.log(data);
-                this.router.navigate(['/admin']);
+                await this.setupStripeConnectedAccount();
+                // this.router.navigate(['/admin']);
               },
               error: (err) => console.error(err)
             });
@@ -148,6 +149,20 @@ export class RegisterComponent implements OnInit {
           // Existing user: proceed to dashboard
         }
       });
+  }
+  async setupStripeConnectedAccount() {
+    try {
+      // Step 1: Create the connected account
+      const accountId = await this.stripeService.createConnectedAccount();
 
+      // Step 2: Get onboarding link
+      const onboardingUrl = await this.stripeService.generateAccountLink(accountId);
+
+      // Step 3: Redirect to Stripe
+      window.location.href = onboardingUrl;
+    } catch (error) {
+      console.error('Error during Stripe onboarding:', error);
+      alert('Something went wrong. Please try again.');
+    }
   }
 }
