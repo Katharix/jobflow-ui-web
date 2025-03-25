@@ -3,7 +3,7 @@ export interface OrganizationDto {
     firebaseUid: string;
     organizationTypeId: string;
     userRole: string;
-    emailAddress: string;
+    emailAddress?: string;
 }
 
 export interface Organization {

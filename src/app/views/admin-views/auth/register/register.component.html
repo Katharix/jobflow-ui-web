@@ -18,6 +18,15 @@
                     <input type="text" class="form-control" placeholder="Company Name" [(ngModel)]="organizationName" name="organizationName" />
                   </div>
                   <div class="mb-3">
+                    <label class="form-label">Type of Company</label>
+                    <select class="form-select" [(ngModel)]="selectedOrganizationTypeId" name="organizationType">
+                      <option [ngValue]="null" disabled selected>Select company type</option>
+                      <option *ngFor="let type of organizationTypes" [ngValue]="type.id">
+                        {{ type.typeName }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
                     <label class="form-label">Username</label>
                     <input type="text" class="form-control" placeholder="This is your email address" [(ngModel)]="email" name="email" />
                   </div>
@@ -35,9 +44,9 @@
                   </div>
                   <div>
                     <button type="submit" class="btn btn-primary me-2">Sign up</button>
-                    <button type="button" class="btn btn-outline-primary btn-icon-text">
-                      <i class="feather icon-twitter btn-icon-prepend"></i>
-                      Sign up with twitter
+                    <button type="button" class="btn btn-outline-info" (click)="loginWithGoogle()">
+                      <i class="feather icon-mail me-1 btn-icon-prepend"></i>
+                      Sign up with Google
                     </button>
                   </div>
                   <a routerLink="/auth/login" class="d-block mt-3 text-secondary">Already a user? Sign in</a>

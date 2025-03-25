@@ -66,18 +66,6 @@ export class LoginComponent implements OnInit {
       .then(async (result) => {
         const user = result.user;
         const uid = user.uid;
-        const testDocRef = doc(this.firestore, 'users', 'test-user');
-        try {
-          const testSnap = await getDoc(testDocRef);
-          if (testSnap.exists()) {
-            console.log('✅ Test user data:', testSnap.data());
-          } else {
-            console.log('⚠️ No test user found');
-          }
-        } catch (err) {
-          console.error('🔥 Firestore test read failed:', err);
-        }
-
 
         const userRef = doc(this.firestore, 'users', uid);
         const docSnap = await getDoc(userRef);
