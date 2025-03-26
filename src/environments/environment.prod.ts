@@ -1,5 +1,5 @@
 export const environment = {
     production: true,
-    apiUrl: 'http://localhost:5000/api',
+    apiUrl: 'https://jobflow-api-gmbbc4hma5d4c4a7.centralus-01.azurewebsites.net/api',
     stripePublicKey: 'your-dev-stripe-key',
   };

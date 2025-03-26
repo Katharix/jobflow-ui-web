@@ -1,0 +1,32 @@
+name: Deploy Angular to Firebase Hosting
+
+on:
+  push:
+    branches:
+      - master # or 'master' or whatever branch you want to deploy from
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.11.0' # or whatever you're using
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular App
+        run: npm run build -- --configuration production
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccountToken: '${{ secrets.FIREBASE_TOKEN }}'
+          channelId: live
