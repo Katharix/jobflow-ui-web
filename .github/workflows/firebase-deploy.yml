@@ -26,8 +26,9 @@ jobs:
 
 
       - name: Deploy to Firebase Hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
+        uses: w9jds/firebase-action@v2
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccountToken: '${{ secrets.FIREBASE_TOKEN }}'
-          channelId: live
+         args: deploy --only hosting
+        env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
