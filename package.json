@@ -33,6 +33,7 @@
     "@popperjs/core": "^2.11.8",
     "@rg-software/angular-archwizard": "^17.0.0",
     "@siemens/ngx-datatable": "^22.4.1",
+    "@stripe/stripe-js": "^6.1.0",
     "@sweetalert2/ngx-sweetalert2": "^12.4.0",
     "animate.css": "^4.1.1",
     "apexcharts": "^3.53.0",
@@ -56,9 +57,9 @@
     "nxt-sortablejs": "^18.0.0",
     "quill": "^2.0.2",
     "rxjs": "~7.8.0",
-    "swiper": "^11.1.15",
     "sortablejs": "^1.15.3",
     "sweetalert2": "^11.14.0",
+    "swiper": "^11.1.15",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.10"
   },
