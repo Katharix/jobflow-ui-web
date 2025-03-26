@@ -24,7 +24,6 @@ jobs:
       - name: Build Angular App
         run: npm run build:prod
 
-
       - name: Deploy to Firebase Hosting
         uses: w9jds/firebase-action@v2
         with:
