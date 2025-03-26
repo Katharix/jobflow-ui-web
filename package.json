@@ -8,8 +8,7 @@
     "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "rtl": "webpack --config rtl.config.js",
-    "test": "ng test",
-    "preinstall": "npm config set optional false"
+    "test": "ng test"
   },
   "private": true,
   "dependencies": {
