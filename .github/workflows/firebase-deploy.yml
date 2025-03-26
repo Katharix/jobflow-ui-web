@@ -3,7 +3,7 @@ name: Deploy Angular to Firebase Hosting
 on:
   push:
     branches:
-      - master # or 'master' or whatever branch you want to deploy from
+      - main
 
 jobs:
   build-and-deploy:
@@ -16,18 +16,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.11.1' # or whatever you're using
+          node-version: '20.11.1'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build Angular App
+      - name: Build Angular app
         run: npm run build:prod
 
       - name: Deploy to Firebase Hosting
         uses: w9jds/firebase-action@v2
         with:
-         args: deploy --only hosting
+          args: deploy --only hosting
         env:
-        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
