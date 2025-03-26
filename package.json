@@ -79,6 +79,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "mini-css-extract-plugin": "^2.9.2",
+    "rollup": "^3.29.5",
     "rtlcss-webpack-plugin": "^4.0.7",
     "typescript": "~5.5.2",
     "webpack-cli": "^5.1.4"
