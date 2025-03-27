@@ -11,7 +11,7 @@ import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './public-navbar.component.scss'
 })
 export class PublicNavbarComponent {
-  navLinks=["home","features","pricing","contact"]
+  navLinks=["home","about","features","pricing","contact"]
 
   @Input() navbarLight?: boolean
   isCollapsed = false;
@@ -26,7 +26,7 @@ export class PublicNavbarComponent {
       this.isSticky = window.scrollY >= 50
     }
   
-    // Check which section is currently in view
+    // Check which section is currently in view 249965
     checkActiveSection() {
       const sections = document.querySelectorAll('.section');
       const scrollPosition = window.pageYOffset + 50; // You can adjust the offset based on your needs
