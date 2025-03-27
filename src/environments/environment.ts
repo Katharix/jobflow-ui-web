@@ -10,4 +10,5 @@ export const environment = {
     maxYearlyPrice: 'price_1R1GvqEKX7voND9YYe2zLZZx'
   },
   stripePublicKey: 'your-dev-stripe-key',
+  reCAPTCHASecretKey: '6LcrDQErAAAAAFWv5_LazDZOsSICxGZI9Cs_UlBl'
 };
