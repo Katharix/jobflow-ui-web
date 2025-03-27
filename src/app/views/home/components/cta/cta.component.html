@@ -13,28 +13,25 @@
             <div class="row justify-content-center align-items-center g-2">
               <div class="col-md-8">
                 <div class="">
-                  <input type="email" [(ngModel)]="email" name="email" class="form-control rounded-pill"
-                    placeholder="Enter your E-mail address" required />
+                  <input type="text" class="form-control rounded-pill"[(ngModel)]="email" name="email" placeholder="Enter your E-mail address">
                 </div>
-              </div>
-              </div>
-              <div class="row justify-content-center align-items-center g-2">
-              <div class="col-md-8">
+              </div>  
+              <div class="col-md-4">
                 <div>
-                  <re-captcha [siteKey]="reCAPTCHAKey" (resolved)="onCaptchaResolved($event)">
-                  </re-captcha>
-                  <button type="submit" class="btn btn-primary w-100" [disabled]="!captchaToken || isSubmitting">
+                  <button type="submit" class="btn btn-primary w-100" [disabled]="isSubmitting">
                     {{ isSubmitting ? 'Subscribing...' : 'Subscribe' }}
                   </button>
                 </div>
-                <div class="mt-3 text-center">
-                  <div *ngIf="success" class="alert alert-success py-2 px-4 d-inline-block">
-                    ✅ Thanks for subscribing!
-                  </div>
-                
-                  <div *ngIf="error" class="alert alert-danger py-2 px-4 d-inline-block">
-                    ❌ Something went wrong. Please try again.
-                  </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="mt-3 text-center">
+                <div *ngIf="success" class="alert alert-success py-2 px-4 d-inline-block">
+                  ✅ Thanks for subscribing!
+                </div>
+              
+                <div *ngIf="error" class="alert alert-danger py-2 px-4 d-inline-block">
+                  ❌ Something went wrong. Please try again.
                 </div>
               </div>
             </div>
