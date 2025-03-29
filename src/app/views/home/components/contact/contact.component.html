@@ -9,9 +9,10 @@
             <i class="ti ti-line-dashed text-dark fs-5"></i>
             <span class="badge bg-light border text-primary py-2 px-3 f-14">Contact</span>
           </p>
-          <h3 class="text-dark">Contact Us</h3>
-          <p class="text-muted">We're here to help! Whether you have questions, need support, or want to explore how we
-            can collaborate</p>
+          <h3 class="text-dark">Get in Touch</h3>
+          <p class="text-muted">
+            Have a question about JobFlow? Need help getting started? Drop us a message and we’ll get back to you as soon as possible.
+          </p>
         </div>
       </div>
       <div class="row mt-5 align-items-center">
@@ -23,54 +24,41 @@
                   class="icon-bg bg-light text-primary rounded d-flex justify-content-center align-items-center border border-primary">
                   <i class="ti ti-phone-call fs-4"></i>
                 </span>
-                <p class="mb-0 fw-semibold f-16 text-white">Call Us Directly At</p>
+                <p class="mb-0 fw-semibold f-16 text-white">Reach Us by Email</p>
               </div>
-              <h5 class="text-white mt-4 mb-5">+ 713-707-2524</h5>
+              <h5 class="text-white mt-4 mb-5">hello&#64;katharix.com</h5>
               <a href="#!" class="btn btn-light btn-sm w-100">Contact Us</a>
             </div>
           </div>
-          <div class="card border-0">
-            <div class="card-body">
-              <div class="d-flex align-items-center gap-3">
-                <span
-                  class="icon-bg bg-light text-primary rounded d-flex justify-content-center align-items-center border border-primary">
-                  <i class="ti ti-mail fs-4"></i>
-                </span>
-                <p class="mb-0 fw-semibold f-16 text-muted">Chat With Our Team</p>
-              </div>
-              <h5 class="text-dark mt-4 mb-5">marshal&#64;rhyta.com</h5>
-              <a href="#!" class="btn btn-primary btn-sm w-100">Contact Us</a>
-            </div>
-          </div>
+
         </div>
         <div class="col-lg-8">
           <div class="custom-form p-3">
-            <form>
+            <form (ngSubmit)="onSubmit()" #contactForm="ngForm">
               <h6 class="mb-4">Send Details</h6>
               <div class="row">
                 <div class="col-lg-6">
                   <div class="mb-3">
-                    <input name="name" id="name" type="text" class="form-control border" placeholder="Name" required="">
+                    <input name="name" [(ngModel)]="model.name" class="form-control border" placeholder="Name" required>
                   </div>
                 </div>
   
                 <div class="col-lg-6">
                   <div class="mb-3">
-                    <input name="email" id="email" type="email" class="form-control border" placeholder="Email"
-                      required="">
+                    <input name="email" [(ngModel)]="model.email" class="form-control border" placeholder="Email" required type="email">
                   </div>
                 </div>
   
                 <div class="col-lg-12">
                   <div class="mb-3">
-                    <input type="text" class="form-control border" id="subject" placeholder="Subject" required="">
+                    <input name="subject" [(ngModel)]="model.subject" class="form-control border" placeholder="Subject" required>
                   </div>
                 </div>
   
                 <div class="col-lg-12">
                   <div class="mb-3">
-                    <textarea name="comments" id="comments" rows="8" class="form-control border" required=""
-                      placeholder="Message"></textarea>
+                    <textarea name="message" [(ngModel)]="model.message" class="form-control border" rows="8" required></textarea>
+
                   </div>
                 </div>
   
@@ -78,9 +66,20 @@
   
               <div class="row">
                 <div class="col-sm-12">
-                  <button type="submit" class="btn btn-primary">
+                  <re-captcha [siteKey]="reCAPTCHAKey" (resolved)="onCaptchaResolved($event)">
+                  </re-captcha>
+                  <button [disabled]="!captchaToken" type="submit" class="btn btn-primary">
                     Send Message
                   </button>
+                  <div class="mt-3 text-center">
+                    <div *ngIf="success" class="alert alert-success py-2 px-4 d-inline-block">
+                      ✅ Message sent!
+                    </div>
+                  
+                    <div *ngIf="error" class="alert alert-danger py-2 px-4 d-inline-block">
+                      ❌ Something went wrong. Please try again.
+                    </div>
+                  </div>
                 </div>
   
               </div>
