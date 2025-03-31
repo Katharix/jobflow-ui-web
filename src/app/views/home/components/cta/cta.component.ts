@@ -18,26 +18,15 @@ export class CtaComponent {
   isSubmitting = false;
   success = false;
   error = false;
-  captchaToken: string | null = null;
-  reCAPTCHAKey = environment.reCAPTCHASecretKey;
 
   constructor(private emailService: EmailService) { }
 
-
-
-  onCaptchaResolved(token: string | null) {
-    this.captchaToken = token;
-  }
-
-
   onSubmit() {
     if (!this.email) return;
-    if (!this.captchaToken) return;
 
     const payload: NewsletterRequest = {
       email: this.email,
-      listId: BrevoListEnum.Newsletter,
-      captchaToken: this.captchaToken as string
+      listId: BrevoListEnum.Newsletter
     };
 
     this.isSubmitting = true;
