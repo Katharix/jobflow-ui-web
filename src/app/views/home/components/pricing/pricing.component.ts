@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { plans } from '../data';
 import { PricingPlan } from '../types';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-pricing',
@@ -28,5 +29,17 @@ export class PricingComponent {
       return `$${plan.price.toFixed(0)} / Month`;
     }
   }
-  
+  subscribeToPlan(plan: string) {
+    const subscriptionPlanId = this.getSubscriptionPlanId(plan);
+  }
+
+  getSubscriptionPlanId(plan: string): string {
+    if (plan === 'Go') {
+      return this.isAnnual ? environment.stripeSettings.goYearlyPrice : environment.stripeSettings.goMonthlyPrice;
+    }
+    if (plan === 'Flow') {
+      return this.isAnnual ? environment.stripeSettings.flowYearlyPrice : environment.stripeSettings.flowMonthlyPrice;
+    }
+    return this.isAnnual ? environment.stripeSettings.maxYearlyPrice : environment.stripeSettings.maxMonthlyPrice;
+  }
 }

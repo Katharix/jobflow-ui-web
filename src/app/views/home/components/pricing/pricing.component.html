@@ -56,7 +56,7 @@
                   </ul>
                 </div>
                 <div class="card-footer border-0">
-                  <a href="#!" class="btn" [ngClass]="plan.buttonClass + ' w-100'">Purchase Now</a>
+                  <a href="#!" class="btn" [ngClass]="plan.buttonClass + ' w-100'" (click)="subscribeToPlan(plan.name)">Purchase Now</a>
                 </div>
               </div>
               
