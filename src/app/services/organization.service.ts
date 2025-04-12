@@ -19,4 +19,8 @@ organizationUrl: string;
   registerOrganization(orgDto: OrganizationDto) : Observable<Organization>{
     return this.api.post<Organization>(`${this.organizationUrl}register`, orgDto);
   }
+
+  createOrganization(org: OrganizationDto) : Observable<Organization>{
+    return this.api.post<Organization>(`${this.organizationUrl}create`, org);
+  }
 }

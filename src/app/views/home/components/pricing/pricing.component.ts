@@ -3,6 +3,7 @@ import { plans } from '../data';
 import { PricingPlan } from '../types';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../../../environments/environment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pricing',
@@ -15,6 +16,9 @@ export class PricingComponent {
   plans = plans
   // Type for the billing toggle (whether it's annual or not)
   isAnnual: boolean = false;
+
+  constructor(private router: Router)
+  {}
 
   // Toggle between monthly and annual billing
   toggleBilling(): void {
@@ -31,6 +35,8 @@ export class PricingComponent {
   }
   subscribeToPlan(plan: string) {
     const subscriptionPlanId = this.getSubscriptionPlanId(plan);
+    console.log('Navigating to /subscribe with planId:', subscriptionPlanId);
+    this.router.navigate(['/subscribe'], { queryParams: { planId: subscriptionPlanId } });
   }
 
   getSubscriptionPlanId(plan: string): string {

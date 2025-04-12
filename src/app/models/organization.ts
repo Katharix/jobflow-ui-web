@@ -1,9 +1,15 @@
 export interface OrganizationDto {
     organizationName: string;
-    firebaseUid: string;
+    firebaseUid?: string;
     organizationTypeId: string;
-    userRole: string;
+    userRole?: string;
     emailAddress?: string;
+    address1?: string;
+    address2?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    phoneNumber?: string;
 }
 
 export interface Organization {
