@@ -5,7 +5,6 @@
           <div class="row">
             <div class="col-md-4 pe-md-0">
               <div class="auth-side-wrapper" [ngStyle]="{ 'background-image': 'url(/assets/public/images/jobflow-login.jpg)' }">
-    
               </div>
             </div>
             <div class="col-md-8 ps-md-0">
@@ -16,15 +15,16 @@
                   <div class="mb-3">
                     <label for="exampleInputEmail1" class="form-label">Email address</label>
                     <input
-                      type="email"
-                      [(ngModel)]="email"
-                      class="form-control"
-                      placeholder="Email"
-                      name="email"
-                      required
-                      email
-                      #emailModel="ngModel"
-                    />
+                    type="email"
+                    class="form-control"
+                    placeholder="Email"
+                    name="email"
+                    [(ngModel)]="email"
+                    required
+                    email
+                    #emailModel="ngModel"
+                  />
+                  
                     <div *ngIf="emailModel.invalid && emailModel.touched" class="text-danger mt-1">
                       <div *ngIf="emailModel.errors?.['required']">Email is required.</div>
                       <div *ngIf="emailModel.errors?.['email']">Enter a valid email address.</div>

@@ -4,7 +4,7 @@
         <div class="card">
           <div class="row">
             <div class="col-md-4 pe-md-0">
-              <div class="auth-side-wrapper" [ngStyle]="{ 'background-image': 'url(https://placehold.co/250x650)' }">
+              <div class="auth-side-wrapper" [ngStyle]="{ 'background-image': 'url(/assets/public/images/jobflow-login.jpg)' }">
     
               </div>
             </div>
@@ -22,8 +22,27 @@
                     <input type="text" class="form-control" placeholder="This is your email address" disabled [(ngModel)]="email" name="email" />
                   </div>
                   <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <input type="password" class="form-control" placeholder="Password" [(ngModel)]="password" name="password" required />
+                    <label for="exampleInputPassword1" class="form-label">Password</label>
+                    <input
+                    type="password"
+                    [(ngModel)]="password"
+                    class="form-control"
+                    placeholder="Password"
+                    name="password"
+                    required
+                    minlength="8"
+                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':&quot;\\|,.<>\/?]).+$"
+                    #passwordModel="ngModel"
+                  />
+                  
+
+                    <div *ngIf="passwordModel.invalid && passwordModel.touched" class="text-danger mt-1">
+                      <div *ngIf="passwordModel.errors?.['required']">Password is required.</div>
+                      <div *ngIf="passwordModel.errors?.['minlength']">Password must be at least 8 characters.</div>
+                      <div *ngIf="passwordModel.errors?.['pattern']">
+                        Password must include uppercase, lowercase, number, and special character.
+                      </div>
+                    </div>
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Confirm Password</label>

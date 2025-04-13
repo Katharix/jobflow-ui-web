@@ -4,7 +4,7 @@
       <div class="card">
         <div class="row">
           <div class="col-md-4 pe-md-0">
-            <div class="auth-side-wrapper" [ngStyle]="{ 'background-image': 'url(https://placehold.co/250x650)' }"></div>
+            <div class="auth-side-wrapper" [ngStyle]="{ 'background-image': 'url(/assets/public/images/jobflow-login.jpg)' }"></div>
           </div>
           <div class="col-md-8 ps-md-0">
             <div class="auth-form-wrapper px-4 py-5">
@@ -111,6 +111,27 @@
                     </div>
                   </div>
                 </div>
+<!-- Twilio Consent Checkbox -->
+<div class="form-check mb-3">
+  <input
+    class="form-check-input"
+    type="checkbox"
+    id="twilioConsent"
+    name="twilioConsent"
+    [(ngModel)]="twilioConsent"
+    required
+    #twilioConsentCtrl="ngModel"
+  />
+  <label class="form-check-label" for="twilioConsent">
+    I consent to receive SMS or voice calls regarding my subscription and service usage.
+  </label>
+  <div *ngIf="twilioConsentCtrl.invalid && twilioConsentCtrl.touched" class="text-danger small">
+    You must provide consent to continue.
+  </div>
+  <small class="form-text text-muted">
+    Message and data rates may apply. You can opt out at any time by replying STOP.
+  </small>
+</div>
 
                 <div>
                   <button type="submit" class="btn btn-primary me-2" [disabled]="form.invalid">

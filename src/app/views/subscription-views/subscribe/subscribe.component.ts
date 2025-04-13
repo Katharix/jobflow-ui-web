@@ -38,6 +38,9 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
   selectedOrganizationTypeId: string = '';
   planId: string = '';
   usStates = US_STATES;
+  twilioConsent: boolean = false;
+
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
