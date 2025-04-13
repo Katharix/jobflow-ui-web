@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BaseApiService } from './base-api.service';
-import { Organization, OrganizationDto } from '../models/organization';
+import { Organization, OrganizationDto, OrganizationRequest } from '../models/organization';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -18,5 +18,12 @@ organizationUrl: string;
 
   registerOrganization(orgDto: OrganizationDto) : Observable<Organization>{
     return this.api.post<Organization>(`${this.organizationUrl}register`, orgDto);
+  }
+
+  createOrganization(org: OrganizationDto) : Observable<Organization>{
+    return this.api.post<Organization>(`${this.organizationUrl}create`, org);
+  }
+  getOrganizationById(org: OrganizationRequest) : Observable<Organization>{
+    return this.api.post<Organization>(`${this.organizationUrl}retrieve`, org);
   }
 }

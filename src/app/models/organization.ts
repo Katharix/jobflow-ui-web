@@ -1,9 +1,16 @@
 export interface OrganizationDto {
-    organizationName: string;
-    firebaseUid: string;
-    organizationTypeId: string;
-    userRole: string;
+    id?: string;
+    organizationName?: string;
+    firebaseUid?: string;
+    organizationTypeId?: string;
+    userRole?: string;
     emailAddress?: string;
+    address1?: string;
+    address2?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    phoneNumber?: string;
 }
 
 export interface Organization {
@@ -22,3 +29,6 @@ export interface Organization {
     hasFreeAccount: boolean;
   }
   
+  export interface OrganizationRequest{
+    organizationId: string;
+  }

@@ -1,11 +1,11 @@
 import { CommonModule, NgStyle } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Auth, createUserWithEmailAndPassword, getAdditionalUserInfo, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
 import { doc, Firestore, setDoc } from '@angular/fire/firestore';
 import { OrganizationService } from '../../../../services/organization.service';
-import { Organization, OrganizationDto } from '../../../../models/organization';
+import { Organization, OrganizationDto, OrganizationRequest } from '../../../../models/organization';
 import { OrganizationTypeService } from '../../../../services/organization-type.service';
 import { OrganizationType } from '../../../../models/organization-type';
 import { StripeService } from '../../../../services/stripe.service';
@@ -23,7 +23,9 @@ export class RegisterComponent implements OnInit {
   password: string = '';
   confirmPassword: string = '';
   error: string = '';
+  organization: Organization;
   organizationTypes: OrganizationType[] = [];
+  organizationId: string | null = null;
   selectedOrganizationTypeId: string = '';
 
   constructor(
@@ -32,18 +34,36 @@ export class RegisterComponent implements OnInit {
     private router: Router,
     private orgService: OrganizationService,
     private organizationTypeService: OrganizationTypeService,
-    private stripeService: StripeService
+    private stripeService: StripeService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
     this.loadOrganizationTypes();
+    this.organizationId = this.route.snapshot.queryParamMap.get('organizationId');
+
+    if(this.organizationId){
+      this.getOrganizationData(this.organizationId);
+    }
+  }
+
+  private getOrganizationData(orgId: string){
+    let orgRequest : OrganizationRequest ={
+      organizationId: orgId
+    }
+    this.orgService.getOrganizationById(orgRequest).subscribe({
+      next: (data : Organization) => {
+        this.email = data.emailAddress ?? '';
+        this.organizationName = data.organizationName ?? '';
+      },
+      error: (err) => console.error(err)
+    });
   }
 
   private loadOrganizationTypes(): void {
     this.organizationTypeService.getAllOrganizations().subscribe({
       next: (data) => {
         this.organizationTypes = data;
-        console.log('Organization Types:', data);
       },
       error: (err) => console.error('Failed to load org types:', err)
     });
@@ -56,7 +76,7 @@ export class RegisterComponent implements OnInit {
 
   async register() {
     this.error = '';
-    const role = 'SuperAdmin';
+    const role = 'OrganizationAdmin';
 
     if (this.password.trim() !== this.confirmPassword.trim()) {
       this.error = 'Passwords do not match';
@@ -78,17 +98,14 @@ export class RegisterComponent implements OnInit {
         createdAt: new Date()
       });
       const orgDto: OrganizationDto = {
-        organizationName: this.organizationName,
+        id: this.organizationId ?? '',
         firebaseUid: uid,
-        organizationTypeId: this.selectedOrganizationTypeId,
         userRole: role,
         emailAddress: this.email
       }
       let org: Organization;
       this.orgService.registerOrganization(orgDto).subscribe({
         next: (data) => {
-          org = data;
-          console.log(data);
           this.router.navigate(['/admin']);
         },
         error: (err) => console.error(err)

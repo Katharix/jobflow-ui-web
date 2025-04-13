@@ -2,12 +2,14 @@ export const environment = {
   production: false,
   apiUrl: 'https://localhost:44398/api',
   stripeSettings: {
-    goMonthlyPrice: 'price_1R1GuJEKX7voND9YLCN6bAhG',
-    goYearlyPrice: 'price_1R1GuJEKX7voND9Y02wkuT0A',
-    flowMonthlyPrice: 'price_1R1GugEKX7voND9Y9RJ05Wep',
-    flowYearlyPrice: 'price_1R1Gv8EKX7voND9YaRprxnxs',
-    maxMonthlyPrice: 'price_1R1GvqEKX7voND9YIHVzWnWd',
-    maxYearlyPrice: 'price_1R1GvqEKX7voND9YYe2zLZZx'
+    goMonthlyPrice: 'price_1RCsrMEKX7voND9YOTQ6qU3g',
+    goYearlyPrice: 'price_1RCsrMEKX7voND9YD27S46RA',
+    flowMonthlyPrice: 'price_1RCsrlEKX7voND9YdirKlU7p',
+    flowYearlyPrice: 'price_1RCssEEKX7voND9YnjCqXxdY',
+    maxMonthlyPrice: 'price_1RCssUEKX7voND9YCYzHKlFP',
+    maxYearlyPrice: 'price_1RCssmEKX7voND9YzkpTUmtt',
+    cancelUrl: 'http://localhost:4200/auth/register',
+    successUrl: 'http://localhost:4200/auth/register',
   },
   stripePublicKey: 'your-dev-stripe-key',
   reCAPTCHASecretKey: '6LcrDQErAAAAAFWv5_LazDZOsSICxGZI9Cs_UlBl'

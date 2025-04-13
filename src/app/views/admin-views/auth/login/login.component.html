@@ -4,41 +4,75 @@
         <div class="card">
           <div class="row">
             <div class="col-md-4 pe-md-0">
-              <div class="auth-side-wrapper" [ngStyle]="{ 'background-image': 'url(https://placehold.co/250x650)' }">
-    
+              <div class="auth-side-wrapper" [ngStyle]="{ 'background-image': 'url(/assets/public/images/jobflow-login.jpg)' }">
               </div>
             </div>
             <div class="col-md-8 ps-md-0">
               <div class="auth-form-wrapper px-4 py-5">
                 <a routerLink="." class="nobleui-logo d-block mb-2"><img src="/assets/public/images/jobflow-01.png" alt="" class="logo-light" style="height: 40px;" /></a>
                 <h5 class="text-secondary fw-normal mb-4">Welcome back! Log in to your account.</h5>
-                <form class="forms-sample">
+                <form class="forms-sample" #form="ngForm" (ngSubmit)="onLoggedin($event)">
                   <div class="mb-3">
                     <label for="exampleInputEmail1" class="form-label">Email address</label>
-                    <input type="email" [(ngModel)]="email" class="form-control" placeholder="Email" name="email" required>
+                    <input
+                    type="email"
+                    class="form-control"
+                    placeholder="Email"
+                    name="email"
+                    [(ngModel)]="email"
+                    required
+                    email
+                    #emailModel="ngModel"
+                  />
+                  
+                    <div *ngIf="emailModel.invalid && emailModel.touched" class="text-danger mt-1">
+                      <div *ngIf="emailModel.errors?.['required']">Email is required.</div>
+                      <div *ngIf="emailModel.errors?.['email']">Enter a valid email address.</div>
+                    </div>
                   </div>
+                
                   <div class="mb-3">
                     <label for="exampleInputPassword1" class="form-label">Password</label>
-                    <input type="password" [(ngModel)]="password" class="form-control" placeholder="Password" name="password" required>
+                    <input
+                      type="password"
+                      [(ngModel)]="password"
+                      class="form-control"
+                      placeholder="Password"
+                      name="password"
+                      required
+                      minlength="6"
+                      #passwordModel="ngModel"
+                    />
+                    <div *ngIf="passwordModel.invalid && passwordModel.touched" class="text-danger mt-1">
+                      <div *ngIf="passwordModel.errors?.['required']">Password is required.</div>
+                      <div *ngIf="passwordModel.errors?.['minlength']">Password must be at least 6 characters.</div>
+                    </div>
                   </div>
+                
                   <div *ngIf="error" class="alert alert-danger mt-3">
                     {{ error }}
                   </div>
+                
                   <div class="form-check mb-3">
-                    <input type="checkbox" class="form-check-input" id="authCheck">
-                    <label class="form-check-label" for="authCheck">
-                      Remember me
-                    </label>
+                    <input type="checkbox" class="form-check-input" id="authCheck" />
+                    <label class="form-check-label" for="authCheck">Remember me</label>
                   </div>
+                
                   <div>
-                    <button type="submit" class="btn btn-primary me-2 mb-2 mb-md-0" (click)="onLoggedin($event)">Login</button>
+                    <button
+                      type="submit"
+                      class="btn btn-primary me-2 mb-2 mb-md-0"
+                      [disabled]="form.invalid"
+                    >
+                      Login
+                    </button>
                     <button type="button" class="btn btn-outline-info" (click)="loginWithGoogle()">
                       <i class="feather icon-mail me-1 btn-icon-prepend"></i>
                       Sign in with Google
                     </button>
                   </div>
-                  <a routerLink="/auth/register" class="d-block mt-3 text-secondary">Not a user? Sign up</a>
                 </form>
+                
               </div>
             </div>
           </div>
