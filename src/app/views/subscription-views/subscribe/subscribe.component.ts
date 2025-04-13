@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { OrganizationType } from '../../../models/organization-type';
 import { OrganizationTypeService } from '../../../services/organization-type.service';
 import { CommonModule, NgStyle } from '@angular/common';
@@ -8,15 +8,23 @@ import { Organization, OrganizationDto } from '../../../models/organization';
 import { OrganizationService } from '../../../services/organization.service';
 import { PaymentService } from '../../../services/payment.service';
 import { PaymentSessionRequest } from '../../../models/payment-session-request';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { US_STATES } from '../../../common/constants';
+import { environment } from '../../../../environments/environment';
+
+declare const google: any;
 
 @Component({
   selector: 'app-subscribe',
   standalone: true,
   imports: [NgStyle, RouterLink, FormsModule, CommonModule],
   templateUrl: './subscribe.component.html',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   styleUrl: './subscribe.component.scss'
 })
-export class SubscribeComponent {
+export class SubscribeComponent implements AfterViewInit, OnInit {
+  @ViewChild('addressInput') addressInput!: ElementRef;
+
   email: string = '';
   organizationName: string = '';
   phoneNumber: string = '';
@@ -29,14 +37,15 @@ export class SubscribeComponent {
   organizationTypes: OrganizationType[] = [];
   selectedOrganizationTypeId: string = '';
   planId: string = '';
+  usStates = US_STATES;
   constructor(
     private router: Router,
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private organizationService: OrganizationService,
     private organizationTypeService: OrganizationTypeService,
+    private cdRef: ChangeDetectorRef,
     private paymentService: PaymentService
-  )
-  {}
+  ) { }
 
   ngOnInit(): void {
     this.loadOrganizationTypes();
@@ -49,6 +58,45 @@ export class SubscribeComponent {
       }
     });
   }
+
+  ngAfterViewInit(): void {
+    const autocomplete = new google.maps.places.Autocomplete(this.addressInput.nativeElement, {
+      types: ['address'],
+      componentRestrictions: { country: 'us' }
+    });
+
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace();
+      if (!place.address_components) return;
+      console.log('Google Place: ', place);
+      const streetNumber = this.getComponent(place, 'street_number');
+      const route = this.getComponent(place, 'route');
+      this.companyAddress = `${streetNumber} ${route}`.trim();
+
+      this.city =
+        this.getComponent(place, 'locality') ||
+        this.getComponent(place, 'postal_town') ||
+        this.getComponent(place, 'administrative_area_level_2'); // fallback to county if city is missing
+
+        this.state = this.getComponent(place, 'administrative_area_level_1', 'short_name');
+
+      this.zipCode =
+        this.getComponent(place, 'postal_code');
+        this.cdRef.detectChanges();
+    });
+  }
+
+  private getComponent(place: any, type: string, format: 'short_name' | 'long_name' = 'long_name'): string {
+    if (!place.address_components) return '';
+  
+    const component = place.address_components.find((comp: any) =>
+      comp.types.includes(type)
+    );
+  
+    return component ? component[format] : '';
+  }
+  
+
 
   private loadOrganizationTypes(): void {
     this.organizationTypeService.getAllOrganizations().subscribe({
@@ -77,7 +125,6 @@ export class SubscribeComponent {
       // Call the service to create the organization and subscribe to the observable
       this.organizationService.createOrganization(orgData).subscribe({
         next: (response) => {
-          // Handle successful response, e.g., navigate to another page or show a success message
           console.log('Organization created successfully:', response);
           const paymentSessionRequest: PaymentSessionRequest = {
             email: response.emailAddress,
@@ -85,14 +132,18 @@ export class SubscribeComponent {
             quantity: 1,
             applicationFeeAmount: 75,
             orgId: response.id,
-            mode: 'subscription'
+            mode: 'subscription',
+            successUrl: environment.stripeSettings.successUrl,
+            cancelUrl: environment.stripeSettings.cancelUrl
+            
           }
           this.paymentService.createSubscriptionCheckout(paymentSessionRequest).subscribe({
             next: (checkoutResponse: any) => {
               console.log('Subscription Created', checkoutResponse);
+
               window.location.href = checkoutResponse.url;
             },
-            error: (paymentError: any) =>{
+            error: (paymentError: any) => {
               console.error('Failed to create subscription:', paymentError);
             }
           });

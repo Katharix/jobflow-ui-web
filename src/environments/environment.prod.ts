@@ -7,7 +7,9 @@ export const environment = {
       flowMonthlyPrice: 'price_1R1GugEKX7voND9Y9RJ05Wep',
       flowYearlyPrice: 'price_1R1Gv8EKX7voND9YaRprxnxs',
       maxMonthlyPrice: 'price_1R1GvqEKX7voND9YIHVzWnWd',
-      maxYearlyPrice: 'price_1R1GvqEKX7voND9YYe2zLZZx'
+      maxYearlyPrice: 'price_1R1GvqEKX7voND9YYe2zLZZx',
+      cancelUrl: '',
+      successUrl: '',
     },
     stripePublicKey: 'your-dev-stripe-key',
     reCAPTCHASecretKey: '6LcrDQErAAAAAFWv5_LazDZOsSICxGZI9Cs_UlBl'

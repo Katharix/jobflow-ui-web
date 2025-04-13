@@ -11,5 +11,6 @@ export interface PaymentSessionRequest {
     connectedAccountId?: string;
     email?: string;
     orgId: string;
+    successUrl?: string;
   }
   
