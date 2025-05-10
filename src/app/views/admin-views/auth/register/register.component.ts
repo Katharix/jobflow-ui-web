@@ -106,6 +106,7 @@ export class RegisterComponent implements OnInit {
       let org: Organization;
       this.orgService.registerOrganization(orgDto).subscribe({
         next: (data) => {
+          userCredential.user.getIdToken(true);
           this.router.navigate(['/admin']);
         },
         error: (err) => console.error(err)
