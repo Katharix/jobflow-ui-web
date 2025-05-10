@@ -2,15 +2,14 @@
     <div class="page-wrapper">
         <div class="page-content">
             <app-preloader />
-            @if (isLoading) {
-                <div class="spinner-wrapper">
+       
+                <div *ngIf="isLoading" class="spinner-wrapper">
                   <div class="spinner">Loading...</div>
                 </div>
-              } @else {
                 <div>
                   <router-outlet></router-outlet>
                 </div>
-              }
+          
         </div>
     </div>
 </div>

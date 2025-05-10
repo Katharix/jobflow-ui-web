@@ -27,24 +27,13 @@ export class LoginComponent implements OnInit {
   error: string | null = null;
   
   constructor(
-    private firestore: Firestore,
     private auth: Auth,
     private router: Router, 
     private route: ActivatedRoute, 
-    private authService: AuthService,
-    private organizationService: OrganizationService
+    private authService: AuthService
   ) {}
-  organizations: any[] = [];
+
   ngOnInit(): void {
-    // Get the return URL from the route parameters, or default to '/'
-    this.organizationService.getAllOrganizations().subscribe({
-      next: (data) => {
-        this.organizations = data as any[]; 
-        console.log(data);
-      },
-      error: (err) => console.error(err)
-    });
-    
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
