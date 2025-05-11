@@ -4,6 +4,9 @@ import { NgbCalendar, NgbDatepickerModule, NgbDateStruct, NgbDropdownModule } fr
 import { ApexOptions, NgApexchartsModule } from "ng-apexcharts";
 import { FeatherIconDirective } from '../../../core/feather-icon/feather-icon.directive';
 import { ThemeCssVariableService, ThemeCssVariablesType } from '../../../core/services/theme-css-variable.service';
+import { ActivatedRoute } from '@angular/router';
+import { Organization, OrganizationRequest } from '../../../models/organization';
+import { OrganizationService } from '../../../services/organization.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -36,19 +39,42 @@ export class DashboardComponent implements OnInit {
   public cloudStorageChartOptions: ApexOptions | any;
 
   themeCssVariables = inject(ThemeCssVariableService).getThemeCssVariables();
-
-  constructor() {}
+  organizationId: string;
+  org: Organization;
+  
+  constructor(
+    private route: ActivatedRoute,
+    private organizationService: OrganizationService
+  ) {}
 
   ngOnInit(): void {
-    this.customersChartOptions = this.getCustomersChartOptions(this.themeCssVariables);
-    this.ordersChartOptions = this.getOrdersChartOptions(this.themeCssVariables);
-    this.growthChartOptions = this.getGrowthChartOptions(this.themeCssVariables);
-    this.revenueChartOptions = this.getRevenueChartOptions(this.themeCssVariables);
-    this.monthlySalesChartOptions = this.getMonthlySalesChartOptions(this.themeCssVariables);
-    this.cloudStorageChartOptions = this.getCloudStorageChartOptions(this.themeCssVariables);
+    this.route.queryParams.subscribe(params => {
+      this.organizationId = params['organizationId'];
+      if (!this.organizationId) {
+        console.log('No organization in query params.');
+      }
+      this.getOrganizationData();
+    });
+    // this.customersChartOptions = this.getCustomersChartOptions(this.themeCssVariables);
+    // this.ordersChartOptions = this.getOrdersChartOptions(this.themeCssVariables);
+    // this.growthChartOptions = this.getGrowthChartOptions(this.themeCssVariables);
+    // this.revenueChartOptions = this.getRevenueChartOptions(this.themeCssVariables);
+    // this.monthlySalesChartOptions = this.getMonthlySalesChartOptions(this.themeCssVariables);
+    // this.cloudStorageChartOptions = this.getCloudStorageChartOptions(this.themeCssVariables);
   }
 
-
+ getOrganizationData() {
+  let orgRequest: OrganizationRequest = {
+    organizationId: this.organizationId
+  }
+  this.organizationService.getOrganizationById(orgRequest).subscribe({
+    next: (data) => {
+      console.log("organization data returned: ", data)
+      this.org = data;
+    },
+    error: (err) => console.error(err)
+  });
+ }
 
   /**
    * Customerse chart options

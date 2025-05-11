@@ -1,24 +1,22 @@
 import { ChangeDetectorRef, Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
-import { RouteConfigLoadEnd, RouteConfigLoadStart, Router, RouterOutlet } from '@angular/router';
 import { PreloaderComponent } from "../../landing/preloader.component";
-import { LoadingService } from '../../services/loading-service.service';
+import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { LoadingService } from '../../services/loading-service.service';
 
 @Component({
-  selector: 'app-auth-layout',
+  selector: 'app-general-layout',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, PreloaderComponent],
-  templateUrl: './auth-layout.component.html',
-  styleUrl: './auth-layout.component.scss',
-  encapsulation: ViewEncapsulation.None
+  imports: [CommonModule, RouterOutlet, PreloaderComponent],
+  templateUrl: './general-layout.component.html',
+  styleUrl: './general-layout.component.scss',
+    encapsulation: ViewEncapsulation.None
 })
-export class AuthLayoutComponent implements OnInit {
-
+export class GeneralLayoutComponent implements OnInit {
   isLoading: boolean = false;
   private router = inject(Router);
   private loadingService = inject(LoadingService);
   private cdr = inject(ChangeDetectorRef);
-  constructor() {}
 
   ngOnInit(): void {
     this.loadingService.isLoading$.subscribe(value => {

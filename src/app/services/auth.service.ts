@@ -25,7 +25,7 @@ export class AuthService {
     return this.auth.signOut();
   }
   loginWithFirebase(idToken: string) {
-    return this.api.post<{ email: string }>(`${this.authUrl}login-with-firebase`, {
+    return this.api.post<any>(`${this.authUrl}login-with-firebase`, {
       token: idToken
     });
   }

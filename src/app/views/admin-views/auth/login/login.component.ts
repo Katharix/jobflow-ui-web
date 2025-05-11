@@ -53,9 +53,10 @@ export class LoginComponent implements OnInit {
         next: (res) => {
           // ✅ Step 4: Store session and navigate
           localStorage.setItem('isLoggedin', 'true');
-          localStorage.setItem('userEmail', res.email); // Optional
-  
-          this.router.navigate(['/admin']);
+          localStorage.setItem('userEmail', res.email);
+          localStorage.setItem('authToken', idToken);
+          
+          this.router.navigate(['/admin'], { queryParams: { organizationId: res.organizationId } });
         },
         error: (err) => {
           console.error('Backend login failed:', err);

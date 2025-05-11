@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { currentYear } from '../../../common/constants';
 
 @Component({
   selector: 'app-admin-footer',
@@ -8,5 +9,5 @@ import { Component } from '@angular/core';
   styleUrl: './admin-footer.component.scss'
 })
 export class AdminFooterComponent {
-
+  currentYear = currentYear
 }

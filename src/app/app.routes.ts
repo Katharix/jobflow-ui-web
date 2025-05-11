@@ -6,6 +6,8 @@ import { authGuard } from './services/auth.guard';
 import { DashboardComponent } from './views/admin-views/dashboard/dashboard.component';
 import { SubscribeComponent } from './views/subscription-views/subscribe/subscribe.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { InvoiceComponent } from './views/general/invoice/invoice.component';
+import { GeneralLayoutComponent } from './layouts/general-layout/general-layout.component';
 
 export const routes: Routes = [
   {
@@ -33,6 +35,13 @@ export const routes: Routes = [
     component: AuthLayoutComponent,
     children:[
       { path: '', component: SubscribeComponent },
+    ]
+  },
+  {
+    path: 'invoice/view',
+    component: GeneralLayoutComponent,
+    children:[
+      { path: '', component: InvoiceComponent },
     ]
   }
 ];
