@@ -27,6 +27,7 @@ export class RegisterComponent implements OnInit {
   organizationTypes: OrganizationType[] = [];
   organizationId: string | null = null;
   selectedOrganizationTypeId: string = '';
+  pattern = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=[\\]{};\'":\\\\|,.<>/?]).+$';
 
   constructor(
     private auth: Auth,

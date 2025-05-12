@@ -31,10 +31,9 @@
                     name="password"
                     required
                     minlength="8"
-                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':&quot;\\|,.<>\/?]).+$"
+                    [pattern]="pattern"
                     #passwordModel="ngModel"
                   />
-                  
 
                     <div *ngIf="passwordModel.invalid && passwordModel.touched" class="text-danger mt-1">
                       <div *ngIf="passwordModel.errors?.['required']">Password is required.</div>
