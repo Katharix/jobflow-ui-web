@@ -23,13 +23,21 @@ export class InvoiceComponent implements OnInit {
   ngOnInit(): void {
     const invoiceId = this.route.snapshot.paramMap.get('id');
 
-    if (invoiceId) {
-      this.invoiceService.getInvoice(invoiceId).subscribe({
-        next: invoice => this.invoice = invoice,
-        error: err => console.error('Invoice not found', err)
-      });
-    } else {
-      console.warn('No invoice ID provided in route.');
+ if (invoiceId) {
+  console.log('Fetching invoice with ID:', invoiceId);
+
+  this.invoiceService.getInvoice(invoiceId).subscribe({
+    next: invoice => {
+      this.invoice = invoice;
+      console.log('✅ Invoice retrieved:', invoice);
+    },
+    error: err => {
+      console.error('❌ Failed to retrieve invoice:', err);
     }
+  });
+} else {
+  console.warn('⚠️ No invoice ID provided in route.');
+}
+
   }
 }

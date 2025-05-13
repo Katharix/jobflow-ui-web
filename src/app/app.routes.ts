@@ -38,7 +38,7 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'invoice/view',
+    path: 'invoice/view/:id',
     component: GeneralLayoutComponent,
     children:[
       { path: '', component: InvoiceComponent },
