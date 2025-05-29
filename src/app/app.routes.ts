@@ -8,6 +8,7 @@ import { SubscribeComponent } from './views/subscription-views/subscribe/subscri
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { InvoiceComponent } from './views/general/invoice/invoice.component';
 import { GeneralLayoutComponent } from './layouts/general-layout/general-layout.component';
+import { OnboardingChecklistComponent } from './views/general/onboarding-checklist/onboarding-checklist.component';
 
 export const routes: Routes = [
   {
@@ -20,10 +21,11 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayoutComponent,
-    canActivate: [authGuard],
-    data: { roles: ['OrganizationAdmin', 'KatharixAdmin', 'SuperAdmin'] },
+    // canActivate: [authGuard],
+    // data: { roles: ['OrganizationAdmin', 'KatharixAdmin', 'SuperAdmin'] },
     children: [
       { path: '', component: DashboardComponent },
+      { path: 'onboarding', component: OnboardingChecklistComponent }
     ]
   },
   { 

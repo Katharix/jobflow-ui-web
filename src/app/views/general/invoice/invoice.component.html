@@ -7,13 +7,16 @@
             <div class="col-lg-3 ps-0">
               <a routerLink="." class="nobleui-logo d-block mt-3">Noble<span>UI</span></a>
               <p class="mt-1 mb-1"><b>{{ invoice?.organizationClient?.organization?.organizationName }}</b></p>
-              <p>{{ invoice?.organizationClient?.organization?.address1 }},<br> {{
-                invoice?.organizationClient?.organization?.address2 }},<br>{{
-                invoice?.organizationClient?.organization?.city }}, {{ invoice?.organizationClient?.organization?.state
-                }}, {{ invoice?.organizationClient?.organization?.zipCode }}</p>
+              <p>{{ invoice?.organizationClient?.organization?.address1 }}
+                <span *ngIf="invoice?.organizationClient?.organization?.address2">
+                  {{ invoice?.organizationClient?.organization?.address2 }}
+                </span><br>{{ invoice?.organizationClient?.organization?.city }}, {{
+                invoice?.organizationClient?.organization?.state
+                }}, {{ invoice?.organizationClient?.organization?.zipCode }}
+              </p>
               <h5 class="mt-5 mb-2 text-secondary">Invoice to :</h5>
               <p>{{ invoice?.organizationClient?.firstName }} {{ invoice?.organizationClient?.lastName }}<br> {{
-                invoice?.organizationClient?.address1 }}, {{ invoice?.organizationClient?.address2 }},<br> {{
+                invoice?.organizationClient?.address1 }}<span *ngIf="invoice?.organizationClient?.address2">{{ invoice?.organizationClient?.address2 }},</span><br> {{
                 invoice?.organizationClient?.city }}, {{ invoice?.organizationClient?.state }}, {{
                 invoice?.organizationClient?.zipCode }}</p>
             </div>
@@ -21,10 +24,11 @@
               <h4 class="fw-bold text-uppercase text-end mt-4 mb-2">invoice</h4>
               <h6 class="text-end mb-5 pb-4"># {{ invoice?.invoiceNumber }}</h6>
               <p class="text-end mb-1">Balance Due</p>
-              <h4 class="text-end fw-normal">{{ invoice?.balanceDue | currency }}</h4>
-              <h6 class="mb-0 mt-3 text-end fw-normal mb-2"><span class="text-secondary">Invoice Date :</span> 
-              {{  invoice?.invoiceDate | date: 'longDate' }}</h6>
-              <h6 class="text-end fw-normal"><span class="text-secondary">Due Date :</span> {{ invoice?.dueDate | date: 'longDate' }}</h6>
+              <h4 class="text-end fw-normal">{{ balanceDue | currency }}</h4>
+              <h6 class="mb-0 mt-3 text-end fw-normal mb-2"><span class="text-secondary">Invoice Date :</span>
+                {{ invoice?.invoiceDate | date: 'longDate' }}</h6>
+              <h6 class="text-end fw-normal"><span class="text-secondary">Due Date :</span> {{ invoice?.dueDate | date:
+                'longDate' }}</h6>
             </div>
           </div>
           <div class="container-fluid mt-5 d-flex justify-content-center w-100">
@@ -59,15 +63,15 @@
                     <tbody>
                       <tr>
                         <td>Sub Total</td>
-                        <td class="text-end">$ 14,900.00</td>
+                        <td class="text-end">{{ subTotal | currency }}</td>
                       </tr>
                       <tr>
-                        <td>TAX (12%)</td>
-                        <td class="text-end">$ 1,788.00</td>
+                        <td>TAX ({{ taxRate * 100 }}%)</td>
+                        <td class="text-end">{{ taxAmount | currency }}</td>
                       </tr>
                       <tr>
                         <td class="text-bold-800">Total</td>
-                        <td class="text-bold-800 text-end">{{ invoice?.totalAmount | currency }}</td>
+                        <td class="text-bold-800 text-end">{{ total | currency }}</td>
                       </tr>
                       <tr>
                         <td>Payment Made</td>
@@ -75,7 +79,8 @@
                       </tr>
                       <tr class="bg-light">
                         <td class="text-bold-800">Balance Due</td>
-                        <td class="text-bold-800 text-end">{{ invoice?.balanceDue | currency }}
+                        <td class="text-bold-800 text-end">{{ balanceDue | currency }}</td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -84,9 +89,9 @@
           </div>
           <div class="container-fluid w-100">
             <a routerLink="." class="btn btn-primary float-end mt-4 ms-2"><i data-feather="send" appFeatherIcon
-                class="me-2 icon-md"></i>Send Invoice</a>
+                class="me-2 icon-md"></i>Pay Invoice</a>
             <a routerLink="." class="btn btn-outline-primary float-end mt-4"><i data-feather="printer" appFeatherIcon
-                class="me-2 icon-md"></i>Print</a>
+                class="me-2 icon-md"></i>Download</a>
           </div>
         </div>
       </div>
