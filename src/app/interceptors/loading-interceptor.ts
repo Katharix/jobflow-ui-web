@@ -7,11 +7,15 @@ import { LoadingService } from '../services/loading-service.service';
 
 export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
   const loadingService = inject(LoadingService);
-  
-  console.log('Intercepted HTTP Request:', req.method, req.url); 
+  console.log('📡 Intercepting:', req.method, req.url);
+
   loadingService.show();
 
   return next(req).pipe(
-    finalize(() => loadingService.hide())
+    finalize(() => {
+      console.log('✅ Finalizing:', req.method, req.url);
+      loadingService.hide();
+    })
   );
 };
+

@@ -11,6 +11,8 @@ export interface OrganizationDto {
     state?: string;
     zipCode?: string;
     phoneNumber?: string;
+    defaultTaxRate?: number;
+    subscriptionStatus?: string;
     onBoardingComplete?: boolean;
 }
 
