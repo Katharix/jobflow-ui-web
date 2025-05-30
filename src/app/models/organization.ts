@@ -11,6 +11,7 @@ export interface OrganizationDto {
     state?: string;
     zipCode?: string;
     phoneNumber?: string;
+    onBoardingComplete?: boolean;
 }
 
 export interface Organization {
@@ -27,6 +28,7 @@ export interface Organization {
     phoneNumber?: string;
     emailAddress?: string;
     hasFreeAccount: boolean;
+    onBoardingComplete: boolean;
   }
   
   export interface OrganizationRequest{
