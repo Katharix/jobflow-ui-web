@@ -1,47 +1,22 @@
 <div class="card p-4 rounded-xl shadow">
   <h2 class="text-xl font-bold mb-3">Finish Setting Up Your Account</h2>
-  <ul class="space-y-2">
-    <li>
-        <div class="form-check mb-2">
-            <input type="checkbox" id="checkChecked" [checked]="" disabled class="form-check-input">
-            <label for="checkChecked" class="form-check-label"> Subscription is active </label>
-        </div>
-    </li>
-    <li>
-         <div class="form-check mb-2">
-            <input type="checkbox" id="checkChecked" [checked]="" disabled class="form-check-input">
-            <label for="checkChecked" class="form-check-label"> Connect Stripe or Square </label>
-        </div>
-    </li>
-    <li>
-          <div class="form-check mb-2">
-            <input type="checkbox" id="checkChecked" [checked]="" disabled class="form-check-input">
-            <label for="checkChecked" class="form-check-label"> Set up branding </label>
-        </div>
-    </li>
-    <li>
-          <div class="form-check mb-2">
-            <input type="checkbox" id="checkChecked" [checked]="" disabled class="form-check-input">
-            <label for="checkChecked" class="form-check-label"> Add tax info </label>
-        </div>
-    </li>
-    <li>
-          <div class="form-check mb-2">
-            <input type="checkbox" id="checkChecked" [checked]="" disabled class="form-check-input">
-            <label for="checkChecked" class="form-check-label">Connect to QuickBooks </label>
-        </div>
-    </li>
-    <li>
-          <div class="form-check mb-2">
-            <input type="checkbox" id="checkChecked" [checked]="" disabled class="form-check-input">
-            <label for="checkChecked" class="form-check-label"> Sync QuickBooks data </label>
-        </div>
-    </li>
-    <li>
-          <div class="form-check mb-2">
-            <input type="checkbox" id="checkChecked" [checked]="" disabled class="form-check-input">
-            <label for="checkChecked" class="form-check-label"> Add employees</label>
-        </div>
-    </li>
-  </ul>
+  <ng-template #step1>
+    <div>Step 1 content here</div>
+  </ng-template>
+
+  <ng-template #step2>
+    <div>Step 2 content here</div>
+  </ng-template>
+
+  <ng-template #step3>
+    <div>Step 3 content here</div>
+  </ng-template>
+
+  <app-wizard [steps]="[
+    { title: 'Step 1', contentTemplate: step1 },
+    { title: 'Step 2', contentTemplate: step2 },
+    { title: 'Step 3', contentTemplate: step3 }
+  ]" [config]="wizardConfig">
+  </app-wizard>
+
 </div>
