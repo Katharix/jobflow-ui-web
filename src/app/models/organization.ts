@@ -13,7 +13,7 @@ export interface OrganizationDto {
     phoneNumber?: string;
     defaultTaxRate?: number;
     subscriptionStatus?: string;
-    onBoardingComplete?: boolean;
+    onboardingComplete?: boolean;
 }
 
 export interface Organization {
@@ -30,7 +30,7 @@ export interface Organization {
     phoneNumber?: string;
     emailAddress?: string;
     hasFreeAccount: boolean;
-    onBoardingComplete: boolean;
+    onboardingComplete: boolean;
   }
   
   export interface OrganizationRequest{

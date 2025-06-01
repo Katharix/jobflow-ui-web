@@ -6,6 +6,7 @@ import { AuthService } from '../../../../services/auth.service';
 import { Auth, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
 import { doc, getDoc, Firestore, collection, getDocs } from '@angular/fire/firestore';
 import { OrganizationService } from '../../../../services/organization.service';
+import { OrganizationContextService } from '../../../../services/shared/organization-context.service';
 
 
 @Component({
@@ -30,7 +31,8 @@ export class LoginComponent implements OnInit {
     private auth: Auth,
     private router: Router, 
     private route: ActivatedRoute, 
-    private authService: AuthService
+    private authService: AuthService,
+    private orgContext: OrganizationContextService
   ) {}
 
   ngOnInit(): void {
@@ -55,8 +57,9 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('isLoggedin', 'true');
           localStorage.setItem('userEmail', res.email);
           localStorage.setItem('authToken', idToken);
-          
-          this.router.navigate(['/admin'], { queryParams: { organizationId: res.organizationId } });
+
+          this.orgContext.setOrganization(res.organization);
+          this.router.navigate(['/admin']);
         },
         error: (err) => {
           console.error('Backend login failed:', err);

@@ -24,4 +24,5 @@ paymentUrl: string;
   createConnectedAccount(orgId: string): Observable<any> {
     return this.api.post(`${this.paymentUrl}${orgId}/create-connected-account`, null);
   }
+  
 }

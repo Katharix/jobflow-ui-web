@@ -1,7 +1,8 @@
 <div class="card p-4 rounded-xl shadow">
   <h2 class="text-xl font-bold mb-3">Finish Setting Up Your Account</h2>
+
   <ng-template #step1>
-    <div>Step 1 content here</div>
+    <app-connect-payment />
   </ng-template>
 
   <ng-template #step2>
@@ -12,11 +13,17 @@
     <div>Step 3 content here</div>
   </ng-template>
 
-  <app-wizard [steps]="[
-    { title: 'Step 1', contentTemplate: step1 },
-    { title: 'Step 2', contentTemplate: step2 },
-    { title: 'Step 3', contentTemplate: step3 }
-  ]" [config]="wizardConfig">
-  </app-wizard>
+  <ng-template #step4>
+    <div>Step 4 content here</div>
+  </ng-template>
 
+  <ng-template #step5>
+    <div>Step 5 content here</div>
+  </ng-template>
+
+  <ng-template #step6>
+    <div>Step 6 content here</div>
+  </ng-template>
+
+  <app-wizard [steps]="wizardSteps"></app-wizard>
 </div>

@@ -1,61 +1,74 @@
-import {
-  Component,
-  Input,
-  ContentChildren,
-  QueryList,
-  TemplateRef,
-  AfterContentInit,
-  ViewChild,
-  ViewContainerRef
-} from '@angular/core';
-import { NgWizardModule, NgWizardConfig, STEP_STATE, THEME, StepChangedArgs, NgWizardService, StepValidationArgs } from 'ng-wizard';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { Component, Input, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { WizardStep } from './wizard-step';
-import { Observable } from 'rxjs';
+import { MovingDirection, WizardComponent as ArchWizardComponent, WizardStepComponent } from '@rg-software/angular-archwizard';
 
 @Component({
   selector: 'app-wizard',
-  standalone: true,
-  imports: [
-    NgWizardModule,
-    CommonModule,
-    ReactiveFormsModule
-  ],
   template: `
-    <ng-wizard [config]="config" (stepChanged)="stepChanged($event)">
-      <ng-wizard-step *ngFor="let step of steps"
-                      [title]="step.title"
-                      [description]="step.description ?? ''"
-                      [canEnter]="isValidCanEnter(step.canEnter)"
-                      [canExit]="isValidCanExit(step.canExit)"
-                      [state]="step.state">
+    <aw-wizard (stepChanged)="stepChanged($event)">
+      <aw-wizard-step *ngFor="let step of steps"
+                      [stepTitle]="step.title"
+                      [canEnter]="wrapGuard(step.canEnter)"
+                      [canExit]="wrapGuard(step.canExit)">
         <ng-container *ngTemplateOutlet="step.contentTemplate"></ng-container>
-      </ng-wizard-step>
-    </ng-wizard>
+      </aw-wizard-step>
+    </aw-wizard>
+    <div class="flex justify-between mt-4">
+  <button class="btn btn-secondary" *ngIf="!isFirstStep()" (click)="goToPrevious()">Previous</button>
+  <button class="btn btn-primary" *ngIf="!isLastStep()" (click)="goToNext()">Next</button>
+</div>
   `
 })
 export class WizardComponent {
-
   @Input() steps: WizardStep[] = [];
+  @ViewChild(ArchWizardComponent)
+  wizardRef!: ArchWizardComponent;
 
-  @Input() config: NgWizardConfig = {
-    selected: 0,
-    theme: THEME.arrows,
-  };
+  @ViewChildren(WizardStepComponent)
+  wizardSteps!: QueryList<WizardStepComponent>;
 
-  constructor(private wizardService: NgWizardService) { }
-
-  stepChanged(args: StepChangedArgs) {
-    console.log('Step changed:', args.step);
+  stepChanged(event: any) {
+    console.log('Step changed:', event);
   }
 
-  isValidCanEnter(input: any): boolean | ((args: StepValidationArgs) => boolean | Observable<boolean>) {
-    return typeof input === 'function' || typeof input === 'boolean' ? input : true;
+isFirstStep(): boolean {
+  return this.wizardRef?.currentStepIndex === 0;
+}
+
+isLastStep(): boolean {
+  const totalSteps = this.wizardSteps?.length ?? 0;
+  return this.wizardRef?.currentStepIndex === totalSteps - 1;
+}
+
+  goToNext(): void {
+    if (!this.isLastStep()) {
+      this.wizardRef.goToStep(this.wizardRef.currentStepIndex + 1);
+    }
   }
 
-  isValidCanExit(input: any): boolean | ((args: StepValidationArgs) => boolean | Observable<boolean>) {
-    return typeof input === 'function' || typeof input === 'boolean' ? input : true;
+  goToPrevious(): void {
+    if (!this.isFirstStep()) {
+      this.wizardRef.goToStep(this.wizardRef.currentStepIndex - 1);
+    }
+  }
+  wrapGuard(
+    guard?: boolean | ((dir: MovingDirection) => boolean | Promise<boolean>)
+  ): boolean | ((dir: MovingDirection) => boolean) | ((dir: MovingDirection) => Promise<boolean>) {
+    if (guard === undefined) {
+      return true;
+    }
+
+    if (typeof guard === 'function') {
+      const testResult = guard(MovingDirection.Forwards); // Just to infer type
+
+      if (testResult instanceof Promise) {
+        return (dir: MovingDirection) => guard(dir) as Promise<boolean>;
+      }
+
+      return (dir: MovingDirection) => guard(dir) as boolean;
+    }
+
+    return guard;
   }
 
 }

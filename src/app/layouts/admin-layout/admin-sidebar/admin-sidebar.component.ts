@@ -1,4 +1,4 @@
-import { DOCUMENT, NgClass } from '@angular/common';
+import { CommonModule, DOCUMENT, NgClass } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, Inject, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 
@@ -18,6 +18,7 @@ import { FeatherIconDirective } from '../../../core/feather-icon/feather-icon.di
     RouterLinkActive, 
     NgScrollbar, 
     NgClass, 
+    CommonModule,
     FeatherIconDirective, 
   ],
   templateUrl: './admin-sidebar.component.html',
@@ -29,6 +30,8 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
 
   menuItems: MenuItem[] = [];
   @ViewChild('sidebarMenu') sidebarMenu: ElementRef;
+
+  onboardingComplete: boolean = false;
 
   constructor(@Inject(DOCUMENT) private document: Document, private renderer: Renderer2, router: Router) { 
     router.events.forEach((event) => {

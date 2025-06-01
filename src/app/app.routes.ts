@@ -9,6 +9,9 @@ import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component
 import { InvoiceComponent } from './views/general/invoice/invoice.component';
 import { GeneralLayoutComponent } from './layouts/general-layout/general-layout.component';
 import { OnboardingChecklistComponent } from './views/general/onboarding-checklist/onboarding-checklist.component';
+import { onboardingGuard } from './services/onboarding.guard';
+import { redirectIfOnboardedGuard } from './services/redirect-if-onboarded.guard';
+
 
 export const routes: Routes = [
   {
@@ -21,28 +24,38 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayoutComponent,
-    // canActivate: [authGuard],
-    // data: { roles: ['OrganizationAdmin', 'KatharixAdmin', 'SuperAdmin'] },
+    canActivateChild: [onboardingGuard], // ✅ guard only post-onboarding routes
     children: [
       { path: '', component: DashboardComponent },
-      { path: 'onboarding', component: OnboardingChecklistComponent }
+      // ✅ onboarding moved out
     ]
   },
-  { 
-    path: 'auth', 
+  {
+    path: 'onboarding',
+    component: AdminLayoutComponent, // ✅ still use admin layout
+    children: [
+      {
+        path: '',
+        component: OnboardingChecklistComponent,
+        canActivate: [redirectIfOnboardedGuard] // ✅ skip if already onboarded
+      }
+    ]
+  },
+  {
+    path: 'auth',
     loadChildren: () => import('./views/admin-views/auth/auth.routes')
   },
   {
     path: 'subscribe',
     component: AuthLayoutComponent,
-    children:[
+    children: [
       { path: '', component: SubscribeComponent },
     ]
   },
   {
     path: 'invoice/view/:id',
     component: GeneralLayoutComponent,
-    children:[
+    children: [
       { path: '', component: InvoiceComponent },
     ]
   }

@@ -4,19 +4,19 @@ import { NgbCalendar, NgbDatepickerModule, NgbDateStruct, NgbDropdownModule } fr
 import { ApexOptions, NgApexchartsModule } from "ng-apexcharts";
 import { FeatherIconDirective } from '../../../core/feather-icon/feather-icon.directive';
 import { ThemeCssVariableService, ThemeCssVariablesType } from '../../../core/services/theme-css-variable.service';
-import { ActivatedRoute } from '@angular/router';
-import { Organization, OrganizationRequest } from '../../../models/organization';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Organization, OrganizationDto, OrganizationRequest } from '../../../models/organization';
 import { OrganizationService } from '../../../services/organization.service';
+import { OrganizationContextService } from '../../../services/shared/organization-context.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     NgbDropdownModule,
-    FormsModule, 
-    NgbDatepickerModule, 
+    FormsModule,
+    NgbDatepickerModule,
     NgApexchartsModule,
-    FeatherIconDirective
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -40,20 +40,20 @@ export class DashboardComponent implements OnInit {
 
   themeCssVariables = inject(ThemeCssVariableService).getThemeCssVariables();
   organizationId: string;
-  org: Organization;
-  
+  org: OrganizationDto;
+
   constructor(
-    private route: ActivatedRoute,
-    private organizationService: OrganizationService
-  ) {}
+    private router: Router,
+    private orgContext: OrganizationContextService
+  ) { }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      this.organizationId = params['organizationId'];
-      if (!this.organizationId) {
-        console.log('No organization in query params.');
+    this.orgContext.org$.subscribe(org => {
+      if (org) {
+        this.org = org;
+        if (!org.onboardingComplete)
+          this.router.navigate(['/onboarding']);
       }
-      this.getOrganizationData();
     });
     // this.customersChartOptions = this.getCustomersChartOptions(this.themeCssVariables);
     // this.ordersChartOptions = this.getOrdersChartOptions(this.themeCssVariables);
@@ -63,18 +63,6 @@ export class DashboardComponent implements OnInit {
     // this.cloudStorageChartOptions = this.getCloudStorageChartOptions(this.themeCssVariables);
   }
 
- getOrganizationData() {
-  let orgRequest: OrganizationRequest = {
-    organizationId: this.organizationId
-  }
-  this.organizationService.getOrganizationById(orgRequest).subscribe({
-    next: (data) => {
-      console.log("organization data returned: ", data)
-      this.org = data;
-    },
-    error: (err) => console.error(err)
-  });
- }
 
   /**
    * Customerse chart options
@@ -361,11 +349,11 @@ export class DashboardComponent implements OnInit {
       xaxis: {
         type: "datetime",
         categories: [
-          "Jan 01 2024", "Jan 02 2024", "jan 03 2024", "Jan 04 2024", "Jan 05 2024", "Jan 06 2024", "Jan 07 2024", "Jan 08 2024", "Jan 09 2024", "Jan 10 2024", "Jan 11 2024", "Jan 12 2024", "Jan 13 2024", "Jan 14 2024", "Jan 15 2024", "Jan 16 2024", "Jan 17 2024", "Jan 18 2024", "Jan 19 2024", "Jan 20 2024","Jan 21 2024", "Jan 22 2024", "Jan 23 2024", "Jan 24 2024", "Jan 25 2024", "Jan 26 2024", "Jan 27 2024", "Jan 28 2024", "Jan 29 2024", "Jan 30 2024", "Jan 31 2024",
-          "Feb 01 2024", "Feb 02 2024", "Feb 03 2024", "Feb 04 2024", "Feb 05 2024", "Feb 06 2024", "Feb 07 2024", "Feb 08 2024", "Feb 09 2024", "Feb 10 2024", "Feb 11 2024", "Feb 12 2024", "Feb 13 2024", "Feb 14 2024", "Feb 15 2024", "Feb 16 2024", "Feb 17 2024", "Feb 18 2024", "Feb 19 2024", "Feb 20 2024","Feb 21 2024", "Feb 22 2024", "Feb 23 2024", "Feb 24 2024", "Feb 25 2024", "Feb 26 2024", "Feb 27 2024", "Feb 28 2024",
-          "Mar 01 2024", "Mar 02 2024", "Mar 03 2024", "Mar 04 2024", "Mar 05 2024", "Mar 06 2024", "Mar 07 2024", "Mar 08 2024", "Mar 09 2024", "Mar 10 2024", "Mar 11 2024", "Mar 12 2024", "Mar 13 2024", "Mar 14 2024", "Mar 15 2024", "Mar 16 2024", "Mar 17 2024", "Mar 18 2024", "Mar 19 2024", "Mar 20 2024","Mar 21 2024", "Mar 22 2024", "Mar 23 2024", "Mar 24 2024", "Mar 25 2024", "Mar 26 2024", "Mar 27 2024", "Mar 28 2024", "Mar 29 2024", "Mar 30 2024", "Mar 31 2024",
-          "Apr 01 2024", "Apr 02 2024", "Apr 03 2024", "Apr 04 2024", "Apr 05 2024", "Apr 06 2024", "Apr 07 2024", "Apr 08 2024", "Apr 09 2024", "Apr 10 2024", "Apr 11 2024", "Apr 12 2024", "Apr 13 2024", "Apr 14 2024", "Apr 15 2024", "Apr 16 2024", "Apr 17 2024", "Apr 18 2024", "Apr 19 2024", "Apr 20 2024","Apr 21 2024", "Apr 22 2024", "Apr 23 2024", "Apr 24 2024", "Apr 25 2024", "Apr 26 2024", "Apr 27 2024", "Apr 28 2024", "Apr 29 2024", "Apr 30 2024",
-          "May 01 2024", "May 02 2024", "May 03 2024", "May 04 2024", "May 05 2024", "May 06 2024", "May 07 2024", "May 08 2024", "May 09 2024", "May 10 2024", "May 11 2024", "May 12 2024", "May 13 2024", "May 14 2024", "May 15 2024", "May 16 2024", "May 17 2024", "May 18 2024", "May 19 2024", "May 20 2024","May 21 2024", "May 22 2024", "May 23 2024", "May 24 2024", "May 25 2024", "May 26 2024", "May 27 2024", "May 28 2024", "May 29 2024", "May 30 2024",
+          "Jan 01 2024", "Jan 02 2024", "jan 03 2024", "Jan 04 2024", "Jan 05 2024", "Jan 06 2024", "Jan 07 2024", "Jan 08 2024", "Jan 09 2024", "Jan 10 2024", "Jan 11 2024", "Jan 12 2024", "Jan 13 2024", "Jan 14 2024", "Jan 15 2024", "Jan 16 2024", "Jan 17 2024", "Jan 18 2024", "Jan 19 2024", "Jan 20 2024", "Jan 21 2024", "Jan 22 2024", "Jan 23 2024", "Jan 24 2024", "Jan 25 2024", "Jan 26 2024", "Jan 27 2024", "Jan 28 2024", "Jan 29 2024", "Jan 30 2024", "Jan 31 2024",
+          "Feb 01 2024", "Feb 02 2024", "Feb 03 2024", "Feb 04 2024", "Feb 05 2024", "Feb 06 2024", "Feb 07 2024", "Feb 08 2024", "Feb 09 2024", "Feb 10 2024", "Feb 11 2024", "Feb 12 2024", "Feb 13 2024", "Feb 14 2024", "Feb 15 2024", "Feb 16 2024", "Feb 17 2024", "Feb 18 2024", "Feb 19 2024", "Feb 20 2024", "Feb 21 2024", "Feb 22 2024", "Feb 23 2024", "Feb 24 2024", "Feb 25 2024", "Feb 26 2024", "Feb 27 2024", "Feb 28 2024",
+          "Mar 01 2024", "Mar 02 2024", "Mar 03 2024", "Mar 04 2024", "Mar 05 2024", "Mar 06 2024", "Mar 07 2024", "Mar 08 2024", "Mar 09 2024", "Mar 10 2024", "Mar 11 2024", "Mar 12 2024", "Mar 13 2024", "Mar 14 2024", "Mar 15 2024", "Mar 16 2024", "Mar 17 2024", "Mar 18 2024", "Mar 19 2024", "Mar 20 2024", "Mar 21 2024", "Mar 22 2024", "Mar 23 2024", "Mar 24 2024", "Mar 25 2024", "Mar 26 2024", "Mar 27 2024", "Mar 28 2024", "Mar 29 2024", "Mar 30 2024", "Mar 31 2024",
+          "Apr 01 2024", "Apr 02 2024", "Apr 03 2024", "Apr 04 2024", "Apr 05 2024", "Apr 06 2024", "Apr 07 2024", "Apr 08 2024", "Apr 09 2024", "Apr 10 2024", "Apr 11 2024", "Apr 12 2024", "Apr 13 2024", "Apr 14 2024", "Apr 15 2024", "Apr 16 2024", "Apr 17 2024", "Apr 18 2024", "Apr 19 2024", "Apr 20 2024", "Apr 21 2024", "Apr 22 2024", "Apr 23 2024", "Apr 24 2024", "Apr 25 2024", "Apr 26 2024", "Apr 27 2024", "Apr 28 2024", "Apr 29 2024", "Apr 30 2024",
+          "May 01 2024", "May 02 2024", "May 03 2024", "May 04 2024", "May 05 2024", "May 06 2024", "May 07 2024", "May 08 2024", "May 09 2024", "May 10 2024", "May 11 2024", "May 12 2024", "May 13 2024", "May 14 2024", "May 15 2024", "May 16 2024", "May 17 2024", "May 18 2024", "May 19 2024", "May 20 2024", "May 21 2024", "May 22 2024", "May 23 2024", "May 24 2024", "May 25 2024", "May 26 2024", "May 27 2024", "May 28 2024", "May 29 2024", "May 30 2024",
         ],
         lines: {
           show: true
@@ -385,7 +373,7 @@ export class DashboardComponent implements OnInit {
       yaxis: {
         title: {
           text: 'Revenue ( $1000 x )',
-          style:{
+          style: {
             size: 9,
             color: themeVariables.secondary
           }
@@ -422,7 +410,7 @@ export class DashboardComponent implements OnInit {
     return {
       series: [{
         name: 'Sales',
-        data: [152,109,93,113,126,161,188,143,102,113,116,124]
+        data: [152, 109, 93, 113, 126, 161, 188, 143, 102, 113, 116, 124]
       }],
       chart: {
         type: 'bar',
@@ -436,10 +424,10 @@ export class DashboardComponent implements OnInit {
           enabled: false
         }
       },
-      colors: [themeVariables.primary],  
+      colors: [themeVariables.primary],
       fill: {
         opacity: .9
-      } , 
+      },
       grid: {
         padding: {
           bottom: -4
@@ -453,7 +441,7 @@ export class DashboardComponent implements OnInit {
       },
       xaxis: {
         type: 'datetime',
-        categories: ['01/01/2024','02/01/2024','03/01/2024','04/01/2024','05/01/2024','06/01/2024','07/01/2024', '08/01/2024','09/01/2024','10/01/2024', '11/01/2024', '12/01/2024'],
+        categories: ['01/01/2024', '02/01/2024', '03/01/2024', '04/01/2024', '05/01/2024', '06/01/2024', '07/01/2024', '08/01/2024', '09/01/2024', '10/01/2024', '11/01/2024', '12/01/2024'],
         axisBorder: {
           color: themeVariables.gridBorder,
         },
@@ -464,7 +452,7 @@ export class DashboardComponent implements OnInit {
       yaxis: {
         title: {
           text: 'Number of Sales',
-          style:{
+          style: {
             size: 9,
             color: themeVariables.secondary
           }
@@ -531,7 +519,7 @@ export class DashboardComponent implements OnInit {
             background: themeVariables.gridBorder,
             strokeWidth: '100%',
             opacity: 1,
-            margin: 5, 
+            margin: 5,
           },
           dataLabels: {
             showOn: "always",
@@ -558,5 +546,5 @@ export class DashboardComponent implements OnInit {
       labels: ["Storage Used"]
     }
   };
-  
+
 }

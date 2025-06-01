@@ -43,6 +43,7 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/@rg-software/angular-archwizard/styles/archwizard.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -109,6 +110,7 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/@rg-software/angular-archwizard/styles/archwizard.css",
               "src/styles.scss"
             ],
             "scripts": []
