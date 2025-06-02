@@ -7,15 +7,19 @@ export class OrganizationContextService {
   private orgSubject = new BehaviorSubject<OrganizationDto | null>(null);
   org$ = this.orgSubject.asObservable();
 
+  constructor() {
+    this.loadOrgFromStorage();
+  }
+
   setOrganization(org: OrganizationDto) {
     this.orgSubject.next(org);
+    localStorage.setItem('org', JSON.stringify(org));
   }
 
-  get organizationId(): string | null {
-    return this.orgSubject.value?.id ?? null;
-  }
-
-  get current(): OrganizationDto | null {
-    return this.orgSubject.value;
+  private loadOrgFromStorage() {
+    const raw = localStorage.getItem('org');
+    if (raw) {
+      this.orgSubject.next(JSON.parse(raw));
+    }
   }
 }

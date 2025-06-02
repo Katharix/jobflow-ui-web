@@ -28,7 +28,7 @@ export class ConnectPaymentComponent implements OnInit {
   createStripeConnectedAccount() {
     this.paymentService.createConnectedAccount(this.orgId!).subscribe({
       next: onboardingUrl => {
-        window.location.href = onboardingUrl;
+        window.location.href = onboardingUrl.onboarding;
       },
       error: err => {
       }
