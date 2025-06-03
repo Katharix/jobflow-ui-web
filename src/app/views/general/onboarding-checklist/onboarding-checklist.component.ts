@@ -4,7 +4,8 @@ import {
   TemplateRef,
   ViewChild,
   AfterViewInit,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  Output
 } from '@angular/core';
 import { OrganizationDto } from '../../../models/organization';
 import { CommonModule } from '@angular/common';
@@ -13,28 +14,40 @@ import { WizardStep } from '../../../common/wizard/wizard-step';
 import { WizardModule } from '../../../common/wizard/wizard.module';
 import { getOnboardingSteps } from './onboarding-steps.config';
 import { ConnectPaymentComponent } from "./onboarding-steps/connect-payment/connect-payment.component";
+import { BrandingComponent } from "./onboarding-steps/branding/branding.component";
+import { OrganizationContextService } from '../../../services/shared/organization-context.service';
+import { QuickbooksComponent } from "./onboarding-steps/quickbooks/quickbooks.component";
 
 @Component({
   selector: 'app-onboarding-checklist',
   standalone: true,
-  imports: [CommonModule, RouterModule, WizardModule, ConnectPaymentComponent],
+  imports: [CommonModule, RouterModule, WizardModule, ConnectPaymentComponent, BrandingComponent, QuickbooksComponent],
   templateUrl: './onboarding-checklist.component.html',
   styleUrl: './onboarding-checklist.component.scss'
 })
 export class OnboardingChecklistComponent implements AfterViewInit {
-  @Input() organization: OrganizationDto;
   @ViewChild('step1') step1!: TemplateRef<any>;
   @ViewChild('step2') step2!: TemplateRef<any>;
   @ViewChild('step3') step3!: TemplateRef<any>;
   @ViewChild('step4') step4!: TemplateRef<any>;
   @ViewChild('step5') step5!: TemplateRef<any>;
   @ViewChild('step6') step6!: TemplateRef<any>;
+  @Output() organization: OrganizationDto;
 
   wizardSteps: WizardStep[] = [];
 
-  constructor(private cdr: ChangeDetectorRef) { }
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private orgContext: OrganizationContextService
+  ) 
+  { }
 
   ngAfterViewInit(): void {
+    this.orgContext.org$.subscribe(org => {
+      if (org) {
+        this.organization = org;
+      }
+    });
     this.wizardSteps = getOnboardingSteps({
       step1: this.step1,
       step2: this.step2,

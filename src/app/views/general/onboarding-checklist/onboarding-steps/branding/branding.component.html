@@ -1,0 +1,113 @@
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 p-4">
+                <h4 class="font-semibold mb-4 d-flex align-items-center gap-2">
+                    <i data-feather="edit-3" appFeatherIcon class="text-primary"></i>
+                    Customize Your Branding
+                </h4>
+                <form [formGroup]="brandingForm">
+                    <!-- 🖼️ Logo + 🎨 Colors (Same Row) -->
+                    <div class="mb-4">
+                        <h5 class="text-muted mb-3 d-flex align-items-center gap-2">
+                            <i data-feather="image" class="text-info"></i>
+                            Logo & Brand Colors
+                        </h5>
+                        <div class="row g-3 align-items-end">
+                            <!-- Logo Upload -->
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <label for="logoUpload" class="btn btn-outline-primary">
+                                    <i data-feather="upload" class="me-1"></i> Upload Logo
+                                </label>
+                                <input type="file" id="logoUpload" hidden (change)="onLogoSelected($event)"
+                                    accept="image/*" />
+                                <div class="mt-2" *ngIf="logoPreview">
+                                    <img [src]="logoPreview" alt="Logo Preview" class="img-thumbnail border shadow-sm"
+                                        style="max-height: 100px;" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-end">
+                            <!-- Primary Color -->
+                            <div class="col-md-3 col-lg-4">
+                                <label class="form-label">Primary Color</label>
+                                <color-block formControlName="primaryColor" triangle="hide"
+                                    [color]="brandingForm.value.primaryColor"
+                                    (onChangeComplete)="onPrimaryColorChange($event)"></color-block>
+                            </div>
+
+                            <!-- Secondary Color -->
+                            <div class="col-md-3 col-lg-4">
+                                <label class="form-label">Secondary Color</label>
+                                <color-block formControlName="secondaryColor" triangle="hide"
+                                    [color]="brandingForm.value.secondaryColor"
+                                    (onChangeComplete)="onSecondaryColorChange($event)"></color-block>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 🏷️ Business Info -->
+                    <div class="mb-4">
+                        <h5 class="text-muted mb-3 d-flex align-items-center gap-2">
+                            <i data-feather="type" class="text-info"></i>
+                            Business Info
+                        </h5>
+                        <div class="mb-3">
+                            <label class="form-label">Tagline</label>
+                            <input type="text" class="form-control" formControlName="tagline"
+                                placeholder="e.g., Where Jobs Flow and Business Grows" />
+                        </div>
+                    </div>
+
+                    <!-- 📝 Footer Note -->
+                    <div class="mb-4">
+                        <h5 class="text-muted mb-3 d-flex align-items-center gap-2">
+                            <i data-feather="file-text" class="text-info"></i>
+                            Invoice Footer Note
+                        </h5>
+                        <label class="form-label">Footer Note</label>
+                        <textarea class="form-control" rows="2" formControlName="footerNote"
+                            placeholder="Thanks for your business!"></textarea>
+                    </div>
+                </form>
+
+                <!-- 📄 Live Preview -->
+                <div class="border rounded shadow-sm p-3" [ngStyle]="previewStyles" style="max-width: 400px;">
+                    <!-- Logo + Business Info -->
+                    <div class="d-flex align-items-center mb-3">
+                        <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo" style="max-height: 50px;"
+                            class="me-3" />
+                        <div>
+                            <h5 class="mb-0">{{ brandingForm.value.businessName || 'Your Business' }}</h5>
+                            <small class="text-muted">{{ brandingForm.value.tagline || 'Your tagline here' }}</small>
+                        </div>
+                    </div>
+
+                    <!-- Invoice Summary -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Invoice #</span>
+                            <span>#12345</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Date</span>
+                            <span>June 2, 2025</span>
+                        </div>
+                        <div class="d-flex justify-content-between fw-bold mt-2">
+                            <span>Total</span>
+                            <span>$299.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Optional Footer Note -->
+                    <hr />
+                    <footer class="text-muted small">
+                        {{ brandingForm.value.footerNote || 'Thanks for your business!' }}
+                    </footer>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>

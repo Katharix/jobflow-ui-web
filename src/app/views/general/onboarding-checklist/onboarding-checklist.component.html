@@ -1,29 +1,44 @@
-<div class="card p-4 rounded-xl shadow">
-  <h2 class="text-xl font-bold mb-3">Finish Setting Up Your Account</h2>
+<div class="card p-4 rounded-xl shadow bg-white">
+  <h2 class="text-xl font-bold mb-4">Finish Setting Up Your Account</h2>
 
+  <!-- Wizard Step Templates -->
   <ng-template #step1>
-    <app-connect-payment />
+    <app-connect-payment></app-connect-payment>
   </ng-template>
 
   <ng-template #step2>
-    <div>Step 2 content here</div>
+    <div class="py-3">
+      <app-branding />
+    </div>
   </ng-template>
 
   <ng-template #step3>
-    <div>Step 3 content here</div>
+    <div class="py-3">
+      <h5 class="font-semibold mb-2">Set Up Sales Tax</h5>
+      <p>Step 3 content here...</p>
+    </div>
   </ng-template>
 
   <ng-template #step4>
-    <div>Step 4 content here</div>
+    <div class="py-3">
+      <app-quickbooks />
+    </div>
   </ng-template>
 
   <ng-template #step5>
-    <div>Step 5 content here</div>
+    <div class="py-3">
+      <h5 class="font-semibold mb-2">Import QuickBooks Data</h5>
+      <p>Step 5 content here...</p>
+    </div>
   </ng-template>
 
   <ng-template #step6>
-    <div>Step 6 content here</div>
+    <div class="py-3">
+      <h5 class="font-semibold mb-2">Add Employees Manually</h5>
+      <p>Step 6 content here...</p>
+    </div>
   </ng-template>
 
+  <!-- Wizard Component -->
   <app-wizard [steps]="wizardSteps"></app-wizard>
 </div>

@@ -5,18 +5,37 @@ import { MovingDirection, WizardComponent as ArchWizardComponent, WizardStepComp
 @Component({
   selector: 'app-wizard',
   template: `
-    <aw-wizard (stepChanged)="stepChanged($event)">
-      <aw-wizard-step *ngFor="let step of steps"
-                      [stepTitle]="step.title"
-                      [canEnter]="wrapGuard(step.canEnter)"
-                      [canExit]="wrapGuard(step.canExit)">
-        <ng-container *ngTemplateOutlet="step.contentTemplate"></ng-container>
-      </aw-wizard-step>
-    </aw-wizard>
-    <div class="flex justify-between mt-4">
-  <button class="btn btn-secondary" *ngIf="!isFirstStep()" (click)="goToPrevious()">Previous</button>
-  <button class="btn btn-primary" *ngIf="!isLastStep()" (click)="goToNext()">Next</button>
+<!-- Wizard Component -->
+<aw-wizard (stepChanged)="stepChanged($event)" class="shadow rounded-lg p-4 bg-white">
+  <aw-wizard-step 
+    *ngFor="let step of steps"
+    [stepTitle]="step.title"
+    [canEnter]="wrapGuard(step.canEnter)"
+    [canExit]="wrapGuard(step.canExit)"
+  >
+    <ng-container *ngTemplateOutlet="step.contentTemplate"></ng-container>
+  </aw-wizard-step>
+</aw-wizard>
+
+<!-- Navigation Buttons -->
+<div class="d-flex justify-content-between mt-4">
+  <button 
+    class="btn btn-secondary"
+    *ngIf="!isFirstStep()"
+    (click)="goToPrevious()"
+  >
+    ← Previous
+  </button>
+
+  <button 
+    class="btn btn-primary"
+    *ngIf="!isLastStep()"
+    (click)="goToNext()"
+  >
+    Next →
+  </button>
 </div>
+
   `
 })
 export class WizardComponent {
@@ -31,14 +50,14 @@ export class WizardComponent {
     console.log('Step changed:', event);
   }
 
-isFirstStep(): boolean {
-  return this.wizardRef?.currentStepIndex === 0;
-}
+  isFirstStep(): boolean {
+    return this.wizardRef?.currentStepIndex === 0;
+  }
 
-isLastStep(): boolean {
-  const totalSteps = this.wizardSteps?.length ?? 0;
-  return this.wizardRef?.currentStepIndex === totalSteps - 1;
-}
+  isLastStep(): boolean {
+    const totalSteps = this.wizardSteps?.length ?? 0;
+    return this.wizardRef?.currentStepIndex === totalSteps - 1;
+  }
 
   goToNext(): void {
     if (!this.isLastStep()) {
