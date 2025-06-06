@@ -11,9 +11,10 @@
   z-index: $zindex-sidebar;
 
   .sidebar-header {
-    background: $card-bg;
+    background: $primary;
+    border-top-right-radius: 25px;
+    border-bottom: 1px solid #8595D1;
     height: $navbar-height;
-    border-bottom: 1px solid var(--#{$prefix}border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -87,11 +88,11 @@
   .sidebar-body {
     max-height: calc(100% - #{$navbar-height});
     position: relative;
-    border-right: 1px solid var(--#{$prefix}border-color);
+    border-bottom: 1px solid #8595D1;
     height: 100%;
     -webkit-box-shadow: 0 8px 10px 0 var(--#{$prefix}sidebar-box-shadow-color);
             box-shadow: 0 8px 10px 0 var(--#{$prefix}sidebar-box-shadow-color); 
-    background: var(--#{$prefix}body-bg);   
+    background: $primary;   
     .sidebar-nav {
       list-style: none;
       padding: 25px 25px 50px 25px;

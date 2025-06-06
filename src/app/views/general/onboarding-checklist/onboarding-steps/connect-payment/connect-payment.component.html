@@ -1,23 +1,19 @@
-<div class="container my-5">
+<div class="container my-5" *ngFor="let provider of paymentProviders">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-lg border-0 p-4">
                 <div class="row align-items-center">
-                    <!-- Stripe Connection Section -->
                     <div class="col-md-6 text-center mb-4 mb-md-0">
-                        <img src="assets/admin/images/photos/StripeLogo.png" width="180" class="img-fluid mb-3"
-                            alt="Stripe Logo" />
+                        <img src="{{ provider.logoPath }}" width="180" class="img-fluid mb-3"
+                            alt="{{ provider.altLogoText }}" />
                         <button class="btn btn-primary btn-lg" (click)="createStripeConnectedAccount()">
-                            Connect Stripe
+                            Connect {{ provider.provider }}
                         </button>
                     </div>
-                    
-                    <!-- Text / Info Section -->
                     <div class="col-md-6">
                         <h4 class="mb-3">Accept Payments Securely</h4>
                         <p class="text-muted">
-                            Connect your Stripe account to start accepting online payments directly from your clients.
-                            It's fast, secure, and essential for invoicing through the platform.
+                            {{ provider.description }}
                         </p>
                     </div>
                 </div>
