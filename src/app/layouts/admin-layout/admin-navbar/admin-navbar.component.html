@@ -5,69 +5,8 @@
         <img src="assets/public/images/Asset 6.png" class="logo-mini logo-mini-dark" alt="logo">
       </div>
   
-      <form class="search-form">
-        <div class="input-group">
-          <div class="input-group-text">
-            <i class="feather icon-search"></i>
-          </div>
-          <input type="text" class="form-control" id="navbarForm" placeholder="Search here...">
-        </div>
-      </form>
   
-      <ul class="navbar-nav">
-        <li class="theme-switcher-wrapper nav-item">
-          <input type="checkbox" (change)="onThemeCheckboxChange($event)" value="" id="theme-switcher">
-          <label for="theme-switcher">
-            <div class="box">
-              <div class="ball"></div>
-              <div class="icons">
-                <i class="feather icon-sun"></i>
-                <i class="feather icon-moon"></i>
-              </div>
-            </div>
-          </label>
-        </li>
-        <li class="nav-item" ngbDropdown>
-          <a class="nav-link" ngbDropdownToggle id="languageDropdown" role="button">
-            <img src="assets/admin/images/flags/us.svg" class="w-20px" title="us" alt="us">
-            <span class="ms-2 d-none d-md-inline-block">English</span>
-          </a>
-          <div ngbDropdownMenu aria-labelledby="languageDropdown">
-            <a ngbDropdownItem class="py-2 d-flex"> <img src="assets/admin/images/flags/us.svg" class="w-20px me-1" title="us" alt="us"> <span class="ms-2"> English </span></a>
-            <a ngbDropdownItem class="py-2 d-flex"> <img src="assets/admin/images/flags/fr.svg" class="w-20px me-1" title="fr" alt="fr"> <span class="ms-2"> French </span></a>
-            <a ngbDropdownItem class="py-2 d-flex"> <img src="assets/admin/images/flags/de.svg" class="w-20px me-1" title="de" alt="de"> <span class="ms-2"> German </span></a>
-            <a ngbDropdownItem class="py-2 d-flex"> <img src="assets/admin/images/flags/pt.svg" class="w-20px me-1" title="pt" alt="pt"> <span class="ms-2"> Portuguese </span></a>
-            <a ngbDropdownItem class="py-2 d-flex"> <img src="assets/admin/images/flags/es.svg" class="w-20px me-1" title="es" alt="es"> <span class="ms-2"> Spanish </span></a>
-          </div>
-        </li>
-        <li class="nav-item nav-apps" ngbDropdown>
-          <a class="nav-link" ngbDropdownToggle id="appsDropdown">
-            <i class="link-icon feather icon-grid"></i>
-          </a>
-          <div ngbDropdownMenu class="px-0" aria-labelledby="appsDropdown">
-            <div class="px-3 py-2 d-flex align-items-center justify-content-between border-bottom">
-              <p class="mb-0 fw-bold">Web Apps</p>
-              <a href="javascript:;" class="text-secondary">Edit</a>
-            </div>
-            <div class="row g-0 p-1">
-              <div class="col-3 text-center">
-                <a routerLink="/apps/chat" class="dropdown-item d-flex flex-column align-items-center justify-content-center w-70px h-70px"><i class="feather icon-message-square icon-lg mb-1"></i><p class="fs-12px">Chat</p></a>
-              </div>
-              <div class="col-3 text-center">
-                <a routerLink="/apps/calendar" class="dropdown-item d-flex flex-column align-items-center justify-content-center w-70px h-70px"><i class="feather icon-calendar icon-lg mb-1"></i><p class="fs-12px">Calendar</p></a>
-              </div>
-              <div class="col-3 text-center">
-                <a routerLink="/apps/email/inbox" class="dropdown-item d-flex flex-column align-items-center justify-content-center w-70px h-70px"><i class="feather icon-mail icon-lg mb-1"></i><p class="fs-12px">Email</p></a>
-              </div>
-              <div class="col-3 text-center">
-                <a routerLink="/general/profile" class="dropdown-item d-flex flex-column align-items-center justify-content-center w-70px h-70px"><i class="feather icon-instagram icon-lg mb-1"></i><p class="fs-12px">Profile</p></a>
-              </div>
-            </div>
-            <div class="px-3 py-2 d-flex align-items-center justify-content-center border-top">
-              <a href="" (click)="false">View all</a>
-            </div>
-          </div>
-        </li>
+      <ul *ngIf="org.onboardingComplete" class="navbar-nav">
         <li class="nav-item nav-messages" ngbDropdown>
           <a class="nav-link" ngbDropdownToggle id="messageDropdown">
             <i class="link-icon feather icon-mail"></i>

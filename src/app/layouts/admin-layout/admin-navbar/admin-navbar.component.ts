@@ -1,13 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { OrganizationContextService } from '../../../services/shared/organization-context.service';
+import { OrganizationDto } from '../../../models/organization';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-admin-navbar',
   standalone: true,
   imports: [
     NgbDropdownModule,
-    RouterLink
+    RouterLink,
+    CommonModule
   ],
   templateUrl: './admin-navbar.component.html',
   styleUrl: './admin-navbar.component.scss'
@@ -15,16 +19,19 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 export class AdminNavbarComponent  implements OnInit {
   // currentTheme: string;
 
-  constructor(private router: Router) {}
+  org: OrganizationDto
+  constructor(
+    private router: Router,
+    private orgContext: OrganizationContextService
+  ) {}
 
   ngOnInit(): void {
-
-    // this.themeModeService.currentTheme.subscribe( (theme) => {
-    //   this.currentTheme = theme;
-    //   this.showActiveTheme(this.currentTheme);
-    // });
+    this.orgContext.org$.subscribe(org => {
+      if (org) {
+        this.org = org;
+      }
+    });
   }
-
   showActiveTheme(theme: string) {
     const themeSwitcher = document.querySelector('#theme-switcher') as HTMLInputElement;
     const box = document.querySelector('.box') as HTMLElement;
