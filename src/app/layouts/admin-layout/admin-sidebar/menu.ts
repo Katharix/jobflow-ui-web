@@ -65,7 +65,7 @@ export const MENU: MenuItem[] = [
   {
     label: 'Settings',
     icon: 'settings',
-    link: '/apps/email/inbox',
+    link: '/admin/settings/branding',
   },
   {
     label: 'Help',

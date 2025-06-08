@@ -65,4 +65,13 @@ export class BrandingComponent {
       borderLeft: `4px solid ${primaryColor}`
     };
   }
+
+  onSave(): void {
+  if (this.brandingForm.valid) {
+    const formData = this.brandingForm.value;
+    // TODO: send formData to API
+    console.log('Saving branding settings...', formData);
+  }
+}
+
 }

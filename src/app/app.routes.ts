@@ -11,6 +11,7 @@ import { GeneralLayoutComponent } from './layouts/general-layout/general-layout.
 import { OnboardingChecklistComponent } from './views/general/onboarding-checklist/onboarding-checklist.component';
 import { onboardingGuard } from './services/onboarding.guard';
 import { redirectIfOnboardedGuard } from './services/redirect-if-onboarded.guard';
+import { BrandingComponent } from './views/general/onboarding-checklist/onboarding-steps/branding/branding.component';
 
 
 export const routes: Routes = [
@@ -27,6 +28,7 @@ export const routes: Routes = [
     //canActivateChild: [onboardingGuard], // ✅ guard only post-onboarding routes
     children: [
       { path: '', component: DashboardComponent },
+      { path:'settings/branding', component:  BrandingComponent}
     ]
   },
   {
