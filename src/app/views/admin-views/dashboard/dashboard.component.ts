@@ -51,8 +51,8 @@ export class DashboardComponent implements OnInit {
     this.orgContext.org$.subscribe(org => {
       if (org) {
         this.org = org;
-        if (!org.onboardingComplete)
-          this.router.navigate(['/onboarding']);
+        // if (!org.onboardingComplete)
+        //   this.router.navigate(['/onboarding']);
       }
     });
     // this.customersChartOptions = this.getCustomersChartOptions(this.themeCssVariables);

@@ -1,66 +1,85 @@
-<div class="container">
-    <div class="row w-100 mx-0 auth-page">
-      <div class="col-md-8 col-xl-6 mx-auto">
-        <div class="card">
-          <div class="row">
-            <div class="col-md-4 pe-md-0">
-              <div class="auth-side-wrapper" [ngStyle]="{ 'background-image': 'url(/assets/public/images/jobflow-login.jpg)' }">
-    
-              </div>
-            </div>
-            <div class="col-md-8 ps-md-0">
-              <div class="auth-form-wrapper px-4 py-5">
-                <a routerLink="." class="nobleui-logo d-block mb-2"><img src="/assets/public/images/Asset 1.png" alt="" class="logo-light" style="height: 40px;" /></a>
-                <h5 class="text-secondary fw-normal mb-4">Create your account</h5>
-                <form class="forms-sample" (ngSubmit)="onRegister($event)">
-                  <div class="mb-3">
-                    <label class="form-label">Company Name</label>
-                    <input type="text" class="form-control" placeholder="Company Name" disabled [(ngModel)]="organizationName" name="organizationName" />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    <input type="text" class="form-control" placeholder="This is your email address" disabled [(ngModel)]="email" name="email" />
-                  </div>
-                  <div class="mb-3">
-                    <label for="exampleInputPassword1" class="form-label">Password</label>
-                    <input
-                    type="password"
-                    [(ngModel)]="password"
-                    class="form-control"
-                    placeholder="Password"
-                    name="password"
-                    required
-                    minlength="8"
-                    [pattern]="pattern"
-                    #passwordModel="ngModel"
-                  />
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-xl-5">
+      <div class="p-4 rounded-3 bg-white">
+        <div class="text-center mb-4">
+          <a routerLink=".">
+            <img src="/assets/public/images/Asset 1.png" alt="Logo" style="height: 40px;" />
+          </a>
+          <h5 class="text-muted fw-normal mt-3">Create your account</h5>
+        </div>
 
-                    <div *ngIf="passwordModel.invalid && passwordModel.touched" class="text-danger mt-1">
-                      <div *ngIf="passwordModel.errors?.['required']">Password is required.</div>
-                      <div *ngIf="passwordModel.errors?.['minlength']">Password must be at least 8 characters.</div>
-                      <div *ngIf="passwordModel.errors?.['pattern']">
-                        Password must include uppercase, lowercase, number, and special character.
-                      </div>
-                    </div>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Confirm Password</label>
-                    <input type="password" class="form-control" placeholder="Confirm Password" [(ngModel)]="confirmPassword" name="confirmPassword" required />
-                  </div>
-                  <div class="form-check mb-3">
-                    <input type="checkbox" class="form-check-input" id="authCheck" />
-                    <label class="form-check-label" for="authCheck">Remember me</label>
-                  </div>
-                  <div>
-                    <button type="submit" class="btn btn-primary me-2">Create Account</button>
-                  </div>
-                
-                </form>
-                
+        <form (ngSubmit)="onRegister($event)">
+          <!-- Company Name -->
+          <div class="form-group form-floating-line mb-4">
+            <input type="text"
+                   class="form-control no-border"
+                   id="orgName"
+                   name="organizationName"
+                   placeholder="Company Name"
+                   [(ngModel)]="organizationName"
+                   disabled />
+          
+          </div>
+
+          <!-- Email / Username -->
+          <div class="form-group form-floating-line mb-4">
+            <input type="text"
+                   class="form-control no-border"
+                   id="email"
+                   name="email"
+                   placeholder="This is your email address"
+                   [(ngModel)]="email"
+                   disabled />
+         
+          </div>
+
+          <!-- Password -->
+          <div class="form-group form-floating-line mb-4">
+            <input type="password"
+                   class="form-control no-border"
+                   id="password"
+                   name="password"
+                   placeholder="Password"
+                   [(ngModel)]="password"
+                   required
+                   minlength="8"
+                   [pattern]="pattern"
+                   #passwordModel="ngModel" />
+         
+            <div *ngIf="passwordModel.invalid && passwordModel.touched" class="text-danger mt-1">
+              <div *ngIf="passwordModel.errors?.['required']">Password is required.</div>
+              <div *ngIf="passwordModel.errors?.['minlength']">Minimum 8 characters required.</div>
+              <div *ngIf="passwordModel.errors?.['pattern']">
+                Must include uppercase, lowercase, number, and special character.
               </div>
             </div>
           </div>
-        </div>
+
+          <!-- Confirm Password -->
+          <div class="form-group form-floating-line mb-4">
+            <input type="password"
+                   class="form-control no-border"
+                   id="confirmPassword"
+                   name="confirmPassword"
+                   placeholder="Confirm Password"
+                   [(ngModel)]="confirmPassword"
+                   required />
+
+          </div>
+
+          <!-- Remember Me -->
+          <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" id="authCheck" />
+            <label class="form-check-label" for="authCheck">Remember me</label>
+          </div>
+
+          <!-- Submit -->
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Create Account</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
+</div>
