@@ -7,21 +7,29 @@ import { NavItem } from '../models/nav-item';
 export class NavService {
   private navConfig: { [key: string]: NavItem[] } = {
     '/admin': [
-      { label: 'Inbox', icon: 'feather icon-mail', route: '/admin/messages' },
-      { label: 'Notifications', icon: 'feather icon-bell', route: '/admin/notifications' }
+
+    ],
+    '/admin/company': [
+      { label: 'Invoicing', icon: '', route: '/admin/settings/branding' },
+      { label: 'Estimates', icon: '', route: '/general/edit-profile' },
+      { label: 'Team Management', icon: '', route: '/general/edit-profile' }
     ],
     '/admin/settings/branding': [
-      { label: 'Branding', icon: 'feather icon-user', route: '/admin/settings/branding' },
-      { label: 'Edit Profile', icon: 'feather icon-edit', route: '/general/edit-profile' }
+      { label: 'Branding', icon: '', route: '/admin/settings/branding' },
+      { label: 'Edit Profile', icon: '', route: '/general/edit-profile' }
+    ],
+    '/admin/messaging': [
+      { label: 'Employees', icon: '', route: '/admin/settings/branding' },
+      { label: 'Clients', icon: '', route: '/general/edit-profile' }
     ]
   };
 
-getNavItems(path: string): NavItem[] {
-  const matchingKey = Object.keys(this.navConfig)
-    .filter(key => path.startsWith(key))
-    .sort((a, b) => b.length - a.length)[0]; // longest match
+  getNavItems(path: string): NavItem[] {
+    const matchingKey = Object.keys(this.navConfig)
+      .filter(key => path.startsWith(key))
+      .sort((a, b) => b.length - a.length)[0]; // longest match
 
-  return matchingKey ? this.navConfig[matchingKey] : [];
-}
+    return matchingKey ? this.navConfig[matchingKey] : [];
+  }
 
 }

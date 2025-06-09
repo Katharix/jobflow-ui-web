@@ -12,6 +12,8 @@ import { OnboardingChecklistComponent } from './views/general/onboarding-checkli
 import { onboardingGuard } from './services/onboarding.guard';
 import { redirectIfOnboardedGuard } from './services/redirect-if-onboarded.guard';
 import { BrandingComponent } from './views/general/onboarding-checklist/onboarding-steps/branding/branding.component';
+import { CompanyComponent } from './views/admin-views/general/company/company.component';
+import { ChatComponent } from './views/admin-views/general/chat/chat.component';
 
 
 export const routes: Routes = [
@@ -28,7 +30,9 @@ export const routes: Routes = [
     //canActivateChild: [onboardingGuard], // ✅ guard only post-onboarding routes
     children: [
       { path: '', component: DashboardComponent },
-      { path:'settings/branding', component:  BrandingComponent}
+      { path: 'settings/branding', component:  BrandingComponent },
+      { path: 'messaging', component: ChatComponent },
+      { path: 'company', component: CompanyComponent }
     ]
   },
   {

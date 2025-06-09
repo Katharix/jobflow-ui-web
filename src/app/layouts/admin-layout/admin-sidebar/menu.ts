@@ -9,6 +9,7 @@ export const MENU: MenuItem[] = [
   {
     label: 'Company',
     icon: 'briefcase',
+    link: '/admin/company',
     // subItems: [
     //   {
     //     label: 'Jobs',
@@ -45,7 +46,7 @@ export const MENU: MenuItem[] = [
   {
     label: 'Messaging',
     icon: 'message-square',
-    link: '/apps/chat',
+    link: '/admin//messaging',
   },
   {
     label: 'Employees',

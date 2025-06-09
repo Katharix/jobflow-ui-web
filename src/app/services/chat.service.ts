@@ -1,13 +1,18 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
+import { environment } from '../../environments/environment';
+
+
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
   private hubConnection!: signalR.HubConnection;
 
+  constructor() {}
+
   startConnection(): void {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('/hubs/chat') // Adjust API base URL if needed
+      .withUrl(`${environment.baseUrl.replace(/\/$/, '')}/hubs/chat`) // ensure no double slash
       .withAutomaticReconnect()
       .build();
 

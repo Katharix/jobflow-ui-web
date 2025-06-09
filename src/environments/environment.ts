@@ -1,6 +1,7 @@
 export const environment = {
   production: false,
   apiUrl: 'https://localhost:44398/api',
+  baseUrl: 'https://localhost:44398',
   stripeSettings: {
     goMonthlyPrice: 'price_1RCsrMEKX7voND9YOTQ6qU3g',
     goYearlyPrice: 'price_1RCsrMEKX7voND9YD27S46RA',
