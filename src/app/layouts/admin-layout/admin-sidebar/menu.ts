@@ -9,39 +9,38 @@ export const MENU: MenuItem[] = [
   {
     label: 'Company',
     icon: 'briefcase',
-    link: '/admin/company',
-    // subItems: [
-    //   {
-    //     label: 'Jobs',
-    //     icon: 'check-circle',
-    //     link: '/apps/email/inbox',
-    //   },
-    //   {
-    //     label: 'Scheduling',
-    //     icon: 'calendar',
-    //     link: '/apps/email/inbox',
-    //   },
-    //   {
-    //     label: 'Invoicing',
-    //     icon: 'file-text',
-    //     link: '/apps/email/inbox',
-    //   },
-    //   {
-    //     label: 'Estimates',
-    //     icon: 'file',
-    //     link: '/apps/email/inbox',
-    //   },
-    //   {
-    //     label: 'Tracking',
-    //     icon: 'navigation',
-    //     link: '/apps/email/inbox',
-    //   },
-    //   {
-    //     label: 'Settings',
-    //     icon: 'settings',
-    //     link: '/apps/email/inbox',
-    //   }
-    // ]
+    subItems: [
+      {
+        label: 'Jobs',
+        icon: '',
+        link: '/apps/email/inbox',
+      },
+      {
+        label: 'Scheduling',
+        icon: 'calendar',
+        link: '/apps/email/inbox',
+      },
+      {
+        label: 'Invoicing',
+        icon: 'file-text',
+        link: '/apps/email/inbox',
+      },
+      {
+        label: 'Estimates',
+        icon: 'file',
+        link: '/apps/email/inbox',
+      },
+      {
+        label: 'Tracking',
+        icon: 'navigation',
+        link: '/apps/email/inbox',
+      },
+      {
+        label: 'Settings',
+        icon: 'settings',
+        link: '/admin/settings/branding',
+      }
+    ]
   },
   {
     label: 'Messaging',
@@ -62,11 +61,6 @@ export const MENU: MenuItem[] = [
     label: 'Reporting',
     icon: 'bar-chart-2',
     link: '/apps/chat',
-  },
-  {
-    label: 'Settings',
-    icon: 'settings',
-    link: '/admin/settings/branding',
   },
   {
     label: 'Help',

@@ -5,4 +5,5 @@ export interface BrandingDto {
   businessName?: string;
   tagline?: string;
   footerNote?: string;
+   organizationId: string;
 }

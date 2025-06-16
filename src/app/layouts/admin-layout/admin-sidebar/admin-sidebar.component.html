@@ -1,97 +1,105 @@
 <nav class="sidebar">
-    <div class="sidebar-header">
-  
-      <!--- Logo -->
-      <a routerLink="/" class="sidebar-brand">
-        <img src="/assets/public/images/Asset 2.png" alt="" class="logo-light" style="height: 30px;" />
-      </a>
-  
-      <!-- <a routerLink="/" class="sidebar-brand">
+  <div class="sidebar-header">
+
+    <!--- Logo -->
+    <a routerLink="/" class="sidebar-brand">
+      <img src="/assets/public/images/Asset 2.png" alt="" class="logo-light" style="height: 30px;" />
+    </a>
+
+    <!-- <a routerLink="/" class="sidebar-brand">
         <img src="images/logo.png" alt="logo">
       </a> -->
-  
-      <!--- Toggler -->
-      <div class="sidebar-toggler" #sidebarToggler (click)="toggleSidebar($event)">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-  
+
+    <!--- Toggler -->
+    <div class="sidebar-toggler" #sidebarToggler (click)="toggleSidebar($event)">
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
-    <div class="sidebar-body" (mouseenter)="operSidebarFolded()" (mouseleave)="closeSidebarFolded()">
-  
-      <!--- Sidemenu start -->
-  
-      <ng-scrollbar orientation="vertical" appearance="compact">
-  
-        <ul class="sidebar-nav metismenu" id="sidebar-menu" #sidebarMenu>
-  
-          @for (item of menuItems; track item.label) {
-            
-            <!-- nav item title -->
-            @if (item.isTitle) {
-              <li class="nav-item nav-category">{{ item.label }}</li>
-            } 
-  
-            <!-- nav item -->
-            @else {
-              <li class="nav-item">
-                <!-- nav item with submenu -->
-                @if (hasItems(item)) {
-                  <a class="nav-link" href="javascript:void(0);">
-                    <i class="link-icon" [attr.data-feather]="item.icon" appFeatherIcon></i>
-                    <span class="link-title"> {{ item.label }}</span>
-                    <span class="link-arrow" data-feather="chevron-down" appFeatherIcon></span>
+
+  </div>
+  <div class="sidebar-body" (mouseenter)="operSidebarFolded()" (mouseleave)="closeSidebarFolded()">
+
+    <!--- Sidemenu start -->
+
+    <ng-scrollbar orientation="vertical" appearance="compact">
+
+      <ul class="sidebar-nav metismenu" id="sidebar-menu" #sidebarMenu>
+
+        @for (item of menuItems; track item.label) {
+
+        <!-- nav item title -->
+        @if (item.isTitle) {
+        <li class="nav-item nav-category">{{ item.label }}</li>
+        }
+
+        <!-- nav item -->
+        @else {
+        <li class="nav-item">
+          <!-- nav item with submenu -->
+          @if (hasItems(item)) {
+          <a class="nav-link" href="javascript:void(0);">
+            <i class="link-icon" [attr.data-feather]="item.icon" appFeatherIcon></i>
+            <span class="link-title"> {{ item.label }}</span>
+            <span class="link-arrow" data-feather="chevron-down" appFeatherIcon></span>
+          </a>
+          <ul class="sidebar-nav sub-menu nav-second-level" aria-expanded="false">
+            @for (subitem of item.subItems; track subitem.label) {
+            <li class="nav-item" [ngClass]="{'side-nav-item': hasItems(subitem)}">
+              <!-- nav link with submenu -->
+              @if (hasItems(subitem)) {
+              <a class="nav-link side-nav-link-a-ref" href="javascript:void(0);">
+                <span class="link-title"> {{ subitem.label }}</span>
+                <span class="link-arrow" data-feather="chevron-down" appFeatherIcon></span>
+              </a>
+              <ul class="sidebar-nav sub-menu nav-third-level" aria-expanded="false">
+                @for (subSubitem of subitem.subItems; track subSubitem.label) {
+                <li class="nav-item">
+                  <a class="nav-link nav-link-ref" [routerLink]="subSubitem.link" [routerLinkActive]="['active']">
+                    {{ subSubitem.label }}
                   </a>
-                  <ul class="sidebar-nav sub-menu nav-second-level" aria-expanded="false">
-                    @for (subitem of item.subItems; track subitem.label) {
-                      <li class="nav-item" [ngClass]="{'side-nav-item': hasItems(subitem)}">
-                        <!-- nav link with submenu -->
-                        @if (hasItems(subitem)) {
-                          <a class="nav-link side-nav-link-a-ref" href="javascript:void(0);">
-                            <span class="link-title"> {{ subitem.label }}</span>
-                            <span class="link-arrow" data-feather="chevron-down" appFeatherIcon></span>
-                          </a>
-                          <ul class="sidebar-nav sub-menu nav-third-level" aria-expanded="false">
-                            @for (subSubitem of subitem.subItems; track subSubitem.label) {
-                              <li class="nav-item">
-                                <a class="nav-link nav-link-ref" [routerLink]="subSubitem.link" [routerLinkActive]="['active']">
-                                  {{ subSubitem.label }}
-                                </a>
-                              </li>
-                            }
-                          </ul>
-                        }
-                        <!-- nav link without submenu -->
-                        @else {
-                          <a class="nav-link nav-link-ref" [routerLink]="subitem.link">
-                            {{ subitem.label }}
-                          </a>
-                        }
-                      </li>
-                    }
-                  </ul>
+                </li>
                 }
-                <!-- nav item without submenu -->
-                @else {
-                  <a class="nav-link nav-link-ref" [routerLink]="item.link">
-                    <i class="link-icon" [attr.data-feather]="item.icon" appFeatherIcon></i>
-                    <span class="link-title"> {{ item.label }}</span>
-                    @if (item.badge) {
-                      <span class="badge bg-{{item.badge.variant}}">{{item.badge.text}}</span>
-                    }
-                  </a>
-                }
-              </li>
+              </ul>
+              }
+              <!-- nav link without submenu -->
+              @else {
+              <a class="nav-link nav-link-ref" [routerLink]="subitem.link">
+                {{ subitem.label }}
+              </a>
+              }
+            </li>
             }
-          
+          </ul>
           }
-  
-        </ul>
-  
-      </ng-scrollbar>
-  
-      <!--- Sidemenu end -->
-  
-    </div>
-  </nav>
+          <!-- nav item without submenu -->
+          @else {
+          <a class="nav-link nav-link-ref" [routerLink]="item.link">
+            <i class="link-icon" [attr.data-feather]="item.icon" appFeatherIcon></i>
+            <span class="link-title"> {{ item.label }}</span>
+            @if (item.badge) {
+            <span class="badge bg-{{item.badge.variant}}">{{item.badge.text}}</span>
+            }
+          </a>
+          }
+        </li>
+        }
+
+        }
+        <li>
+          <div class="sidebar-footer">
+            <a routerLink="/user-profile"
+              class="sidebar-footer-link d-flex align-items-center justify-content-start px-3 py-2">
+              <i data-feather="user" appFeatherIcon class="me-2"></i>
+              <span>User Profile</span>
+            </a>
+          </div>
+        </li>
+      </ul>
+    </ng-scrollbar>
+    <!--- Sidemenu end -->
+
+  </div>
+
+
+</nav>

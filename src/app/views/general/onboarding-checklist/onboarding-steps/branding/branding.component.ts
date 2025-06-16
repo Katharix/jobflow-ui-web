@@ -7,6 +7,9 @@ import { BlockComponent, ColorBlockModule } from 'ngx-color/block';
 import { ColorTwitterModule } from 'ngx-color/twitter';
 import { OrganizationDto } from '../../../../../models/organization';
 import { OrganizationContextService } from '../../../../../services/shared/organization-context.service';
+import { OrganizationBrandingService } from '../../../../../services/organization-branding.service';
+import { BrandingDto } from '../../../../../models/organization-branding';
+import { FileUploadService } from '../../../../../services/file-upload.service';
 
 @Component({
   selector: 'app-branding',
@@ -19,13 +22,16 @@ export class BrandingComponent {
   organization: OrganizationDto
   brandingForm!: FormGroup;
   logoPreview: string | null = null;
+  imageUrl: string | null = null;
+  uploadedLogo: File;
 
   constructor(
     private fb: FormBuilder,
-    private orgContext: OrganizationContextService
-  ) 
-    {
-       this.orgContext.org$.subscribe(org => {
+    private orgContext: OrganizationContextService,
+    private brandingService: OrganizationBrandingService,
+    private uploadService: FileUploadService
+  ) {
+    this.orgContext.org$.subscribe(org => {
       if (org) {
         this.organization = org;
       }
@@ -46,6 +52,7 @@ export class BrandingComponent {
       const reader = new FileReader();
       reader.onload = () => this.logoPreview = reader.result as string;
       reader.readAsDataURL(file);
+      this.uploadedLogo = file;
     }
   }
   onPrimaryColorChange(event: any) {
@@ -66,12 +73,34 @@ export class BrandingComponent {
     };
   }
 
-  onSave(): void {
-  if (this.brandingForm.valid) {
-    const formData = this.brandingForm.value;
-    // TODO: send formData to API
-    console.log('Saving branding settings...', formData);
-  }
+ onSave(): void {
+  if (this.brandingForm.invalid) return;
+
+  this.uploadService.uploadImage(
+    this.uploadedLogo,
+    'company_logos_unsigned',
+    `jobflow/companies/${this.organization.id}/images/logo`
+  ).subscribe({
+    next: (url) => {
+      this.imageUrl = url;
+
+      const payload: BrandingDto = {
+        organizationId: this.organization.id,
+        ...this.brandingForm.value,
+        logoUrl: url // ✅ use the actual url from Cloudinary
+      };
+
+      this.brandingService.createOrUpdateBranding(payload).subscribe({
+        next: res => {
+          console.log('✅ Branding saved successfully:', res);
+        },
+        error: err => {
+          console.error('❌ Error saving branding:', err);
+        }
+      });
+    },
+    error: (err) => console.error('❌ Upload failed:', err)
+  });
 }
 
 }
