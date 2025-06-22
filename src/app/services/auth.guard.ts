@@ -3,17 +3,20 @@ import { CanActivateFn, Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
+import { UserSessionService } from '../services/user-session.service'; // adjust path as needed
 
 export const authGuard: CanActivateFn = async (route, state) => {
   const auth = inject(Auth);
   const db = inject(Firestore);
   const router = inject(Router);
+  const session = inject(UserSessionService);
 
-  const allowedRoles = route.data?.['roles'] || []; // Array of allowed roles
+  const allowedRoles = route.data?.['roles'] || [];
 
   return new Promise<boolean>((resolve) => {
     onAuthStateChanged(auth, async (user) => {
-      if (!user) {
+      if (!user || session.isSessionExpired()) {
+        session.clearSession(); // remove token + keys
         router.navigate(['/auth/login']);
         return resolve(false);
       }
@@ -22,6 +25,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
       const userSnap = await getDoc(userDoc);
 
       if (!userSnap.exists()) {
+        session.clearSession();
         router.navigate(['/auth/login']);
         return resolve(false);
       }
@@ -32,7 +36,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
         return resolve(true);
       }
 
-      router.navigate(['/unauthorized']); // optional page
+      router.navigate(['/unauthorized']);
       resolve(false);
     });
   });

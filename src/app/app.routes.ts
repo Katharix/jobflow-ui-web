@@ -27,7 +27,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayoutComponent,
-    //canActivateChild: [onboardingGuard], // ✅ guard only post-onboarding routes
+    canActivate: [authGuard], // ✅ guard only post-onboarding routes
     children: [
       { path: '', component: DashboardComponent },
       { path: 'settings/branding', component:  BrandingComponent },

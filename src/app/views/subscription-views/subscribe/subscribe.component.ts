@@ -35,7 +35,7 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
   zipCode: string = '';
   error: string = '';
   organizationTypes: OrganizationType[] = [];
-  selectedOrganizationTypeId: string = '';
+  selectedOrganizationTypeId: string = '00000000-0000-0000-0000-000000000000';
   planId: string = '';
   usStates = US_STATES;
   twilioConsent: boolean = false;

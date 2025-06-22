@@ -1,25 +1,32 @@
 // loading-service.service.ts
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class LoadingService {
   private _loading = new BehaviorSubject<boolean>(false);
-  isLoading$ = this._loading.asObservable();
+  isLoading$: Observable<boolean> = this._loading.asObservable().pipe(
+    debounceTime(100),            // ✅ Avoids flicker from quick toggles
+    distinctUntilChanged()        // ✅ Avoids repeated same values
+  );
 
   private loadingCount = 0;
 
   show() {
     this.loadingCount++;
-    console.log('Show spinner. Loading count:', this.loadingCount);
     this._loading.next(true);
   }
 
   hide() {
     this.loadingCount = Math.max(0, this.loadingCount - 1);
-    console.log('Hide spinner. Loading count:', this.loadingCount);
     if (this.loadingCount === 0) {
       this._loading.next(false);
     }
+  }
+
+  reset() {
+    this.loadingCount = 0;
+    this._loading.next(false);
   }
 }

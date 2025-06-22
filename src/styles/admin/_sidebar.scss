@@ -412,7 +412,7 @@
 
   .sidebar-footer {
     border-top: 1px solid rgba(255, 255, 255, 0.05);
-    // background-color: $sidebar-bg;
+    background: $primary;
   }
 
   .sidebar-footer-link {
@@ -432,3 +432,82 @@
   }
 }
 
+.sidebar-footer-btn {
+  padding: 15px !important;
+  border-radius: 8px;
+  min-height: 55px;
+  font-size: 16px;
+  background-color: #315BD8;
+}
+
+.sidebar-drop-menu {
+  width: 220px;
+  min-height: 150px;
+  margin-bottom: 10px !important;
+}
+
+.drop-menu-header {
+  min-height: 60px;
+  background-color: $gray-100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.drop-menu-item {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+    &:hover {
+      background-color: #A9BBEF;
+      color: $white !important;
+    }
+}
+
+.dropdown-item {
+  font-size: 16px !important;
+  
+    &:hover {
+      background-color: #A9BBEF;
+      color: $white !important;
+    }
+}
+
+.drop-menu-item {
+  position: relative; /* ensures a reference for absolute sizing if needed */
+  padding: 0; /* remove padding if any */
+}
+
+.drop-menu-item > a.dropdown-item {
+  display: block;       /* ensures it takes full width */
+  width: 100%;          /* fills horizontal space */
+  height: 100%;         /* fills vertical space */
+  padding: 0.75rem 1rem; /* optional: controls clickable padding inside */
+  line-height: inherit; /* match li height */
+}
+
+
+.dropdown-item:hover,
+.dropdown-item:active,
+.dropdown-item.active {
+  background-color: transparent !important;
+   color: $white !important;
+}
+
+.sidebar-nav-item{
+ margin: 20px !important;
+}
+
+.sidebar-footer-nav{
+    list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-link-title, .sidebar-link-icon{
+  color: $white;
+  font-size: 16px !important;
+}

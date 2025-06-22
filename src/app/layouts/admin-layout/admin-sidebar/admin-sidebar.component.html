@@ -86,20 +86,50 @@
         }
 
         }
-        <li>
-          <div class="sidebar-footer">
-            <a routerLink="/user-profile"
-              class="sidebar-footer-link d-flex align-items-center justify-content-start px-3 py-2">
-              <i data-feather="user" appFeatherIcon class="me-2"></i>
-              <span>User Profile</span>
-            </a>
-          </div>
-        </li>
       </ul>
     </ng-scrollbar>
-    <!--- Sidemenu end -->
-
   </div>
 
+  <div class="sidebar-footer">
+    <ul class="sidebar-footer-nav">
+      <li class="sidebar-nav-item nav-category">
+        <a class="nav-link" href="javascript:void(0);">
+          <i class="sidebar-link-icon me-2" data-feather="help-circle" appFeatherIcon></i>
+          <span class="sidebar-link-title"> Help</span>
+        </a>
+      </li>
+      <li class="sidebar-nav-item">
+        <div class="dropup-center dropup">
+          <button class="btn btn-primary sidebar-footer-btn" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            <p>{{ org.organizationName }}</p>
+          </button>
+          <ul class="dropdown-menu sidebar-drop-menu shadow-sm border-0 rounded-3 p-0 overflow-hidden">
+            <li class="drop-menu-header">
+             <lucide-icon class="me-1" name="building-2"></lucide-icon>
+              {{ org.organizationName }}
 
+            </li>
+            <li>
+              <hr class="dropdown-divider my-0">
+            </li>
+            <li class="drop-menu-item">
+              <a class="dropdown-item px-3" href="javascript:void(0);" (click)="logout()">Logout</a>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider my-0">
+            </li>
+            <li class="drop-menu-item">
+              <a routerLink="/user-profile"
+                class="dropdown-item d-flex align-items-center justify-content-start px-3 py-2">
+                <span>User Profile</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+
+  </div>
 </nav>

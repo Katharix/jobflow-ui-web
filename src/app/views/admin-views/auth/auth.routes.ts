@@ -1,7 +1,7 @@
 // src/app/views/admin-views/auth/auth.routes.ts
 import { Routes } from '@angular/router';
 import { AuthLayoutComponent } from '../../../layouts/auth-layout/auth-layout.component';
-import { firebaseProviders } from '../../../firebase.providers';
+import { AuthRedirectGuard } from '../../../services/auth-redirect.guard';
 
 export default [
   {
@@ -13,13 +13,13 @@ export default [
         path: 'login',
         loadComponent: () =>
           import('./login/login.component').then((c) => c.LoginComponent),
-        providers: [...firebaseProviders]
+         canActivate: [AuthRedirectGuard]
       },
       {
         path: 'register',
         loadComponent: () =>
           import('./register/register.component').then((c) => c.RegisterComponent),
-        providers: [...firebaseProviders]
+        canActivate: [AuthRedirectGuard]
       },
     ],
   },

@@ -16,7 +16,7 @@
               <input type="text" class="form-control no-border" placeholder="Company Name"
                 [(ngModel)]="organizationName" name="organizationName" required minlength="2"
                 #companyNameCtrl="ngModel" />
-              
+
               <div *ngIf="companyNameCtrl.invalid && companyNameCtrl.touched" class="text-danger small">
                 <div *ngIf="companyNameCtrl.errors?.['required']">Company name is required.</div>
                 <div *ngIf="companyNameCtrl.errors?.['minlength']">Minimum 2 characters.</div>
@@ -24,14 +24,20 @@
             </div>
 
             <div class="col-md-6 mb-4 form-floating-line">
-              <select class="form-select no-border" [(ngModel)]="selectedOrganizationTypeId"
-                name="organizationType" required #orgTypeCtrl="ngModel">
-                <option [ngValue]="null" disabled selected>Select company type</option>
+              <select class="form-select no-border" [(ngModel)]="selectedOrganizationTypeId" name="organizationType"
+                required #orgTypeCtrl="ngModel">
+
+                <!-- Placeholder -->
+                <option [ngValue]="'00000000-0000-0000-0000-000000000000'" disabled hidden>
+                  Select company type
+                </option>
+
+                <!-- Real options -->
                 <option *ngFor="let type of organizationTypes" [ngValue]="type.id">
                   {{ type.typeName }}
                 </option>
               </select>
-              <label class="form-label">Type of Company</label>
+
               <div *ngIf="orgTypeCtrl.invalid && orgTypeCtrl.touched" class="text-danger small">
                 Please select a company type.
               </div>
@@ -43,7 +49,7 @@
             <div class="col-md-6 mb-4 form-floating-line">
               <input type="email" class="form-control no-border" placeholder="Email" [(ngModel)]="email" name="email"
                 required email #emailCtrl="ngModel" />
-             
+
               <div *ngIf="emailCtrl.invalid && emailCtrl.touched" class="text-danger small">
                 <div *ngIf="emailCtrl.errors?.['required']">Email is required.</div>
                 <div *ngIf="emailCtrl.errors?.['email']">Enter a valid email.</div>
@@ -51,9 +57,9 @@
             </div>
 
             <div class="col-md-6 mb-4 form-floating-line">
-              <input type="text" class="form-control no-border" placeholder="Phone Number"
-                [(ngModel)]="phoneNumber" name="phoneNumber" required #phoneCtrl="ngModel" />
-              
+              <input type="text" class="form-control no-border" placeholder="Phone Number" [(ngModel)]="phoneNumber"
+                name="phoneNumber" required #phoneCtrl="ngModel" />
+
               <div *ngIf="phoneCtrl.invalid && phoneCtrl.touched" class="text-danger small">
                 Phone number is required.
               </div>
@@ -64,7 +70,7 @@
           <div class="mb-4 form-floating-line">
             <input type="text" class="form-control no-border" placeholder="Business Address"
               [(ngModel)]="companyAddress" name="companyAddress" required #addressCtrl="ngModel" />
-          
+
             <div *ngIf="addressCtrl.invalid && addressCtrl.touched" class="text-danger small">
               Business address is required.
             </div>
@@ -73,13 +79,13 @@
           <div class="mb-4 form-floating-line">
             <input type="text" class="form-control no-border" placeholder="Business Address 2"
               [(ngModel)]="companyAddress2" name="companyAddress2" />
-           
+
           </div>
 
           <div class="mb-4 form-floating-line">
-            <input type="text" class="form-control no-border" placeholder="City" [(ngModel)]="city" name="city"
-              required #cityCtrl="ngModel" />
-          
+            <input type="text" class="form-control no-border" placeholder="City" [(ngModel)]="city" name="city" required
+              #cityCtrl="ngModel" />
+
             <div *ngIf="cityCtrl.invalid && cityCtrl.touched" class="text-danger small">
               City is required.
             </div>
@@ -92,7 +98,7 @@
                 <option [ngValue]="null" disabled selected>Select state</option>
                 <option *ngFor="let s of usStates" [value]="s.code">{{ s.name }}</option>
               </select>
-            <label class="form-label">State</label>
+              <label class="form-label">State</label>
               <div *ngIf="stateCtrl.invalid && stateCtrl.touched" class="text-danger small">
                 State is required.
               </div>
@@ -101,7 +107,7 @@
             <div class="col-md-6 mb-4 form-floating-line">
               <input type="text" class="form-control no-border" placeholder="Zip Code" [(ngModel)]="zipCode"
                 name="zipCode" required pattern="^[0-9]{5}$" #zipCtrl="ngModel" />
-              
+
               <div *ngIf="zipCtrl.invalid && zipCtrl.touched" class="text-danger small">
                 <div *ngIf="zipCtrl.errors?.['required']">Zip code is required.</div>
                 <div *ngIf="zipCtrl.errors?.['pattern']">Zip code must be 5 digits.</div>

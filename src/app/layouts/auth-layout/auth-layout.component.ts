@@ -1,8 +1,9 @@
-import { ChangeDetectorRef, Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, inject } from '@angular/core';
 import { RouteConfigLoadEnd, RouteConfigLoadStart, Router, RouterOutlet } from '@angular/router';
 import { PreloaderComponent } from "../../landing/preloader.component";
 import { LoadingService } from '../../services/loading-service.service';
 import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-auth-layout',
@@ -12,21 +13,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './auth-layout.component.scss',
   encapsulation: ViewEncapsulation.None
 })
-export class AuthLayoutComponent implements OnInit {
-
-  isLoading: boolean = false;
-  private router = inject(Router);
+export class AuthLayoutComponent {
   private loadingService = inject(LoadingService);
-  private cdr = inject(ChangeDetectorRef);
-  constructor() {}
-
-  ngOnInit(): void {
-    this.loadingService.isLoading$.subscribe(value => {
-      // Use setTimeout to push change detection to the next cycle
-      setTimeout(() => {
-        this.isLoading = value;
-        this.cdr.detectChanges(); // <-- Safely tell Angular to recheck
-      });
-    });
-  }
+  isLoading$: Observable<boolean> = this.loadingService.isLoading$;
 }

@@ -22,4 +22,10 @@ export class OrganizationContextService {
       this.orgSubject.next(JSON.parse(raw));
     }
   }
+
+  clearOrganization() {
+    localStorage.removeItem('org');
+    this.orgSubject.next(null);
+  }
+
 }

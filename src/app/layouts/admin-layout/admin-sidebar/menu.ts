@@ -61,12 +61,7 @@ export const MENU: MenuItem[] = [
     label: 'Reporting',
     icon: 'bar-chart-2',
     link: '/apps/chat',
-  },
-  {
-    label: 'Help',
-    icon: 'help-circle',
-    link: '/apps/chat',
-  },
+  }
   // {
   //   label: 'Calendar',
   //   icon: 'calendar',

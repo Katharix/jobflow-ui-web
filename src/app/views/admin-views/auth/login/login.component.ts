@@ -26,6 +26,7 @@ export class LoginComponent implements OnInit {
   email = '';
   password = '';
   error: string | null = null;
+  rememberMe = true;
   
   constructor(
     private auth: Auth,
@@ -43,7 +44,8 @@ export class LoginComponent implements OnInit {
     e.preventDefault();
     try {
       // ✅ Step 1: Sign in with Firebase
-      await this.authService.login(this.email, this.password);
+    await this.authService.login(this.email, this.password);
+
   
       // ✅ Step 2: Get the ID token
       const currentUser = this.auth.currentUser;

@@ -12,15 +12,8 @@
         <form #form="ngForm" (ngSubmit)="onLoggedin($event)">
           <!-- Email -->
           <div class="form-group form-floating-line mb-4">
-            <input type="email"
-                   class="form-control no-border"
-                   id="email"
-                   name="email"
-                   placeholder="Email"
-                   [(ngModel)]="email"
-                   required
-                   email
-                   #emailModel="ngModel" />
+            <input type="email" class="form-control no-border" id="email" name="email" placeholder="Email"
+              [(ngModel)]="email" required email #emailModel="ngModel" />
             <!-- <label for="email" class="form-label">Email address</label> -->
             <div *ngIf="emailModel.invalid && emailModel.touched" class="text-danger mt-1">
               <div *ngIf="emailModel.errors?.['required']">Email is required.</div>
@@ -30,15 +23,8 @@
 
           <!-- Password -->
           <div class="form-group form-floating-line mb-4">
-            <input type="password"
-                   class="form-control no-border"
-                   id="password"
-                   name="password"
-                   placeholder="Password"
-                   [(ngModel)]="password"
-                   required
-                   minlength="6"
-                   #passwordModel="ngModel" />
+            <input type="password" class="form-control no-border" id="password" name="password" placeholder="Password"
+              [(ngModel)]="password" required minlength="6" #passwordModel="ngModel" />
             <!-- <label for="password" class="form-label">Password</label> -->
             <div *ngIf="passwordModel.invalid && passwordModel.touched" class="text-danger mt-1">
               <div *ngIf="passwordModel.errors?.['required']">Password is required.</div>
@@ -51,17 +37,9 @@
             {{ error }}
           </div>
 
-          <!-- Remember Me -->
-          <div class="form-check mb-3">
-            <input type="checkbox" class="form-check-input" id="authCheck" />
-            <label class="form-check-label" for="authCheck">Remember me</label>
-          </div>
-
           <!-- Buttons -->
           <div class="d-grid gap-2">
-            <button type="submit"
-                    class="btn btn-primary"
-                    [disabled]="form.invalid">
+            <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
               Login
             </button>
             <button type="button" class="btn btn-outline-dark" (click)="loginWithGoogle()">
