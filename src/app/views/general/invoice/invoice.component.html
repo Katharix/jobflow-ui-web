@@ -16,7 +16,8 @@
               </p>
               <h5 class="mt-5 mb-2 text-secondary">Invoice to :</h5>
               <p>{{ invoice?.organizationClient?.firstName }} {{ invoice?.organizationClient?.lastName }}<br> {{
-                invoice?.organizationClient?.address1 }}<span *ngIf="invoice?.organizationClient?.address2">{{ invoice?.organizationClient?.address2 }},</span><br> {{
+                invoice?.organizationClient?.address1 }}<span *ngIf="invoice?.organizationClient?.address2">{{
+                  invoice?.organizationClient?.address2 }},</span><br> {{
                 invoice?.organizationClient?.city }}, {{ invoice?.organizationClient?.state }}, {{
                 invoice?.organizationClient?.zipCode }}</p>
             </div>
@@ -88,10 +89,12 @@
             </div>
           </div>
           <div class="container-fluid w-100">
-            <a routerLink="." class="btn btn-primary float-end mt-4 ms-2"><i data-feather="send" appFeatherIcon
-                class="me-2 icon-md"></i>Pay Invoice</a>
-            <a routerLink="." class="btn btn-outline-primary float-end mt-4"><i data-feather="printer" appFeatherIcon
-                class="me-2 icon-md"></i>Download</a>
+            <a routerLink="." class="btn btn-primary float-end mt-4 ms-2"> <lucide-icon class="me-2 icon-md"
+                name="image"></lucide-icon>
+              Pay Invoice</a>
+            <a routerLink="." class="btn btn-outline-primary float-end mt-4"><lucide-icon class="me-2 icon-md"
+                name="printer"></lucide-icon>
+              Download</a>
           </div>
         </div>
       </div>

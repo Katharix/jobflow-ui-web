@@ -8,8 +8,6 @@ import MetisMenu from 'metismenujs';
 
 import { MENU } from './menu';
 import { MenuItem } from './menu.model';
-
-import { FeatherIconDirective } from '../../../core/feather-icon/feather-icon.directive';
 import { LogoutService } from '../../../services/logout.service';
 import { OrganizationContextService } from '../../../services/shared/organization-context.service';
 import { OrganizationDto } from '../../../models/organization';
@@ -23,8 +21,7 @@ import { OrganizationDto } from '../../../models/organization';
     NgScrollbar,
     NgClass,
     CommonModule,
-    LucideAngularModule,
-    FeatherIconDirective,
+    LucideAngularModule
   ],
   templateUrl: './admin-sidebar.component.html',
   styleUrl: './admin-sidebar.component.scss'

@@ -2,7 +2,6 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbCalendar, NgbDatepickerModule, NgbDateStruct, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { ApexOptions, NgApexchartsModule } from "ng-apexcharts";
-import { FeatherIconDirective } from '../../../core/feather-icon/feather-icon.directive';
 import { ThemeCssVariableService, ThemeCssVariablesType } from '../../../core/services/theme-css-variable.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Organization, OrganizationDto, OrganizationRequest } from '../../../models/organization';

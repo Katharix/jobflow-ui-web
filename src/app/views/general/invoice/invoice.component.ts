@@ -3,13 +3,13 @@ import { InvoiceService } from '../../../services/invoice.service';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Invoice } from '../../../models/invoice';
-import { finalize } from 'rxjs';
+import { LucideAngularModule } from 'lucide-angular';
 import { LoadingService } from '../../../services/loading-service.service';
 
 @Component({
   selector: 'app-invoice',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './invoice.component.html',
   styleUrls: ['./invoice.component.scss']
 })

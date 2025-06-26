@@ -1,20 +1,19 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FeatherIconDirective } from '../../../../../core/feather-icon/feather-icon.directive';
-import { SketchComponent } from 'ngx-color/sketch';
-import { BlockComponent, ColorBlockModule } from 'ngx-color/block';
+import { ColorBlockModule } from 'ngx-color/block';
 import { ColorTwitterModule } from 'ngx-color/twitter';
 import { OrganizationDto } from '../../../../../models/organization';
 import { OrganizationContextService } from '../../../../../services/shared/organization-context.service';
 import { OrganizationBrandingService } from '../../../../../services/organization-branding.service';
 import { BrandingDto } from '../../../../../models/organization-branding';
 import { FileUploadService } from '../../../../../services/file-upload.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-branding',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FeatherIconDirective, ColorBlockModule, ColorTwitterModule],
+  imports: [CommonModule, ReactiveFormsModule, ColorBlockModule, ColorTwitterModule, LucideAngularModule],
   templateUrl: './branding.component.html',
   styleUrl: './branding.component.scss'
 })

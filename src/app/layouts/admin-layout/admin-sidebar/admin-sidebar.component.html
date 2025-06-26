@@ -6,10 +6,6 @@
       <img src="/assets/public/images/Asset 2.png" alt="" class="logo-light" style="height: 30px;" />
     </a>
 
-    <!-- <a routerLink="/" class="sidebar-brand">
-        <img src="images/logo.png" alt="logo">
-      </a> -->
-
     <!--- Toggler -->
     <div class="sidebar-toggler" #sidebarToggler (click)="toggleSidebar($event)">
       <span></span>
@@ -39,9 +35,9 @@
           <!-- nav item with submenu -->
           @if (hasItems(item)) {
           <a class="nav-link" href="javascript:void(0);">
-            <i class="link-icon" [attr.data-feather]="item.icon" appFeatherIcon></i>
+            <lucide-icon class="link-icon" [name]="item.icon"></lucide-icon>
             <span class="link-title"> {{ item.label }}</span>
-            <span class="link-arrow" data-feather="chevron-down" appFeatherIcon></span>
+            <lucide-icon class="link-arrow" name="chevron-down"></lucide-icon>
           </a>
           <ul class="sidebar-nav sub-menu nav-second-level" aria-expanded="false">
             @for (subitem of item.subItems; track subitem.label) {
@@ -50,7 +46,7 @@
               @if (hasItems(subitem)) {
               <a class="nav-link side-nav-link-a-ref" href="javascript:void(0);">
                 <span class="link-title"> {{ subitem.label }}</span>
-                <span class="link-arrow" data-feather="chevron-down" appFeatherIcon></span>
+                <lucide-icon class="link-arrow" name="chevron-down"></lucide-icon>
               </a>
               <ul class="sidebar-nav sub-menu nav-third-level" aria-expanded="false">
                 @for (subSubitem of subitem.subItems; track subSubitem.label) {
@@ -75,7 +71,7 @@
           <!-- nav item without submenu -->
           @else {
           <a class="nav-link nav-link-ref" [routerLink]="item.link">
-            <i class="link-icon" [attr.data-feather]="item.icon" appFeatherIcon></i>
+            <lucide-icon class="link-icon" [name]="item.icon"></lucide-icon>
             <span class="link-title"> {{ item.label }}</span>
             @if (item.badge) {
             <span class="badge bg-{{item.badge.variant}}">{{item.badge.text}}</span>
@@ -94,7 +90,7 @@
     <ul class="sidebar-footer-nav">
       <li class="sidebar-nav-item nav-category">
         <a class="nav-link" href="javascript:void(0);">
-          <i class="sidebar-link-icon me-2" data-feather="help-circle" appFeatherIcon></i>
+          <lucide-icon class="sidebar-link-icon me-1" name="life-buoy"></lucide-icon>
           <span class="sidebar-link-title"> Help</span>
         </a>
       </li>
@@ -106,7 +102,7 @@
           </button>
           <ul class="dropdown-menu sidebar-drop-menu shadow-sm border-0 rounded-3 p-0 overflow-hidden">
             <li class="drop-menu-header">
-             <lucide-icon class="me-1" name="building-2"></lucide-icon>
+              <lucide-icon class="me-1" name="building-2"></lucide-icon>
               {{ org.organizationName }}
 
             </li>

@@ -21,6 +21,10 @@ export class NavService {
     '/admin/messaging': [
       { label: 'Employees', icon: '', route: '/admin/settings/branding' },
       { label: 'Clients', icon: '', route: '/general/edit-profile' }
+    ],
+        '/admin/employees': [
+      { label: 'Employees', icon: '', route: '/admin/employees' },
+      { label: 'Roles', icon: '', route: '/general/edit-profile' }
     ]
   };
 

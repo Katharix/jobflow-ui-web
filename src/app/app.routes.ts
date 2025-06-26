@@ -14,6 +14,7 @@ import { redirectIfOnboardedGuard } from './services/redirect-if-onboarded.guard
 import { BrandingComponent } from './views/general/onboarding-checklist/onboarding-steps/branding/branding.component';
 import { CompanyComponent } from './views/admin-views/general/company/company.component';
 import { ChatComponent } from './views/admin-views/general/chat/chat.component';
+import { EmployeesComponent } from './views/admin-views/general/employees/employees.component';
 
 
 export const routes: Routes = [
@@ -32,7 +33,8 @@ export const routes: Routes = [
       { path: '', component: DashboardComponent },
       { path: 'settings/branding', component:  BrandingComponent },
       { path: 'messaging', component: ChatComponent },
-      { path: 'company', component: CompanyComponent }
+      { path: 'company', component: CompanyComponent },
+      { path: 'employees', component: EmployeesComponent }
     ]
   },
   {

@@ -42,7 +42,6 @@
     "apexcharts": "^3.53.0",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.4",
-    "feather-icons": "^4.29.2",
     "firebase": "^11.5.0",
     "lucide-angular": "^0.522.0",
     "metismenujs": "^1.4.0",

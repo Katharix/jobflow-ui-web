@@ -3,7 +3,7 @@ import { MenuItem } from './menu.model';
 export const MENU: MenuItem[] = [
   {
     label: 'Home',
-    icon: 'home',
+    icon: 'house',
     link: '/admin'
   },
   {
@@ -44,22 +44,22 @@ export const MENU: MenuItem[] = [
   },
   {
     label: 'Messaging',
-    icon: 'message-square',
+    icon: 'messages-square',
     link: '/admin//messaging',
   },
   {
     label: 'Employees',
-    icon: 'users',
-    link: '/apps/chat',
+    icon: 'users-round',
+    link: '/admin/employees',
   },
   {
     label: 'Billing & Payments',
-    icon: 'credit-card',
+    icon: 'banknote',
     link: '/apps/chat',
   },
   {
     label: 'Reporting',
-    icon: 'bar-chart-2',
+    icon: 'chart-no-axes-combined',
     link: '/apps/chat',
   }
   // {
