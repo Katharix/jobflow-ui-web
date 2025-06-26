@@ -44,6 +44,7 @@
             ],
             "styles": [
               "node_modules/@rg-software/angular-archwizard/styles/archwizard.css",
+              "node_modules/@syncfusion/ej2-bootstrap5-theme/styles/bootstrap5.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -111,6 +112,7 @@
             ],
             "styles": [
               "node_modules/@rg-software/angular-archwizard/styles/archwizard.css",
+              "node_modules/@syncfusion/ej2-bootstrap5-theme/styles/bootstrap5.css",
               "src/styles.scss"
             ],
             "scripts": []

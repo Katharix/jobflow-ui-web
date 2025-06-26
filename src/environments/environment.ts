@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  syncFusionKey: 'Ngo9BigBOggjHTQxAR8/V1JEaF5cXmRCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXlcdnVSQmlcVEZxXkJWYEk=',
   apiUrl: 'https://localhost:44398/api',
   baseUrl: 'https://localhost:44398',
   stripeSettings: {
