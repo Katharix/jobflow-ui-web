@@ -24,6 +24,7 @@ export class NavService {
     ],
         '/admin/employees': [
       { label: 'Employees', icon: '', route: '/admin/employees' },
+      { label: 'Scheduling', icon: '', route: '/admin/employees/scheduling-employees' },
       { label: 'Roles', icon: '', route: '/general/edit-profile' }
     ]
   };

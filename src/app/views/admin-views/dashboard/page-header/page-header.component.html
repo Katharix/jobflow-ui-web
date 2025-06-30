@@ -1,0 +1,19 @@
+<div class="row align-items-start align-items-md-center justify-content-between mb-4 g-3">
+  <div class="col-12 col-md-auto">
+    <h1 class="h1 mb-1 text-primary fw-bold">{{ title }}</h1>
+    <small class="text-muted">{{ subtitle }}</small>
+  </div>
+  <div class="col-12 col-md-auto text-md-end" *ngIf="actions?.length">
+    <div class="d-flex flex-wrap gap-2 justify-content-start justify-content-md-end">
+      <button
+        *ngFor="let action of actions"
+        class="btn d-flex align-items-center gap-2 w-100 w-md-auto"
+        [ngClass]="action.class"
+        (click)="action.click?.()"
+      >
+        <lucide-icon *ngIf="action.icon" [name]="action.icon" class="icon-lg"></lucide-icon>
+        {{ action.label }}
+      </button>
+    </div>
+  </div>
+</div>

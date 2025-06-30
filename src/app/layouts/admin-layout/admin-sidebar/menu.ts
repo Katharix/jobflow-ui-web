@@ -18,7 +18,7 @@ export const MENU: MenuItem[] = [
       {
         label: 'Scheduling',
         icon: 'calendar',
-        link: '/apps/email/inbox',
+        link: '/admin/scheduling-jobs',
       },
       {
         label: 'Invoicing',

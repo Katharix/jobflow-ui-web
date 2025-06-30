@@ -1,0 +1,20 @@
+<div class="modal fade show d-block" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered {{ modalSizeClass }}" role="document">
+    <div class="modal-content shadow">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ title }}</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+      </div>
+
+      <div class="modal-body">
+        <ng-content></ng-content>
+      </div>
+
+      <div class="modal-footer" *ngIf="showFooter">
+        <button type="button" class="btn btn-secondary" (click)="close()">{{ cancelText }}</button>
+        <button type="button" class="btn btn-primary" (click)="submit()">{{ confirmText }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show"></div>

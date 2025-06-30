@@ -8,7 +8,7 @@ export class UserSessionService {
   private readonly emailKey = 'userEmail';
   private readonly orgIdKey = 'orgId';
   private readonly lastActivityKey = 'lastActivity';
-  private readonly sessionTimeout = 1 * 60 * 1000; // 30 minutes
+  private readonly sessionTimeout = 30 * 60 * 1000; // 30 minutes
 
   setSession(token: string, email: string, orgId: string) {
     localStorage.setItem(this.tokenKey, token);

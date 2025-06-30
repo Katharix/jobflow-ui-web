@@ -1,22 +1,43 @@
-<div class="container">
-  <div class="row align-items-center justify-content-between mb-3">
-    <div class="col-12 col-md-auto mb-3 mb-md-0">
-      <h1 class="h1 mb-0 text-primary fw-bold">Employees</h1>
+<div class="container py-4">
+
+
+<app-page-header
+  [title]="'Employees'"
+  [subtitle]="'Manage team members, assign roles, and invite new users'"
+  [actions]="headerActions"
+></app-page-header>
+
+  <!-- Search & Filters -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6 col-lg-4">
+      <label class="form-label fw-semibold text-muted">Search</label>
+      <input
+        #searchBox
+        type="text"
+        class="form-control"
+        placeholder="Search by name, email, or role"
+        (input)="onSearch(searchBox.value)"
+      />
     </div>
-    <div class="col-12 col-md-auto text-md-end">
-      <div class="d-flex gap-3 justify-content-start justify-content-md-end">
-        <button class="btn btn-outline-primary btn-xl px-4 fw-semibold">
-          Invite
-          <lucide-icon class="icon-lg" name="chevron-down" (click)="onInviteClick()"></lucide-icon>
-        </button>
-        <button class="btn btn-primary btn-xl px-4 fw-semibold" (click)="onAddEmployeeClick()">
-          Add Employee
-          <lucide-icon class="icon-lg" name="chevron-down"></lucide-icon>
-        </button>
-      </div>
+
+    <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+      <label class="form-label fw-semibold text-muted">Filter by Role</label>
+      <select #roleSelect class="form-select" (change)="onRoleFilter(roleSelect.value)">
+        <option value="">All Roles</option>
+        <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+      </select>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+      <label class="form-label fw-semibold text-muted">Filter by Status</label>
+      <select #statusSelect class="form-select" (change)="onStatusFilter(statusSelect.value)">
+        <option value="">All Statuses</option>
+        <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+      </select>
     </div>
   </div>
 
+  <!-- Data Grid -->
   <div class="card shadow-sm border-0">
     <div class="card-body p-0">
       <ejs-grid

@@ -28,7 +28,6 @@ export class AppComponent implements OnInit {
 
   constructor(
     private session: UserSessionService,
-    private idleService: IdleTimeoutService,
     private logoutService: LogoutService,
     private router: Router,
   ) { }

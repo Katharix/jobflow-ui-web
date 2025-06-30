@@ -15,6 +15,8 @@ import { BrandingComponent } from './views/general/onboarding-checklist/onboardi
 import { CompanyComponent } from './views/admin-views/general/company/company.component';
 import { ChatComponent } from './views/admin-views/general/chat/chat.component';
 import { EmployeesComponent } from './views/admin-views/general/employees/employees.component';
+import { JobScheduleComponent } from './views/admin-views/general/scheduling/job-schedule/job-schedule.component';
+import { EmployeeScheduleComponent } from './views/admin-views/general/scheduling/employee-schedule/employee-schedule.component';
 
 
 export const routes: Routes = [
@@ -34,7 +36,9 @@ export const routes: Routes = [
       { path: 'settings/branding', component:  BrandingComponent },
       { path: 'messaging', component: ChatComponent },
       { path: 'company', component: CompanyComponent },
-      { path: 'employees', component: EmployeesComponent }
+      { path: 'employees', component: EmployeesComponent },
+      { path: 'scheduling-jobs', component: JobScheduleComponent },
+      { path: 'employees/scheduling-employees', component: EmployeeScheduleComponent }
     ]
   },
   {

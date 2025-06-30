@@ -28,6 +28,8 @@ import {
   Image,
   Send,
   Printer,
+  PlusCircle,
+  UserPlus,
 } from 'lucide-angular';
 
 export const appConfig: ApplicationConfig = {
@@ -58,7 +60,9 @@ export const appConfig: ApplicationConfig = {
         Upload,
         Image,
         Send,
-        Printer
+        Printer,
+        PlusCircle,
+        UserPlus
       })
     ),
   ]

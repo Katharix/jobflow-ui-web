@@ -7,8 +7,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 export class LoadingService {
   private _loading = new BehaviorSubject<boolean>(false);
   isLoading$: Observable<boolean> = this._loading.asObservable().pipe(
-    debounceTime(100),            // ✅ Avoids flicker from quick toggles
-    distinctUntilChanged()        // ✅ Avoids repeated same values
+    debounceTime(100),
+    distinctUntilChanged()
   );
 
   private loadingCount = 0;
