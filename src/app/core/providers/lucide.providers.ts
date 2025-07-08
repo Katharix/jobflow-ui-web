@@ -1,0 +1,63 @@
+// lucide.providers.ts
+import { importProvidersFrom } from '@angular/core';
+import { Calendar, LucideAngularModule } from 'lucide-angular';
+import {
+  Home,
+  User,
+  Menu,
+  File,
+  Building2,
+  ChartNoAxesCombined,
+  UserRound,
+  MessagesSquare,
+  Banknote,
+  Briefcase,
+  House,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  MessageCircleQuestion,
+  UsersRound,
+  LifeBuoy,
+  Save,
+  FileText,
+  Type,
+  Upload,
+  Image,
+  Send,
+  Printer,
+  PlusCircle,
+  UserPlus,
+} from 'lucide-angular';
+
+export const lucideProviders = importProvidersFrom(
+  LucideAngularModule.pick({
+    Home,
+    User,
+    Menu,
+    File,
+    Building2,
+    ChartNoAxesCombined,
+    UserRound,
+    UsersRound,
+    MessagesSquare,
+    Banknote,
+    Briefcase,
+    House,
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    MessageCircleQuestion,
+    LifeBuoy,
+    Save,
+    FileText,
+    Type,
+    Upload,
+    Image,
+    Send,
+    Printer,
+    PlusCircle,
+    UserPlus,
+    Calendar
+  })
+);

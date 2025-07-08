@@ -3,17 +3,19 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ColorBlockModule } from 'ngx-color/block';
 import { ColorTwitterModule } from 'ngx-color/twitter';
-import { OrganizationDto } from '../../../../../models/organization';
-import { OrganizationContextService } from '../../../../../services/shared/organization-context.service';
-import { OrganizationBrandingService } from '../../../../../services/organization-branding.service';
-import { BrandingDto } from '../../../../../models/organization-branding';
-import { FileUploadService } from '../../../../../services/file-upload.service';
+import { OrganizationDto } from '../../../../models/organization';
+import { OrganizationContextService } from '../../../../services/shared/organization-context.service';
+import { OrganizationBrandingService } from '../../../../services/organization-branding.service';
+import { BrandingDto } from '../../../../models/organization-branding';
+import { FileUploadService } from '../../../../services/file-upload.service';
 import { LucideAngularModule } from 'lucide-angular';
+import { PageHeaderComponent } from '../../dashboard/page-header/page-header.component';
+
 
 @Component({
   selector: 'app-branding',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ColorBlockModule, ColorTwitterModule, LucideAngularModule],
+  imports: [CommonModule, ReactiveFormsModule, ColorBlockModule, ColorTwitterModule, LucideAngularModule, PageHeaderComponent],
   templateUrl: './branding.component.html',
   styleUrl: './branding.component.scss'
 })

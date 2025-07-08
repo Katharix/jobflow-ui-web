@@ -3,37 +3,13 @@
     [title]="'Schedule'"
     [subtitle]="'View and manage all your jobs in one calendar'"
   ></app-page-header>
+  
+<jobflow-calendar
+  [(selectedDate)]="selectedDate"
+  [(calendarView)]="calendarView"
+  [views]="['Day', 'Week', 'Month']"
+  [eventSettings]="calendarEvents"
+  [height]="'700px'">
+</jobflow-calendar>
 
-  <!-- 🔧 Custom Toolbar -->
-  <div class="bg-white rounded-3 shadow-sm p-3 d-flex flex-wrap align-items-center justify-content-between mb-3">
-    <div class="d-flex align-items-center gap-2 flex-wrap">
-      <button class="btn btn-outline-primary btn-sm" (click)="goPrev()">‹</button>
-      <button class="btn btn-outline-primary btn-sm" (click)="goToday()">Today</button>
-      <button class="btn btn-outline-primary btn-sm" (click)="goNext()">›</button>
-    </div>
-  <div class="fw-semibold text-dark fs-6">
-    {{ currentDateLabel }}
-  </div>
-    <div class="d-flex align-items-center gap-3 flex-wrap">
-      <!-- View Switch -->
-      <select class="form-select form-select-sm w-auto" [(ngModel)]="calendarView" (change)="changeView()">
-        <option value="dayGridMonth">Month</option>
-        <option value="timeGridWeek">Week</option>
-        <option value="timeGridDay">Day</option>
-      </select>
-
-      <!-- Employee Filter -->
-      <select class="form-select form-select-sm w-auto" [(ngModel)]="selectedEmployeeId" (change)="filterByEmployee()">
-        <option value="">All Employees</option>
-        <option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- 🗓️ Calendar -->
-  <div class="card shadow-sm">
-    <div class="card-body p-0">
-      <full-calendar [options]="calendarOptions"></full-calendar>
-    </div>
-  </div>
 </div>

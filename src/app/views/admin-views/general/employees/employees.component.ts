@@ -4,17 +4,20 @@ import { GridComponent, GridModule, PageService, SortService, ToolbarService, Ed
 import { CommonModule } from '@angular/common';
 import { getClickHandler } from '../../../../common/utils/page-action-dispatcher';
 import { PageHeaderComponent } from "../../dashboard/page-header/page-header.component";
+import { ModalComponent } from '../../../shared/modal/modal.component';
 
 @Component({
   selector: 'app-employees',
   standalone: true,
-  imports: [LucideAngularModule, GridModule, CommonModule, PageHeaderComponent],
-  providers: [PageService, SortService, ToolbarService, EditService, FilterService],
+  imports: [LucideAngularModule, GridModule, CommonModule, PageHeaderComponent, ModalComponent],
+  providers: [PageService, SortService, ToolbarService, EditService, FilterService ],
   templateUrl: './employees.component.html',
   styleUrl: './employees.component.scss'
 })
 export class EmployeesComponent {
   @ViewChild('employeeGrid') employeeGrid!: GridComponent;
+  showAddEmployeeModal = false;
+
 
   employees = [
     { id: 1, name: 'Jerry Phillips', email: 'jerry@jobflow.app', role: 'Admin' },
@@ -69,9 +72,18 @@ export class EmployeesComponent {
     }
   }
 
+  onModalConfirm(): void {
+  // TODO: Handle form submission logic here
+  this.showAddEmployeeModal = false;
+}
+
+onModalCancel(): void {
+  this.showAddEmployeeModal = false;
+}
+
 
   onAddEmployeeClick(): void {
-    this.employeeGrid.addRecord(); // opens the dialog in "Add" mode
+    this.showAddEmployeeModal = true;
   }
 
   onInviteClick(): void {

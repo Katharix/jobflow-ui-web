@@ -24,6 +24,12 @@ import { filter } from 'rxjs/operators';
 export class AdminNavbarComponent implements OnInit {
   // currentTheme: string;
   navItems: NavItem[] = [];
+  showNavbar = true;
+
+  private hideNavbarRoutes: string[] = [
+    '/admin/scheduling-jobs'
+  ];
+
 
   org: OrganizationDto
   constructor(
@@ -34,20 +40,31 @@ export class AdminNavbarComponent implements OnInit {
 
   ngOnInit(): void {
     const initialUrl = this.router.url;
+    this.showNavbar = !this.hideNavbarRoutes.some(route =>
+      initialUrl.startsWith(route)
+    );
     this.navItems = this.navService.getNavItems(initialUrl);
 
-    // Handle future navigations
-    this.router.events.pipe(
-      filter((event): event is NavigationEnd => event instanceof NavigationEnd)
-    ).subscribe(event => {
-      this.navItems = this.navService.getNavItems(event.urlAfterRedirects);
-    });
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe(event => {
+        const url = event.urlAfterRedirects;
+
+        // Check if the route is in the hidden list
+        this.showNavbar = !this.hideNavbarRoutes.some(route =>
+          url.startsWith(route)
+        );
+
+        this.navItems = this.navService.getNavItems(url);
+      });
+
     this.orgContext.org$.subscribe(org => {
       if (org) {
         this.org = org;
       }
     });
   }
+
   showActiveTheme(theme: string) {
     const themeSwitcher = document.querySelector('#theme-switcher') as HTMLInputElement;
     const box = document.querySelector('.box') as HTMLElement;

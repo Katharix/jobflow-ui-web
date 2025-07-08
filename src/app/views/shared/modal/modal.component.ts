@@ -1,8 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
-  selector: 'app-modal',
+  selector: 'jobflow-modal',
   templateUrl: './modal.component.html',
+  standalone: true,
+   imports: [LucideAngularModule, CommonModule]
 })
 export class ModalComponent {
   @Input() title: string = 'Modal';

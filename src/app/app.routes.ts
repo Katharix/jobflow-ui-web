@@ -11,7 +11,7 @@ import { GeneralLayoutComponent } from './layouts/general-layout/general-layout.
 import { OnboardingChecklistComponent } from './views/general/onboarding-checklist/onboarding-checklist.component';
 import { onboardingGuard } from './services/onboarding.guard';
 import { redirectIfOnboardedGuard } from './services/redirect-if-onboarded.guard';
-import { BrandingComponent } from './views/general/onboarding-checklist/onboarding-steps/branding/branding.component';
+import { BrandingComponent } from './views/admin-views/general/branding/branding.component';
 import { CompanyComponent } from './views/admin-views/general/company/company.component';
 import { ChatComponent } from './views/admin-views/general/chat/chat.component';
 import { EmployeesComponent } from './views/admin-views/general/employees/employees.component';
