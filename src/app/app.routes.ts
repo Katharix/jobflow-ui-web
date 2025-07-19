@@ -17,6 +17,7 @@ import { ChatComponent } from './views/admin-views/general/chat/chat.component';
 import { EmployeesComponent } from './views/admin-views/general/employees/employees.component';
 import { JobScheduleComponent } from './views/admin-views/general/scheduling/job-schedule/job-schedule.component';
 import { EmployeeScheduleComponent } from './views/admin-views/general/scheduling/employee-schedule/employee-schedule.component';
+import { ProductsComponent } from './views/admin-views/general/products/products.component';
 
 
 export const routes: Routes = [
@@ -38,7 +39,8 @@ export const routes: Routes = [
       { path: 'company', component: CompanyComponent },
       { path: 'employees', component: EmployeesComponent },
       { path: 'scheduling-jobs', component: JobScheduleComponent },
-      { path: 'employees/scheduling-employees', component: EmployeeScheduleComponent }
+      { path: 'employees/scheduling-employees', component: EmployeeScheduleComponent },
+      { path: 'pricebook', component: ProductsComponent }
     ]
   },
   {

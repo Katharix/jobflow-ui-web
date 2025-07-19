@@ -415,6 +415,10 @@
     background: $primary;
   }
 
+  .pl-8{
+    padding-left: -19px !important;
+  }
+
   .sidebar-footer-link {
     color: $white;
     text-decoration: none;
@@ -433,11 +437,20 @@
 }
 
 .sidebar-footer-btn {
-  padding: 15px !important;
+  padding: 10px 12px;
   border-radius: 8px;
-  min-height: 55px;
-  font-size: 16px;
+  font-size: 12px;
+  width: 100%;
+  text-align: left;
   background-color: #315BD8;
+  color: $white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:hover {
+    background-color: darken(#315BD8, 5%);
+  }
 }
 
 .sidebar-drop-menu {
@@ -502,12 +515,17 @@
 }
 
 .sidebar-footer-nav{
-    list-style-type: none;
+  list-style-type: none;
   margin: 0;
   padding: 0;
 }
 
-.sidebar-link-title, .sidebar-link-icon{
+.sidebar-link-title{
   color: $white;
   font-size: 16px !important;
+}
+.sidebar-link-icon{
+  color: $white;
+  width: 16px !important;
+ height: 16px !important;
 }

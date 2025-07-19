@@ -1,6 +1,6 @@
 // lucide.providers.ts
 import { importProvidersFrom } from '@angular/core';
-import { Calendar, LucideAngularModule } from 'lucide-angular';
+import { BookOpenText, Calendar, LucideAngularModule } from 'lucide-angular';
 import {
   Home,
   User,
@@ -58,6 +58,7 @@ export const lucideProviders = importProvidersFrom(
     Printer,
     PlusCircle,
     UserPlus,
-    Calendar
+    Calendar,
+    BookOpenText
   })
 );

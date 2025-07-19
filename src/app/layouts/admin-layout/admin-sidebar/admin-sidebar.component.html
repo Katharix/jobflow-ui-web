@@ -90,15 +90,26 @@
     <ul class="sidebar-footer-nav">
       <li class="sidebar-nav-item nav-category">
         <a class="nav-link" href="javascript:void(0);">
+          <ng-container *ngIf="isSidebarOpen; else collapsedHelp">
           <lucide-icon class="sidebar-link-icon me-1" name="life-buoy"></lucide-icon>
           <span class="sidebar-link-title"> Help</span>
+          </ng-container>
+          <ng-template #collapsedHelp>
+            <lucide-icon class="sidebar-link-icon me-1" name="life-buoy"></lucide-icon>
+          </ng-template>
         </a>
       </li>
       <li class="sidebar-nav-item">
-        <div class="dropup-center dropup">
+        <div class="dropup-center dropend">
           <button class="btn btn-primary sidebar-footer-btn" type="button" data-bs-toggle="dropdown"
             aria-expanded="false">
-            <p>{{ org.organizationName }}</p>
+            <ng-container *ngIf="isSidebarOpen; else collapsedOrg">
+              <lucide-icon class="sidebar-link-icon me-2" name="building-2"></lucide-icon>
+              <span>{{ org.organizationName }}</span>
+            </ng-container>
+            <ng-template #collapsedOrg>
+              <lucide-icon class="sidebar-link-icon pl-8" name="building-2" [attr.title]="org.organizationName"></lucide-icon>
+            </ng-template>
           </button>
           <ul class="dropdown-menu sidebar-drop-menu shadow-sm border-0 rounded-3 p-0 overflow-hidden">
             <li class="drop-menu-header">

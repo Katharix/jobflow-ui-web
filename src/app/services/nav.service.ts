@@ -22,11 +22,15 @@ export class NavService {
       { label: 'Employees', icon: '', route: '/admin/settings/branding' },
       { label: 'Clients', icon: '', route: '/general/edit-profile' }
     ],
-        '/admin/employees': [
+    '/admin/employees': [
       { label: 'Employees', icon: '', route: '/admin/employees' },
       { label: 'Scheduling', icon: '', route: '/admin/employees/scheduling-employees' },
       { label: 'Roles', icon: '', route: '/general/edit-profile' }
-    ]
+    ],
+    '/admin/pricebook': [
+      { label: 'Products', icon: '', route: '/admin/pricebook' },
+      { label: 'Material', icon: '', route: '/general/edit-profile' }
+    ],
   };
 
   getNavItems(path: string): NavItem[] {

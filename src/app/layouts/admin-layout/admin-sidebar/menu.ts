@@ -31,6 +31,11 @@ export const MENU: MenuItem[] = [
         link: '/apps/email/inbox',
       },
       {
+        label: 'Price Book',
+        icon: 'book-open-text',
+        link: '/admin/pricebook',
+      },
+      {
         label: 'Tracking',
         icon: 'navigation',
         link: '/apps/email/inbox',

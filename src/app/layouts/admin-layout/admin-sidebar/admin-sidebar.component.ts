@@ -86,6 +86,12 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
     this._activateMenuDropdown();
   }
 
+get isSidebarOpen(): boolean {
+  const body = this.document.body.classList;
+  return !body.contains('sidebar-folded') || body.contains('open-sidebar-folded');
+}
+
+
   /**
    * Toggle the sidebar when the hamburger button is clicked
    */
