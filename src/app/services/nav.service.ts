@@ -28,8 +28,8 @@ export class NavService {
       { label: 'Roles', icon: '', route: '/general/edit-profile' }
     ],
     '/admin/pricebook': [
-      { label: 'Products', icon: '', route: '/admin/pricebook' },
-      { label: 'Material', icon: '', route: '/general/edit-profile' }
+      { label: 'Materials', icon: '', route: '/admin/pricebook' },
+      { label: 'Services', icon: '', route: '/general/edit-profile' }
     ],
   };
 

@@ -31,11 +31,6 @@ export const MENU: MenuItem[] = [
         link: '/apps/email/inbox',
       },
       {
-        label: 'Price Book',
-        icon: 'book-open-text',
-        link: '/admin/pricebook',
-      },
-      {
         label: 'Tracking',
         icon: 'navigation',
         link: '/apps/email/inbox',
@@ -56,6 +51,11 @@ export const MENU: MenuItem[] = [
     label: 'Employees',
     icon: 'users-round',
     link: '/admin/employees',
+  },
+  {
+    label: 'Price Book',
+    icon: 'book-open-text',
+    link: '/admin/pricebook',
   },
   {
     label: 'Billing & Payments',

@@ -11,13 +11,13 @@ import { GeneralLayoutComponent } from './layouts/general-layout/general-layout.
 import { OnboardingChecklistComponent } from './views/general/onboarding-checklist/onboarding-checklist.component';
 import { onboardingGuard } from './services/onboarding.guard';
 import { redirectIfOnboardedGuard } from './services/redirect-if-onboarded.guard';
-import { BrandingComponent } from './views/admin-views/general/branding/branding.component';
-import { CompanyComponent } from './views/admin-views/general/company/company.component';
-import { ChatComponent } from './views/admin-views/general/chat/chat.component';
-import { EmployeesComponent } from './views/admin-views/general/employees/employees.component';
-import { JobScheduleComponent } from './views/admin-views/general/scheduling/job-schedule/job-schedule.component';
-import { EmployeeScheduleComponent } from './views/admin-views/general/scheduling/employee-schedule/employee-schedule.component';
-import { ProductsComponent } from './views/admin-views/general/products/products.component';
+import { BrandingComponent } from './admin/branding/branding.component';
+import { ChatComponent } from './admin/chat/chat.component';
+import { CompanyComponent } from './admin/company/company.component';
+import { EmployeesComponent } from './admin/employees/employees.component';
+import { ProductsComponent } from './admin/products/products.component';
+import { EmployeeScheduleComponent } from './admin/scheduling/employee-schedule/employee-schedule.component';
+import { JobScheduleComponent } from './admin/scheduling/job-schedule/job-schedule.component';
 
 
 export const routes: Routes = [
@@ -56,7 +56,7 @@ export const routes: Routes = [
   },
   {
     path: 'auth',
-    loadChildren: () => import('./views/admin-views/auth/auth.routes')
+    loadChildren: () => import('./auth/auth.routes')
   },
   {
     path: 'subscribe',

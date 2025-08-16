@@ -1,0 +1,108 @@
+<div class="container py-4">
+
+
+<app-page-header
+  [title]="'Employees'"
+  [subtitle]="'Manage team members, assign roles, and invite new users'"
+  [actions]="headerActions"
+></app-page-header>
+
+  <!-- Search & Filters -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6 col-lg-4">
+      <label class="form-label fw-semibold text-muted">Search</label>
+      <input
+        #searchBox
+        type="text"
+        class="form-control"
+        placeholder="Search by name, email, or role"
+        (input)="onSearch(searchBox.value)"
+      />
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+      <label class="form-label fw-semibold text-muted">Filter by Role</label>
+      <select #roleSelect class="form-select" (change)="onRoleFilter(roleSelect.value)">
+        <option value="">All Roles</option>
+        <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+      </select>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+      <label class="form-label fw-semibold text-muted">Filter by Status</label>
+      <select #statusSelect class="form-select" (change)="onStatusFilter(statusSelect.value)">
+        <option value="">All Statuses</option>
+        <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Data Grid -->
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+      <ejs-grid
+        #employeeGrid
+        cssClass="jobflow-grid"
+        [dataSource]="employees"
+        [allowPaging]="true"
+        [allowSorting]="true"
+        [allowFiltering]="true"
+        [pageSettings]="{ pageSize: 10 }"
+        [editSettings]="{
+          allowEditing: true,
+          allowAdding: true,
+          allowDeleting: true,
+          mode: 'Dialog'
+        }"
+        height="450px"
+      >
+        <e-columns>
+          <e-column field="name" headerText="Name" width="180" isPrimaryKey="true" validationRules="{ required: true }"></e-column>
+          <e-column field="email" headerText="Email" width="220" validationRules="{ required: true, email: true }"></e-column>
+          <e-column field="role" headerText="Role" width="150"></e-column>
+        </e-columns>
+      </ejs-grid>
+    </div>
+  </div>
+</div>
+
+<jobflow-modal
+  *ngIf="showAddEmployeeModal"
+  [title]="'Add New Employee'"
+  [confirmText]="'Add'"
+  (confirm)="onModalConfirm()"
+  (cancel)="onModalCancel()"
+>
+  <form class="p-2">
+    <!-- 👤 Name -->
+    <div class="mb-4">
+      <label class="form-label text-muted fw-semibold">Full Name</label>
+      <input
+        type="text"
+        class="form-control rounded-3 border border-light-subtle shadow-sm px-3 py-2"
+        placeholder="e.g. John Smith"
+      />
+    </div>
+
+    <!-- 📧 Email -->
+    <div class="mb-4">
+      <label class="form-label text-muted fw-semibold">Email Address</label>
+      <input
+        type="email"
+        class="form-control rounded-3 border border-light-subtle shadow-sm px-3 py-2"
+        placeholder="e.g. john@example.com"
+      />
+    </div>
+
+    <!-- 🧑‍💼 Role -->
+    <div class="mb-2">
+      <label class="form-label text-muted fw-semibold">Role</label>
+      <select
+        class="form-select rounded-3 border border-light-subtle shadow-sm px-3 py-2"
+      >
+        <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+      </select>
+    </div>
+  </form>
+</jobflow-modal>
+

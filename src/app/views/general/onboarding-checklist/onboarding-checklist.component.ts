@@ -14,9 +14,9 @@ import { WizardStep } from '../../../common/wizard/wizard-step';
 import { WizardModule } from '../../../common/wizard/wizard.module';
 import { getOnboardingSteps } from './onboarding-steps.config';
 import { ConnectPaymentComponent } from "./onboarding-steps/connect-payment/connect-payment.component";
-import { BrandingComponent } from "../../admin-views/general/branding/branding.component";
 import { OrganizationContextService } from '../../../services/shared/organization-context.service';
 import { QuickbooksComponent } from "./onboarding-steps/quickbooks/quickbooks.component";
+import { BrandingComponent } from '../../../admin/branding/branding.component';
 
 @Component({
   selector: 'app-onboarding-checklist',

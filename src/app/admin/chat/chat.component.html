@@ -1,0 +1,97 @@
+<div class="row chat-wrapper">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row position-relative">
+          <!-- Sidebar -->
+          <div class="col-lg-4 chat-aside border-end-lg">
+            <div class="aside-content">
+              <div class="aside-header">
+  <button class="btn btn-primary w-100 my-2" (click)="startNewChat()">
+    <i class="feather icon-plus me-1"></i> New Chat
+  </button>
+                <form class="search-form">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search here...">
+                    <div class="input-group-text bg-transparent">
+                      <i class="feather icon-search icon-md cursor-pointer"></i>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="aside-body">
+                <p class="text-secondary mb-1">Conversations</p>
+                <ul class="list-unstyled chat-list px-1">
+                  <li class="chat-item pe-1" *ngFor="let convo of conversations" (click)="selectConversation(convo)">
+                    <a class="d-flex align-items-center">
+                      <figure class="mb-0 me-2">
+                        <img [src]="convo.avatarUrl || 'https://placehold.co/35x35'" class="img-xs rounded-circle" alt="user">
+                      </figure>
+                      <div class="d-flex justify-content-between flex-grow-1 border-bottom">
+                        <div>
+                          <p class="text-body fw-bolder">{{ convo.name }}</p>
+                          <p class="text-secondary fs-13px">{{ convo.lastMessage?.content }}</p>
+                        </div>
+                        <div class="d-flex flex-column align-items-end">
+                          <p class="text-secondary fs-13px mb-1">{{ convo.lastMessage?.timestamp | date:'shortTime' }}</p>
+                          <div *ngIf="convo.unreadCount" class="badge rounded-pill bg-primary ms-auto">{{ convo.unreadCount }}</div>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Area -->
+          <div class="col-lg-8 chat-content" *ngIf="selectedConversation">
+            <div class="chat-header border-bottom pb-2">
+              <div class="d-flex justify-content-between">
+                <div class="d-flex align-items-center">
+                  <figure class="mb-0 me-2">
+                    <img [src]="selectedConversation.avatarUrl || 'https://placehold.co/45x45'" class="img-sm rounded-circle" alt="image">
+                  </figure>
+                  <div>
+                    <p>{{ selectedConversation.name }}</p>
+                    <p class="text-secondary fs-13px">{{ selectedConversation.role || 'Participant' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="chat-body">
+              <ng-scrollbar>
+                <ul class="messages">
+                  <li class="message-item" *ngFor="let msg of messages" [ngClass]="{ 'me': msg.isMine, 'friend': !msg.isMine }">
+                    <img src="https://placehold.co/35x35" class="img-xs rounded-circle" alt="avatar">
+                    <div class="content">
+                      <div class="message">
+                        <div class="bubble">
+                          <p>{{ msg.content }}</p>
+                        </div>
+                        <span>{{ msg.timestamp | date:'shortTime' }}</span>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </ng-scrollbar>
+            </div>
+
+            <div class="chat-footer d-flex mt-2">
+              <input type="text" class="form-control me-2" [(ngModel)]="messageText" (keyup.enter)="sendMessage()" placeholder="Type a message" />
+              <button type="button" class="btn btn-primary" (click)="sendMessage()">
+                <i class="feather icon-send"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- No conversation selected -->
+          <div class="col-lg-8 d-flex align-items-center justify-content-center" *ngIf="!selectedConversation">
+            <p class="text-muted">Select a conversation to start chatting</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
