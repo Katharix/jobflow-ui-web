@@ -15,9 +15,10 @@ import { BrandingComponent } from './admin/branding/branding.component';
 import { ChatComponent } from './admin/chat/chat.component';
 import { CompanyComponent } from './admin/company/company.component';
 import { EmployeesComponent } from './admin/employees/employees.component';
-import { ProductsComponent } from './admin/products/products.component';
+import { PriceBookComponent } from './admin/pricebook/pricebook.component';
 import { EmployeeScheduleComponent } from './admin/scheduling/employee-schedule/employee-schedule.component';
 import { JobScheduleComponent } from './admin/scheduling/job-schedule/job-schedule.component';
+import { PriceBookItemComponent } from './admin/pricebook/price-book-item/price-book-item.component';
 
 
 export const routes: Routes = [
@@ -40,7 +41,14 @@ export const routes: Routes = [
       { path: 'employees', component: EmployeesComponent },
       { path: 'scheduling-jobs', component: JobScheduleComponent },
       { path: 'employees/scheduling-employees', component: EmployeeScheduleComponent },
-      { path: 'pricebook', component: ProductsComponent }
+      { path: 'pricebook', component: PriceBookComponent },
+      { 
+        path: 'pricebook/items/category/:categoryId',
+        loadComponent: () =>
+          import('./admin/pricebook/price-book-item/price-book-item.component')
+            .then(m => m.PriceBookItemComponent)
+      },
+
     ]
   },
   {

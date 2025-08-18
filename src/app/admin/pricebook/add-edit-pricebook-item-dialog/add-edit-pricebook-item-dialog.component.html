@@ -1,0 +1,55 @@
+  <div class="modal-header">
+    <h5 class="modal-title">{{ data.title }}</h5>
+    <button type="button" class="btn-close" (click)="close()"></button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="modal-body">
+      <div class="row g-3">
+        <div class="col-md-8">
+          <label class="form-label">Name</label>
+          <input class="form-control" formControlName="name" required maxlength="200" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Type</label>
+          <select class="form-select" formControlName="type">
+            <option [value]="0">Material</option>
+            <option [value]="1">Service</option>
+            <option [value]="2">Product</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Part #</label>
+          <input class="form-control" formControlName="partNumber" maxlength="100" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Unit</label>
+          <input class="form-control" formControlName="unit" maxlength="50" placeholder="ea, hr, ft" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Inventory Units per Sale</label>
+          <input type="number" step="0.0001" class="form-control" formControlName="inventoryUnitsPerSale" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Cost</label>
+          <input type="number" step="0.01" class="form-control" formControlName="cost" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Price</label>
+          <input type="number" step="0.01" class="form-control" formControlName="price" />
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" rows="3" formControlName="description"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Save</button>
+    </div>
+  </form>
