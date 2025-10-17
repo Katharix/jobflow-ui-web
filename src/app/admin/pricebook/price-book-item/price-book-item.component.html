@@ -1,0 +1,22 @@
+<div class="container-fluid py-4">
+    <app-page-header [title]="'Price Book Items'"  [subtitle]="'Manage materials for ' + categoryName"
+        [actions]="headerActions">
+    </app-page-header>
+
+    <ejs-grid #grid [dataSource]="items" [allowPaging]="true" [pageSettings]="pageSettings" [allowSorting]="true"
+        [allowFiltering]="true" [toolbar]="toolbar" (toolbarClick)="onToolbarClick($event)" height="600"
+        [enableStickyHeader]="true">
+        <e-columns>
+            <e-column field="name" headerText="Name" width="220"></e-column>
+            <e-column field="itemType" headerText="Type" width="120" [valueAccessor]="typeAccessor"></e-column>
+            <e-column field="partNumber" headerText="Part #" width="140"></e-column>
+            <e-column field="unit" headerText="Unit" width="100"></e-column>
+            <e-column field="cost" headerText="Cost" width="110" textAlign="Right" format="C2"></e-column>
+            <e-column field="price" headerText="Price" width="110" textAlign="Right" format="C2"></e-column>
+            <e-column field="inventoryUnitsPerSale" headerText="Inv/Sale" width="110" textAlign="Right"
+                format="N4"></e-column>
+            <e-column field="description" headerText="Description" width="300"></e-column>
+            <e-column headerText="" width="140" textAlign="Right" [commands]="commandButtons"></e-column>
+        </e-columns>
+    </ejs-grid>
+</div>

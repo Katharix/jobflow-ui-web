@@ -1,17 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '@angular/fire/auth';
 import { BaseApiService } from './base-api.service';
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '@angular/fire/auth'; // ✅ All from AngularFire
 
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
+  authUrl = 'auth/';
 
-  authUrl: string;
-  constructor(private auth: Auth, private api: BaseApiService) {
-    this.authUrl = 'auth/';
-  }
+  constructor(private auth: Auth, private api: BaseApiService) {}
 
   login(email: string, password: string) {
     return signInWithEmailAndPassword(this.auth, email, password);
@@ -24,12 +19,11 @@ export class AuthService {
   logout() {
     return this.auth.signOut();
   }
+
   loginWithFirebase(idToken: string) {
-    return this.api.post<{ email: string }>(`${this.authUrl}login-with-firebase`, {
-      token: idToken
-    });
+    return this.api.post<any>(`${this.authUrl}login-with-firebase`, { token: idToken });
   }
-  
+
   get currentUser() {
     return this.auth.currentUser;
   }

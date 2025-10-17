@@ -1,28 +1,68 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterModule } from '@angular/router';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { OrganizationContextService } from '../../../services/shared/organization-context.service';
+import { OrganizationDto } from '../../../models/organization';
+import { CommonModule } from '@angular/common';
+import { NavItem } from '../../../models/nav-item';
+import { NavService } from '../../../services/nav.service';
+import { filter } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-admin-navbar',
   standalone: true,
   imports: [
     NgbDropdownModule,
-    RouterLink
+    RouterLink,
+    CommonModule,
+    RouterModule
   ],
   templateUrl: './admin-navbar.component.html',
   styleUrl: './admin-navbar.component.scss'
 })
-export class AdminNavbarComponent  implements OnInit {
+export class AdminNavbarComponent implements OnInit {
   // currentTheme: string;
+  navItems: NavItem[] = [];
+  showNavbar = true;
 
-  constructor(private router: Router) {}
+  private hideNavbarRoutes: string[] = [
+    '/admin/scheduling-jobs'
+  ];
+
+
+  org: OrganizationDto
+  constructor(
+    private router: Router,
+    private orgContext: OrganizationContextService,
+    private navService: NavService
+  ) { }
 
   ngOnInit(): void {
+    const initialUrl = this.router.url;
+    this.showNavbar = !this.hideNavbarRoutes.some(route =>
+      initialUrl.startsWith(route)
+    );
+    this.navItems = this.navService.getNavItems(initialUrl);
 
-    // this.themeModeService.currentTheme.subscribe( (theme) => {
-    //   this.currentTheme = theme;
-    //   this.showActiveTheme(this.currentTheme);
-    // });
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe(event => {
+        const url = event.urlAfterRedirects;
+
+        // Check if the route is in the hidden list
+        this.showNavbar = !this.hideNavbarRoutes.some(route =>
+          url.startsWith(route)
+        );
+
+        this.navItems = this.navService.getNavItems(url);
+      });
+
+    this.orgContext.org$.subscribe(org => {
+      if (org) {
+        this.org = org;
+      }
+    });
   }
 
   showActiveTheme(theme: string) {

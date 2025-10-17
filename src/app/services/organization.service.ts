@@ -7,23 +7,23 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class OrganizationService {
-organizationUrl: string;
-  constructor(private api: BaseApiService) { 
+  organizationUrl: string;
+  constructor(private api: BaseApiService) {
     this.organizationUrl = 'organizations/';
   }
 
-  getAllOrganizations(){
+  getAllOrganizations() {
     return this.api.get(`${this.organizationUrl}all`);
   }
 
-  registerOrganization(orgDto: OrganizationDto) : Observable<Organization>{
+  registerOrganization(orgDto: OrganizationDto): Observable<Organization> {
     return this.api.post<Organization>(`${this.organizationUrl}register`, orgDto);
   }
 
-  createOrganization(org: OrganizationDto) : Observable<Organization>{
+  createOrganization(org: OrganizationDto): Observable<Organization> {
     return this.api.post<Organization>(`${this.organizationUrl}create`, org);
   }
-  getOrganizationById(org: OrganizationRequest) : Observable<Organization>{
+  getOrganizationById(org: OrganizationRequest): Observable<Organization> {
     return this.api.post<Organization>(`${this.organizationUrl}retrieve`, org);
   }
 }

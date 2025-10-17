@@ -1,5 +1,5 @@
 // Bootstrap base colors
-$white:        #fff !default;
+$white:        #FAFBFF !default;
 $gray-100:     #f8f9fa !default;
 $gray-200:     #e9ecef !default;
 $gray-300:     #dee2e6 !default;
@@ -29,25 +29,25 @@ $cyan:    #0dcaf0 !default;
 
 // --- Bootstrap Theme Colors --- //
 //
-$primary:         #6571ff !default;
+$primary:         #3F67DA !default;
 $secondary:       $gray-600 !default;
-$success:         #05a34a !default;
+$success:         #23CE6B !default;
 $info:            #66d1d1 !default;
-$warning:         #fbbc06 !default;
-$danger:          #ff3366 !default;
+$warning:         #F0A202 !default;
+$danger:          #DC493A !default;
 $light:           $gray-200 !default;
 $dark:            $gray-900 !default;
 
 
-$gray-100:            #f8f9fa;
-$gray-200:            #eff1f5;
+$gray-100:            #EDEFF7;
+$gray-200:            #D3D6E0;
 $gray-300:            #e2e7f1;
-$gray-400:            #ced4da;
-$gray-500:            #7c8bad;
-$gray-600:            #6c757d;
-$gray-700:            #536976;
+$gray-400:            #BCBFCC;
+$gray-500:            #9DA2B3;
+$gray-600:            #6E7180;
+$gray-700:            #40424D;
 $gray-800:            #292E49;
-$gray-900:            #0f1f3e;
+$gray-900:            #1E1E24;
 $black:               #000;
 
 $blue:                #0D1044;
@@ -57,14 +57,14 @@ $yellow:              #E3A932;
 $red:                 #A22C29;
 
 
-$primary:             $yellow;
-$secondary:           $gray-700;
-$info:                $cyan;
-$warning:             $yellow;
-$success:             $green;
-$danger:              $red;
-$light:               $gray-100;
-$dark:                $gray-900;
+$primary:             $primary;
+$secondary:           $secondary;
+$info:                $info;
+$warning:             $warning;
+$success:             $success;
+$danger:              $danger;
+$light:               $light;
+$dark:                $dark;
 $white:               $white;
 $blue:                $blue;
 
@@ -210,7 +210,7 @@ $prefix:                      bs- !default;
 // Body
 //
 // Settings for the `<body>` element.
-$body-bg:                      #fff !default;
+$body-bg:                      $white !default;
 $body-color:                   $black !default;
 
 $body-secondary-color:      rgba($body-color, .75) !default;
@@ -269,9 +269,9 @@ $component-hover-bg:          rgba($secondary, .2);         // custom variable
 // Font, line-height, and color for body text, headings, and more.
 
 // Font family
-$font-family-sans-serif: "Plus Jakarta Sans", Helvetica, sans-serif !default;
-$font-primary:          "Plus Jakarta Sans", sans-serif;
-$font-secondary:        "Plus Jakarta Sans", sans-serif;
+$font-family-sans-serif: "Manrope", Helvetica, sans-serif !default;
+$font-primary:          "Manrope", sans-serif;
+$font-secondary:        "Manrope", sans-serif;
 
 
 $font-size-base:              		 0.875rem !default;   // 14px
@@ -514,15 +514,15 @@ $sidebar-color-dark:    $secondary;
 $sidebar-box-shadow-color:          rgba(183,192,206,.2);
 $sidebar-box-shadow-color-dark:     #08101e;
 
-$sidebar-nav-link-active-color:     $primary;
-$sidebar-nav-link-hover-color:      $primary;
+$sidebar-nav-link-active-color:     $white;
+$sidebar-nav-link-hover-color:      #2751CE;
 
 // sidebar-dark in light theme
 $sidebar-dark-bg:               #0c1427;
 $sidebar-dark-color:            $secondary;
 
 // Navbar
-$navbar-height:                 60px;
+$navbar-height:                 85px;
 
 $navbar-item-color:             $body-color;
 $navbar-item-color-dark:        $secondary;

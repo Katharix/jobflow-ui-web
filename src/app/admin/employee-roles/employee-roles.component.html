@@ -1,0 +1,23 @@
+<app-page-header
+  title="Roles"
+  subtitle="Manage your team roles"
+  [actions]="headerActions"
+></app-page-header>
+
+<div class="card shadow-sm p-3">
+  <ejs-grid
+    #grid
+    id="employeeRolesGrid"
+    [dataSource]="roles"
+    [allowPaging]="true"
+    [editSettings]="editSettings"
+    (actionBegin)="actionBegin($event)"
+  >
+    <e-columns>
+      <e-column field="name" headerText="Role Name" width="250" textAlign="Left"
+        [validationRules]="{ required: true }"></e-column>
+      <e-column field="id" headerText="ID" width="250" isPrimaryKey="true"
+        textAlign="Left" [isIdentity]="true" [visible]="false"></e-column>
+    </e-columns>
+  </ejs-grid>
+</div>

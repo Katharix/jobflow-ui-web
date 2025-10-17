@@ -16905,8 +16905,7 @@ body {
 }
 .main-wrapper .page-wrapper {
   min-height: 100vh;
-  width: calc(100% - 240px);
-  margin-right: 240px;
+
   display: flex;
   flex-direction: column;
   -webkit-transition: margin 0.1s ease, width 0.1s ease;

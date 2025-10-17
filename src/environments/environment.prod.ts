@@ -1,6 +1,8 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://jobflow-api-gmbbc4hma5d4c4a7.centralus-01.azurewebsites.net/api',
+    syncFusionKey: 'Ngo9BigBOggjHTQxAR8/V1JEaF5cXmRCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXlcdnVSQmlcVEZxXkJWYEk=',
+    apiUrl: 'https://api.gojobflow.com/api',
+    baseUrl: 'https://api.gojobflow.com',
     stripeSettings: {
       goMonthlyPrice: 'price_1R1GuJEKX7voND9YLCN6bAhG',
       goYearlyPrice: 'price_1R1GuJEKX7voND9Y02wkuT0A',

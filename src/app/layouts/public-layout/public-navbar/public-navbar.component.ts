@@ -14,7 +14,7 @@ export class PublicNavbarComponent {
   navLinks=["home","about","features","pricing","contact"]
 
   @Input() navbarLight?: boolean
-  isCollapsed = false;
+  isCollapsed = true;
   isSticky = false
 
   currentSection = 'home';

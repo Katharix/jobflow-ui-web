@@ -6,6 +6,21 @@ import { authGuard } from './services/auth.guard';
 import { DashboardComponent } from './views/admin-views/dashboard/dashboard.component';
 import { SubscribeComponent } from './views/subscription-views/subscribe/subscribe.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { InvoiceComponent } from './views/general/invoice/invoice.component';
+import { GeneralLayoutComponent } from './layouts/general-layout/general-layout.component';
+import { OnboardingChecklistComponent } from './views/general/onboarding-checklist/onboarding-checklist.component';
+import { onboardingGuard } from './services/onboarding.guard';
+import { redirectIfOnboardedGuard } from './services/redirect-if-onboarded.guard';
+import { BrandingComponent } from './admin/branding/branding.component';
+import { ChatComponent } from './admin/chat/chat.component';
+import { CompanyComponent } from './admin/company/company.component';
+import { EmployeesComponent } from './admin/employees/employees.component';
+import { PriceBookComponent } from './admin/pricebook/pricebook.component';
+import { EmployeeScheduleComponent } from './admin/scheduling/employee-schedule/employee-schedule.component';
+import { JobScheduleComponent } from './admin/scheduling/job-schedule/job-schedule.component';
+import { PriceBookItemComponent } from './admin/pricebook/price-book-item/price-book-item.component';
+import { EmployeeRolesComponent } from './admin/employee-roles/employee-roles.component';
+
 
 export const routes: Routes = [
   {
@@ -18,21 +33,53 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayoutComponent,
-    canActivate: [authGuard],
-    data: { roles: ['OrganizationAdmin', 'KatharixAdmin', 'SuperAdmin'] },
+    canActivate: [authGuard, ], //onboardingGuard ✅ guard only post-onboarding routes
     children: [
       { path: '', component: DashboardComponent },
+      { path: 'settings/branding', component:  BrandingComponent },
+      { path: 'messaging', component: ChatComponent },
+      { path: 'company', component: CompanyComponent },
+      { path: 'employees', component: EmployeesComponent },
+      { path: 'scheduling-jobs', component: JobScheduleComponent },
+      { path: 'employees/scheduling-employees', component: EmployeeScheduleComponent },
+      { path: 'employees/roles', component: EmployeeRolesComponent },
+      { path: 'pricebook', component: PriceBookComponent },
+      { 
+        path: 'pricebook/items/category/:categoryId',
+        loadComponent: () =>
+          import('./admin/pricebook/price-book-item/price-book-item.component')
+            .then(m => m.PriceBookItemComponent)
+      },
+
     ]
   },
-  { 
-    path: 'auth', 
-    loadChildren: () => import('./views/admin-views/auth/auth.routes')
+  {
+    path: 'onboarding',
+    component: AdminLayoutComponent, // ✅ still use admin layout
+    children: [
+      {
+        path: '',
+        component: OnboardingChecklistComponent,
+        canActivate: [redirectIfOnboardedGuard] // ✅ skip if already onboarded
+      }
+    ]
+  },
+  {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.routes')
   },
   {
     path: 'subscribe',
     component: AuthLayoutComponent,
-    children:[
+    children: [
       { path: '', component: SubscribeComponent },
+    ]
+  },
+  {
+    path: 'invoice/view/:id',
+    component: GeneralLayoutComponent,
+    children: [
+      { path: '', component: InvoiceComponent },
     ]
   }
 ];

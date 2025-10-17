@@ -1,26 +1,19 @@
 <div class="main-wrapper">
-  <app-preloader />
-    <app-admin-sidebar></app-admin-sidebar>
+  
+  <!-- Preloader overlays on top -->
+  <app-preloader *ngIf="isLoading" class="preloader-overlay" />
 
-    <div class="page-wrapper">
-        <app-admin-navbar></app-admin-navbar>
+  <!-- Always render actual app underneath -->
+  <app-admin-sidebar></app-admin-sidebar>
 
-        <div class="page-content container-xxl">
+  <div class="page-wrapper">
+    <app-admin-navbar></app-admin-navbar>
 
-            <!-- Spinner for lazyload modules -->
-             @if (isLoading) {
-               <div class="spinner-wrapper">
-                 <div class="spinner">Loading...</div>
-               </div>
-             } @else {
-               <div>
-                 <router-outlet></router-outlet>
-               </div>
-             }
-      
-      
-          </div>
-
-        <app-admin-footer></app-admin-footer>
+    <div class="page-content container-xxl">
+      <router-outlet></router-outlet>
     </div>
+
+    <app-admin-footer></app-admin-footer>
+  </div>
+
 </div>

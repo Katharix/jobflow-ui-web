@@ -1,16 +1,19 @@
-import { Component, ViewEncapsulation } from '@angular/core';
-import { LoginComponent } from "../../views/admin-views/auth/login/login.component";
-import { RouterOutlet } from '@angular/router';
+import { Component, ViewEncapsulation, inject } from '@angular/core';
+import { RouteConfigLoadEnd, RouteConfigLoadStart, Router, RouterOutlet } from '@angular/router';
 import { PreloaderComponent } from "../../landing/preloader.component";
+import { LoadingService } from '../../services/loading-service.service';
+import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-auth-layout',
   standalone: true,
-  imports: [RouterOutlet, LoginComponent, PreloaderComponent],
+  imports: [RouterOutlet, CommonModule, PreloaderComponent],
   templateUrl: './auth-layout.component.html',
   styleUrl: './auth-layout.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 export class AuthLayoutComponent {
-
+  private loadingService = inject(LoadingService);
+  isLoading$: Observable<boolean> = this.loadingService.isLoading$;
 }

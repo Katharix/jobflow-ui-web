@@ -20,4 +20,9 @@ paymentUrl: string;
   createOneTimePaymentSession(orgId: string, paymentRequest: PaymentSessionRequest): Observable<any> {
     return this.api.post(`${this.paymentUrl}${orgId}charge-customer`, paymentRequest);
   }
+
+  createConnectedAccount(orgId: string): Observable<any> {
+    return this.api.post(`${this.paymentUrl}${orgId}/create-connected-account`, null);
+  }
+  
 }

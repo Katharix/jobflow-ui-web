@@ -35,7 +35,7 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
   zipCode: string = '';
   error: string = '';
   organizationTypes: OrganizationType[] = [];
-  selectedOrganizationTypeId: string = '';
+  selectedOrganizationTypeId: string = '00000000-0000-0000-0000-000000000000';
   planId: string = '';
   usStates = US_STATES;
   twilioConsent: boolean = false;
@@ -81,30 +81,36 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
         this.getComponent(place, 'postal_town') ||
         this.getComponent(place, 'administrative_area_level_2'); // fallback to county if city is missing
 
-        this.state = this.getComponent(place, 'administrative_area_level_1', 'short_name');
+      this.state = this.getComponent(place, 'administrative_area_level_1', 'short_name');
 
       this.zipCode =
         this.getComponent(place, 'postal_code');
-        this.cdRef.detectChanges();
+      this.cdRef.detectChanges();
     });
   }
 
   private getComponent(place: any, type: string, format: 'short_name' | 'long_name' = 'long_name'): string {
     if (!place.address_components) return '';
-  
+
     const component = place.address_components.find((comp: any) =>
       comp.types.includes(type)
     );
-  
+
     return component ? component[format] : '';
   }
-  
+
 
 
   private loadOrganizationTypes(): void {
     this.organizationTypeService.getAllOrganizations().subscribe({
       next: (data) => {
-        this.organizationTypes = data;
+        this.organizationTypes = data
+          .filter(e => e.typeName !== 'Master Account')
+          .sort((a, b) => {
+            if (a.typeName === 'Other') return 1;
+            if (b.typeName === 'Other') return -1;
+            return a.typeName.localeCompare(b.typeName);
+          });
         console.log('Organization Types:', data);
       },
       error: (err) => console.error('Failed to load org types:', err)
@@ -138,7 +144,7 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
             mode: 'subscription',
             successUrl: environment.stripeSettings.successUrl,
             cancelUrl: environment.stripeSettings.cancelUrl
-            
+
           }
           this.paymentService.createSubscriptionCheckout(paymentSessionRequest).subscribe({
             next: (checkoutResponse: any) => {

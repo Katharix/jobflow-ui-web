@@ -11,6 +11,9 @@ export interface OrganizationDto {
     state?: string;
     zipCode?: string;
     phoneNumber?: string;
+    defaultTaxRate?: number;
+    subscriptionStatus?: string;
+    onboardingComplete?: boolean;
 }
 
 export interface Organization {
@@ -27,6 +30,7 @@ export interface Organization {
     phoneNumber?: string;
     emailAddress?: string;
     hasFreeAccount: boolean;
+    onboardingComplete: boolean;
   }
   
   export interface OrganizationRequest{

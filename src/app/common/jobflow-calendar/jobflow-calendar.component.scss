@@ -1,0 +1,186 @@
+
+$white:        #FAFBFF !default;
+$gray-100:     #f8f9fa !default;
+$gray-200:     #e9ecef !default;
+$gray-300:     #dee2e6 !default;
+$gray-400:     #cbd1db !default;
+$gray-500:     #aeb7c5 !default;
+$gray-600:     #7987a1 !default;
+$gray-700:     #41516c !default;
+$gray-800:     #212a3a !default;
+$gray-900:     #060c17 !default;
+$black:        #000 !default;
+
+$primary:         #3F67DA !default;
+$secondary:       $gray-600 !default;
+$success:         #B9E28C !default;
+$info:            #66d1d1 !default;
+$warning:         #F0A202 !default;
+$danger:          #DC493A !default;
+$light:           $gray-200 !default;
+/* 📅 JobFlow Scheduler Theme */
+.e-schedule.jobflow-scheduler {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  overflow: hidden;
+}
+
+.e-schedule.jobflow-scheduler .e-toolbar {
+  display: none;
+}
+
+/* Header cells (Sun, Mon...) */
+.e-schedule.jobflow-scheduler .e-header-cells {
+  background-color: #f9fafb;
+  color: #000;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+/* Appointment block styling */
+.e-schedule.jobflow-scheduler .e-appointment {
+  background-color: $primary;
+  color: $white;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 0.75rem;
+  padding: 6px 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  line-height: 1.4;
+}
+
+/* Sidebar resource labels (if used) */
+.e-schedule.jobflow-scheduler .e-resource-cells {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  font-weight: 600;
+  font-size: 0.75rem;
+  border-right: 1px solid #e5e7eb;
+}
+
+/* Calendar body background + grid lines */
+.e-schedule.jobflow-scheduler .e-content-wrap {
+  background-color: $white;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Empty state messaging */
+.e-schedule.jobflow-scheduler .e-empty-cell,
+.e-schedule.jobflow-scheduler .e-appointment-container:empty::before {
+  content: "No jobs scheduled for this time";
+  display: block;
+  text-align: center;
+  color: #9ca3af;
+  font-style: italic;
+  padding: 2rem 0;
+  font-size: 0.8125rem;
+}
+
+/* Highlight current day column */
+.e-schedule.jobflow-scheduler .e-current-day {
+  background-color: $white;
+  font-weight: 700;
+}
+
+/* Time grid lines and header borders */
+.e-schedule.jobflow-scheduler .e-work-cells,
+.e-schedule.jobflow-scheduler .e-header-cells {
+  border-color: #e5e7eb;
+}
+
+/* Reduce padding inside cells */
+.e-schedule.jobflow-scheduler .e-schedule-table td {
+  padding: 0.25rem;
+}
+
+/* Time label column */
+.e-schedule.jobflow-scheduler .e-time-cells {
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Hover effect on time cells */
+.e-schedule.jobflow-scheduler .e-work-cells:hover {
+  background-color: #f9fafb;
+}
+
+/* 🎛️ Custom JobFlow Toolbar Styling */
+.calendar-toolbar {
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+
+  .date-nav {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1f2937;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  button {
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .active-view {
+    background-color: $primary;
+    color: $white !important;
+    border-color: $primary;
+  }
+
+  .form-select {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-color: #d1d5db;
+    border-radius: 0.5rem;
+
+    &:hover {
+      border-color: #9ca3af;
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+
+    .date-nav {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    button,
+    .form-select {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+
+    .col-auto.ms-auto {
+      margin-left: 0 !important;
+    }
+  }
+}
+
+/* 🖱 Lucide Icons */
+lucide-icon.cursor-pointer {
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.75;
+    transition: opacity 0.2s ease-in-out;
+  }
+}
