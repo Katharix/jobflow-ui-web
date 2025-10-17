@@ -19,6 +19,7 @@ import { PriceBookComponent } from './admin/pricebook/pricebook.component';
 import { EmployeeScheduleComponent } from './admin/scheduling/employee-schedule/employee-schedule.component';
 import { JobScheduleComponent } from './admin/scheduling/job-schedule/job-schedule.component';
 import { PriceBookItemComponent } from './admin/pricebook/price-book-item/price-book-item.component';
+import { EmployeeRolesComponent } from './admin/employee-roles/employee-roles.component';
 
 
 export const routes: Routes = [
@@ -32,7 +33,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayoutComponent,
-    canActivate: [authGuard], // ✅ guard only post-onboarding routes
+    canActivate: [authGuard, ], //onboardingGuard ✅ guard only post-onboarding routes
     children: [
       { path: '', component: DashboardComponent },
       { path: 'settings/branding', component:  BrandingComponent },
@@ -41,6 +42,7 @@ export const routes: Routes = [
       { path: 'employees', component: EmployeesComponent },
       { path: 'scheduling-jobs', component: JobScheduleComponent },
       { path: 'employees/scheduling-employees', component: EmployeeScheduleComponent },
+      { path: 'employees/roles', component: EmployeeRolesComponent },
       { path: 'pricebook', component: PriceBookComponent },
       { 
         path: 'pricebook/items/category/:categoryId',

@@ -1,5 +1,5 @@
 <div class="container-fluid py-4">
-    <app-page-header [title]="'Price Book Items'" [subtitle]="'Manage materials for '" 
+    <app-page-header [title]="'Price Book Items'"  [subtitle]="'Manage materials for ' + categoryName"
         [actions]="headerActions">
     </app-page-header>
 
@@ -8,7 +8,7 @@
         [enableStickyHeader]="true">
         <e-columns>
             <e-column field="name" headerText="Name" width="220"></e-column>
-            <e-column field="type" headerText="Type" width="120" [valueAccessor]="typeAccessor"></e-column>
+            <e-column field="itemType" headerText="Type" width="120" [valueAccessor]="typeAccessor"></e-column>
             <e-column field="partNumber" headerText="Part #" width="140"></e-column>
             <e-column field="unit" headerText="Unit" width="100"></e-column>
             <e-column field="cost" headerText="Cost" width="110" textAlign="Right" format="C2"></e-column>

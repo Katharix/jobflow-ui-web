@@ -15,6 +15,7 @@ import { ToastService } from '../../../common/toast/toast.service';
 import { ModalService } from '../../../common/modal/modal.service';
 import { AddEditPricebookItemDialogComponent, EditItemData, EditItemResult } from '../add-edit-pricebook-item-dialog/add-edit-pricebook-item-dialog.component';
 import { PageHeaderComponent } from "../../../views/admin-views/dashboard/page-header/page-header.component";
+import { PriceBookCategoryService } from '../services/price-book-category.service';
 
 @Component({
   selector: 'app-price-book-item',
@@ -27,7 +28,8 @@ import { PageHeaderComponent } from "../../../views/admin-views/dashboard/page-h
 export class PriceBookItemComponent implements OnInit, OnDestroy {
   @ViewChild('grid') grid?: GridComponent;
 
-  private svc = inject(PriceBookItemService);
+  private itemService = inject(PriceBookItemService);
+  private categoryService = inject(PriceBookCategoryService);
   private orgCtx = inject(OrganizationContextService);
   private toast = inject(ToastService);
   private modal = inject(ModalService);
@@ -50,7 +52,7 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
   ];
 
   // map enum to label
-  typeAccessor = (_: string, data: any) => this.typeLabel(data?.type);
+  typeAccessor = (_: string, data: any) => this.typeLabel(data?.itemType);
 
 // --- Actions config ---
 headerActions = [
@@ -59,12 +61,6 @@ headerActions = [
     label: 'Back to Categories',
     icon: 'chevron-left',
     class: 'btn btn-outline-secondary px-3'
-  },
-  {
-    key: 'import',
-    label: 'Import',
-    icon: 'upload',
-    class: 'btn btn-outline-primary px-4 fw-semibold'
   },
   {
     key: 'add',
@@ -81,7 +77,6 @@ headerActions = [
 private getActionHandlerMap(): Record<string, () => void> {
   return {
     back: () => this.goBackToCategories(),
-    import: () => this.importItems(),
     add: () => this.add()
   };
 }
@@ -89,7 +84,7 @@ private getActionHandlerMap(): Record<string, () => void> {
 // --- Implement the handlers you need ---
 private goBackToCategories() {
   // navigate back to your categories page/route
-  this.router.navigate(['/pricebook/categories']); // adjust route as needed
+  this.router.navigate(['/admin/pricebook']); // adjust route as needed
 }
 
 private importItems() {
@@ -108,9 +103,18 @@ private importItems() {
 
   load() {
     if (!this.orgId || !this.categoryId) return;
-    this.svc.getAll(this.orgId, this.categoryId).subscribe({
+    this.categoryService.getById(this.orgId, this.categoryId).subscribe({
+      next: category => {
+        this.categoryName = category.name ?? null;
+      },
+      error: e => { this.toast.error('Failed to retrieve category name'); console.error(e); }
+    });
+
+    this.itemService.getAll(this.orgId, this.categoryId).subscribe({
       next: list => {
+        console.log('Pricebook Items: ', list);
         this.items = (list ?? []).sort((a, b) => a.name.localeCompare(b.name));
+        console.log('Items ', this.items)
       },
       error: e => { this.toast.error('Failed to load items'); console.error(e); }
     });
@@ -133,7 +137,7 @@ private importItems() {
       // force-associate with current category if present
       result.type = 1;
       const body = { ...result, categoryId: this.categoryId ?? result.categoryId };
-      this.svc.create(body as any).subscribe({
+      this.itemService.create(body as any).subscribe({
         next: created => {
           // show only if it belongs to this category
           if (!this.categoryId || (created.categoryId ?? '').toLowerCase() === this.categoryId.toLowerCase()) {
@@ -157,7 +161,7 @@ private importItems() {
     ref.afterClosed().subscribe(result => {
       if (!result) return;
       const body = { ...row, ...result, id: row.id, organizationId: this.orgId };
-      this.svc.update(body as any).subscribe({
+      this.itemService.update(body as any).subscribe({
         next: updated => {
           // If category changed, remove if it no longer matches the current filter
           const stillMatches = !this.categoryId || (updated.categoryId ?? '').toLowerCase() === this.categoryId!.toLowerCase();
@@ -177,7 +181,7 @@ private importItems() {
     if (!row) return;
     if (!confirm(`Delete "${row.name}"? This cannot be undone.`)) return;
 
-    this.svc.delete(row.id!).subscribe({
+    this.itemService.delete(row.id!).subscribe({
       next: () => {
         this.items = this.items.filter(i => i.id !== row.id);
         this.toast.success('Item deleted');

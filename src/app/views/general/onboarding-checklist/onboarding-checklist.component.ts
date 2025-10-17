@@ -1,62 +1,80 @@
-import {
-  Component,
-  Input,
-  TemplateRef,
-  ViewChild,
-  AfterViewInit,
-  ChangeDetectorRef,
-  Output
-} from '@angular/core';
-import { OrganizationDto } from '../../../models/organization';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { WizardStep } from '../../../common/wizard/wizard-step';
-import { WizardModule } from '../../../common/wizard/wizard.module';
-import { getOnboardingSteps } from './onboarding-steps.config';
-import { ConnectPaymentComponent } from "./onboarding-steps/connect-payment/connect-payment.component";
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { AuthService } from '../../../services/auth.service';
+import { Router } from '@angular/router';
 import { OrganizationContextService } from '../../../services/shared/organization-context.service';
+import {
+  CommonModule,
+  TitleCasePipe,
+  NgSwitch,
+  NgSwitchCase,
+  NgSwitchDefault
+} from '@angular/common';
+import { ConnectPaymentComponent } from "./onboarding-steps/connect-payment/connect-payment.component";
+import { BrandingComponent } from "../../../admin/branding/branding.component";
 import { QuickbooksComponent } from "./onboarding-steps/quickbooks/quickbooks.component";
-import { BrandingComponent } from '../../../admin/branding/branding.component';
+import { OnboardingService, OnboardingStep } from './services/onboarding.service';
 
 @Component({
   selector: 'app-onboarding-checklist',
   standalone: true,
-  imports: [CommonModule, RouterModule, WizardModule, ConnectPaymentComponent, BrandingComponent, QuickbooksComponent],
-  templateUrl: './onboarding-checklist.component.html',
-  styleUrl: './onboarding-checklist.component.scss'
+  imports: [
+    CommonModule,
+    TitleCasePipe,
+    NgSwitch,
+    NgSwitchCase,
+    ConnectPaymentComponent,
+    BrandingComponent,
+    QuickbooksComponent
+  ],
+  templateUrl: './onboarding-checklist.component.html'
 })
-export class OnboardingChecklistComponent implements AfterViewInit {
-  @ViewChild('step1') step1!: TemplateRef<any>;
-  @ViewChild('step2') step2!: TemplateRef<any>;
-  @ViewChild('step3') step3!: TemplateRef<any>;
-  @ViewChild('step4') step4!: TemplateRef<any>;
-  @ViewChild('step5') step5!: TemplateRef<any>;
-  @ViewChild('step6') step6!: TemplateRef<any>;
-  @Output() organization: OrganizationDto;
+export class OnboardingChecklistComponent implements OnInit, OnDestroy {
+  private onboardingService = inject(OnboardingService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private organizationContext = inject(OrganizationContextService);
 
-  wizardSteps: WizardStep[] = [];
+  steps: OnboardingStep[] = [];
+  organizationId: string | null = null;
+  selectedStep: string | null = null;
+  private orgSubscription;
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private orgContext: OrganizationContextService
-  ) 
-  { }
-
-  ngAfterViewInit(): void {
-    this.orgContext.org$.subscribe(org => {
-      if (org) {
-        this.organization = org;
-      }
+  constructor() {
+    this.orgSubscription = this.organizationContext.org$.subscribe(org => {
+      this.organizationId = org?.id ?? null;
     });
-    this.wizardSteps = getOnboardingSteps({
-      step1: this.step1,
-      step2: this.step2,
-      step3: this.step3,
-      step4: this.step4,
-      step5: this.step5,
-      step6: this.step6,
-    });
+  }
 
-    this.cdr.detectChanges();
+  ngOnInit() {
+    this.loadSteps();
+  }
+
+  ngOnDestroy() {
+    this.orgSubscription.unsubscribe();
+  }
+
+  openStep(stepName: string) {
+    this.selectedStep = stepName;
+  }
+
+  loadSteps() {
+    if (!this.organizationId) return;
+    this.onboardingService.getSteps(this.organizationId).subscribe(s => (this.steps = s));
+  }
+
+  completeStep(stepName: string) {
+    if (!this.organizationId) return;
+    this.onboardingService.markStepComplete(this.organizationId, stepName).subscribe(() => {
+      this.selectedStep = null;
+      this.loadSteps();
+    });
+  }
+
+  get allComplete() {
+    return this.steps.length > 0 && this.steps.every(x => x.isCompleted);
+  }
+
+  proceed() {
+    if (this.allComplete) this.router.navigate(['/admin']);
   }
 }

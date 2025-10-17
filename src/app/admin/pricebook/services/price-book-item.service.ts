@@ -4,9 +4,9 @@ import { BaseApiService } from '../../../services/base-api.service';
 
 
 export enum PriceBookItemType {
-  Material = 0,
-  Service = 1,
-  Product = 2
+  Material = 1,
+  Service = 2,
+  Product = 3
 }
 
 export interface PriceBookItemDto {
@@ -18,10 +18,16 @@ export interface PriceBookItemDto {
   unit?: string | null;
   cost: number;
   price: number;
-  type: PriceBookItemType;
+  itemType: PriceBookItemType;
   inventoryUnitsPerSale: number;
   categoryId?: string | null;
   createdAt?: string;
+  category?: string;
+}
+
+export interface PriceBookCategory {
+  id?: string;
+  name?: string;
 }
 
 export interface CreatePriceBookItemRequest extends Omit<PriceBookItemDto, 'id' | 'createdAt'> { }

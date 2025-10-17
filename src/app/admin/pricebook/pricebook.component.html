@@ -11,19 +11,20 @@
   </div>
 
   <div class="row">
-    <div
-      class="col-md-4 mb-4"
-      *ngFor="let category of materialCategories"
-    >
+    <div class="col-md-4 mb-4" *ngFor="let category of materialCategories">
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body d-flex flex-column justify-content-between">
           <div class="d-flex align-items-center mb-2">
-            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
+            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-3"
+              style="width: 48px; height: 48px;">
               <lucide-icon name="settings" size="20"></lucide-icon>
             </div>
             <div class="flex-grow-1">
               <h5 class="card-title mb-0">{{ category.name }}</h5>
-              <small class="text-muted">{{ category?.items?.length || 0 }} items</small>
+              <small class="text-muted">
+                {{ category?.itemCount || 0 }}
+                {{ (category?.itemCount || 0) === 1 ? 'item' : 'items' }}
+              </small>
             </div>
             <div class="dropdown ms-auto">
               <button class="btn btn-icon p-1" data-bs-toggle="dropdown" aria-label="Category Actions">
@@ -36,8 +37,8 @@
             </div>
           </div>
           <div class="mt-2">
-            <button class="btn btn-sm btn-outline-primary w-100" 
-                    [routerLink]="['/admin/pricebook/items/category', category.id]">
+            <button class="btn btn-sm btn-outline-primary w-100"
+              [routerLink]="['/admin/pricebook/items/category', category.id]">
               View Items
             </button>
           </div>

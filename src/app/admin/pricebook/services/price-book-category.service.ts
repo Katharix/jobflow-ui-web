@@ -8,7 +8,7 @@ export interface PriceBookCategoryDto {
   name: string;
   description?: string | null;
   createdAt: string; // ISO
-  items?: any[]; // narrow if you want
+  itemCount?: number; // narrow if you want
 }
 
 export type CreatePriceBookCategoryRequest = {

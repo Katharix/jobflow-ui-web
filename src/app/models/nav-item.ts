@@ -4,4 +4,6 @@ export interface NavItem {
   route?: string;
   action?: () => void;
   roles?: string[];
+  active?: boolean;
+  allowDeepMatch?: boolean;
 }

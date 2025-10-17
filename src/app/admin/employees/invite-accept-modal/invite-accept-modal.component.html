@@ -1,0 +1,14 @@
+<jobflow-modal
+  *ngIf="showInviteAcceptModal"
+  title="Complete Your Account"
+  confirmText="Confirm"
+  cancelText="Cancel"
+  (cancel)="onCancel()"
+  (confirm)="onConfirm()">
+
+  <app-employee-invite-accept
+    [token]="inviteToken"
+    (accepted)="onInviteAccepted()">
+  </app-employee-invite-accept>
+
+</jobflow-modal>

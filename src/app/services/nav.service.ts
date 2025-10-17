@@ -24,21 +24,33 @@ export class NavService {
     ],
     '/admin/employees': [
       { label: 'Employees', icon: '', route: '/admin/employees' },
-      { label: 'Scheduling', icon: '', route: '/admin/employees/scheduling-employees' },
-      { label: 'Roles', icon: '', route: '/general/edit-profile' }
+      { label: 'Scheduling', icon: '', route: '/admin/employees/scheduling-employees', allowDeepMatch: true },
+      { label: 'Roles', icon: '', route: '/admin/employees/roles', allowDeepMatch: true }
     ],
     '/admin/pricebook': [
-      { label: 'Materials', icon: '', route: '/admin/pricebook' },
+      { label: 'Materials', icon: '', route: '/admin/pricebook', allowDeepMatch: true },
       { label: 'Services', icon: '', route: '/general/edit-profile' }
     ],
   };
 
-  getNavItems(path: string): NavItem[] {
-    const matchingKey = Object.keys(this.navConfig)
-      .filter(key => path.startsWith(key))
-      .sort((a, b) => b.length - a.length)[0]; // longest match
+getNavItems(path: string): NavItem[] {
+  const matchingKey = Object.keys(this.navConfig)
+    .filter(key => path.startsWith(key))
+    .sort((a, b) => b.length - a.length)[0];
 
-    return matchingKey ? this.navConfig[matchingKey] : [];
-  }
+  const items = matchingKey ? this.navConfig[matchingKey] : [];
+
+  return items.map(item => {
+    if (!item.route) return { ...item, active: false };
+
+    const isExact = path === item.route;
+    const isDeep = item.allowDeepMatch && path.startsWith(item.route);
+
+    return {
+      ...item,
+      active: isExact || isDeep
+    };
+  });
+}
 
 }

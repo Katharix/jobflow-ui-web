@@ -1,44 +1,29 @@
 <div class="card p-4 rounded-xl shadow bg-white">
   <h2 class="text-xl font-bold mb-4">Finish Setting Up Your Account</h2>
 
-  <!-- Wizard Step Templates -->
-  <ng-template #step1>
-    <app-connect-payment></app-connect-payment>
-  </ng-template>
-
-  <ng-template #step2>
-    <div class="py-3">
-      <app-branding />
+  <div class="space-y-3">
+    <div *ngFor="let step of steps" class="flex items-center justify-between p-3 border rounded-lg">
+      <div>
+        <span class="font-semibold">{{ step.stepName | titlecase }}</span>
+        <div *ngIf="step.isCompleted" class="text-green-600 text-sm">Completed ✓</div>
+      </div>
+      <button *ngIf="!step.isCompleted" (click)="openStep(step.stepName)" class="btn btn-primary btn-sm">
+        Open Step
+      </button>
     </div>
-  </ng-template>
+  </div>
 
-  <ng-template #step3>
-    <div class="py-3">
-      <h5 class="font-semibold mb-2">Set Up Sales Tax</h5>
-      <p>Step 3 content here...</p>
-    </div>
-  </ng-template>
+  <div class="mt-6">
+    <button [disabled]="!allComplete" (click)="proceed()" class="btn btn-success w-full">
+      Continue to Dashboard
+    </button>
+  </div>
 
-  <ng-template #step4>
-    <div class="py-3">
-      <app-quickbooks />
-    </div>
-  </ng-template>
-
-  <ng-template #step5>
-    <div class="py-3">
-      <h5 class="font-semibold mb-2">Import QuickBooks Data</h5>
-      <p>Step 5 content here...</p>
-    </div>
-  </ng-template>
-
-  <ng-template #step6>
-    <div class="py-3">
-      <h5 class="font-semibold mb-2">Add Employees Manually</h5>
-      <p>Step 6 content here...</p>
-    </div>
-  </ng-template>
-
-  <!-- Wizard Component -->
-  <app-wizard [steps]="wizardSteps"></app-wizard>
+  <div class="mt-6" *ngIf="selectedStep">
+    <ng-container [ngSwitch]="selectedStep">
+      <app-connect-payment *ngSwitchCase="'connectPayment'" (completed)="completeStep('connectPayment')"></app-connect-payment>
+      <app-branding *ngSwitchCase="'branding'" (completed)="completeStep('branding')"></app-branding>
+      <app-quickbooks *ngSwitchCase="'quickBooks'" (completed)="completeStep('quickBooks')"></app-quickbooks>
+    </ng-container>
+  </div>
 </div>

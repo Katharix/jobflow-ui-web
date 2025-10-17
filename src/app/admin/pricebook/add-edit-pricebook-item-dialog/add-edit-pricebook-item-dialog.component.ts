@@ -46,7 +46,7 @@ export class AddEditPricebookItemDialogComponent {
     unit:        [this.data.item?.unit ?? '', [Validators.maxLength(50)]],
     cost:        [this.data.item?.cost ?? 0, []],
     price:       [this.data.item?.price ?? 0, []],
-    type:        [this.data.item?.type ?? 0, []],
+    type:        [this.data.item?.itemType ?? 0, []],
     inventoryUnitsPerSale: [this.data.item?.inventoryUnitsPerSale ?? 1, []],
     categoryId:  [this.data.item?.categoryId ?? null],
   });
