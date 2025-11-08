@@ -30,6 +30,7 @@
     [pageSettings]="{ pageSize: 10 }"
     [allowSorting]="true"
     [allowFiltering]="true"
+     (commandClick)="onEditCommandClick($event)"
   >
     <e-columns>
       <e-column field="firstName" headerText="Name" width="200" [valueAccessor]="fullNameAccessor"></e-column>

@@ -87,6 +87,7 @@
     "mini-css-extract-plugin": "^2.9.2",
     "rollup": "^3.29.5",
     "rtlcss-webpack-plugin": "^4.0.7",
+    "source-map-explorer": "^2.5.3",
     "typescript": "~5.5.2",
     "webpack-cli": "^5.1.4"
   }

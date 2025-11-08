@@ -10,7 +10,8 @@ import {
   EditService,
   FilterService,
   CommandModel,
-  CommandColumnService
+  CommandColumnService,
+  CommandClickEventArgs
 } from '@syncfusion/ej2-angular-grids';
 import { getClickHandler } from '../../common/utils/page-action-dispatcher';
 import { PageHeaderComponent } from '../../views/admin-views/dashboard/page-header/page-header.component';
@@ -77,7 +78,7 @@ export class EmployeesComponent implements OnInit {
 
   // --- Syncfusion command column ---
   public commands: CommandModel[] = [
-    { buttonOption: { content: 'Edit', cssClass: 'e-flat e-primary', click: this.onEditCommandClick.bind(this) } }
+    { buttonOption: { content: 'Edit', cssClass: 'e-flat e-primary' } }
   ];
 
   private employeeService = inject(EmployeeService);
@@ -191,8 +192,9 @@ export class EmployeesComponent implements OnInit {
     }
   }
 
-  onEditCommandClick(args: any): void {
+  onEditCommandClick(args: CommandClickEventArgs): void {
     const rowData = args.rowData as Employee;
+    console.log("Employee Data: ", args);
     this.isEditing = true;
     this.selectedEmployee = { ...rowData };
     this.showAddEmployeeModal = true;

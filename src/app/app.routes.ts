@@ -30,10 +30,12 @@ export const routes: Routes = [
       { path: '', component: HomeComponent }
     ]
   },
+  { path: 'i', loadChildren: () => import('./views/general/invite-accept/invite.routes').then(m => m.INVITE_ROUTES) },
+
   {
     path: 'admin',
     component: AdminLayoutComponent,
-    canActivate: [authGuard, ], //onboardingGuard ✅ guard only post-onboarding routes
+    canActivate: [authGuard, ],
     children: [
       { path: '', component: DashboardComponent },
       { path: 'settings/branding', component:  BrandingComponent },
