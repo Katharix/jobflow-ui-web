@@ -116,7 +116,7 @@ export class EmployeeRolesComponent implements OnInit, AfterViewInit {
     if (args.requestType === 'save') {
       const payload: EmployeeRole = {
         id: args.data.id || null,
-        name: args.data.name,
+        name: args.data.name.toUpperCase(),
         organizationId: this.organizationId
       };
 

@@ -8,6 +8,8 @@ import { OrganizationContextService } from '../../../services/shared/organizatio
 import { OrganizationDto } from '../../../models/organization';
 import { firstValueFrom } from 'rxjs';
 import { EmployeeInviteService } from '../services/employee-invite.service';
+import {ToastService} from "../../../common/toast/toast.service";
+import {EmployeeService} from "../services/employee.service";
 
 @Component({
   selector: 'app-employee-invite-form',
@@ -23,6 +25,8 @@ export class EmployeeInviteFormComponent {
   roles: EmployeeRole[] = [];
   loading = false;
   private organizationContext = inject(OrganizationContextService);
+  public toast = inject(ToastService);
+  private employeeService = inject(EmployeeService);
   constructor(
     private fb: FormBuilder,
     private inviteService: EmployeeInviteService,
@@ -53,14 +57,41 @@ export class EmployeeInviteFormComponent {
 
   async submit() {
     if (this.form.invalid) return;
+
     this.loading = true;
 
     try {
-      const payload = { ...this.form.value, organizationId: this.organizationId };
-      const result = await firstValueFrom(this.inviteService.sendInvite(payload));
+      const payload = {
+        ...this.form.value,
+        organizationId: this.organizationId
+      };
+
+      // 1. CHECK EMAIL FIRST
+      const exists = await firstValueFrom(
+        this.employeeService.employeeExistByEmail(
+          payload.organizationId,
+          payload.email
+        )
+      );
+
+      // 2. STOP if email exists
+      if (exists) {
+        this.toast.warning(`${payload.email} already exists`, 'Warning');
+        return;
+      }
+
+      // 3. SEND INVITE IF SAFE
+      const result = await firstValueFrom(
+        this.inviteService.sendInvite(payload)
+      );
+
       this.submitted.emit(result);
+
+    } catch (err) {
+      this.toast.error('Failed to send invite', 'Error');
     } finally {
       this.loading = false;
     }
   }
+
 }

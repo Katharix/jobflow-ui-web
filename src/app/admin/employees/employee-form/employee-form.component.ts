@@ -40,12 +40,16 @@ export class EmployeeFormComponent implements OnInit {
       firstName: [this.employee?.firstName || '', Validators.required],
       lastName: [this.employee?.lastName || '', Validators.required],
       email: [this.employee?.email || '', [Validators.required, Validators.email]],
-      phoneNumber: [this.employee?.phoneNumber || ''],
+      phoneNumber: [this.employee?.phoneNumber || '', Validators.required],
       roleId: [this.employee?.role || '', Validators.required],
       isActive: [this.employee?.isActive ?? true],
-      organizationId: [this.organizationId]
+      organizationId: [this.organizationId],
+      id: [this.employee?.id],
     });
 
+  }
+  get formGroup() {
+    return this.form;
   }
 
   onSubmit(): void {

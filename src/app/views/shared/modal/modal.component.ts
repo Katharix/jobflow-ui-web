@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
+import {FormGroup} from "@angular/forms";
 
 @Component({
   selector: 'jobflow-modal',
@@ -9,7 +10,10 @@ import { LucideAngularModule } from 'lucide-angular';
    imports: [LucideAngularModule, CommonModule]
 })
 export class ModalComponent {
+  @Input() formGroup?: FormGroup; // optional form for validation
   @Input() title: string = 'Modal';
+  @Input() cancelButtonClass = 'btn btn-secondary';
+  @Input() confirmButtonClass = 'btn btn-primary';
   @Input() confirmText: string = 'Confirm';
   @Input() cancelText: string = 'Cancel';
   @Input() showFooter: boolean = true;
@@ -27,6 +31,14 @@ export class ModalComponent {
   }
 
   submit() {
+    if (this.formGroup) {
+      this.formGroup.markAllAsTouched();
+
+      if (this.formGroup.invalid) {
+        return;
+      }
+    }
+
     this.confirm.emit();
   }
 }

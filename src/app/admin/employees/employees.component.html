@@ -30,7 +30,7 @@
     [pageSettings]="{ pageSize: 10 }"
     [allowSorting]="true"
     [allowFiltering]="true"
-     (commandClick)="onEditCommandClick($event)"
+    (commandClick)="onCommandClick($event)"
   >
     <e-columns>
       <e-column field="firstName" headerText="Name" width="200" [valueAccessor]="fullNameAccessor"></e-column>
@@ -44,7 +44,11 @@
 <jobflow-modal
   *ngIf="showAddEmployeeModal"
   [title]="isEditing ? 'Edit Employee' : 'Add Employee'"
+  [confirmText]="'Save'"
+  [cancelText]="'Cancel'"
+  [formGroup]="employeeFormComponent?.formGroup"
   (cancel)="onModalCancel()"
+  (confirm)="employeeFormComponent.onSubmit()"
 >
   <app-employee-form
     [employee]="selectedEmployee"
@@ -62,4 +66,20 @@
 >
   <app-employee-invite-form #inviteForm
    (submitted)="onInviteSuccess($event)"></app-employee-invite-form>
+</jobflow-modal>
+
+<jobflow-modal
+  *ngIf="showDeleteModal"
+  [title]="'Delete Employee'"
+  [confirmText]="'Delete'"
+  [cancelText]="'Cancel'"
+  (cancel)="closeDeleteModal()"
+  (confirm)="confirmDelete()"
+  [confirmButtonClass]="'btn btn-danger px-4'"
+  [cancelButtonClass]="'btn btn-outline-secondary'"
+>
+  <app-delete-confirm
+    [title]="'Delete Employee'"
+    [message]="'Are you sure you want to delete ' + selectedEmployeeName + '?'"
+  ></app-delete-confirm>
 </jobflow-modal>

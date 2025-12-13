@@ -31,4 +31,8 @@ export class EmployeeService {
   delete(employeeId: string): Observable<void> {
     return this.api.delete<void>(`${this.apiUrl}/${employeeId}`);
   }
+
+  employeeExistByEmail(organizationId: string, email: string): Observable<boolean>{
+    return this.api.get<boolean>(`${this.apiUrl}/${organizationId}/employees/${email}`);
+  }
 }
