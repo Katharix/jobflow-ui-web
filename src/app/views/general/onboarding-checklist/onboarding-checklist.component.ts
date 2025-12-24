@@ -1,80 +1,96 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../../services/auth.service';
+import {Component, inject, Input, OnDestroy, OnInit} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { OrganizationContextService } from '../../../services/shared/organization-context.service';
-import {
-  CommonModule,
-  TitleCasePipe,
-  NgSwitch,
-  NgSwitchCase,
-  NgSwitchDefault
-} from '@angular/common';
-import { ConnectPaymentComponent } from "./onboarding-steps/connect-payment/connect-payment.component";
-import { BrandingComponent } from "../../../admin/branding/branding.component";
-import { QuickbooksComponent } from "./onboarding-steps/quickbooks/quickbooks.component";
-import { OnboardingService, OnboardingStep } from './services/onboarding.service';
+import { Subject, takeUntil } from 'rxjs';
+import {OnboardingService, OnboardingStepDto} from "./services/onboarding.service";
+import {OrganizationContextService} from "../../../services/shared/organization-context.service";
+import {OrganizationDto} from "../../../models/organization";
+
 
 @Component({
   selector: 'app-onboarding-checklist',
   standalone: true,
-  imports: [
-    CommonModule,
-    TitleCasePipe,
-    NgSwitch,
-    NgSwitchCase,
-    ConnectPaymentComponent,
-    BrandingComponent,
-    QuickbooksComponent
-  ],
-  templateUrl: './onboarding-checklist.component.html'
+  imports: [CommonModule],
+  templateUrl: './onboarding-checklist.component.html',
 })
 export class OnboardingChecklistComponent implements OnInit, OnDestroy {
-  private onboardingService = inject(OnboardingService);
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  @Input({ required: true }) organizationId: string | null = null;
+
+  steps: OnboardingStepDto[] = [];
+  nextStep: OnboardingStepDto | null = null;
+  organization!: OrganizationDto;
+
   private organizationContext = inject(OrganizationContextService);
+  private destroy$ = new Subject<void>();
 
-  steps: OnboardingStep[] = [];
-  organizationId: string | null = null;
-  selectedStep: string | null = null;
-  private orgSubscription;
-
-  constructor() {
-    this.orgSubscription = this.organizationContext.org$.subscribe(org => {
-      this.organizationId = org?.id ?? null;
+  constructor(
+    private onboardingService: OnboardingService,
+    private router: Router
+  ) {
+    this.organizationContext.org$.subscribe(org => {
+      if (org) {
+        this.organization = org;
+        this.organizationId = org.id ?? null;
+      }
     });
   }
 
-  ngOnInit() {
-    this.loadSteps();
+  ngOnInit(): void {
+    this.load();
   }
 
-  ngOnDestroy() {
-    this.orgSubscription.unsubscribe();
+  load(): void {
+    this.onboardingService
+      .getChecklist(this.organizationId!)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((steps) => {
+        this.steps = (steps ?? []).slice().sort((a, b) => a.order - b.order);
+        this.nextStep = this.steps.find(s => !s.isCompleted) ?? null;
+      });
   }
 
-  openStep(stepName: string) {
-    this.selectedStep = stepName;
+  goTo(step: OnboardingStepDto): void {
+    // Truth-driven routing: backend decides state, UI routes.
+    switch (step.key) {
+      case 'create_customer':
+        this.router.navigate(['/customers/new']);
+        break;
+
+      case 'create_job':
+        this.router.navigate(['/jobs/new']);
+        break;
+
+      case 'schedule_job':
+        this.router.navigate(['/schedule']);
+        break;
+
+      case 'create_invoice':
+        this.router.navigate(['/invoices/new']);
+        break;
+
+      case 'send_invoice':
+        this.router.navigate(['/invoices']);
+        break;
+
+      case 'receive_payment':
+        // v1: route to billing/connect stripe page if needed, otherwise invoices.
+        // If you don’t have /billing yet, route to /invoices and show a “Connect Stripe” CTA there.
+        this.router.navigate(['/billing']);
+        break;
+
+      default:
+        this.router.navigate(['/dashboard']);
+        break;
+    }
   }
 
-  loadSteps() {
-    if (!this.organizationId) return;
-    this.onboardingService.getSteps(this.organizationId).subscribe(s => (this.steps = s));
+  goNext(): void {
+    if (!this.nextStep) return;
+    this.goTo(this.nextStep);
   }
 
-  completeStep(stepName: string) {
-    if (!this.organizationId) return;
-    this.onboardingService.markStepComplete(this.organizationId, stepName).subscribe(() => {
-      this.selectedStep = null;
-      this.loadSteps();
-    });
-  }
-
-  get allComplete() {
-    return this.steps.length > 0 && this.steps.every(x => x.isCompleted);
-  }
-
-  proceed() {
-    if (this.allComplete) this.router.navigate(['/admin']);
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

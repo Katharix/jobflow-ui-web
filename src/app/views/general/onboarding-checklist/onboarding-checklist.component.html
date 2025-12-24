@@ -1,29 +1,46 @@
 <div class="card p-4 rounded-xl shadow bg-white">
   <h2 class="text-xl font-bold mb-4">Finish Setting Up Your Account</h2>
 
-  <div class="space-y-3">
-    <div *ngFor="let step of steps" class="flex items-center justify-between p-3 border rounded-lg">
+  <div class="space-y-3" *ngIf="steps?.length; else loading">
+    <div
+      *ngFor="let step of steps"
+      class="flex items-center justify-between p-3 border rounded-lg"
+    >
       <div>
-        <span class="font-semibold">{{ step.stepName | titlecase }}</span>
-        <div *ngIf="step.isCompleted" class="text-green-600 text-sm">Completed ✓</div>
+        <span class="font-semibold">{{ step.title }}</span>
+        <div *ngIf="step.isCompleted" class="text-green-600 text-sm">
+          Completed ✓
+        </div>
+        <div *ngIf="!step.isCompleted" class="text-gray-500 text-sm">
+          Not completed
+        </div>
       </div>
-      <button *ngIf="!step.isCompleted" (click)="openStep(step.stepName)" class="btn btn-primary btn-sm">
-        Open Step
+
+      <button
+        *ngIf="!step.isCompleted"
+        (click)="goTo(step)"
+        class="btn btn-primary btn-sm"
+      >
+        Go
       </button>
     </div>
   </div>
 
+  <ng-template #loading>
+    <div>Loading…</div>
+  </ng-template>
+
   <div class="mt-6">
-    <button [disabled]="!allComplete" (click)="proceed()" class="btn btn-success w-full">
-      Continue to Dashboard
+    <button
+      class="btn btn-success w-full"
+      [disabled]="!nextStep"
+      (click)="goNext()"
+    >
+      Next step
     </button>
   </div>
 
-  <div class="mt-6" *ngIf="selectedStep">
-    <ng-container [ngSwitch]="selectedStep">
-      <app-connect-payment *ngSwitchCase="'connectPayment'" (completed)="completeStep('connectPayment')"></app-connect-payment>
-      <app-branding *ngSwitchCase="'branding'" (completed)="completeStep('branding')"></app-branding>
-      <app-quickbooks *ngSwitchCase="'quickBooks'" (completed)="completeStep('quickBooks')"></app-quickbooks>
-    </ng-container>
+  <div class="mt-2 text-sm text-gray-500" *ngIf="!nextStep && steps.length">
+    All steps complete.
   </div>
 </div>

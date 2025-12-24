@@ -9,8 +9,6 @@ import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component
 import { InvoiceComponent } from './views/general/invoice/invoice.component';
 import { GeneralLayoutComponent } from './layouts/general-layout/general-layout.component';
 import { OnboardingChecklistComponent } from './views/general/onboarding-checklist/onboarding-checklist.component';
-import { onboardingGuard } from './services/onboarding.guard';
-import { redirectIfOnboardedGuard } from './services/redirect-if-onboarded.guard';
 import { BrandingComponent } from './admin/branding/branding.component';
 import { ChatComponent } from './admin/chat/chat.component';
 import { CompanyComponent } from './admin/company/company.component';
@@ -46,7 +44,7 @@ export const routes: Routes = [
       { path: 'employees/scheduling-employees', component: EmployeeScheduleComponent },
       { path: 'employees/roles', component: EmployeeRolesComponent },
       { path: 'pricebook', component: PriceBookComponent },
-      { 
+      {
         path: 'pricebook/items/category/:categoryId',
         loadComponent: () =>
           import('./admin/pricebook/price-book-item/price-book-item.component')
@@ -61,8 +59,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: OnboardingChecklistComponent,
-        canActivate: [redirectIfOnboardedGuard] // ✅ skip if already onboarded
+        component: OnboardingChecklistComponent
       }
     ]
   },
