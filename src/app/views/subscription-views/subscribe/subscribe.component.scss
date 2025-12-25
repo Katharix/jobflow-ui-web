@@ -4,3 +4,50 @@
     align-items: center;
     justify-content: center;
   }
+.onboarding-checklist {
+   max-width: 520px;
+}
+
+.onboarding-checklist .subtitle {
+   color: #666;
+   font-size: 0.9rem;
+   margin-bottom: 1rem;
+}
+
+.onboarding-checklist ul {
+   list-style: none;
+   padding: 0;
+   margin: 0;
+}
+
+.onboarding-checklist li {
+   display: flex;
+   align-items: center;
+   padding: 0.5rem 0;
+   gap: 0.75rem;
+}
+
+.onboarding-checklist .status {
+   width: 1.25rem;
+   text-align: center;
+   font-size: 1.1rem;
+}
+
+.onboarding-checklist li.completed {
+   opacity: 0.55;
+}
+
+.onboarding-checklist li.active {
+   font-weight: 600;
+}
+
+.onboarding-checklist li.active .status {
+   color: #2563eb; /* subtle emphasis */
+}
+
+.onboarding-checklist small {
+   font-weight: normal;
+   color: #666;
+   margin-left: 0.25rem;
+}
+

@@ -7,16 +7,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Organization, OrganizationDto, OrganizationRequest } from '../../../models/organization';
 import { OrganizationService } from '../../../services/organization.service';
 import { OrganizationContextService } from '../../../services/shared/organization-context.service';
+import {OnboardingChecklistComponent} from "../../general/onboarding-checklist/onboarding-checklist.component";
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [
-    NgbDropdownModule,
-    FormsModule,
-    NgbDatepickerModule,
-    NgApexchartsModule,
-  ],
+   imports: [
+      NgbDropdownModule,
+      FormsModule,
+      NgbDatepickerModule,
+      NgApexchartsModule,
+      OnboardingChecklistComponent,
+   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -38,7 +40,7 @@ export class DashboardComponent implements OnInit {
   public cloudStorageChartOptions: ApexOptions | any;
 
   themeCssVariables = inject(ThemeCssVariableService).getThemeCssVariables();
-  organizationId: string;
+   organizationId: string | null = null;
   org: OrganizationDto;
 
   constructor(
@@ -50,6 +52,7 @@ export class DashboardComponent implements OnInit {
     this.orgContext.org$.subscribe(org => {
       if (org) {
         this.org = org;
+        this.organizationId = org.id!;
         // if (!org.onboardingComplete)
         //   this.router.navigate(['/onboarding']);
       }
