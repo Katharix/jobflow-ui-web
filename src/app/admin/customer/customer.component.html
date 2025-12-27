@@ -1,0 +1,28 @@
+<h2>Create Customer</h2>
+
+<div *ngIf="error" class="error">{{ error }}</div>
+
+<div>
+   <label>
+      Name *
+      <input [(ngModel)]="name" />
+   </label>
+</div>
+
+<div>
+   <label>
+      Email
+      <input [(ngModel)]="email" />
+   </label>
+</div>
+
+<div>
+   <label>
+      Phone
+      <input [(ngModel)]="phone" />
+   </label>
+</div>
+
+<button (click)="save()" [disabled]="saving">
+   {{ saving ? 'Saving…' : 'Save' }}
+</button>

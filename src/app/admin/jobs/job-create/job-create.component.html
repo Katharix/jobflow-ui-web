@@ -1,0 +1,29 @@
+<h2>Create Job</h2>
+
+<div *ngIf="error">
+   {{ error }}
+</div>
+
+<div>
+   <label>
+      Customer *
+      <select [(ngModel)]="selectedCustomerId">
+         <option [ngValue]="null">Select a customer</option>
+         <option *ngFor="let customer of customers"
+                 [value]="customer.id">
+            {{ customer.name }}
+         </option>
+      </select>
+   </label>
+</div>
+
+<div>
+   <label>
+      Job Title *
+      <input [(ngModel)]="title" />
+   </label>
+</div>
+
+<button (click)="save()" [disabled]="saving">
+   {{ saving ? 'Saving…' : 'Save Job' }}
+</button>

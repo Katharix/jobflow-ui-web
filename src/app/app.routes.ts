@@ -18,6 +18,8 @@ import { EmployeeScheduleComponent } from './admin/scheduling/employee-schedule/
 import { JobScheduleComponent } from './admin/scheduling/job-schedule/job-schedule.component';
 import { PriceBookItemComponent } from './admin/pricebook/price-book-item/price-book-item.component';
 import { EmployeeRolesComponent } from './admin/employee-roles/employee-roles.component';
+import {CustomerComponent} from "./admin/customer/customer.component";
+import {CreateJobComponent} from "./admin/jobs/job-create/job-create.component";
 
 
 export const routes: Routes = [
@@ -50,6 +52,14 @@ export const routes: Routes = [
           import('./admin/pricebook/price-book-item/price-book-item.component')
             .then(m => m.PriceBookItemComponent)
       },
+       {
+          path: 'customers/create',
+          component: CustomerComponent
+       },
+       {
+          path: 'jobs/create',
+          component: CreateJobComponent
+       }
 
     ]
   },
