@@ -22,4 +22,18 @@ export class JobsService {
          payload
       );
    }
+   updateSchedule(
+      organizationId: string,
+      payload: {
+         id: string;
+         scheduledStart: string;
+         scheduledEnd?: string | null;
+      }
+   ) {
+      return this.api.post(
+         `${this.apiUrl}${organizationId}`,
+         payload
+      );
+   }
+
 }

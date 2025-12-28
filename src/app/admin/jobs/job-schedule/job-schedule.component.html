@@ -1,0 +1,23 @@
+<h2>Schedule Job</h2>
+
+<div *ngIf="error">{{ error }}</div>
+
+<div>
+   <label>
+      Start Date & Time *
+      <input type="datetime-local"
+             [(ngModel)]="scheduledStart" />
+   </label>
+</div>
+
+<div>
+   <label>
+      End Date & Time
+      <input type="datetime-local"
+             [(ngModel)]="scheduledEnd" />
+   </label>
+</div>
+
+<button (click)="save()" [disabled]="saving">
+   {{ saving ? 'Saving…' : 'Save Schedule' }}
+</button>
