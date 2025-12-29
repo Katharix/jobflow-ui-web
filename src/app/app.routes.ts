@@ -20,6 +20,7 @@ import { PriceBookItemComponent } from './admin/pricebook/price-book-item/price-
 import { EmployeeRolesComponent } from './admin/employee-roles/employee-roles.component';
 import {CustomerComponent} from "./admin/customer/customer.component";
 import {CreateJobComponent} from "./admin/jobs/job-create/job-create.component";
+import {JobInvoiceComponent} from "./admin/jobs/job-invoice/job-invoice.component";
 
 
 export const routes: Routes = [
@@ -63,6 +64,10 @@ export const routes: Routes = [
        {
           path: 'jobs/:jobId/schedule',
           component: JobScheduleComponent
+       },
+       {
+          path: 'jobs/:jobId/invoice',
+          component: JobInvoiceComponent
        }
     ]
   },

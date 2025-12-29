@@ -62,7 +62,7 @@ export class CreateJobComponent {
       };
 
       this.jobsService.upsertJob(this.organizationId, payload).subscribe({
-         next: () => this.router.navigate(['/dashboard']),
+         next: () => this.router.navigate(['/admin']),
          error: () => {
             this.saving = false;
             this.error = 'Failed to create job.';
