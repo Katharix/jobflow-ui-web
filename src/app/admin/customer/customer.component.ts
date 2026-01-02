@@ -46,7 +46,7 @@ export class CustomerComponent {
          emailAddress: this.email || undefined,
          phoneNumber: this.phone || undefined
       }).subscribe({
-         next: () => this.router.navigate(['/admin/dashboard']),
+         next: () => this.router.navigate(['/admin']),
          error: () => {
             this.saving = false;
             this.error = 'Failed to create customer.';

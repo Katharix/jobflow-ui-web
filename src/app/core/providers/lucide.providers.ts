@@ -28,6 +28,7 @@ import {
   Printer,
   PlusCircle,
   UserPlus,
+   Users
 } from 'lucide-angular';
 
 export const lucideProviders = importProvidersFrom(
@@ -65,6 +66,7 @@ export const lucideProviders = importProvidersFrom(
     Plus,
     Edit,
     Trash,
-    Trash2
+    Trash2,
+     Users
   })
 );

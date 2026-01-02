@@ -51,7 +51,7 @@ export class JobScheduleComponent {
          scheduledStart: this.scheduledStart,
          scheduledEnd: this.scheduledEnd || null
       }).subscribe({
-         next: () => this.router.navigate(['/dashboard']),
+         next: () => this.router.navigate(['/admin']),
          error: () => {
             this.saving = false;
             this.error = 'Failed to schedule job.';

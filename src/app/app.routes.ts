@@ -21,6 +21,9 @@ import { EmployeeRolesComponent } from './admin/employee-roles/employee-roles.co
 import {CustomerComponent} from "./admin/customer/customer.component";
 import {CreateJobComponent} from "./admin/jobs/job-create/job-create.component";
 import {JobInvoiceComponent} from "./admin/jobs/job-invoice/job-invoice.component";
+import {
+   ConnectPaymentComponent
+} from "./views/general/onboarding-checklist/onboarding-steps/connect-payment/connect-payment.component";
 
 
 export const routes: Routes = [
@@ -54,7 +57,7 @@ export const routes: Routes = [
             .then(m => m.PriceBookItemComponent)
       },
        {
-          path: 'customers/create',
+          path: 'clients/create',
           component: CustomerComponent
        },
        {
@@ -68,6 +71,10 @@ export const routes: Routes = [
        {
           path: 'jobs/:jobId/invoice',
           component: JobInvoiceComponent
+       },
+       {
+          path: 'connectedpayment',
+          component: ConnectPaymentComponent
        }
     ]
   },

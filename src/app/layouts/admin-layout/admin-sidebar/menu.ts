@@ -45,8 +45,13 @@ export const MENU: MenuItem[] = [
   {
     label: 'Messaging',
     icon: 'messages-square',
-    link: '/admin//messaging',
+    link: '/admin/messaging',
   },
+   {
+      label: 'Clients',
+      icon: 'users',
+      link: '/admin/clients/create',
+   },
   {
     label: 'Employees',
     icon: 'users-round',
