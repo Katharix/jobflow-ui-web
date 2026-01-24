@@ -1,13 +1,13 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import {Component} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {Router} from '@angular/router';
 import {OrganizationContextService} from "../../../services/shared/organization-context.service";
 import {CustomersService} from "../../customer/services/customer.service";
 import {CreateJobRequest, JobsService} from "../services/jobs.service";
 
 @Component({
-   selector: 'jobflow-create-job',
+   selector: 'job-create',
    standalone: true,
    imports: [CommonModule, FormsModule],
    templateUrl: './job-create.component.html'
@@ -40,7 +40,7 @@ export class CreateJobComponent {
       if (!this.organizationId) return;
 
       this.customersService
-         .getAllByOrganization(this.organizationId)
+         .getAllByOrganization()
          .subscribe({
             next: customers => (this.customers = customers),
             error: () => (this.error = 'Failed to load customers.')

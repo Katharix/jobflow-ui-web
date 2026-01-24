@@ -1,17 +1,18 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { BaseApiService } from '../../../services/base-api.service';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {BaseApiService} from '../../../services/base-api.service';
 
 export interface CreateJobRequest {
    organizationClientId: string;
    title: string;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class JobsService {
    private apiUrl = 'job/';
 
-   constructor(private api: BaseApiService) {}
+   constructor(private api: BaseApiService) {
+   }
 
    upsertJob(
       organizationId: string,
@@ -22,6 +23,7 @@ export class JobsService {
          payload
       );
    }
+
    updateSchedule(
       organizationId: string,
       payload: {
@@ -36,4 +38,9 @@ export class JobsService {
       );
    }
 
+   getAllJobs() {
+      return this.api.get<any>(
+         `${this.apiUrl}all`
+      )
+   }
 }

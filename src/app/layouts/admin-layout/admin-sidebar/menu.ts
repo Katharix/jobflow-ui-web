@@ -13,7 +13,7 @@ export const MENU: MenuItem[] = [
          {
             label: 'Jobs',
             icon: '',
-            link: '/apps/email/inbox',
+            link: '/admin/jobs',
          },
          {
             label: 'Scheduling',

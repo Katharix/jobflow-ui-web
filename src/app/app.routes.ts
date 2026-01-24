@@ -19,11 +19,11 @@ import {JobScheduleComponent} from './admin/jobs/job-schedule/job-schedule.compo
 import {PriceBookItemComponent} from './admin/pricebook/price-book-item/price-book-item.component';
 import {EmployeeRolesComponent} from './admin/employee-roles/employee-roles.component';
 import {CustomerComponent} from "./admin/customer/customer.component";
-import {CreateJobComponent} from "./admin/jobs/job-create/job-create.component";
 import {JobInvoiceComponent} from "./admin/jobs/job-invoice/job-invoice.component";
 import {
    ConnectPaymentComponent
 } from "./views/general/onboarding-checklist/onboarding-steps/connect-payment/connect-payment.component";
+import {JobComponent} from "./admin/jobs/job.component";
 
 
 export const routes: Routes = [
@@ -61,8 +61,8 @@ export const routes: Routes = [
             component: CustomerComponent
          },
          {
-            path: 'jobs/create',
-            component: CreateJobComponent
+            path: 'jobs',
+            component: JobComponent
          },
          {
             path: 'jobs/:jobId/schedule',

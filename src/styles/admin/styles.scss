@@ -5,7 +5,6 @@
 @import "variables";
 @import "./variables-dark";
 
-
 // Bootstrap stylesheets
 @import "bootstrap/scss/variables";
 @import "bootstrap/scss/variables-dark";
@@ -52,12 +51,10 @@
 @import "./utilities";
 @import "bootstrap/scss/utilities/api";
 
-
 // Custom mixins
 @import "./mixins/animation";
 @import "./mixins/buttons";
 @import "./mixins/misc";
-
 
 // Core styles
 @import "./root";
@@ -99,7 +96,6 @@
 @import "./components/chat";
 @import "./components/email";
 
-
 // Plugin overrides
 @import "./plugin-overrides/angular-archwizard";
 @import "./plugin-overrides/apex-charts";
@@ -112,7 +108,7 @@
 @import "./plugin-overrides/ngx-quill";
 @import "./plugin-overrides/ngx-scrollbar";
 @import "./plugin-overrides/sweet-alert";
-
+@import "./_grid";
 
 // Custom scss
 @import "./custom";

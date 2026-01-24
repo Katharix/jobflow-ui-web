@@ -38,25 +38,17 @@ export class InvoiceComponent implements OnInit {
       private loadingService: LoadingService,
       private route: ActivatedRoute,
       private paymentService: PaymentService,
-      private orgContext: OrganizationContextService
    ) {
    }
 
    ngOnInit(): void {
-      this.orgContext.org$.subscribe(org => {
-         if (org) {
-            this.org = org;
-            this.organizationId = org.id!;
-            // if (!org.onboardingComplete)
-            //   this.router.navigate(['/onboarding']);
-         }
-      });
       const invoiceId = this.route.snapshot.paramMap.get('id');
 
       if (invoiceId) {
          this.invoiceService.getInvoice(invoiceId).subscribe({
             next: invoice => {
                this.invoice = invoice;
+               this.organizationId = invoice.organizationId;
             },
             error: err => {
                console.error('❌ Failed to retrieve invoice:', err);
@@ -65,7 +57,6 @@ export class InvoiceComponent implements OnInit {
       } else {
          console.warn('⚠️ No invoice ID provided in route.');
       }
-
    }
 
    get subTotal(): number {
@@ -121,8 +112,7 @@ export class InvoiceComponent implements OnInit {
             const paymentElement = this.elements.create('payment');
             paymentElement.mount(this.paymentElementContainer.nativeElement);
          });
-
-
+         
       } catch {
          this.error = 'Unable to initialize payment.';
       } finally {

@@ -21,7 +21,8 @@ export enum InvoiceStatus {
    Draft = 0,
    Sent = 1,
    Paid = 2,
-   Overdue = 3
+   Overdue = 3,
+   Unpaid
 }
 
 export interface OrganizationClient {
