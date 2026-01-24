@@ -1,0 +1,98 @@
+﻿
+.e-grid .e-gridheader {
+   padding-right: 0px !important;
+}
+
+.jobflow-grid {
+   border-radius: 12px;
+   overflow: hidden;
+
+
+   .e-gridheader {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #dee2e6;
+      height: 55px;
+   }
+
+   .e-headercell {
+      font-weight: 600;
+      color: #343a40;
+      background-color: #f9f9f9;
+
+   }
+
+   .e-headercelldiv {
+      height: 55px;
+      line-height: 55px;
+   }
+
+   .e-rowcell {
+      color: #212529;
+      height: inherit;
+   }
+
+   .e-row {
+      height: 5rem;
+   }
+
+   .e-toolbar {
+      display: none;
+   }
+
+   .e-toolbar .e-btn {
+      font-weight: 500;
+      padding: 0.375rem 0.75rem;
+      border-radius: 0.375rem;
+      background-color: transparent;
+      border: 1px solid var(--bs-primary);
+      color: var(--bs-primary);
+   }
+
+   .e-toolbar .e-btn:hover {
+      background-color: var(--bs-primary);
+      color: #fff;
+   }
+
+   .e-gridpager {
+      padding: 0.5rem 1rem;
+      background-color: #f8f9fa;
+      border-top: 1px solid #dee2e6;
+   }
+
+   .e-content {
+      border-left: none;
+      border-right: none;
+   }
+
+   .e-edit-dialog {
+      border-radius: 0.5rem;
+   }
+}
+
+.jobflow-grid-search {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   margin-bottom: 12px;
+   width: 23rem;
+
+   input {
+      height: 38px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      padding: 0 12px;
+      font-size: 0.95rem;
+   }
+
+   .clear-btn {
+      color: #6b7280;
+      font-size: 18px;
+      line-height: 1;
+      padding: 0 6px;
+
+      &:hover {
+         color: #111827;
+         text-decoration: none;
+      }
+   }
+}

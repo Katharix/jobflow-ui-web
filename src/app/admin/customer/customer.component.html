@@ -1,0 +1,25 @@
+<app-page-header
+   title="Clients"
+   subtitle="Manage your clients"
+   [actions]="headerActions"
+></app-page-header>
+<div *ngIf="error" class="alert alert-danger mb-3">
+   {{ error }}
+</div>
+
+<jobflow-drawer
+   [open]="isDrawerOpen"
+   title="Add Client"
+   (closed)="closeDrawer()"
+>
+   <customer-create/>
+</jobflow-drawer>
+
+<jobflow-grid
+   [data]="items"
+   [columns]="columns"
+   [pageSettings]="pageSettings"
+   [height]="600"
+   [showSearchBar]="true"
+   (commandClick)="onCommandClick($event)"
+></jobflow-grid>

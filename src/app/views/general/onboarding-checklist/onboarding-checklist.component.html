@@ -1,46 +1,25 @@
-<div class="card p-4 rounded-xl shadow bg-white">
-  <h2 class="text-xl font-bold mb-4">Finish Setting Up Your Account</h2>
+<section class="onboarding-checklist">
+   <h3>Getting started</h3>
+   <p class="subtitle">
+      Complete these steps to start scheduling jobs and getting paid.
+   </p>
 
-  <div class="space-y-3" *ngIf="steps?.length; else loading">
-    <div
-      *ngFor="let step of steps"
-      class="flex items-center justify-between p-3 border rounded-lg"
-    >
-      <div>
-        <span class="font-semibold">{{ step.title }}</span>
-        <div *ngIf="step.isCompleted" class="text-green-600 text-sm">
-          Completed ✓
-        </div>
-        <div *ngIf="!step.isCompleted" class="text-gray-500 text-sm">
-          Not completed
-        </div>
-      </div>
+   <ul>
+      <li *ngFor="let step of steps"
+          [class.completed]="step.isCompleted"
+          [class.active]="step === nextStep">
 
-      <button
-        *ngIf="!step.isCompleted"
-        (click)="goTo(step)"
-        class="btn btn-primary btn-sm"
-      >
-        Go
-      </button>
-    </div>
-  </div>
+      <span class="status">
+        {{ step.isCompleted ? '✔' : '○' }}
+      </span>
 
-  <ng-template #loading>
-    <div>Loading…</div>
-  </ng-template>
+         <span class="title">
+        {{ step.title }}
+            <small *ngIf="step === nextStep && !step.isCompleted">
+          (recommended next step)
+        </small>
+      </span>
 
-  <div class="mt-6">
-    <button
-      class="btn btn-success w-full"
-      [disabled]="!nextStep"
-      (click)="goNext()"
-    >
-      Next step
-    </button>
-  </div>
-
-  <div class="mt-2 text-sm text-gray-500" *ngIf="!nextStep && steps.length">
-    All steps complete.
-  </div>
-</div>
+      </li>
+   </ul>
+</section>

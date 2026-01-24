@@ -1,0 +1,16 @@
+﻿.job-cell {
+   display: flex;
+   flex-direction: column;
+   line-height: 1.2;
+
+   .job-title {
+      font-weight: 600;
+      color: #111827;
+   }
+
+   .job-client {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-top: 2px;
+   }
+}

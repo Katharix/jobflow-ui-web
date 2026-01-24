@@ -1,103 +1,169 @@
 <div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="container-fluid d-flex justify-content-between">
-            <div class="col-lg-3 ps-0">
-              <a routerLink="." class="nobleui-logo d-block mt-3">Noble<span>UI</span></a>
-              <p class="mt-1 mb-1"><b>{{ invoice?.organizationClient?.organization?.organizationName }}</b></p>
-              <p>{{ invoice?.organizationClient?.organization?.address1 }}
-                <span *ngIf="invoice?.organizationClient?.organization?.address2">
+   <div class="row">
+      <div class="col-md-12">
+         <div class="card">
+            <div class="card-body">
+               <!-- PAID STATE -->
+               <div *ngIf="invoice?.status === InvoiceStatus.Paid"
+                    class="alert alert-success d-flex align-items-center mb-4">
+                  <lucide-icon name="check-circle" class="me-2"></lucide-icon>
+                  <strong>Payment received.</strong>
+                  <span class="ms-2">This invoice is fully paid.</span>
+               </div>
+
+               <div class="container-fluid d-flex justify-content-between">
+                  <div class="col-lg-3 ps-0">
+                     <a routerLink="." class="nobleui-logo d-block mt-3">Noble<span>UI</span></a>
+                     <p class="mt-1 mb-1"><b>{{ invoice?.organizationClient?.organization?.organizationName }}</b></p>
+                     <p>{{ invoice?.organizationClient?.organization?.address1 }}
+                        <span *ngIf="invoice?.organizationClient?.organization?.address2">
                   {{ invoice?.organizationClient?.organization?.address2 }}
                 </span><br>{{ invoice?.organizationClient?.organization?.city }}, {{
-                invoice?.organizationClient?.organization?.state
-                }}, {{ invoice?.organizationClient?.organization?.zipCode }}
-              </p>
-              <h5 class="mt-5 mb-2 text-secondary">Invoice to :</h5>
-              <p>{{ invoice?.organizationClient?.firstName }} {{ invoice?.organizationClient?.lastName }}<br> {{
-                invoice?.organizationClient?.address1 }}<span *ngIf="invoice?.organizationClient?.address2">{{
-                  invoice?.organizationClient?.address2 }},</span><br> {{
-                invoice?.organizationClient?.city }}, {{ invoice?.organizationClient?.state }}, {{
-                invoice?.organizationClient?.zipCode }}</p>
+                           invoice?.organizationClient?.organization?.state
+                        }}, {{ invoice?.organizationClient?.organization?.zipCode }}
+                     </p>
+                     <h5 class="mt-5 mb-2 text-secondary">Invoice to :</h5>
+                     <p>{{ invoice?.organizationClient?.firstName }} {{ invoice?.organizationClient?.lastName }}<br> {{
+                           invoice?.organizationClient?.address1
+                        }}<span *ngIf="invoice?.organizationClient?.address2">{{
+                              invoice?.organizationClient?.address2
+                           }},</span><br> {{
+                           invoice?.organizationClient?.city
+                        }}, {{ invoice?.organizationClient?.state }}, {{
+                           invoice?.organizationClient?.zipCode
+                        }}</p>
+                  </div>
+                  <div class="col-lg-3 pe-0">
+                     <h4 class="fw-bold text-uppercase text-end mt-4 mb-2">invoice</h4>
+                     <h6 class="text-end mb-5 pb-4"># {{ invoice?.invoiceNumber }}</h6>
+                     <p class="text-end mb-1">Balance Due</p>
+                     <h4
+                        class="text-end fw-bold"
+                        [ngClass]="{
+                         'text-danger': invoice?.status !== InvoiceStatus.Paid,
+                         'text-success': invoice?.status === InvoiceStatus.Paid
+                       }"
+                     >
+                        {{ invoice?.status === InvoiceStatus.Paid ? '$0.00' : (balanceDue | currency) }}
+                     </h4>
+
+                     <h6 class="mb-0 mt-3 text-end fw-normal mb-2"><span class="text-secondary">Invoice Date :</span>
+                        {{ invoice?.invoiceDate | date: 'longDate' }}</h6>
+                     <h6 class="text-end fw-normal"><span class="text-secondary">Due Date :</span> Payment due on
+                        receipt</h6>
+                  </div>
+               </div>
+               <div class="container-fluid mt-5 d-flex justify-content-center w-100">
+                  <div class="table-responsive w-100">
+                     <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                           <th>#</th>
+                           <th>Description</th>
+                           <th class="text-end">Quantity</th>
+                           <th class="text-end">Unit cost</th>
+                           <th class="text-end">Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="text-end" *ngFor="let item of invoice?.lineItems; let i = index">
+                           <td class="text-start">{{ i + 1 }}</td>
+                           <td class="text-start">{{ item.description }}</td>
+                           <td>{{ item.quantity }}</td>
+                           <td>{{ item.unitPrice | currency }}</td>
+                           <td>{{ item.lineTotal | currency }}</td>
+                        </tr>
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+               <div class="container-fluid mt-5 w-100">
+                  <div class="row">
+                     <div class="col-md-6 ms-auto">
+                        <div class="table-responsive">
+                           <table class="table">
+                              <tbody>
+                              <tr>
+                                 <td>Sub Total</td>
+                                 <td class="text-end">{{ subTotal | currency }}</td>
+                              </tr>
+                              <tr>
+                                 <td>TAX ({{ taxRate * 100 }}%)</td>
+                                 <td class="text-end">{{ taxAmount | currency }}</td>
+                              </tr>
+                              <tr>
+                                 <td class="text-bold-800">Total</td>
+                                 <td class="text-bold-800 text-end">{{ total | currency }}</td>
+                              </tr>
+                              <tr>
+                                 <td>Payment Made</td>
+                                 <td
+                                    class="text-end"
+                                    [ngClass]="{
+                                     'text-danger': invoice?.status !== InvoiceStatus.Paid,
+                                     'text-success': invoice?.status === InvoiceStatus.Paid
+                                   }"
+                                 >
+                                    (-) {{ invoice?.amountPaid | currency }}
+                                 </td>
+
+                              </tr>
+                              <tr class="bg-light">
+                                 <td class="text-bold-800">Balance Due</td>
+                                 <td class="text-bold-800 text-end">{{ balanceDue | currency }}</td>
+                              </tr>
+                              </tbody>
+                           </table>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <!-- Stripe Payment Element -->
+               <div *ngIf="showPaymentForm" class="container-fluid mt-4">
+                  <div class="card border-primary">
+                     <div class="card-header bg-primary text-white">
+                        Secure Payment
+                     </div>
+
+                     <div class="card-body">
+                        <div #paymentElementContainer></div>
+
+                        <div class="mt-3 text-end">
+                           <button
+                              class="btn btn-success"
+                              [disabled]="loading"
+                              (click)="confirmPayment()"
+                           >
+                              {{ loading ? 'Processing…' : 'Confirm Payment' }}
+                           </button>
+                        </div>
+
+                        <div *ngIf="error" class="text-danger mt-2">
+                           {{ error }}
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+               <div class="container-fluid w-100">
+                  <button
+                     *ngIf="invoice?.status != InvoiceStatus.Paid && !showPaymentForm"
+                     class="btn btn-primary float-end mt-4 ms-2"
+                     [disabled]="loading"
+                     (click)="payInvoice()"
+                  >
+                     <lucide-icon class="me-2 icon-md" name="credit-card"></lucide-icon>
+                     Pay Invoice
+                  </button>
+
+
+                  <a routerLink="." class="btn btn-outline-primary float-end mt-4">
+                     <lucide-icon class="me-2 icon-md"
+                                  name="printer"></lucide-icon>
+                     Download</a>
+               </div>
             </div>
-            <div class="col-lg-3 pe-0">
-              <h4 class="fw-bold text-uppercase text-end mt-4 mb-2">invoice</h4>
-              <h6 class="text-end mb-5 pb-4"># {{ invoice?.invoiceNumber }}</h6>
-              <p class="text-end mb-1">Balance Due</p>
-              <h4 class="text-end fw-normal">{{ balanceDue | currency }}</h4>
-              <h6 class="mb-0 mt-3 text-end fw-normal mb-2"><span class="text-secondary">Invoice Date :</span>
-                {{ invoice?.invoiceDate | date: 'longDate' }}</h6>
-              <h6 class="text-end fw-normal"><span class="text-secondary">Due Date :</span> {{ invoice?.dueDate | date:
-                'longDate' }}</h6>
-            </div>
-          </div>
-          <div class="container-fluid mt-5 d-flex justify-content-center w-100">
-            <div class="table-responsive w-100">
-              <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Description</th>
-                    <th class="text-end">Quantity</th>
-                    <th class="text-end">Unit cost</th>
-                    <th class="text-end">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="text-end" *ngFor="let item of invoice?.lineItems; let i = index">
-                    <td class="text-start">{{ i + 1 }}</td>
-                    <td class="text-start">{{ item.description }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ item.unitPrice | currency }}</td>
-                    <td>{{ item.lineTotal | currency }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="container-fluid mt-5 w-100">
-            <div class="row">
-              <div class="col-md-6 ms-auto">
-                <div class="table-responsive">
-                  <table class="table">
-                    <tbody>
-                      <tr>
-                        <td>Sub Total</td>
-                        <td class="text-end">{{ subTotal | currency }}</td>
-                      </tr>
-                      <tr>
-                        <td>TAX ({{ taxRate * 100 }}%)</td>
-                        <td class="text-end">{{ taxAmount | currency }}</td>
-                      </tr>
-                      <tr>
-                        <td class="text-bold-800">Total</td>
-                        <td class="text-bold-800 text-end">{{ total | currency }}</td>
-                      </tr>
-                      <tr>
-                        <td>Payment Made</td>
-                        <td class="text-danger text-end">(-) {{ invoice?.amountPaid | currency }}</td>
-                      </tr>
-                      <tr class="bg-light">
-                        <td class="text-bold-800">Balance Due</td>
-                        <td class="text-bold-800 text-end">{{ balanceDue | currency }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="container-fluid w-100">
-            <a routerLink="." class="btn btn-primary float-end mt-4 ms-2"> <lucide-icon class="me-2 icon-md"
-                name="image"></lucide-icon>
-              Pay Invoice</a>
-            <a routerLink="." class="btn btn-outline-primary float-end mt-4"><lucide-icon class="me-2 icon-md"
-                name="printer"></lucide-icon>
-              Download</a>
-          </div>
-        </div>
+         </div>
       </div>
-    </div>
-  </div>
+   </div>
 </div>

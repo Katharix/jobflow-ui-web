@@ -1,0 +1,35 @@
+﻿<app-page-header
+   title="Jobs"
+   subtitle="Manage your jobs"
+   [actions]="headerActions"
+></app-page-header>
+<div *ngIf="error" class="alert alert-danger mb-3">
+   {{ error }}
+</div>
+
+<jobflow-drawer
+   [open]="isDrawerOpen"
+   title="Add Job"
+   (closed)="closeDrawer()"
+>
+   <job-create/>
+</jobflow-drawer>
+
+<ng-template #jobTitleTemplate let-job>
+   <div class="job-cell">
+      <div class="job-title">{{ job.title }}</div>
+      <div class="job-client">
+         {{ job.organizationClient.firstName }}
+         {{ job.organizationClient.lastName }}
+      </div>
+   </div>
+</ng-template>
+
+<jobflow-grid
+   [data]="items"
+   [columns]="columns"
+   [pageSettings]="pageSettings"
+   [height]="600"
+   [showSearchBar]="true"
+   (commandClick)="onCommandClick($event)"
+></jobflow-grid>

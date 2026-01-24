@@ -1,0 +1,16 @@
+<div class="drawer-backdrop" *ngIf="open" (click)="backdropClick()"></div>
+
+<aside
+   class="drawer"
+   [class.open]="open"
+   [style.width.px]="width"
+>
+   <header class="drawer-header">
+      <h3 class="drawer-title">{{ title }}</h3>
+      <button class="drawer-close" (click)="close()">×</button>
+   </header>
+
+   <section class="drawer-body">
+      <ng-content></ng-content>
+   </section>
+</aside>
