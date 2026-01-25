@@ -141,7 +141,6 @@ export class PriceBookComponent implements OnInit {
 
    viewCategoryItems(category: PriceBookCategoryDto): void {
       // navigate or open a modal
-      console.log('viewCategoryItems', category);
    }
 
    editMaterial(material: Product): void {

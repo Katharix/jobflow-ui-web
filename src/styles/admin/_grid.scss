@@ -9,7 +9,7 @@
 
 
    .e-gridheader {
-      background-color: #f8f9fa;
+      background-color: $light;
       border-bottom: 1px solid #dee2e6;
       height: 55px;
    }
@@ -27,7 +27,7 @@
    }
 
    .e-rowcell {
-      color: #212529;
+      color: $gray-400;
       height: inherit;
    }
 
@@ -53,10 +53,8 @@
       color: #fff;
    }
 
-   .e-gridpager {
-      padding: 0.5rem 1rem;
-      background-color: #f8f9fa;
-      border-top: 1px solid #dee2e6;
+   .e-pager .e-pagesizes {
+      display: none;
    }
 
    .e-content {
@@ -66,6 +64,142 @@
 
    .e-edit-dialog {
       border-radius: 0.5rem;
+   }
+
+
+   /* =======================
+      PAGER — CORRECT FIX
+      ======================= */
+
+   .e-gridpager {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+
+      padding: 0.5rem 1rem;
+      border-top: 1px solid #dee2e6;
+   }
+
+   /* Page number container */
+   .e-gridpager .e-pagercontainer {
+      display: flex;
+      align-items: center;
+      order: 2;
+   }
+
+   /* Navigation arrows */
+   .e-gridpager .e-firstpage,
+   .e-gridpager .e-prevpage,
+   .e-gridpager .e-nextpage,
+   .e-gridpager .e-lastpage {
+      order: 1;
+   }
+
+   .e-gridpager .e-nextpage,
+   .e-gridpager .e-lastpage {
+      order: 3;
+   }
+
+   /* Hide page size selector SAFELY */
+   .e-gridpager .e-pagesizes {
+      display: none;
+   }
+
+   /* Hide count text (optional, but cleaner) */
+   .e-gridpager .e-parentmsgbar {
+      display: none;
+   }
+
+   /* Button polish */
+   .e-gridpager .e-numericitem,
+   .e-gridpager .e-prevpage,
+   .e-gridpager .e-nextpage,
+   .e-gridpager .e-firstpage,
+   .e-gridpager .e-lastpage {
+      border-radius: 6px;
+      padding: 4px 8px;
+      transition: background-color 0.15s ease;
+   }
+
+   .e-gridpager .e-numericitem:hover,
+   .e-gridpager .e-prevpage:hover,
+   .e-gridpager .e-nextpage:hover,
+   .e-gridpager .e-firstpage:hover,
+   .e-gridpager .e-lastpage:hover {
+      background-color: #eef2ff;
+   }
+
+   .e-gridpager .e-icon {
+      font-size: 16px;
+      color: #4f46e5;
+   }
+
+
+   /* =======================
+      PAGINATION POLISH
+      ======================= */
+
+   .e-gridpager .e-pager {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+   }
+
+   /* Base button style */
+   .e-gridpager .e-numericitem,
+   .e-gridpager .e-prevpage,
+   .e-gridpager .e-nextpage,
+   .e-gridpager .e-firstpage,
+   .e-gridpager .e-lastpage {
+      min-width: 34px;
+      height: 34px;
+      padding: 0 10px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      background-color: #ffffff;
+
+      font-size: 14px;
+      font-weight: 500;
+      color: #4f46e5;
+
+      cursor: pointer;
+      transition: all 0.15s ease;
+   }
+
+   /* Hover */
+   .e-gridpager .e-numericitem:hover,
+   .e-gridpager .e-prevpage:hover,
+   .e-gridpager .e-nextpage:hover,
+   .e-gridpager .e-firstpage:hover,
+   .e-gridpager .e-lastpage:hover {
+      background-color: #eef2ff;
+      border-color: #c7d2fe;
+   }
+
+   /* Active page */
+   .e-gridpager .e-numericitem.e-currentitem {
+      background-color: $primary;
+      border-color: $primary;
+      color: #ffffff;
+      font-weight: 600;
+   }
+
+   /* Disabled arrows */
+   .e-gridpager .e-disabled {
+      opacity: 0.4;
+      cursor: default;
+      pointer-events: none;
+   }
+
+   /* Icon sizing */
+   .e-gridpager .e-icon {
+      font-size: 16px;
    }
 }
 

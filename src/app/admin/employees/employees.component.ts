@@ -240,7 +240,6 @@ export class EmployeesComponent implements OnInit {
 
    onEditCommandClick(args: CommandClickEventArgs): void {
       const rowData = args.rowData as Employee;
-      console.log("Employee Data: ", args);
       this.isEditing = true;
       this.selectedEmployee = {...rowData};
       this.showAddEmployeeModal = true;

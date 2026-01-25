@@ -149,9 +149,7 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
 
       this.itemService.getAll(this.categoryId).subscribe({
          next: list => {
-            console.log('Pricebook Items: ', list);
             this.items = (list ?? []).sort((a, b) => a.name.localeCompare(b.name));
-            console.log('Items ', this.items)
          },
          error: e => {
             this.toast.error('Failed to load items');

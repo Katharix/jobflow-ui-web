@@ -101,7 +101,6 @@ export class CustomerComponent {
       this.customers.getAllByOrganization().subscribe({
          next: list => {
             this.items = (list ?? []).sort((a, b) => a.firstName.localeCompare(b.lastName));
-            console.log('Items ', this.items)
          },
          error: e => {
             this.toast.error('Failed to load items');

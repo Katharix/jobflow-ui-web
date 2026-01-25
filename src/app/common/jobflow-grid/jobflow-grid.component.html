@@ -5,7 +5,7 @@
    >
       <input
          type="text"
-         class="form-control shadow-sm rounded-3"
+         class="form-control form-control-lg"
          placeholder="Search…"
          [(ngModel)]="searchText"
          (input)="onSearchChange()"
@@ -30,7 +30,6 @@
              [toolbar]="toolbar"
              (toolbarClick)="onToolbarClick($event)"
              (commandClick)="onCommandClick($event)"
-             [height]="height"
              [enableStickyHeader]="enableStickyHeader"
    >
       <e-columns>

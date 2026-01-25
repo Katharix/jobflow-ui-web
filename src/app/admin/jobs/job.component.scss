@@ -14,3 +14,34 @@
       margin-top: 2px;
    }
 }
+
+.job-status-chip {
+   display: inline-flex;
+   align-items: center;
+   padding: 4px 10px;
+   border-radius: 999px;
+   font-size: 13px;
+   font-weight: 500;
+   line-height: 1;
+}
+
+.chip-scheduled {
+   background: #eef2ff;
+   color: #3F67DA;
+}
+
+.chip-unscheduled {
+   background: #f3f4f6;
+   color: #374151;
+}
+
+.chip-inprogress {
+   background: #fff7ed;
+   color: #d97706;
+}
+
+.chip-completed {
+   background: #ecfdf5;
+   color: #047857;
+}
+

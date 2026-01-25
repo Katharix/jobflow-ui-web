@@ -5,11 +5,24 @@ import {Router} from '@angular/router';
 import {OrganizationContextService} from "../../../services/shared/organization-context.service";
 import {CustomersService} from "../../customer/services/customer.service";
 import {CreateJobRequest, JobsService} from "../services/jobs.service";
+import {
+   NgLabelTemplateDirective,
+   NgOptionComponent,
+   NgOptionTemplateDirective,
+   NgSelectComponent
+} from '@ng-select/ng-select';
 
 @Component({
    selector: 'job-create',
    standalone: true,
-   imports: [CommonModule, FormsModule],
+   imports: [
+      CommonModule,
+      FormsModule,
+      NgLabelTemplateDirective,
+      NgOptionTemplateDirective,
+      NgSelectComponent,
+      NgOptionComponent
+   ],
    templateUrl: './job-create.component.html'
 })
 export class CreateJobComponent {
@@ -61,7 +74,7 @@ export class CreateJobComponent {
          title: this.title.trim()
       };
 
-      this.jobsService.upsertJob(this.organizationId, payload).subscribe({
+      this.jobsService.upsertJob(payload).subscribe({
          next: () => this.router.navigate(['/admin']),
          error: () => {
             this.saving = false;

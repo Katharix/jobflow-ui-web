@@ -20,7 +20,9 @@ import {JobsService} from "./services/jobs.service";
 import {getClickHandler} from "../../common/utils/page-action-dispatcher";
 import {CommandClickEventArgs, PageSettingsModel} from "@syncfusion/ej2-angular-grids";
 import {CreateJobComponent} from "./job-create/job-create.component";
-import {formatPhone} from "../../common/utils/app-formaters";
+import {formatDateTime, formatPhone} from "../../common/utils/app-formaters";
+import {JobLifecycleStatus} from "../../models/enums/job-lifecycle-status";
+import {JobLifecycleStatusLabels} from "../../models/labels/job-lifecycle-status-label";
 
 @Component({
    selector: 'app-job',
@@ -41,6 +43,12 @@ export class JobComponent implements OnInit {
 
    @ViewChild('jobTitleTemplate', {static: true})
    jobTitleTemplate!: TemplateRef<any>;
+
+   @ViewChild('actionsTemplate', {static: true})
+   actionsTemplate!: TemplateRef<any>;
+
+   @ViewChild('statusTemplate', {static: true})
+   statusTemplate!: TemplateRef<any>;
 
    organizationId: string | null = null;
    isDrawerOpen = false;
@@ -88,6 +96,7 @@ export class JobComponent implements OnInit {
    }
 
    private buildColumns(): void {
+
       this.columns = [
          {
             headerText: 'Job',
@@ -98,18 +107,12 @@ export class JobComponent implements OnInit {
             headerText: 'Scheduled',
             width: 160,
             valueAccessor: (_field: string, data: any) =>
-               data.scheduledStart
-                  ? new Date(data.scheduledStart).toLocaleDateString('en-US', {
-                     month: 'short',
-                     day: 'numeric',
-                     year: 'numeric'
-                  })
-                  : ''
+               formatDateTime(data.scheduledStart)
          },
          {
-            field: 'jobStatus.status',
             headerText: 'Status',
-            width: 120
+            width: 120,
+            template: this.statusTemplate
          },
          {
             field: 'organizationClient.phoneNumber',
@@ -117,6 +120,11 @@ export class JobComponent implements OnInit {
             width: 160,
             valueAccessor: (_field: string, data: any) =>
                formatPhone(data?.organizationClient?.phoneNumber)
+         },
+         {
+            headerText: 'Actions',
+            width: 200,
+            template: this.actionsTemplate
          }
       ];
    }
@@ -125,6 +133,28 @@ export class JobComponent implements OnInit {
       return {
          add: () => this.openAddJob()
       };
+   }
+
+   getStatusText(job: any): string {
+      switch (job.lifecycleStatus) {
+
+         case JobLifecycleStatus.Approved:
+            return this.isUnscheduled(job)
+               ? 'Unscheduled'
+               : 'Scheduled';
+
+         case JobLifecycleStatus.InProgress:
+            return 'In Progress';
+
+         case JobLifecycleStatus.Completed:
+            return 'Completed';
+
+         case JobLifecycleStatus.Draft:
+            return 'Unscheduled';
+
+         default:
+            return '—';
+      }
    }
 
    load(): void {
@@ -137,6 +167,13 @@ export class JobComponent implements OnInit {
             console.error(e);
          }
       });
+   }
+
+   isUnscheduled(job: any): boolean {
+      if (!job?.scheduledStart) return true;
+
+      const date = new Date(job.scheduledStart);
+      return isNaN(date.getTime()) || date.getFullYear() <= 1;
    }
 
    onCommandClick(args: CommandClickEventArgs) {
@@ -163,4 +200,63 @@ export class JobComponent implements OnInit {
       this.isDrawerOpen = false;
       this.editingJob = null;
    }
+
+   scheduleJob(job: any) {
+      this.router.navigate([
+         '/admin/jobs',
+         job.id,
+         'schedule'
+      ]);
+   }
+
+   getStatusChipLabel(job: any): string {
+      if (job.lifecycleStatus === JobLifecycleStatus.Approved) {
+         return this.isUnscheduled(job) ? 'Unscheduled' : 'Scheduled';
+      }
+
+      if (job.lifecycleStatus === JobLifecycleStatus.InProgress) {
+         return 'In Progress';
+      }
+
+      if (job.lifecycleStatus === JobLifecycleStatus.Completed) {
+         return 'Completed';
+      }
+
+      if (job.lifecycleStatus === JobLifecycleStatus.Draft) {
+         return 'Unscheduled';
+      }
+      return '—';
+   }
+
+   getStatusChipClass(job: any): string {
+      if (job.lifecycleStatus === JobLifecycleStatus.Approved) {
+         return this.isUnscheduled(job)
+            ? 'chip-unscheduled'
+            : 'chip-scheduled';
+      }
+
+      if (job.lifecycleStatus === JobLifecycleStatus.InProgress) {
+         return 'chip-inprogress';
+      }
+
+      if (job.lifecycleStatus === JobLifecycleStatus.Completed) {
+         return 'chip-completed';
+      }
+
+      if (job.lifecycleStatus === JobLifecycleStatus.Draft) {
+         return 'chip-unscheduled';
+      }
+
+      return 'chip-default';
+   }
+
+   deleteJob(job: any) {
+
+   }
+
+   editJob(job: any) {
+
+   }
+
+   protected readonly Date = Date;
 }

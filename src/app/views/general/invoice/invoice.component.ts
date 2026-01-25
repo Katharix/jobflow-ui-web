@@ -112,7 +112,7 @@ export class InvoiceComponent implements OnInit {
             const paymentElement = this.elements.create('payment');
             paymentElement.mount(this.paymentElementContainer.nativeElement);
          });
-         
+
       } catch {
          this.error = 'Unable to initialize payment.';
       } finally {
@@ -138,7 +138,6 @@ export class InvoiceComponent implements OnInit {
       }
 
       if (result.paymentIntent?.status === 'succeeded') {
-         console.log('Payment succeeded:', result.paymentIntent.id);
          // UI cleanup will go here next
       }
 

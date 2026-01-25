@@ -25,6 +25,39 @@
    </div>
 </ng-template>
 
+<ng-template #actionsTemplate let-data>
+   <div class="grid-actions">
+
+      <button
+         *ngIf="isUnscheduled(data)"
+         class="btn btn-sm btn-primary"
+         (click)="scheduleJob(data)">
+         Schedule
+      </button>
+
+      <button
+         class="btn btn-sm btn-link"
+         (click)="editJob(data)">
+         Edit
+      </button>
+
+      <button
+         class="btn btn-sm btn-link text-danger"
+         (click)="deleteJob(data)">
+         Delete
+      </button>
+
+   </div>
+</ng-template>
+
+<ng-template #statusTemplate let-job>
+   <span
+      class="job-status-chip"
+      [ngClass]="getStatusChipClass(job)">
+      {{ getStatusChipLabel(job) }}
+   </span>
+</ng-template>
+
 <jobflow-grid
    [data]="items"
    [columns]="columns"

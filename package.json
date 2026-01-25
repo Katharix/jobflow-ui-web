@@ -27,7 +27,7 @@
     "@microsoft/signalr": "^8.0.7",
     "@narik/custom-validators": "^12.0.0",
     "@ng-bootstrap/ng-bootstrap": "^17.0.1",
-    "@ng-select/ng-select": "^13.7.1",
+    "@ng-select/ng-select": "^13.9.1",
     "@popperjs/core": "^2.11.8",
     "@rg-software/angular-archwizard": "^17.0.0",
     "@siemens/ngx-datatable": "^22.4.1",

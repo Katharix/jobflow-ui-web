@@ -2,7 +2,7 @@
 import {importProvidersFrom} from '@angular/core';
 import {
    BookOpenText, Calendar,
-   CreditCard, Edit, LucideAngularModule, MoreVertical, Plus, Settings, Trash, Trash2, TrashIcon
+   CreditCard, Edit, LucideAngularModule, MoreVertical, Network, Plus, Settings, Trash, Trash2, TrashIcon
 } from 'lucide-angular';
 import {
    Home,
@@ -74,5 +74,6 @@ export const lucideProviders = importProvidersFrom(
       Users,
       Handshake,
       CreditCard,
+      Network
    })
 );

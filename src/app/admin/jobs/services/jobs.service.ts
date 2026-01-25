@@ -15,11 +15,10 @@ export class JobsService {
    }
 
    upsertJob(
-      organizationId: string,
       payload: CreateJobRequest
    ): Observable<any> {
       return this.api.post(
-         `${this.apiUrl}${organizationId}`,
+         `${this.apiUrl}upsert`,
          payload
       );
    }

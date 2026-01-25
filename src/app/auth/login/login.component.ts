@@ -80,7 +80,6 @@ export class LoginComponent implements OnInit {
             // ✅ Step 3: Call backend to create/sync user
             this.authService.loginWithFirebase(idToken).subscribe({
                next: (res) => {
-                  console.log('User synced with backend:', res);
 
                   // ✅ Optional: store info
                   localStorage.setItem('isLoggedin', 'true');

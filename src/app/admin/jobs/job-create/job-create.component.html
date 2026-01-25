@@ -4,17 +4,18 @@
    </div>
    <div class="col-12 col-md-6">
       <label class="form-label">Customer <span class="text-danger">*</span></label>
-      <select class="form-select" [(ngModel)]="selectedCustomerId">
-         <option [ngValue]="null">Select a customer</option>
-         <option *ngFor="let customer of customers"
-                 [value]="customer.id">
+      <ng-select
+         [searchable]="true"
+         [(ngModel)]="selectedCustomerId">
+         <ng-option *ngFor="let customer of customers"
+                    [value]="customer.id">
             {{ customer.firstName }} {{ customer.lastName }}
-         </option>
-      </select>
+         </ng-option>
+      </ng-select>
    </div>
    <div class="col-12 col-md-6">
       <label class="form-label">Job Title <span class="text-danger">*</span></label>
-      <input class="form-control shadow-sm rounded-3" [(ngModel)]="title"/>
+      <input class="form-control form-control-lg" [(ngModel)]="title"/>
    </div>
 </div>
 <br>
