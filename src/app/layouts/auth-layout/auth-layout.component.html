@@ -1,8 +1,5 @@
-<app-preloader/>
-
 <ng-container *ngIf="isLoading$ | async; else mainLayout">
    <app-preloader/>
-   <app-loading-overlay/>
 </ng-container>
 
 <ng-template #mainLayout>

@@ -1,9 +1,13 @@
 import {Component, ViewEncapsulation, inject} from '@angular/core';
-import {RouteConfigLoadEnd, RouteConfigLoadStart, Router, RouterOutlet} from '@angular/router';
+import {
+   NavigationCancel,
+   NavigationEnd, NavigationError, NavigationStart,
+   Router,
+   RouterOutlet
+} from '@angular/router';
 import {PreloaderComponent} from "../../landing/preloader.component";
 import {LoadingService} from '../../services/loading-service.service';
 import {CommonModule} from '@angular/common';
-import {Observable} from 'rxjs';
 import {LoadingOverlayComponent} from "../../common/app-loading-overlay/app-loading-overlay.component";
 
 @Component({
@@ -15,6 +19,25 @@ import {LoadingOverlayComponent} from "../../common/app-loading-overlay/app-load
    encapsulation: ViewEncapsulation.None
 })
 export class AuthLayoutComponent {
+   private router = inject(Router);
    private loadingService = inject(LoadingService);
-   isLoading$: Observable<boolean> = this.loadingService.isLoading$;
+
+   isLoading$ = this.loadingService.isLoading$;
+
+   constructor() {
+      this.router.events.subscribe(event => {
+
+         if (event instanceof NavigationStart) {
+            this.loadingService.show();
+         }
+
+         if (
+            event instanceof NavigationEnd ||
+            event instanceof NavigationCancel ||
+            event instanceof NavigationError
+         ) {
+            this.loadingService.hide();
+         }
+      });
+   }
 }

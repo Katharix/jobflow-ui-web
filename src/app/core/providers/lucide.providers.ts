@@ -9,6 +9,7 @@ import {
    User,
    Menu,
    File,
+   CircleArrowOutUpLeft,
    Building2,
    ChartNoAxesCombined,
    UserRound,
@@ -74,6 +75,7 @@ export const lucideProviders = importProvidersFrom(
       Users,
       Handshake,
       CreditCard,
-      Network
+      Network,
+      CircleArrowOutUpLeft
    })
 );

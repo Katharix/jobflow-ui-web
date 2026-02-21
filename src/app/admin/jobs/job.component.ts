@@ -21,8 +21,8 @@ import {getClickHandler} from "../../common/utils/page-action-dispatcher";
 import {CommandClickEventArgs, PageSettingsModel} from "@syncfusion/ej2-angular-grids";
 import {CreateJobComponent} from "./job-create/job-create.component";
 import {formatDateTime, formatPhone} from "../../common/utils/app-formaters";
-import {JobLifecycleStatus} from "../../models/enums/job-lifecycle-status";
-import {JobLifecycleStatusLabels} from "../../models/labels/job-lifecycle-status-label";
+import {Job, JobLifecycleStatus} from "./models/job";
+
 
 @Component({
    selector: 'app-job',
@@ -54,7 +54,7 @@ export class JobComponent implements OnInit {
    isDrawerOpen = false;
    editingJob: any | null = null;
 
-   items: any[] = [];
+   items: Job[] = [];
    columns: JobflowGridColumn[] = [];
    error: string | null = null;
 
@@ -104,12 +104,6 @@ export class JobComponent implements OnInit {
             template: this.jobTitleTemplate
          },
          {
-            headerText: 'Scheduled',
-            width: 160,
-            valueAccessor: (_field: string, data: any) =>
-               formatDateTime(data.scheduledStart)
-         },
-         {
             headerText: 'Status',
             width: 120,
             template: this.statusTemplate
@@ -135,27 +129,6 @@ export class JobComponent implements OnInit {
       };
    }
 
-   getStatusText(job: any): string {
-      switch (job.lifecycleStatus) {
-
-         case JobLifecycleStatus.Approved:
-            return this.isUnscheduled(job)
-               ? 'Unscheduled'
-               : 'Scheduled';
-
-         case JobLifecycleStatus.InProgress:
-            return 'In Progress';
-
-         case JobLifecycleStatus.Completed:
-            return 'Completed';
-
-         case JobLifecycleStatus.Draft:
-            return 'Unscheduled';
-
-         default:
-            return '—';
-      }
-   }
 
    load(): void {
       this.jobs.getAllJobs().subscribe({
@@ -170,10 +143,7 @@ export class JobComponent implements OnInit {
    }
 
    isUnscheduled(job: any): boolean {
-      if (!job?.scheduledStart) return true;
-
-      const date = new Date(job.scheduledStart);
-      return isNaN(date.getTime()) || date.getFullYear() <= 1;
+      return !job.hasAssignments;
    }
 
    onCommandClick(args: CommandClickEventArgs) {
@@ -214,6 +184,10 @@ export class JobComponent implements OnInit {
          return this.isUnscheduled(job) ? 'Unscheduled' : 'Scheduled';
       }
 
+      if (job.lifecycleStatus === JobLifecycleStatus.Draft && job.hasAssignments) {
+         return 'Scheduled';
+      }
+
       if (job.lifecycleStatus === JobLifecycleStatus.InProgress) {
          return 'In Progress';
       }
@@ -233,6 +207,10 @@ export class JobComponent implements OnInit {
          return this.isUnscheduled(job)
             ? 'chip-unscheduled'
             : 'chip-scheduled';
+      }
+
+      if (job.lifecycleStatus === JobLifecycleStatus.Draft && job.hasAssignments) {
+         return 'chip-scheduled';
       }
 
       if (job.lifecycleStatus === JobLifecycleStatus.InProgress) {
