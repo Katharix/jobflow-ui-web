@@ -271,5 +271,4 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
             return 'Unknown';
       }
    }
-
 }

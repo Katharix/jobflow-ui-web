@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {BaseApiService} from '../../../services/base-api.service';
+import {Job} from "../models/job";
 
 export interface CreateJobRequest {
    organizationClientId: string;
@@ -16,7 +17,7 @@ export class JobsService {
 
    upsertJob(
       payload: CreateJobRequest
-   ): Observable<any> {
+   ): Observable<Job> {
       return this.api.post(
          `${this.apiUrl}upsert`,
          payload
@@ -24,22 +25,30 @@ export class JobsService {
    }
 
    updateSchedule(
-      organizationId: string,
       payload: {
          id: string;
-         scheduledStart: string;
-         scheduledEnd?: string | null;
+         scheduledStart: Date;
+         scheduledEnd?: Date | null;
       }
    ) {
-      return this.api.post(
-         `${this.apiUrl}${organizationId}`,
+      return this.api.put(
+         `${this.apiUrl}${payload.id}/schedule`,
          payload
       );
    }
 
-   getAllJobs() {
+   getAllJobs(): Observable<Job[]> {
       return this.api.get<any>(
          `${this.apiUrl}all`
       )
    }
+
+   getScheduledJobs(start: Date, end: Date) {
+      return this.api.get<any[]>(
+         `${this.apiUrl}scheduled`,
+         {start, end}
+      );
+   }
+
+
 }

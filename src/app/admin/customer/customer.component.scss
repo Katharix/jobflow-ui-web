@@ -1,0 +1,10 @@
+.client-cell {
+   display: flex;
+   flex-direction: column;
+   line-height: 1.2;
+
+   .client-title {
+      font-weight: 600;
+      color: #111827;
+   }
+}

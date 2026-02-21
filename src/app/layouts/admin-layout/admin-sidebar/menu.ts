@@ -16,11 +16,6 @@ export const MENU: MenuItem[] = [
             link: '/admin/jobs',
          },
          {
-            label: 'Scheduling',
-            icon: 'calendar',
-            link: '/admin/scheduling-jobs',
-         },
-         {
             label: 'Invoicing',
             icon: 'file-text',
             link: '/apps/email/inbox',
@@ -41,6 +36,11 @@ export const MENU: MenuItem[] = [
             link: '/admin/settings/branding',
          }
       ]
+   },
+   {
+      label: 'Dispatch',
+      icon: 'circle-arrow-out-up-left',
+      link: '/admin/messaging',
    },
    {
       label: 'Messaging',

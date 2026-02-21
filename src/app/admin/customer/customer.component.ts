@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, TemplateRef, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Router} from '@angular/router';
@@ -14,17 +14,23 @@ import {CommandClickEventArgs, CommandModel, PageSettingsModel, ToolbarItems} fr
 import {ClickEventArgs} from "@syncfusion/ej2-navigations";
 import {JobflowDrawerComponent} from "../../common/jobflow-drawer/jobflow-drawer.component";
 import {CustomerCreateComponent} from "./customer-create/customer-create.component";
+import {formatPhone} from "../../common/utils/app-formaters";
 
 
 @Component({
    selector: 'jobflow-create-customer',
    standalone: true,
    imports: [CommonModule, FormsModule, PageHeaderComponent, ReactiveFormsModule, JobflowGridComponent, JobflowDrawerComponent, CustomerCreateComponent],
-   templateUrl: './customer.component.html'
+   templateUrl: './customer.component.html',
+   styleUrls: ['./customer.component.scss'],
 })
 export class CustomerComponent {
+   @ViewChild('clientNameTemplate', {static: true})
+   clientNameTemplate!: TemplateRef<any>;
+
    organizationId: string | null = null;
    items: Client[] = [];
+   columns: JobflowGridColumn[] = [];
 
    error: string | null = null;
    isDrawerOpen = false;
@@ -75,17 +81,10 @@ export class CustomerComponent {
       }
    ];
 
-   columns: JobflowGridColumn[] = [
-      {field: 'firstName', headerText: 'First Name', width: 100},
-      {field: 'lastName', headerText: 'Last Name', width: 100},
-      {field: 'email', headerText: 'Email Address', width: 100},
-      {field: 'phoneNumber', headerText: 'Phone Number', width: 100},
-      {headerText: '', width: 140, textAlign: 'Right', commands: this.commandButtons}
-   ];
-
    pageSettings: PageSettingsModel = {pageSize: 20, pageSizes: [10, 20, 50, 100]};
 
    ngOnInit(): void {
+      this.buildColumns();
       if (this.organizationId) {
          this.load();
       }
@@ -124,6 +123,30 @@ export class CustomerComponent {
 
             break;
       }
+   }
+
+   buildColumns(): void {
+      this.columns = [
+         {
+            headerText: 'Client Name',
+            width: 100,
+            template: this.clientNameTemplate
+         },
+         {
+            field: 'email',
+            headerText: 'Email Address',
+            width: 100
+         },
+         {
+            field: 'phoneNumber',
+            headerText: 'Phone Number',
+            width: 100,
+            valueAccessor: (_field: string, data: any) =>
+               formatPhone(data?.phoneNumber)
+         },
+         {headerText: '', width: 140, textAlign: 'Right', commands: this.commandButtons}
+      ];
+
    }
 
    cancel(): void {

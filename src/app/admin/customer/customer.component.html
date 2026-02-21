@@ -15,11 +15,16 @@
    <customer-create/>
 </jobflow-drawer>
 
+<ng-template #clientNameTemplate let-client>
+   <div class="client-cell">
+      <div class="client-title">{{ client.firstName }} {{ client.lastName }}</div>
+   </div>
+</ng-template>
+
 <jobflow-grid
    [data]="items"
    [columns]="columns"
    [pageSettings]="pageSettings"
-   [height]="600"
    [showSearchBar]="true"
    (commandClick)="onCommandClick($event)"
 ></jobflow-grid>

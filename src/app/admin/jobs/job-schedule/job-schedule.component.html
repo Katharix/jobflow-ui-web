@@ -1,23 +1,15 @@
-<h2>Schedule Job</h2>
+<app-page-header
+   [title]="'Job Assignments'"
+   [subtitle]="jobTitle + ' assignments'"
+></app-page-header>
 
-<div *ngIf="error">{{ error }}</div>
-
-<div>
-   <label>
-      Start Date & Time *
-      <input type="datetime-local"
-             [(ngModel)]="scheduledStart" />
-   </label>
+<div class="mt-3">
+   <jobflow-calendar
+      [(selectedDate)]="selectedDate"
+      [eventSettings]="calendarEvents"
+      (selectedDateChange)="onCalendarDateChange($event)"
+      (eventCreate)="onCalendarEventCreate($event)"
+      (eventChange)="onCalendarEventUpdate($event)"
+   >
+   </jobflow-calendar>
 </div>
-
-<div>
-   <label>
-      End Date & Time
-      <input type="datetime-local"
-             [(ngModel)]="scheduledEnd" />
-   </label>
-</div>
-
-<button (click)="save()" [disabled]="saving">
-   {{ saving ? 'Saving…' : 'Save Schedule' }}
-</button>
