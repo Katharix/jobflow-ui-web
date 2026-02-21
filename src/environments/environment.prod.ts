@@ -4,15 +4,15 @@ export const environment = {
    apiUrl: 'https://api.gojobflow.com/api',
    baseUrl: 'https://api.gojobflow.com',
    stripeSettings: {
-      goMonthlyPrice: 'price_1R1GuJEKX7voND9YLCN6bAhG',
-      goYearlyPrice: 'price_1R1GuJEKX7voND9Y02wkuT0A',
-      flowMonthlyPrice: 'price_1R1GugEKX7voND9Y9RJ05Wep',
-      flowYearlyPrice: 'price_1R1Gv8EKX7voND9YaRprxnxs',
-      maxMonthlyPrice: 'price_1R1GvqEKX7voND9YIHVzWnWd',
-      maxYearlyPrice: 'price_1R1GvqEKX7voND9YYe2zLZZx',
+      goMonthlyPrice: 'price_1T3OPGAKhSZtrups36OXQ7pg',
+      goYearlyPrice: 'price_1T3OPGAKhSZtrupsIUUkqabJ',
+      flowMonthlyPrice: 'price_1T3ONbAKhSZtrups2l8HWUuP',
+      flowYearlyPrice: 'price_1T3ONbAKhSZtrupsJybiVplx',
+      maxMonthlyPrice: 'price_1T3OLgAKhSZtrupsmlzs3Qng',
+      maxYearlyPrice: 'price_1T3OLgAKhSZtrupshXaPAvXR',
       cancelUrl: '',
       successUrl: '',
    },
-   stripePublicKey: 'pk_test_51QyN6iEKX7voND9YGTfVW206G36u54YmEs2BWK4q6hUObIMxHCPBb3Beb7FF4FLe3SVZdKOYbFm5ZEVsJLx94wyo009eCZ8MIz',
+   stripePublicKey: 'pk_live_51SobeYAKhSZtrupsOaGkJhdEQHAXF2pCqHqpffPXxQlkbc0qzHufQKh1oNOd8Q306ykzlMuooPmnmjnp9pvFrEsM00EHQ4b9AE',
    reCAPTCHASecretKey: '6LcrDQErAAAAAFWv5_LazDZOsSICxGZI9Cs_UlBl'
 };
