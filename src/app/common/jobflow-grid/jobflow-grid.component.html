@@ -1,0 +1,59 @@
+<div class="jobflow-grid-wrapper">
+   <div
+      class="jobflow-grid-search"
+      *ngIf="showSearchBar"
+   >
+      <input
+         type="text"
+         class="form-control form-control-lg"
+         placeholder="Search…"
+         [(ngModel)]="searchText"
+         (input)="onSearchChange()"
+      />
+
+      <button
+         *ngIf="searchText"
+         class="btn btn-link clear-btn"
+         (click)="clearSearch()"
+      >
+         ✕
+      </button>
+   </div>
+
+   <ejs-grid class="jobflow-grid"
+             #grid
+             [dataSource]="data"
+             [allowPaging]="allowPaging"
+             [pageSettings]="pageSettings"
+             [allowSorting]="allowSorting"
+             [allowFiltering]="allowFiltering"
+             [toolbar]="toolbar"
+             (toolbarClick)="onToolbarClick($event)"
+             (commandClick)="onCommandClick($event)"
+             [enableStickyHeader]="enableStickyHeader"
+   >
+      <e-columns>
+         <ng-container *ngFor="let col of columns">
+            <e-column
+               [field]="col.template ? null : col.field"
+               [headerText]="col.headerText"
+               [width]="col.width"
+               [textAlign]="col.textAlign"
+               [format]="col.format"
+               [valueAccessor]="col.valueAccessor"
+               [commands]="col.commands">
+
+               <ng-template
+                  *ngIf="col.template"
+                  #template
+                  let-data>
+                  <ng-container
+                     *ngTemplateOutlet="col.template; context: { $implicit: data }">
+                  </ng-container>
+               </ng-template>
+
+            </e-column>
+         </ng-container>
+      </e-columns>
+   </ejs-grid>
+</div>

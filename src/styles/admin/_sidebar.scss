@@ -430,7 +430,7 @@
     font-size: 16px;
 
     &:hover {
-      background-color: $sidebar-nav-link-hover-color;
+      background-color: $primary;
       color: $white;
     }
   }
@@ -475,16 +475,16 @@
   justify-content: center;
 
     &:hover {
-      background-color: #A9BBEF;
+      background-color: $primary;
       color: $white !important;
     }
 }
 
 .dropdown-item {
   font-size: 16px !important;
-  
+
     &:hover {
-      background-color: #A9BBEF;
+      background-color: $primary;
       color: $white !important;
     }
 }

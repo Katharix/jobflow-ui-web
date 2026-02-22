@@ -1,5 +1,4 @@
 export interface EmployeeRole {
-  id: string | undefined;
-  name: string;
-  organizationId: string;
+   id: string | undefined;
+   name: string;
 }

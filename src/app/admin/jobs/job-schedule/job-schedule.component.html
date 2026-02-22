@@ -1,0 +1,15 @@
+<app-page-header
+   [title]="'Job Assignments'"
+   [subtitle]="jobTitle + ' assignments'"
+></app-page-header>
+
+<div class="mt-3">
+   <jobflow-calendar
+      [(selectedDate)]="selectedDate"
+      [eventSettings]="calendarEvents"
+      (selectedDateChange)="onCalendarDateChange($event)"
+      (eventCreate)="onCalendarEventCreate($event)"
+      (eventChange)="onCalendarEventUpdate($event)"
+   >
+   </jobflow-calendar>
+</div>

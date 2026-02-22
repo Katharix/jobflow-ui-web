@@ -1,0 +1,30 @@
+<app-page-header
+   title="Clients"
+   subtitle="Manage your clients"
+   [actions]="headerActions"
+></app-page-header>
+<div *ngIf="error" class="alert alert-danger mb-3">
+   {{ error }}
+</div>
+
+<jobflow-drawer
+   [open]="isDrawerOpen"
+   title="Add Client"
+   (closed)="closeDrawer()"
+>
+   <customer-create/>
+</jobflow-drawer>
+
+<ng-template #clientNameTemplate let-client>
+   <div class="client-cell">
+      <div class="client-title">{{ client.firstName }} {{ client.lastName }}</div>
+   </div>
+</ng-template>
+
+<jobflow-grid
+   [data]="items"
+   [columns]="columns"
+   [pageSettings]="pageSettings"
+   [showSearchBar]="true"
+   (commandClick)="onCommandClick($event)"
+></jobflow-grid>

@@ -1,43 +1,43 @@
-import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
-import { Auth } from '@angular/fire/auth';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
-import { UserSessionService } from '../services/user-session.service'; // adjust path as needed
+import {inject} from '@angular/core';
+import {CanActivateFn, Router} from '@angular/router';
+import {Auth, onAuthStateChanged} from '@angular/fire/auth';
+import {Firestore, doc, getDoc} from '@angular/fire/firestore';
 
-export const authGuard: CanActivateFn = async (route, state) => {
-  const auth = inject(Auth);
-  const db = inject(Firestore);
-  const router = inject(Router);
-  const session = inject(UserSessionService);
+export const authGuard: CanActivateFn = (route, state) => {
+   const auth = inject(Auth);
+   const db = inject(Firestore);
+   const router = inject(Router);
 
-  const allowedRoles = route.data?.['roles'] || [];
+   const allowedRoles: string[] = route.data?.['roles'] ?? [];
 
-  return new Promise<boolean>((resolve) => {
-    onAuthStateChanged(auth, async (user) => {
-      if (!user || session.isSessionExpired()) {
-        session.clearSession(); // remove token + keys
-        router.navigate(['/auth/login']);
-        return resolve(false);
-      }
+   return new Promise<boolean>((resolve) => {
+      onAuthStateChanged(auth, async (user) => {
+         // 🔒 Not authenticated
+         if (!user) {
+            router.navigate(['/auth/login'], {
+               queryParams: {returnUrl: state.url}
+            });
+            return resolve(false);
+         }
 
-      const userDoc = doc(db, 'users', user.uid);
-      const userSnap = await getDoc(userDoc);
+         // 🔎 Load role from Firestore
+         const snap = await getDoc(doc(db, 'users', user.uid));
 
-      if (!userSnap.exists()) {
-        session.clearSession();
-        router.navigate(['/auth/login']);
-        return resolve(false);
-      }
+         if (!snap.exists()) {
+            router.navigate(['/auth/login']);
+            return resolve(false);
+         }
 
-      const userRole = userSnap.data()['role'];
+         const role = snap.data()?.['role'];
 
-      if (allowedRoles.length === 0 || allowedRoles.includes(userRole)) {
-        return resolve(true);
-      }
+         // ✅ Role allowed
+         if (allowedRoles.length === 0 || allowedRoles.includes(role)) {
+            return resolve(true);
+         }
 
-      router.navigate(['/unauthorized']);
-      resolve(false);
-    });
-  });
+         // ⛔ Unauthorized
+         router.navigate(['/unauthorized']);
+         resolve(false);
+      });
+   });
 };

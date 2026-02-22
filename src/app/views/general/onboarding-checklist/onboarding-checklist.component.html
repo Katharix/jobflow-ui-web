@@ -1,29 +1,25 @@
-<div class="card p-4 rounded-xl shadow bg-white">
-  <h2 class="text-xl font-bold mb-4">Finish Setting Up Your Account</h2>
+<section class="onboarding-checklist">
+   <h3>Getting started</h3>
+   <p class="subtitle">
+      Complete these steps to start scheduling jobs and getting paid.
+   </p>
 
-  <div class="space-y-3">
-    <div *ngFor="let step of steps" class="flex items-center justify-between p-3 border rounded-lg">
-      <div>
-        <span class="font-semibold">{{ step.stepName | titlecase }}</span>
-        <div *ngIf="step.isCompleted" class="text-green-600 text-sm">Completed ✓</div>
-      </div>
-      <button *ngIf="!step.isCompleted" (click)="openStep(step.stepName)" class="btn btn-primary btn-sm">
-        Open Step
-      </button>
-    </div>
-  </div>
+   <ul>
+      <li *ngFor="let step of steps"
+          [class.completed]="step.isCompleted"
+          [class.active]="step === nextStep">
 
-  <div class="mt-6">
-    <button [disabled]="!allComplete" (click)="proceed()" class="btn btn-success w-full">
-      Continue to Dashboard
-    </button>
-  </div>
+      <span class="status">
+        {{ step.isCompleted ? '✔' : '○' }}
+      </span>
 
-  <div class="mt-6" *ngIf="selectedStep">
-    <ng-container [ngSwitch]="selectedStep">
-      <app-connect-payment *ngSwitchCase="'connectPayment'" (completed)="completeStep('connectPayment')"></app-connect-payment>
-      <app-branding *ngSwitchCase="'branding'" (completed)="completeStep('branding')"></app-branding>
-      <app-quickbooks *ngSwitchCase="'quickBooks'" (completed)="completeStep('quickBooks')"></app-quickbooks>
-    </ng-container>
-  </div>
-</div>
+         <span class="title">
+        {{ step.title }}
+            <small *ngIf="step === nextStep && !step.isCompleted">
+          (recommended next step)
+        </small>
+      </span>
+
+      </li>
+   </ul>
+</section>

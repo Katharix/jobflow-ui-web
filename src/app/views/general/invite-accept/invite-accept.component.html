@@ -1,0 +1,32 @@
+<div class="invite-container" *ngIf="!isLoading; else loading">
+  <ng-container *ngIf="!error && !isAccepted">
+    <h2>You're Invited!</h2>
+    <p>
+      <strong>{{ inviteInfo?.firstName }} {{ inviteInfo?.lastName }}</strong>,<br />
+      You've been invited to join
+      <strong>{{ inviteInfo?.organizationName }}</strong>s
+      as a <strong>{{ inviteInfo?.roleName }}</strong>.
+    </p>
+
+    <button class="btn btn-primary" (click)="onAccept()">Accept Invite</button>
+  </ng-container>
+
+  <div *ngIf="isAccepted" class="success-message">
+    <h3>Invite Accepted ✅</h3>
+    <p>
+      We've sent you an email to set your JobFlow password and finish account setup.
+      Please check your inbox.
+    </p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <h3>Oops!</h3>
+    <p>{{ error }}</p>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="loading">
+    <p>Loading your invitation...</p>
+  </div>
+</ng-template>

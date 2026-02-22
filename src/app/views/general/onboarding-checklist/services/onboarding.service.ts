@@ -1,29 +1,24 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../../environments/environment';
+import { Observable } from 'rxjs';
+import {BaseApiService} from "../../../../services/base-api.service";
 
-export interface OnboardingStep {
-  id: string;
-  stepName: string;
+export interface OnboardingStepDto {
+  key: string;
+  title: string;
+  order: number;
   isCompleted: boolean;
-  completedAt?: string;
+  completedAt?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
 export class OnboardingService {
-  private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/onboarding`;
-
-
-
-  getSteps(organizationId: string) {
-    return this.http.get<OnboardingStep[]>(`${this.apiUrl}/${organizationId}`);
+  invoiceUrl: string;
+  constructor(private api: BaseApiService) {
+    this.invoiceUrl = 'onboarding/';
   }
 
-  markStepComplete(organizationId: string, stepName: string) {
-    return this.http.put<OnboardingStep>(
-      `${this.apiUrl}/${organizationId}/complete`,
-      { stepName }
-    );
+  getChecklist(organizationId: string): Observable<OnboardingStepDto[]> {
+    return this.api.get<OnboardingStepDto[]>(`${this.invoiceUrl}${organizationId}`);
   }
 }

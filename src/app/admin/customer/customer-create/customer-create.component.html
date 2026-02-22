@@ -1,0 +1,31 @@
+<div class="row g-3">
+   <div class="col-12 col-md-6">
+      <label class="form-label">First Name <span class="text-danger">*</span></label>
+      <input class="form-control form-control-lg" [(ngModel)]="firstName"/>
+   </div>
+
+   <div class="col-12 col-md-6">
+      <label class="form-label">Last Name</label>
+      <input class="form-control form-control-lg" [(ngModel)]="lastName"/>
+   </div>
+
+   <div class="col-12 col-md-6">
+      <label class="form-label">Email <span class="text-danger">*</span></label>
+      <input class="form-control form-control-lg" [(ngModel)]="email"/>
+   </div>
+
+   <div class="col-12 col-md-6">
+      <label class="form-label">Phone <span class="text-danger">*</span></label>
+      <input class="form-control form-control-lg" [(ngModel)]="phone"/>
+   </div>
+
+   <div class="col-12 d-flex justify-content-end gap-2 pt-2">
+      <button type="button" class="btn btn-light" (click)="cancel()" [disabled]="saving">
+         Cancel
+      </button>
+
+      <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saving">
+         {{ saving ? 'Saving…' : 'Save' }}
+      </button>
+   </div>
+</div>
