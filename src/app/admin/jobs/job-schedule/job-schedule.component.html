@@ -1,15 +1,30 @@
 <app-page-header
-   [title]="'Job Assignments'"
-   [subtitle]="jobTitle + ' assignments'"
+  [title]="'Job Assignments'"
+  [subtitle]="jobTitle + ' assignments'"
 ></app-page-header>
 
 <div class="mt-3">
-   <jobflow-calendar
-      [(selectedDate)]="selectedDate"
-      [eventSettings]="calendarEvents"
-      (selectedDateChange)="onCalendarDateChange($event)"
-      (eventCreate)="onCalendarEventCreate($event)"
-      (eventChange)="onCalendarEventUpdate($event)"
-   >
-   </jobflow-calendar>
+  <jobflow-calendar
+    [(selectedDate)]="selectedDate"
+    [eventSettings]="calendarEvents"
+    (selectedDateChange)="onCalendarDateChange($event)"
+    (eventCreate)="onCalendarEventCreate($event)"
+    (eventChange)="onCalendarEventUpdate($event)"
+  >
+  </jobflow-calendar>
 </div>
+
+<jobflow-drawer
+  [open]="showAssignmentModal"
+  title="Schedule Job"
+  (closed)="showAssignmentModal = false"
+>
+  <job-assignment-form
+    #assignmentForm
+    [jobId]="currentJobId"
+    [scheduledStart]="draftEvent?.StartTime ?? selectedDate"
+    [scheduledEnd]="draftEvent?.EndTime ?? addThirtyMinutes(selectedDate)"
+    (submitted)="onAssignmentSave($event)"
+  >
+  </job-assignment-form>
+</jobflow-drawer>

@@ -21,7 +21,7 @@ import {getClickHandler} from "../../common/utils/page-action-dispatcher";
 import {CommandClickEventArgs, PageSettingsModel} from "@syncfusion/ej2-angular-grids";
 import {CreateJobComponent} from "./job-create/job-create.component";
 import {formatDateTime, formatPhone} from "../../common/utils/app-formaters";
-import {Job, JobLifecycleStatus} from "./models/job";
+import {Job, JobLifecycleStatus, JobLifecycleStatusLabels} from "./models/job";
 
 
 @Component({
@@ -179,53 +179,58 @@ export class JobComponent implements OnInit {
       ]);
    }
 
+   private resolveLifecycleStatus(job: any): JobLifecycleStatus | null {
+      const rawStatus = job?.lifecycleStatus;
+
+      if (typeof rawStatus === 'number' && JobLifecycleStatusLabels[rawStatus as JobLifecycleStatus]) {
+         return rawStatus as JobLifecycleStatus;
+      }
+
+      if (typeof rawStatus === 'string') {
+         const enumValue = JobLifecycleStatus[rawStatus as keyof typeof JobLifecycleStatus];
+         if (typeof enumValue === 'number') {
+            return enumValue;
+         }
+
+         const numericStatus = Number(rawStatus);
+         if (!Number.isNaN(numericStatus) && JobLifecycleStatusLabels[numericStatus as JobLifecycleStatus]) {
+            return numericStatus as JobLifecycleStatus;
+         }
+      }
+
+      return null;
+   }
+
    getStatusChipLabel(job: any): string {
-      if (job.lifecycleStatus === JobLifecycleStatus.Approved) {
-         return this.isUnscheduled(job) ? 'Unscheduled' : 'Scheduled';
+      const status = this.resolveLifecycleStatus(job);
+      if (status !== null) {
+         return JobLifecycleStatusLabels[status];
       }
 
-      if (job.lifecycleStatus === JobLifecycleStatus.Draft && job.hasAssignments) {
-         return 'Scheduled';
-      }
-
-      if (job.lifecycleStatus === JobLifecycleStatus.InProgress) {
-         return 'In Progress';
-      }
-
-      if (job.lifecycleStatus === JobLifecycleStatus.Completed) {
-         return 'Completed';
-      }
-
-      if (job.lifecycleStatus === JobLifecycleStatus.Draft) {
-         return 'Unscheduled';
-      }
-      return '—';
+      return typeof job?.lifecycleStatus === 'string' && job.lifecycleStatus.trim().length > 0
+         ? job.lifecycleStatus
+         : '—';
    }
 
    getStatusChipClass(job: any): string {
-      if (job.lifecycleStatus === JobLifecycleStatus.Approved) {
-         return this.isUnscheduled(job)
-            ? 'chip-unscheduled'
-            : 'chip-scheduled';
-      }
+      const status = this.resolveLifecycleStatus(job);
 
-      if (job.lifecycleStatus === JobLifecycleStatus.Draft && job.hasAssignments) {
-         return 'chip-scheduled';
+      switch (status) {
+         case JobLifecycleStatus.Draft:
+            return 'chip-draft';
+         case JobLifecycleStatus.Approved:
+            return 'chip-approved';
+         case JobLifecycleStatus.InProgress:
+            return 'chip-inprogress';
+         case JobLifecycleStatus.Completed:
+            return 'chip-completed';
+         case JobLifecycleStatus.Cancelled:
+            return 'chip-cancelled';
+         case JobLifecycleStatus.Failed:
+            return 'chip-failed';
+         default:
+            return 'chip-default';
       }
-
-      if (job.lifecycleStatus === JobLifecycleStatus.InProgress) {
-         return 'chip-inprogress';
-      }
-
-      if (job.lifecycleStatus === JobLifecycleStatus.Completed) {
-         return 'chip-completed';
-      }
-
-      if (job.lifecycleStatus === JobLifecycleStatus.Draft) {
-         return 'chip-unscheduled';
-      }
-
-      return 'chip-default';
    }
 
    deleteJob(job: any) {
