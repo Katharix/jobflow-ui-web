@@ -25,14 +25,14 @@
    line-height: 1;
 }
 
-.chip-scheduled {
-   background: #eef2ff;
-   color: #3F67DA;
+.chip-draft {
+   background: #f3f4f6;
+   color: #6b7280;
 }
 
-.chip-unscheduled {
-   background: #f3f4f6;
-   color: #374151;
+.chip-approved {
+   background: #eef2ff;
+   color: #3F67DA;
 }
 
 .chip-inprogress {
@@ -45,3 +45,17 @@
    color: #047857;
 }
 
+.chip-cancelled {
+   background: #f3f4f6;
+   color: #6b7280;
+}
+
+.chip-failed {
+   background: #fef2f2;
+   color: #dc2626;
+}
+
+.chip-default {
+   background: #f3f4f6;
+   color: #9ca3af;
+}

@@ -1,0 +1,97 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+   <div class="mb-3">
+      <label class="form-label fw-semibold text-muted">Schedule Type</label>
+      <select class="form-select" formControlName="scheduleMode">
+         <option value="OneTime">One Time</option>
+         <option value="Recurring">Recurring</option>
+      </select>
+   </div>
+
+   <div class="mb-3">
+      <label class="form-label fw-semibold text-muted">Start</label>
+      <input
+         type="datetime-local"
+         class="form-control"
+         formControlName="scheduledStart">
+   </div>
+
+   <div class="mb-3">
+      <label class="form-label fw-semibold text-muted">End</label>
+      <input
+         type="datetime-local"
+         class="form-control"
+         formControlName="scheduledEnd">
+   </div>
+
+   <div class="mb-3">
+      <label class="form-label fw-semibold text-muted">Notes</label>
+      <textarea
+         rows="3"
+         class="form-control"
+         formControlName="notes">
+      </textarea>
+   </div>
+
+   <ng-container *ngIf="isRecurring">
+      <div class="mb-3">
+         <label class="form-label fw-semibold text-muted">Frequency</label>
+         <select class="form-select" formControlName="pattern">
+            <option value="Weekly">Weekly</option>
+            <option value="Monthly">Monthly</option>
+         </select>
+      </div>
+
+      <div class="mb-3">
+         <label class="form-label fw-semibold text-muted">Interval</label>
+         <input class="form-control" type="number" min="1" formControlName="interval" />
+      </div>
+
+      <div class="mb-3" *ngIf="form.get('pattern')?.value === 'Weekly'">
+         <label class="form-label fw-semibold text-muted">Days of Week</label>
+         <div class="d-flex gap-2">
+            <label *ngFor="let day of weekDays" class="form-check form-check-inline">
+               <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [value]="day.value"
+                  (change)="onDayOfWeekChange(day.value, $event)"
+                  [checked]="isDaySelected(day.value)">
+               <span class="form-check-label">{{ day.name }}</span>
+            </label>
+         </div>
+      </div>
+
+      <div class="mb-3" *ngIf="form.get('pattern')?.value === 'Monthly'">
+         <label class="form-label fw-semibold text-muted">Day of Month</label>
+         <input class="form-control" type="number" min="1" max="31" formControlName="dayOfMonth" />
+      </div>
+
+      <div class="mb-3">
+         <label class="form-label fw-semibold text-muted">Ends</label>
+         <select class="form-select" formControlName="endType">
+            <option value="Never">Never</option>
+            <option value="OnDate">On Date</option>
+            <option value="AfterCount">After Count</option>
+         </select>
+      </div>
+
+      <div class="mb-3" *ngIf="form.get('endType')?.value === 'OnDate'">
+         <label class="form-label fw-semibold text-muted">End Date</label>
+         <input class="form-control" type="date" formControlName="endDate" />
+      </div>
+
+      <div class="mb-3" *ngIf="form.get('endType')?.value === 'AfterCount'">
+         <label class="form-label fw-semibold text-muted">Occurrences</label>
+         <input class="form-control" type="number" min="1" formControlName="occurrenceCount" />
+      </div>
+   </ng-container>
+
+   <div class="d-flex justify-content-end mt-4">
+      <button
+         type="submit"
+         class="btn btn-primary fw-semibold">
+         Save Assignment
+      </button>
+   </div>
+</form>
