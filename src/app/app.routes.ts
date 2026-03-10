@@ -3,6 +3,7 @@ import {PublicLayoutComponent} from './layouts/public-layout/public-layout.compo
 import {AdminLayoutComponent} from './layouts/admin-layout/admin-layout.component';
 import {HomeComponent} from './views/home/home.component';
 import {authGuard} from './services/auth.guard';
+import {subscriptionGuard} from './core/guards/subscription.guard';
 import {DashboardComponent} from './views/admin-views/dashboard/dashboard.component';
 import {SubscribeComponent} from './views/subscription-views/subscribe/subscribe.component';
 import {AuthLayoutComponent} from './layouts/auth-layout/auth-layout.component';
@@ -39,19 +40,24 @@ export const routes: Routes = [
    {
       path: 'admin',
       component: AdminLayoutComponent,
-      canActivate: [authGuard,],
+      canActivate: [authGuard],
       children: [
          {path: '', component: DashboardComponent},
          {path: 'settings/branding', component: BrandingComponent},
          {path: 'messaging', component: ChatComponent},
          {path: 'company', component: CompanyComponent},
-         {path: 'employees', component: EmployeesComponent},
+
+         {path: 'employees', component: EmployeesComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
+         {path: 'employees/scheduling-employees', component: EmployeeScheduleComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
+         {path: 'employees/roles', component: EmployeeRolesComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
+
          {path: 'scheduling-jobs', component: JobScheduleComponent},
-         {path: 'employees/scheduling-employees', component: EmployeeScheduleComponent},
-         {path: 'employees/roles', component: EmployeeRolesComponent},
-         {path: 'pricebook', component: PriceBookComponent},
+
+         {path: 'pricebook', component: PriceBookComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
          {
             path: 'pricebook/items/category/:categoryId',
+            canActivate: [subscriptionGuard],
+            data: {minPlan: 'Flow'},
             loadComponent: () =>
                import('./admin/pricebook/price-book-item/price-book-item.component')
                   .then(m => m.PriceBookItemComponent)

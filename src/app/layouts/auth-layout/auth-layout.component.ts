@@ -8,12 +8,11 @@ import {
 import {PreloaderComponent} from "../../landing/preloader.component";
 import {LoadingService} from '../../services/loading-service.service';
 import {CommonModule} from '@angular/common';
-import {LoadingOverlayComponent} from "../../common/app-loading-overlay/app-loading-overlay.component";
 
 @Component({
    selector: 'app-auth-layout',
    standalone: true,
-   imports: [RouterOutlet, CommonModule, PreloaderComponent, LoadingOverlayComponent],
+   imports: [RouterOutlet, CommonModule, PreloaderComponent],
    templateUrl: './auth-layout.component.html',
    styleUrl: './auth-layout.component.scss',
    encapsulation: ViewEncapsulation.None

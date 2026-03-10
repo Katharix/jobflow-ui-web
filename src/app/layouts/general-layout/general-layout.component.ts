@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
-import { PreloaderComponent } from "../../landing/preloader.component";
-import { Router, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LoadingService } from '../../services/loading-service.service';
 import { LoadingOverlayComponent } from "../../common/app-loading-overlay/app-loading-overlay.component";
@@ -8,14 +7,13 @@ import { LoadingOverlayComponent } from "../../common/app-loading-overlay/app-lo
 @Component({
   selector: 'app-general-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, PreloaderComponent, LoadingOverlayComponent],
+  imports: [CommonModule, RouterOutlet, LoadingOverlayComponent],
   templateUrl: './general-layout.component.html',
   styleUrl: './general-layout.component.scss',
     encapsulation: ViewEncapsulation.None
 })
 export class GeneralLayoutComponent implements OnInit {
   isLoading: boolean = false;
-  private router = inject(Router);
   private loadingService = inject(LoadingService);
   private cdr = inject(ChangeDetectorRef);
 

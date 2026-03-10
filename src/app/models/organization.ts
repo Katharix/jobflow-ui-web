@@ -14,6 +14,7 @@ export interface OrganizationDto {
     defaultTaxRate?: number;
     subscriptionStatus?: string;
     onboardingComplete?: boolean;
+    subscriptionPlanName?: string;
 }
 
 export interface Organization {

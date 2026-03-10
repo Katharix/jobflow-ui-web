@@ -41,7 +41,7 @@ export class DashboardComponent implements OnInit {
 
    themeCssVariables = inject(ThemeCssVariableService).getThemeCssVariables();
    organizationId: string | null = null;
-   org: OrganizationDto;
+   org: OrganizationDto | null = null;
 
    constructor(
       private router: Router,

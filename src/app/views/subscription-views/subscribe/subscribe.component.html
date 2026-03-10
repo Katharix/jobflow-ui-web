@@ -10,6 +10,12 @@
         </div>
 
         <form #form="ngForm" (ngSubmit)="onSubscribe($event)">
+          <!-- Error Message -->
+          <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ error }}
+            <button type="button" class="btn-close" (click)="error = ''"></button>
+          </div>
+
           <!-- Company Name and Type -->
           <div class="row">
             <div class="col-md-6 mb-4 form-floating-line">
@@ -69,7 +75,7 @@
           <!-- Address -->
           <div class="mb-4 form-floating-line">
             <input type="text" class="form-control no-border" placeholder="Business Address"
-              [(ngModel)]="companyAddress" name="companyAddress" required #addressCtrl="ngModel" />
+              [(ngModel)]="companyAddress" name="companyAddress" required #addressCtrl="ngModel" #addressInput />
 
             <div *ngIf="addressCtrl.invalid && addressCtrl.touched" class="text-danger small">
               Business address is required.
@@ -132,8 +138,9 @@
 
           <!-- Submit -->
           <div class="d-grid">
-            <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
-              Purchase
+            <button type="submit" class="btn btn-primary" [disabled]="form.invalid || (isLoading$ | async)">
+              <span *ngIf="!(isLoading$ | async)">Purchase</span>
+              <span *ngIf="isLoading$ | async">Processing...</span>
             </button>
           </div>
         </form>

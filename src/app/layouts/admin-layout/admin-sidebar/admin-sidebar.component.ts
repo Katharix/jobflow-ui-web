@@ -7,7 +7,7 @@ import { NgScrollbar } from 'ngx-scrollbar';
 import MetisMenu from 'metismenujs';
 
 import { MENU } from './menu';
-import { MenuItem } from './menu.model';
+import { MenuItem, SubscriptionPlan } from './menu.model';
 import { LogoutService } from '../../../services/logout.service';
 import { OrganizationContextService } from '../../../services/shared/organization-context.service';
 import { OrganizationDto } from '../../../models/organization';
@@ -31,7 +31,7 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
   @ViewChild('sidebarMenu') sidebarMenu: ElementRef;
 
   menuItems: MenuItem[] = [];
-  org: OrganizationDto;
+  org: OrganizationDto | null = null;
   onboardingComplete = false;
 
   constructor(
@@ -43,10 +43,19 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.menuItems = MENU;
-
     this.orgContext.org$.subscribe(org => {
-      if (org) this.org = org;
+      if (!org) {
+        this.menuItems = [];
+        return;
+      }
+
+      this.org = org;
+
+      // normalize and default
+      const plan = (org.subscriptionPlanName ?? 'Go') as SubscriptionPlan;
+
+      // apply plan-based filtering
+      this.menuItems = this.filterMenuByPlan(MENU, plan);
     });
 
     // Sidebar-folded on desktop (992px–1199px)
@@ -102,5 +111,27 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
 
   logout() {
     this.logoutService.logout();
+  }
+
+  private filterMenuByPlan(items: MenuItem[], currentPlan: SubscriptionPlan): MenuItem[] {
+    return items
+      .map((item) => {
+        const subItems = item.subItems
+          ? this.filterMenuByPlan(item.subItems, currentPlan)
+          : undefined;
+
+        return { ...item, subItems };
+      })
+      .filter((item) => {
+        const allowed = !item.minPlan || this.rank(currentPlan) >= this.rank(item.minPlan);
+        const hasVisibleChildren = !!item.subItems?.length;
+        return allowed && (item.isTitle || !!item.link || hasVisibleChildren);
+      });
+  }
+
+  private rank(plan: SubscriptionPlan): number {
+    if (plan === 'Go') return 0;
+    if (plan === 'Flow') return 1;
+    return 2; // Max
   }
 }
