@@ -30,7 +30,7 @@ export class ContactComponent {
   success = false;
   error = false;
   captchaToken: string | null = null;
-  reCAPTCHAKey = environment.reCAPTCHASecretKey;
+  reCAPTCHAKey = environment.reCAPTCHASiteKey ?? environment.reCAPTCHASecretKey;
 
   constructor(private emailService: EmailService)
   {}
@@ -39,6 +39,15 @@ export class ContactComponent {
   onCaptchaResolved(token: string | null) {
     this.captchaToken = token;
   }
+
+  onCaptchaExpired() {
+    this.captchaToken = null;
+  }
+
+  onCaptchaError() {
+    this.captchaToken = null;
+  }
+
   onSubmit() {
     if (!this.captchaToken) return;
     this.model.captchaToken = this.captchaToken;

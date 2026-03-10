@@ -113,19 +113,19 @@
                        aria-expanded="false">
                   <ng-container *ngIf="isSidebarOpen; else collapsedOrg">
                      <lucide-icon class="sidebar-link-icon me-2" name="network"></lucide-icon>
-                     <span>{{ org.organizationName }}</span>
+                     <span>{{ org?.organizationName || 'Organization' }}</span>
                   </ng-container>
                   <ng-template #collapsedOrg>
                      <lucide-icon class="sidebar-link-icon pl-8"
                                   name="building-2"
-                                  [attr.title]="org.organizationName"></lucide-icon>
+                                  [attr.title]="org?.organizationName || 'Organization'"></lucide-icon>
                   </ng-template>
                </button>
 
                <ul class="dropdown-menu sidebar-drop-menu shadow-sm border-0 rounded-3 p-0 overflow-hidden">
                   <li class="drop-menu-header">
                      <lucide-icon class="me-1" name="network"></lucide-icon>
-                     {{ org.organizationName }}
+                     {{ org?.organizationName || 'Organization' }}
                   </li>
                   <li>
                      <hr class="dropdown-divider my-0">

@@ -1,4 +1,4 @@
-import {CommonModule, NgStyle} from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {Component, OnInit} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
@@ -15,11 +15,12 @@ import {OrganizationType} from '../../models/organization-type';
 import {OrganizationTypeService} from '../../services/organization-type.service';
 import {OrganizationService} from '../../services/organization.service';
 import {StripeService} from '../../services/stripe.service';
+import {OrganizationContextService} from '../../services/shared/organization-context.service';
 
 @Component({
    selector: 'app-register',
    standalone: true,
-   imports: [NgStyle, RouterLink, FormsModule, CommonModule],
+   imports: [RouterLink, FormsModule, CommonModule],
    templateUrl: './register.component.html',
    styleUrl: './register.component.scss'
 })
@@ -33,7 +34,7 @@ export class RegisterComponent implements OnInit {
    organizationTypes: OrganizationType[] = [];
    organizationId: string | null = null;
    selectedOrganizationTypeId: string = '';
-   pattern = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=[\\]{};\'":\\\\|,.<>/?]).+$';
+   pattern = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d])\\S+$';
 
    constructor(
       private auth: Auth,
@@ -42,7 +43,8 @@ export class RegisterComponent implements OnInit {
       private orgService: OrganizationService,
       private organizationTypeService: OrganizationTypeService,
       private stripeService: StripeService,
-      private route: ActivatedRoute
+      private route: ActivatedRoute,
+      private orgContext: OrganizationContextService
    ) {
    }
 
@@ -114,7 +116,7 @@ export class RegisterComponent implements OnInit {
          let org: Organization;
          this.orgService.registerOrganization(orgDto).subscribe({
             next: (data) => {
-               userCredential.user.getIdToken(true);
+               this.orgContext.setOrganization(data);
                this.router.navigate(['/admin'], {queryParams: {organizationId: data.id}});
             },
             error: (err) => console.error(err)

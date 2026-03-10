@@ -1,6 +1,6 @@
-import { Injectable } from "@angular/core";
-import { OrganizationDto } from "../../models/organization";
-import { BehaviorSubject } from "rxjs";
+import { Injectable } from '@angular/core';
+import { OrganizationDto } from '../../models/organization';
+import { BehaviorSubject, map } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class OrganizationContextService {
@@ -15,6 +15,17 @@ export class OrganizationContextService {
     this.orgSubject.next(org);
     localStorage.setItem('org', JSON.stringify(org));
   }
+  hasMinPlan$(minPlan: 'Go' | 'Flow' | 'Max') {
+    return this.org$.pipe(
+      map((org) => {
+        const current = (org?.subscriptionPlanName ?? '').toLowerCase();
+        const rank = { go: 0, flow: 1, max: 2 } as const;
+        const currentRank = rank[current as keyof typeof rank] ?? -1;
+        const minRank = rank[minPlan.toLowerCase() as keyof typeof rank];
+        return currentRank >= minRank;
+      })
+    );
+  }
 
   private loadOrgFromStorage() {
     const raw = localStorage.getItem('org');
@@ -27,5 +38,4 @@ export class OrganizationContextService {
     localStorage.removeItem('org');
     this.orgSubject.next(null);
   }
-
 }
