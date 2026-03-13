@@ -10,7 +10,6 @@ import { PaymentService } from '../../../services/payment.service';
 import { PaymentSessionRequest } from '../../../models/payment-session-request';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { US_STATES } from '../../../common/constants';
-import { environment } from '../../../../environments/environment';
 import { LoadingService } from '../../../services/loading-service.service';
 import { Observable } from 'rxjs';
 
@@ -58,7 +57,10 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
    ngOnInit(): void {
        this.isLoading$ = this.loadingService.isLoading$;
       this.loadOrganizationTypes();
-      this.planId = this.route.snapshot.queryParamMap.get('planId') ?? '';
+      this.planId =
+         this.route.snapshot.queryParamMap.get('planId') ??
+         this.route.snapshot.queryParamMap.get('planid') ??
+         '';
    }
 
    ngAfterViewInit(): void {
@@ -149,6 +151,10 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
 
      next: (response) => {
 
+        const appBaseUrl = window.location.origin;
+        const successUrl = `${appBaseUrl}/auth/register?organizationId=${encodeURIComponent(response.id)}`;
+        const cancelUrl = `${appBaseUrl}/subscribe?planId=${encodeURIComponent(this.planId)}`;
+
         const paymentSessionRequest: PaymentSessionRequest = {
            email: response.emailAddress,
            stripePriceId: this.planId,
@@ -156,8 +162,8 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
            applicationFeeAmount: 75,
            orgId: response.id,
            mode: 'subscription',
-           successUrl: environment.stripeSettings.successUrl,
-           cancelUrl: environment.stripeSettings.cancelUrl
+           successUrl,
+           cancelUrl
         };
 
         // Keep loader active for second call
