@@ -12,6 +12,10 @@ invoiceUrl: string;
     this.invoiceUrl = 'invoice/';
   }
 
+   getByOrganization(): Observable<Invoice[]> {
+    return this.api.get<Invoice[]>(`${this.invoiceUrl}organization`);
+  }
+
    getInvoice(id: string): Observable<Invoice> {
     return this.api.get<Invoice>(`${this.invoiceUrl}${id}`);
   }

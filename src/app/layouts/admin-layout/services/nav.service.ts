@@ -8,7 +8,7 @@ export class NavService {
    private navConfig: { [key: string]: NavItem[] } = {
       '/admin': [],
       '/admin/company': [
-         {label: 'Invoicing', icon: '', route: '/admin/settings/branding'},
+         {label: 'Invoicing', icon: '', route: '/admin/invoices'},
          {label: 'Estimates', icon: '', route: '/general/edit-profile'},
          {label: 'Team Management', icon: '', route: '/general/edit-profile'}
       ],
