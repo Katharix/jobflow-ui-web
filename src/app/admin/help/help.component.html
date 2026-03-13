@@ -1,0 +1,21 @@
+<app-page-header
+   title="Help"
+   subtitle="Frequently asked questions"
+></app-page-header>
+
+<div class="card">
+   <div class="card-body">
+      <p class="text-muted mb-4">
+         Find quick answers to common questions about invoices, clients, and account setup.
+      </p>
+
+      <div class="d-flex flex-column gap-2">
+         <details class="faq-item" *ngFor="let faq of faqs">
+            <summary class="faq-question">{{ faq.question }}</summary>
+            <div class="faq-answer">
+               {{ faq.answer }}
+            </div>
+         </details>
+      </div>
+   </div>
+</div>

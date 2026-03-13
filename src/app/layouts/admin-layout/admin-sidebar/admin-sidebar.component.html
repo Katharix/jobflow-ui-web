@@ -94,7 +94,10 @@
    <div class="sidebar-footer">
       <ul class="sidebar-footer-nav">
          <li class="sidebar-nav-item nav-category">
-            <a class="nav-link" href="javascript:void(0);">
+            <a class="nav-link nav-link-ref"
+               routerLink="/admin/help"
+               routerLinkActive="mm-active"
+               [routerLinkActiveOptions]="{ exact: true }">
                <ng-container *ngIf="isSidebarOpen; else collapsedHelp">
                   <lucide-icon class="sidebar-link-icon me-1" name="life-buoy"></lucide-icon>
                   <span class="sidebar-link-title">Help</span>

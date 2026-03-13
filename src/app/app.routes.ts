@@ -26,6 +26,7 @@ import {
 } from "./views/general/onboarding-checklist/onboarding-steps/connect-payment/connect-payment.component";
 import {JobComponent} from "./admin/jobs/job.component";
 import {InvoicesComponent} from "./admin/invoices/invoices.component";
+import {HelpComponent} from "./admin/help/help.component";
 
 
 export const routes: Routes = [
@@ -82,6 +83,10 @@ export const routes: Routes = [
          {
             path: 'invoices',
             component: InvoicesComponent
+         },
+         {
+            path: 'help',
+            component: HelpComponent
          },
          {
             path: 'connectedpayment',
