@@ -3,16 +3,55 @@
     <div class="card">
       <div class="card-body">
         <div class="row position-relative">
-          <!-- Sidebar -->
           <div class="col-lg-4 chat-aside border-end-lg">
             <div class="aside-content">
               <div class="aside-header">
-  <button class="btn btn-primary w-100 my-2" (click)="startNewChat()">
-    <i class="feather icon-plus me-1"></i> New Chat
-  </button>
+                <div class="d-flex justify-content-between align-items-center pb-2 mb-2">
+                  <div class="d-flex align-items-center">
+                    <figure class="me-2 mb-0">
+                      <div class="avatar-initials img-sm rounded-circle">JF</div>
+                      <div class="status online"></div>
+                    </figure>
+                    <div>
+                      <h6 class="mb-0">JobFlow Inbox</h6>
+                      <p class="text-secondary fs-13px mb-0">{{ conversations.length }} active conversation{{ conversations.length === 1 ? '' : 's' }}</p>
+                    </div>
+                  </div>
+                  <div class="dropdown" ngbDropdown>
+                    <button type="button" class="btn btn-link p-0 no-dropdown-toggle-icon text-decoration-none" ngbDropdownToggle aria-label="Chat actions">
+                      <i class="feather icon-settings icon-md text-secondary"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                      <button type="button" class="dropdown-item d-flex align-items-center" (click)="startNewChat()">
+                        <i class="feather icon-edit-2 icon-sm me-2"></i>
+                        <span>Start new chat</span>
+                      </button>
+                      <button type="button" class="dropdown-item d-flex align-items-center" (click)="loadConversations()">
+                        <i class="feather icon-refresh-cw icon-sm me-2"></i>
+                        <span>Refresh list</span>
+                      </button>
+                      <button type="button" class="dropdown-item d-flex align-items-center" (click)="backToChatList()" [disabled]="!selectedConversation">
+                        <i class="feather icon-corner-up-left icon-sm me-2"></i>
+                        <span>Hide conversation</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-grid mb-3">
+                  <button class="btn btn-primary" type="button" (click)="startNewChat()">
+                    <i class="feather icon-plus me-1"></i>
+                    New Chat
+                  </button>
+                </div>
                 <form class="search-form">
                   <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search here...">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Search conversations..."
+                      [(ngModel)]="searchQuery"
+                      name="searchQuery"
+                    >
                     <div class="input-group-text bg-transparent">
                       <i class="feather icon-search icon-md cursor-pointer"></i>
                     </div>
@@ -20,75 +59,260 @@
                 </form>
               </div>
               <div class="aside-body">
-                <p class="text-secondary mb-1">Conversations</p>
-                <ul class="list-unstyled chat-list px-1">
-                  <li class="chat-item pe-1" *ngFor="let convo of conversations" (click)="selectConversation(convo)">
-                    <a class="d-flex align-items-center">
-                      <figure class="mb-0 me-2">
-                        <img [src]="convo.avatarUrl || 'https://placehold.co/35x35'" class="img-xs rounded-circle" alt="user">
-                      </figure>
-                      <div class="d-flex justify-content-between flex-grow-1 border-bottom">
-                        <div>
-                          <p class="text-body fw-bolder">{{ convo.name }}</p>
-                          <p class="text-secondary fs-13px">{{ convo.lastMessage?.content }}</p>
-                        </div>
-                        <div class="d-flex flex-column align-items-end">
-                          <p class="text-secondary fs-13px mb-1">{{ convo.lastMessage?.timestamp | date:'shortTime' }}</p>
-                          <div *ngIf="convo.unreadCount" class="badge rounded-pill bg-primary ms-auto">{{ convo.unreadCount }}</div>
-                        </div>
+                <ul ngbNav #defaultNav="ngbNav" [(activeId)]="defaultNavActiveId" class="nav-tabs nav-fill mt-3">
+                  <li [ngbNavItem]="1">
+                    <button ngbNavLink type="button">
+                      <div class="d-flex flex-row flex-lg-column flex-xl-row align-items-center justify-content-center">
+                        <i class="feather icon-message-square icon-xs me-sm-2 me-lg-0 me-xxl-2"></i>
+                        <p class="d-none d-sm-block d-lg-none d-xxl-block mb-0">Chats</p>
                       </div>
-                    </a>
+                    </button>
+                    <ng-template ngbNavContent>
+                      <ng-scrollbar>
+                        <p class="text-secondary mb-1">Recent chats</p>
+                        <ul class="list-unstyled chat-list px-1">
+                          <li
+                            class="chat-item pe-1"
+                            *ngFor="let convo of filteredConversations; trackBy: trackByConversationId"
+                            [class.active]="selectedConversation?.id === convo.id"
+                          >
+                            <button type="button" class="chat-link d-flex align-items-center w-100 text-start border-0 bg-transparent p-0" (click)="selectConversation(convo)">
+                              <figure class="mb-0 me-2">
+                                <img *ngIf="convo.avatarUrl; else conversationAvatar" [src]="convo.avatarUrl" class="img-xs rounded-circle" alt="conversation avatar">
+                                <ng-template #conversationAvatar>
+                                  <div class="avatar-initials img-xs rounded-circle">{{ getAvatarInitials(getConversationName(convo)) }}</div>
+                                </ng-template>
+                                <div class="status" [ngClass]="convo.status === 'offline' ? 'offline' : 'online'"></div>
+                              </figure>
+                              <div class="d-flex justify-content-between flex-grow-1 border-bottom">
+                                <div class="conversation-copy">
+                                  <p class="text-body fw-bolder mb-1">{{ getConversationName(convo) }}</p>
+                                  <p class="text-secondary fs-13px mb-0 text-truncate">{{ getConversationPreview(convo) }}</p>
+                                </div>
+                                <div class="d-flex flex-column align-items-end conversation-meta">
+                                  <p class="text-secondary fs-13px mb-1">{{ convo.lastMessage?.timestamp ? (convo.lastMessage?.timestamp | date:'shortTime') : '' }}</p>
+                                  <div *ngIf="convo.unreadCount" class="badge rounded-pill bg-primary ms-auto">{{ convo.unreadCount }}</div>
+                                </div>
+                              </div>
+                            </button>
+                          </li>
+                          <li *ngIf="!filteredConversations.length" class="tab-empty-state">
+                            <p class="text-muted mb-0">No conversations match your search.</p>
+                          </li>
+                        </ul>
+                      </ng-scrollbar>
+                    </ng-template>
+                  </li>
+                  <li [ngbNavItem]="2">
+                    <button ngbNavLink type="button">
+                      <div class="d-flex flex-row flex-lg-column flex-xl-row align-items-center justify-content-center">
+                        <i class="feather icon-phone-call icon-xs me-sm-2 me-lg-0 me-xxl-2"></i>
+                        <p class="d-none d-sm-block d-lg-none d-xxl-block mb-0">Calls</p>
+                      </div>
+                    </button>
+                    <ng-template ngbNavContent>
+                      <ng-scrollbar>
+                        <p class="text-secondary mb-1">Recent calls</p>
+                        <ul class="list-unstyled chat-list px-1" *ngIf="recentCalls.length; else noCalls">
+                          <li class="chat-item pe-1" *ngFor="let convo of recentCalls; trackBy: trackByConversationId">
+                            <button type="button" class="chat-link d-flex align-items-center w-100 text-start border-0 bg-transparent p-0" (click)="selectConversation(convo)">
+                              <figure class="mb-0 me-2">
+                                <img *ngIf="convo.avatarUrl; else callAvatar" [src]="convo.avatarUrl" class="img-xs rounded-circle" alt="contact avatar">
+                                <ng-template #callAvatar>
+                                  <div class="avatar-initials img-xs rounded-circle">{{ getAvatarInitials(getConversationName(convo)) }}</div>
+                                </ng-template>
+                                <div class="status" [ngClass]="convo.status === 'offline' ? 'offline' : 'online'"></div>
+                              </figure>
+                              <div class="d-flex align-items-center justify-content-between flex-grow-1 border-bottom">
+                                <div>
+                                  <p class="text-body mb-1">{{ getConversationName(convo) }}</p>
+                                  <div class="d-flex align-items-center">
+                                    <i class="feather icon-phone-call icon-xs text-success me-1"></i>
+                                    <p class="text-secondary fs-13px mb-0">{{ convo.lastMessage?.timestamp | date:'medium' }}</p>
+                                  </div>
+                                </div>
+                                <div class="d-flex flex-column align-items-end">
+                                  <i class="feather icon-phone-call text-secondary icon-sm"></i>
+                                </div>
+                              </div>
+                            </button>
+                          </li>
+                        </ul>
+                        <ng-template #noCalls>
+                          <div class="tab-empty-state bordered-empty-state">
+                            <i class="feather icon-phone-call icon-lg text-secondary mb-2"></i>
+                            <p class="mb-1">No call history yet</p>
+                            <p class="text-muted mb-0">Call events will show here when they are available from the chat backend.</p>
+                          </div>
+                        </ng-template>
+                      </ng-scrollbar>
+                    </ng-template>
+                  </li>
+                  <li [ngbNavItem]="3">
+                    <button ngbNavLink type="button">
+                      <div class="d-flex flex-row flex-lg-column flex-xl-row align-items-center justify-content-center">
+                        <i class="feather icon-users icon-xs me-sm-2 me-lg-0 me-xxl-2"></i>
+                        <p class="d-none d-sm-block d-lg-none d-xxl-block mb-0">Contacts</p>
+                      </div>
+                    </button>
+                    <ng-template ngbNavContent>
+                      <ng-scrollbar>
+                        <p class="text-secondary mb-1">Contacts</p>
+                        <ul class="list-unstyled chat-list px-1">
+                          <li class="chat-item pe-1" *ngFor="let convo of contactConversations; trackBy: trackByConversationId">
+                            <div class="d-flex align-items-center">
+                              <figure class="mb-0 me-2">
+                                <img *ngIf="convo.avatarUrl; else contactAvatar" [src]="convo.avatarUrl" class="img-xs rounded-circle" alt="contact avatar">
+                                <ng-template #contactAvatar>
+                                  <div class="avatar-initials img-xs rounded-circle">{{ getAvatarInitials(getConversationName(convo)) }}</div>
+                                </ng-template>
+                                <div class="status" [ngClass]="convo.status === 'offline' ? 'offline' : 'online'"></div>
+                              </figure>
+                              <div class="d-flex align-items-center justify-content-between flex-grow-1 border-bottom">
+                                <div>
+                                  <p class="text-body mb-1">{{ getConversationName(convo) }}</p>
+                                  <p class="text-secondary fs-13px mb-0">{{ getConversationRole(convo) }}</p>
+                                </div>
+                                <div class="d-flex align-items-end text-body contact-actions">
+                                  <button type="button" class="btn btn-link p-0 text-secondary me-2" (click)="selectConversation(convo)" ngbTooltip="Open chat">
+                                    <i class="feather icon-message-square icon-sm"></i>
+                                  </button>
+                                  <button type="button" class="btn btn-link p-0 text-secondary me-2" ngbTooltip="Voice call coming soon" aria-label="Voice call coming soon">
+                                    <i class="feather icon-phone-call icon-sm"></i>
+                                  </button>
+                                  <button type="button" class="btn btn-link p-0 text-secondary" ngbTooltip="Video call coming soon" aria-label="Video call coming soon">
+                                    <i class="feather icon-video icon-sm"></i>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                          <li *ngIf="!contactConversations.length" class="tab-empty-state">
+                            <p class="text-muted mb-0">No contacts available.</p>
+                          </li>
+                        </ul>
+                      </ng-scrollbar>
+                    </ng-template>
                   </li>
                 </ul>
+                <div [ngbNavOutlet]="defaultNav" class="mt-3"></div>
               </div>
             </div>
           </div>
 
-          <!-- Chat Area -->
-          <div class="col-lg-8 chat-content" *ngIf="selectedConversation">
-            <div class="chat-header border-bottom pb-2">
-              <div class="d-flex justify-content-between">
-                <div class="d-flex align-items-center">
-                  <figure class="mb-0 me-2">
-                    <img [src]="selectedConversation.avatarUrl || 'https://placehold.co/45x45'" class="img-sm rounded-circle" alt="image">
-                  </figure>
-                  <div>
-                    <p>{{ selectedConversation.name }}</p>
-                    <p class="text-secondary fs-13px">{{ selectedConversation.role || 'Participant' }}</p>
+          <div class="col-lg-8 chat-content" [class.show]="chatPanelVisible">
+            <ng-container *ngIf="selectedConversation; else emptyConversationState">
+              <div class="chat-header border-bottom pb-2">
+                <div class="d-flex justify-content-between align-items-center gap-3">
+                  <div class="d-flex align-items-center">
+                    <button type="button" (click)="backToChatList()" class="btn btn-link p-0 me-2 ms-n2 text-secondary d-lg-none" aria-label="Back to chat list">
+                      <i class="feather icon-corner-up-left icon-md"></i>
+                    </button>
+                    <figure class="mb-0 me-2">
+                      <img *ngIf="selectedConversation.avatarUrl; else selectedAvatar" [src]="selectedConversation.avatarUrl" class="img-sm rounded-circle" alt="selected conversation avatar">
+                      <ng-template #selectedAvatar>
+                        <div class="avatar-initials img-sm rounded-circle">{{ getAvatarInitials(getConversationName(selectedConversation)) }}</div>
+                      </ng-template>
+                      <div class="status" [ngClass]="selectedConversation.status === 'offline' ? 'offline' : 'online'"></div>
+                    </figure>
+                    <div>
+                      <p class="mb-0 fw-semibold">{{ getConversationName(selectedConversation) }}</p>
+                      <p class="text-secondary fs-13px mb-0">{{ getConversationRole(selectedConversation) }}</p>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center me-n1 chat-header-actions">
+                    <button type="button" class="btn btn-link p-0 text-secondary me-3" ngbTooltip="Video call coming soon" aria-label="Video call coming soon">
+                      <i class="feather icon-video icon-lg"></i>
+                    </button>
+                    <button type="button" class="btn btn-link p-0 text-secondary me-0 me-sm-3" ngbTooltip="Voice call coming soon" aria-label="Voice call coming soon">
+                      <i class="feather icon-phone-call icon-lg"></i>
+                    </button>
+                    <button type="button" class="btn btn-link p-0 text-secondary d-none d-sm-block" ngbTooltip="Open contact details" aria-label="Open contact details">
+                      <i class="feather icon-user icon-lg"></i>
+                    </button>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="chat-body">
-              <ng-scrollbar>
-                <ul class="messages">
-                  <li class="message-item" *ngFor="let msg of messages" [ngClass]="{ 'me': msg.isMine, 'friend': !msg.isMine }">
-                    <img src="https://placehold.co/35x35" class="img-xs rounded-circle" alt="avatar">
-                    <div class="content">
-                      <div class="message">
-                        <div class="bubble">
-                          <p>{{ msg.content }}</p>
+              <div class="chat-body">
+                <ng-scrollbar>
+                  <ul class="messages" *ngIf="messages.length; else emptyThreadState">
+                    <li class="message-item" *ngFor="let msg of messages; trackBy: trackByMessage" [ngClass]="{ 'me': msg.isMine, 'friend': !msg.isMine }">
+                      <ng-container *ngIf="msg.isMine; else friendMessageAvatar">
+                        <div class="avatar-initials img-xs rounded-circle">{{ getAvatarInitials(msg.senderName || 'You') }}</div>
+                      </ng-container>
+                      <ng-template #friendMessageAvatar>
+                        <img *ngIf="selectedConversation.avatarUrl; else friendInitials" [src]="selectedConversation.avatarUrl || ''" class="img-xs rounded-circle" alt="message sender avatar">
+                        <ng-template #friendInitials>
+                          <div class="avatar-initials img-xs rounded-circle">{{ getAvatarInitials(getConversationName(selectedConversation)) }}</div>
+                        </ng-template>
+                      </ng-template>
+                      <div class="content">
+                        <div class="message">
+                          <div class="bubble">
+                            <p class="mb-0">{{ msg.content }}</p>
+                          </div>
+                          <span>{{ msg.timestamp | date:'shortTime' }}</span>
                         </div>
-                        <span>{{ msg.timestamp | date:'shortTime' }}</span>
                       </div>
+                    </li>
+                  </ul>
+                  <ng-template #emptyThreadState>
+                    <div class="thread-empty-state">
+                      <i class="feather icon-message-square icon-lg text-secondary mb-2"></i>
+                      <p class="mb-1">No messages yet</p>
+                      <p class="text-muted mb-0">Send the first message to start this conversation.</p>
                     </div>
-                  </li>
-                </ul>
-              </ng-scrollbar>
-            </div>
+                  </ng-template>
+                </ng-scrollbar>
+              </div>
 
-            <div class="chat-footer d-flex mt-2">
-              <input type="text" class="form-control me-2" [(ngModel)]="messageText" (keyup.enter)="sendMessage()" placeholder="Type a message" />
-              <button type="button" class="btn btn-primary" (click)="sendMessage()">
-                <i class="feather icon-send"></i>
-              </button>
-            </div>
-          </div>
+              <div class="chat-footer d-flex">
+                <div>
+                  <button type="button" class="btn border btn-icon rounded-circle me-2" ngbTooltip="Emoji picker coming soon" aria-label="Emoji picker coming soon">
+                    <i class="feather icon-smile text-secondary"></i>
+                  </button>
+                </div>
+                <div class="d-none d-md-block">
+                  <button type="button" class="btn border btn-icon rounded-circle me-2" ngbTooltip="Attachments coming soon" aria-label="Attachments coming soon">
+                    <i class="feather icon-paperclip text-secondary"></i>
+                  </button>
+                </div>
+                <div class="d-none d-md-block">
+                  <button type="button" class="btn border btn-icon rounded-circle me-2" ngbTooltip="Voice notes coming soon" aria-label="Voice notes coming soon">
+                    <i class="feather icon-mic text-secondary"></i>
+                  </button>
+                </div>
+                <form class="search-form flex-grow-1 me-2" (ngSubmit)="sendMessage()">
+                  <div class="input-group">
+                    <input
+                      type="text"
+                      class="form-control rounded-pill"
+                      name="messageText"
+                      [(ngModel)]="messageText"
+                      placeholder="Type a message"
+                    >
+                  </div>
+                </form>
+                <div>
+                  <button type="button" class="btn btn-primary btn-icon rounded-circle" (click)="sendMessage()" [disabled]="!messageText.trim()">
+                    <i class="feather icon-send"></i>
+                  </button>
+                </div>
+              </div>
+            </ng-container>
 
-          <!-- No conversation selected -->
-          <div class="col-lg-8 d-flex align-items-center justify-content-center" *ngIf="!selectedConversation">
-            <p class="text-muted">Select a conversation to start chatting</p>
+            <ng-template #emptyConversationState>
+              <div class="chat-panel-empty d-none d-lg-flex">
+                <div class="text-center">
+                  <div class="empty-state-icon mx-auto mb-3">
+                    <i class="feather icon-message-square icon-lg"></i>
+                  </div>
+                  <h5 class="mb-2">Select a conversation</h5>
+                  <p class="text-muted mb-0">Choose a chat from the left to view messages and reply.</p>
+                </div>
+              </div>
+            </ng-template>
           </div>
         </div>
       </div>
