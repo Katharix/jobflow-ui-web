@@ -1,0 +1,25 @@
+.faq-item {
+   border: 1px solid var(--bs-border-color);
+   border-radius: .5rem;
+   padding: .875rem 1rem;
+   background: var(--bs-body-bg);
+
+   &[open] {
+      border-color: rgba(var(--bs-primary-rgb), .35);
+   }
+}
+
+.faq-question {
+   font-weight: 600;
+   cursor: pointer;
+   list-style: none;
+}
+
+.faq-question::-webkit-details-marker {
+   display: none;
+}
+
+.faq-answer {
+   margin-top: .625rem;
+   color: var(--bs-secondary-color);
+}
