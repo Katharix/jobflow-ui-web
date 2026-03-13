@@ -1,0 +1,48 @@
+.invoice-client-cell {
+   .invoice-client-name {
+      font-weight: 600;
+      color: var(--bs-body-color);
+   }
+
+   .invoice-client-email {
+      font-size: .8125rem;
+      color: var(--bs-secondary-color);
+   }
+}
+
+.invoice-status-chip {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   min-width: 74px;
+   border-radius: 999px;
+   padding: .2rem .55rem;
+   font-size: .75rem;
+   font-weight: 600;
+}
+
+.status-draft {
+   background: rgba(var(--bs-secondary-rgb), .15);
+   color: var(--bs-secondary);
+}
+
+.status-sent {
+   background: rgba(var(--bs-primary-rgb), .15);
+   color: var(--bs-primary);
+}
+
+.status-paid {
+   background: rgba(var(--bs-success-rgb), .15);
+   color: var(--bs-success);
+}
+
+.status-overdue,
+.status-unpaid {
+   background: rgba(var(--bs-danger-rgb), .15);
+   color: var(--bs-danger);
+}
+
+.status-unknown {
+   background: rgba(var(--bs-dark-rgb), .1);
+   color: var(--bs-dark);
+}
