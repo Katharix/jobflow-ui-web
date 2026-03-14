@@ -1,11 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild, inject} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ActivatedRoute, Router} from '@angular/router';
-import {
-   CommandModel,
-   ToolbarItems,
-   PageSettingsModel, CommandClickEventArgs
-} from '@syncfusion/ej2-angular-grids';
 
 import {Subscription, combineLatest} from 'rxjs';
 
@@ -22,8 +17,14 @@ import {
 } from '../add-edit-pricebook-item-dialog/add-edit-pricebook-item-dialog.component';
 import {PageHeaderComponent} from "../../../views/admin-views/dashboard/page-header/page-header.component";
 import {PriceBookCategoryService} from '../services/price-book-category.service';
-import {JobflowGridColumn, JobflowGridComponent} from "../../../common/jobflow-grid/jobflow-grid.component";
-import {ClickEventArgs} from "@syncfusion/ej2-navigations";
+import {
+   JobflowGridColumn,
+   JobflowGridCommandClickEventArgs,
+   JobflowGridCommandModel,
+   JobflowGridComponent,
+   JobflowGridPageSettings,
+   JobflowGridToolbarClickEventArgs
+} from "../../../common/jobflow-grid/jobflow-grid.component";
 
 @Component({
    selector: 'app-price-book-item',
@@ -51,7 +52,7 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
    typeAccessor = (_: string, data: any) => this.typeLabel(data?.itemType);
 
 
-   commandButtons: CommandModel[] = [
+   commandButtons: JobflowGridCommandModel[] = [
       {
          type: 'Edit',
          buttonOption: {
@@ -70,7 +71,7 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
       }
    ];
 
-   pageSettings: PageSettingsModel = {pageSize: 20, pageSizes: [10, 20, 50, 100]};
+   pageSettings: JobflowGridPageSettings = {pageSize: 20, pageSizes: [10, 20, 50, 100]};
 
    columns: JobflowGridColumn[] = [
       {field: 'name', headerText: 'Name', width: 220},
@@ -164,13 +165,13 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
       return true;
    }
 
-   onToolbarClick(e: ClickEventArgs) {
+   onToolbarClick(e: JobflowGridToolbarClickEventArgs) {
       const id = (e.item as any)?.id;
       if (id === 'AddItem') this.add();
    }
 
 
-   onCommandClick(args: CommandClickEventArgs) {
+   onCommandClick(args: JobflowGridCommandClickEventArgs) {
       const row = args.rowData as PriceBookItemDto;
 
       switch (args.commandColumn?.type) {

@@ -2,15 +2,15 @@ import {
    Component,
    Input,
    Output,
-   EventEmitter,
-   HostListener
+   EventEmitter
 } from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {Drawer} from 'primeng/drawer';
 
 @Component({
    selector: 'jobflow-drawer',
    standalone: true,
-   imports: [CommonModule],
+   imports: [CommonModule, Drawer],
    templateUrl: './jobflow-drawer.component.html',
    styleUrls: ['./jobflow-drawer.component.scss']
 })
@@ -23,25 +23,18 @@ export class JobflowDrawerComponent {
    @Output() closed = new EventEmitter<void>();
    @Output() opened = new EventEmitter<void>();
 
-   ngOnChanges(): void {
-      if (this.open) {
-         this.opened.emit();
-      }
+   get drawerStyle(): Record<string, string> {
+      return {
+         width: `${this.width}px`
+      };
    }
 
    close(): void {
       this.closed.emit();
    }
 
-   backdropClick(): void {
-      if (this.closeOnBackdrop) {
-         this.close();
-      }
-   }
-
-   @HostListener('document:keydown.escape')
-   onEscape(): void {
-      if (this.open) {
+   onVisibleChange(visible: boolean): void {
+      if (!visible) {
          this.close();
       }
    }

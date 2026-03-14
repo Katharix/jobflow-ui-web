@@ -1,16 +1,15 @@
-<div class="drawer-backdrop" *ngIf="open" (click)="backdropClick()"></div>
-
-<aside
-   class="drawer"
-   [class.open]="open"
-   [style.width.px]="width"
+<p-drawer
+   [visible]="open"
+   [position]="'right'"
+   [header]="title"
+   [modal]="true"
+   [dismissible]="closeOnBackdrop"
+   [closeOnEscape]="true"
+   [style]="drawerStyle"
+   styleClass="jobflow-prime-drawer"
+   [baseZIndex]="1050"
+   (onShow)="opened.emit()"
+   (visibleChange)="onVisibleChange($event)"
 >
-   <header class="drawer-header">
-      <h3 class="drawer-title">{{ title }}</h3>
-      <button class="drawer-close" (click)="close()">×</button>
-   </header>
-
-   <section class="drawer-body">
-      <ng-content></ng-content>
-   </section>
-</aside>
+   <ng-content></ng-content>
+</p-drawer>

@@ -1,4 +1,4 @@
-import {CommonModule, NgStyle} from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
@@ -11,7 +11,6 @@ import {OrganizationContextService} from '../../services/shared/organization-con
    selector: 'app-login',
    standalone: true,
    imports: [
-      NgStyle,
       RouterLink,
       FormsModule,
       CommonModule

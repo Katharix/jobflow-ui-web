@@ -18,16 +18,17 @@ import {
    AddEditPriceBookCategoryDialogComponent
 } from './add-edit-pricebook-category-dialog/add-edit-pricebook-category-dialog.component';
 import {ToastService} from '../../common/toast/toast.service';
-import {RouterLink, RouterLinkActive} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 
 @Component({
    selector: 'app-pricebook',
    standalone: true,
-   imports: [CommonModule, LucideAngularModule, RouterLink, RouterLinkActive],
+   imports: [CommonModule, LucideAngularModule, RouterLink],
    templateUrl: './pricebook.component.html'
 })
 export class PriceBookComponent implements OnInit {
    organizationId: string | null = null;
+   private onboardingActionHandled = false;
 
    headerActions = [
       {
@@ -50,6 +51,7 @@ export class PriceBookComponent implements OnInit {
       private organizationContext: OrganizationContextService,
       private toast: ToastService,
       private modal: ModalService,
+      private route: ActivatedRoute,
    ) {
       this.organizationContext.org$.subscribe(org => {
          if (org) {
@@ -70,6 +72,14 @@ export class PriceBookComponent implements OnInit {
             this.organizationId = org.id!;
             this.loadCategories();
          });
+
+      this.route.queryParamMap.subscribe(params => {
+         if (this.onboardingActionHandled) return;
+         if (params.get('onboardingAction') !== 'open-pricebook-modal') return;
+
+         this.openAddMaterialDialog();
+         this.onboardingActionHandled = true;
+      });
    }
 
    private loadCategories(): void {

@@ -1,0 +1,275 @@
+.onboarding-checklist {
+	padding: 0;
+}
+
+.onboarding-checklist__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 0.75rem;
+	margin-bottom: 0.85rem;
+
+	h3 {
+		margin: 0;
+			font-size: 1.05rem;
+		font-weight: 700;
+		color: var(--bs-heading-color);
+			letter-spacing: 0.01em;
+	}
+
+	.subtitle {
+		margin: 0.3rem 0 0;
+			font-size: 0.8rem;
+			line-height: 1.4;
+		color: var(--bs-secondary-color);
+	}
+}
+
+.onboarding-checklist__summary {
+	display: inline-flex;
+	align-items: center;
+	min-height: 1.8rem;
+	padding: 0.2rem 0.6rem;
+	border-radius: 999rem;
+	background-color: rgba(var(--bs-primary-rgb), 0.1);
+	color: var(--bs-primary);
+	font-size: 0.72rem;
+	font-weight: 600;
+	white-space: nowrap;
+	border: 1px solid rgba(var(--bs-primary-rgb), 0.2);
+}
+
+.onboarding-checklist__empty {
+	padding: 0.8rem;
+	border: 1px dashed var(--bs-border-color);
+	border-radius: 0.5rem;
+	color: var(--bs-secondary-color);
+	font-size: 0.85rem;
+}
+
+.onboarding-checklist__timeline {
+	overflow-x: auto;
+	overflow-y: hidden;
+	padding: 0.2rem 0.1rem 0.5rem;
+	scroll-snap-type: x proximity;
+	border-radius: 0.75rem;
+	background: linear-gradient(180deg, rgba(var(--bs-primary-rgb), 0.04) 0%, rgba(var(--bs-primary-rgb), 0.01) 100%);
+}
+
+:host ::ng-deep .jobflow-onboarding-timeline {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: flex-start;
+	position: relative;
+	width: max-content;
+	min-width: 100%;
+	padding: 0.2rem 0.3rem 0.35rem;
+
+	&::before {
+		content: '';
+		position: absolute;
+		left: 1.25rem;
+		right: 1.25rem;
+		top: 0.68rem;
+		height: 0.12rem;
+		border-radius: 999rem;
+		background: linear-gradient(90deg, rgba(var(--bs-success-rgb), 0.26) 0%, rgba(var(--bs-primary-rgb), 0.3) 45%, rgba(var(--bs-primary-rgb), 0.14) 100%);
+		z-index: 0;
+	}
+
+	.p-timeline-event {
+		flex: 0 0 auto;
+		min-width: 12.5rem;
+		display: block;
+		position: relative;
+		z-index: 1;
+		scroll-snap-align: start;
+	}
+
+	.p-timeline-event-opposite {
+		display: none;
+	}
+
+	.p-timeline-event-content {
+		padding: 0.52rem 0.38rem 0;
+		margin-top: 0;
+		text-align: center;
+	}
+
+	.p-timeline-event-separator {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 0;
+		min-height: auto;
+	}
+
+	.p-timeline-event-marker {
+		width: auto;
+		height: auto;
+		border: 0;
+		background: transparent;
+		box-shadow: none;
+	}
+
+	.p-timeline-event-connector {
+		display: none;
+	}
+}
+
+.timeline-marker {
+	width: 1.35rem;
+	height: 1.35rem;
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 0.1rem solid transparent;
+	font-size: 0.58rem;
+
+	&.timeline-marker--completed {
+		color: var(--bs-white);
+		background-color: var(--bs-success);
+		border-color: rgba(var(--bs-success-rgb), 0.2);
+	}
+
+	&.timeline-marker--current {
+		color: var(--bs-white);
+		background-color: var(--bs-primary);
+		border-color: rgba(var(--bs-primary-rgb), 0.2);
+	}
+
+	&.timeline-marker--upcoming {
+		color: var(--bs-secondary-color);
+		background-color: var(--bs-tertiary-bg);
+		border-color: rgba(var(--bs-secondary-rgb), 0.2);
+	}
+}
+
+.timeline-card {
+	width: 11.65rem;
+	min-height: 8.2rem;
+	padding: 0.68rem;
+	border-radius: 0.6rem;
+	border: 0.0625rem solid var(--bs-border-color);
+	background-color: var(--bs-body-bg);
+	text-align: left;
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	gap: 0.42rem;
+	box-shadow: var(--bs-box-shadow-sm);
+	transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.timeline-card__title {
+	margin: 0;
+	font-size: 0.82rem;
+	line-height: 1.25;
+	font-weight: 700;
+	color: var(--bs-heading-color);
+}
+
+.timeline-card__description {
+	margin: 0;
+	font-size: 0.73rem;
+	line-height: 1.35;
+	color: var(--bs-secondary-color);
+	min-height: 1.9rem;
+}
+
+.timeline-card__action {
+	border: 0;
+	border-radius: 0.45rem;
+	padding: 0.4rem 0.52rem;
+	width: 100%;
+	font-size: 0.7rem;
+	font-weight: 600;
+	line-height: 1.2;
+	background-color: var(--bs-primary);
+	color: var(--bs-white);
+	cursor: pointer;
+	transition: opacity 0.15s ease;
+}
+
+.timeline-card__action:not(:disabled):hover {
+	opacity: 0.92;
+}
+
+.timeline-card__action:disabled {
+	opacity: 0.65;
+	cursor: not-allowed;
+}
+
+.timeline-card__action--completed {
+	background-color: var(--bs-success);
+	color: var(--bs-white);
+}
+
+.timeline-card--completed {
+	border-color: rgba(var(--bs-success-rgb), 0.35);
+}
+
+.timeline-card--current {
+	border-color: rgba(var(--bs-primary-rgb), 0.35);
+	box-shadow: 0 0 0 0.1rem rgba(var(--bs-primary-rgb), 0.08), var(--bs-box-shadow-sm);
+}
+
+.timeline-card--upcoming {
+	border-color: var(--bs-border-color);
+}
+
+@media (max-width: 991px) {
+	.onboarding-checklist__header {
+		flex-direction: column;
+		align-items: stretch;
+		margin-bottom: 0.7rem;
+	}
+
+	.onboarding-checklist__summary {
+		align-self: flex-start;
+	}
+
+	:host ::ng-deep .jobflow-onboarding-timeline {
+		.p-timeline-event {
+			min-width: 11.75rem;
+		}
+	}
+}
+
+@media (max-width: 767px) {
+	.onboarding-checklist {
+		padding: 0.85rem;
+	}
+
+	.onboarding-checklist__timeline {
+		margin: 0 -0.25rem;
+		padding: 0.15rem 0.25rem 0.45rem;
+	}
+
+	:host ::ng-deep .jobflow-onboarding-timeline {
+		padding: 0.15rem 0.2rem 0.3rem;
+
+		.p-timeline-event {
+			min-width: 10.9rem;
+		}
+
+		&::before {
+			left: 1rem;
+			right: 1rem;
+		}
+	}
+
+	.timeline-card {
+		width: 10.45rem;
+		min-height: 8rem;
+		padding: 0.6rem;
+	}
+
+	.timeline-card__title {
+		font-size: 0.78rem;
+	}
+
+	.timeline-card__description {
+		font-size: 0.7rem;
+	}
+}

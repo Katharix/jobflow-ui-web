@@ -1,47 +1,47 @@
-import {Component, OnInit, ViewChild, AfterViewInit, inject} from '@angular/core';
-import {
-   GridComponent,
-   EditSettingsModel,
-   GridModule,
-   PageService,
-   SortService,
-   EditService
-} from '@syncfusion/ej2-angular-grids';
+import {Component, OnInit, TemplateRef, ViewChild, inject} from '@angular/core';
+import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {ActivatedRoute} from '@angular/router';
 import {ToastService} from '../../common/toast/toast.service';
 import {EmployeeRole} from './models/employee-role';
 import {EmployeeRoleService} from './services/employee-role.service';
 import {OrganizationContextService} from '../../services/shared/organization-context.service';
 import {PageHeaderComponent} from "../../views/admin-views/dashboard/page-header/page-header.component";
+import {ModalComponent} from '../../views/shared/modal/modal.component';
+import {
+   JobflowGridColumn,
+   JobflowGridComponent,
+   JobflowGridPageSettings
+} from '../../common/jobflow-grid/jobflow-grid.component';
 
 @Component({
    selector: 'app-employee-roles',
    standalone: true,
    templateUrl: './employee-roles.component.html',
    styleUrls: ['./employee-roles.component.scss'],
-   providers: [PageService, SortService, EditService],
-   imports: [GridModule, PageHeaderComponent]
+   imports: [CommonModule, ReactiveFormsModule, JobflowGridComponent, PageHeaderComponent, ModalComponent]
 })
-export class EmployeeRolesComponent implements OnInit, AfterViewInit {
+export class EmployeeRolesComponent implements OnInit {
    private employeeRoleService = inject(EmployeeRoleService);
    private toast = inject(ToastService);
    private organizationContext = inject(OrganizationContextService);
+   private formBuilder = inject(FormBuilder);
 
-   @ViewChild('grid') grid!: GridComponent;
+   @ViewChild('actionsTemplate', {static: true})
+   actionsTemplate!: TemplateRef<any>;
 
    public roles: EmployeeRole[] = [];
+   columns: JobflowGridColumn[] = [];
+   pageSettings: JobflowGridPageSettings = {pageSize: 10, pageSizes: [10, 20, 50]};
    public organizationId = '';
    public loading = false;
-   private gridReady = false;
 
-   public editSettings: EditSettingsModel = {
-      allowEditing: true,
-      allowAdding: true,
-      allowDeleting: true,
-      mode: 'Dialog',
-      showDeleteConfirmDialog: true
-   };
+   showRoleModal = false;
+   editingRoleId: string | null = null;
 
-   public pageSettings = {pageSize: 10};
+   roleForm = this.formBuilder.group({
+      name: ['', [Validators.required]]
+   });
 
    public headerActions = [
       {
@@ -60,40 +60,28 @@ export class EmployeeRolesComponent implements OnInit, AfterViewInit {
    }
 
    ngOnInit(): void {
+      this.columns = [
+         {field: 'name', headerText: 'Role Name', width: 260},
+         {headerText: 'Actions', width: 180, textAlign: 'Right', template: this.actionsTemplate}
+      ];
       this.loadRoles();
-   }
+      this.route.queryParamMap.subscribe(params => {
+         if (this.onboardingActionHandled) return;
+         if (params.get('onboardingAction') !== 'open-role-modal') return;
 
-   ngAfterViewInit(): void {
-      // Ensure we flag the grid as ready after rendering
-      setTimeout(() => {
-         if (this.grid) {
-            this.gridReady = true;
-         }
+         this.onAddRoleClick();
+         this.onboardingActionHandled = true;
       });
    }
+   private onboardingActionHandled = false;
+   private route = inject(ActivatedRoute);
 
-   // ===========================================================
-   // 🔹 Add Role Button (works without toolbar)
-   // ===========================================================
    onAddRoleClick(): void {
-      if (!this.grid) {
-         this.toast.error('Grid reference not found.');
-         return;
-      }
-
-      // Wait a moment to let Syncfusion finish initializing the dialog edit module
-      setTimeout(() => {
-         if (this.grid && this.grid.editModule) {
-            this.grid.editModule.addRecord();
-         } else {
-            this.toast.error('Grid still initializing. Try again in a moment.');
-         }
-      }, 200);
+      this.editingRoleId = null;
+      this.roleForm.reset({name: ''});
+      this.showRoleModal = true;
    }
 
-   // ===========================================================
-   // 🔹 Load Roles
-   // ===========================================================
    loadRoles(): void {
       if (!this.organizationId) return;
       this.loading = true;
@@ -109,46 +97,61 @@ export class EmployeeRolesComponent implements OnInit, AfterViewInit {
       });
    }
 
-   // ===========================================================
-   // 🔹 CRUD Handlers
-   // ===========================================================
-   actionBegin(args: any): void {
-      if (args.requestType === 'save') {
-         const payload: EmployeeRole = {
-            id: args.data.id || null,
-            name: args.data.name.toUpperCase()
-         };
+   editRole(role: EmployeeRole): void {
+      this.editingRoleId = role.id ?? null;
+      this.roleForm.reset({name: role.name ?? ''});
+      this.showRoleModal = true;
+   }
 
-         if (args.action === 'add') {
-            this.employeeRoleService.create(payload).subscribe({
-               next: () => {
-                  this.toast.success('Role created successfully');
-                  this.loadRoles();
-               },
-               error: () => this.toast.error('Failed to create role')
-            });
-         } else if (args.action === 'edit') {
-            this.employeeRoleService.update(payload.id!, payload).subscribe({
-               next: () => {
-                  this.toast.success('Role updated successfully');
-                  this.loadRoles();
-               },
-               error: () => this.toast.error('Failed to update role')
-            });
-         }
+   closeRoleModal(): void {
+      this.showRoleModal = false;
+      this.editingRoleId = null;
+      this.roleForm.reset({name: ''});
+   }
+
+   saveRole(): void {
+      if (this.roleForm.invalid) {
+         this.roleForm.markAllAsTouched();
+         return;
       }
 
-      if (args.requestType === 'delete') {
-         const id = args.data[0]?.id;
-         if (id) {
-            this.employeeRoleService.delete(id).subscribe({
-               next: () => {
-                  this.toast.success('Role deleted successfully');
-                  this.loadRoles();
-               },
-               error: () => this.toast.error('Failed to delete role')
-            });
-         }
+      const payload: EmployeeRole = {
+         id: this.editingRoleId ?? undefined,
+         name: (this.roleForm.value.name ?? '').toUpperCase()
+      };
+
+      if (this.editingRoleId) {
+         this.employeeRoleService.update(this.editingRoleId, payload).subscribe({
+            next: () => {
+               this.toast.success('Role updated successfully');
+               this.loadRoles();
+               this.closeRoleModal();
+            },
+            error: () => this.toast.error('Failed to update role')
+         });
+         return;
       }
+
+      this.employeeRoleService.create(payload).subscribe({
+         next: () => {
+            this.toast.success('Role created successfully');
+            this.loadRoles();
+            this.closeRoleModal();
+         },
+         error: () => this.toast.error('Failed to create role')
+      });
+   }
+
+   deleteRole(role: EmployeeRole): void {
+      if (!role.id) return;
+      if (!confirm(`Delete role "${role.name}"?`)) return;
+
+      this.employeeRoleService.delete(role.id).subscribe({
+         next: () => {
+            this.toast.success('Role deleted successfully');
+            this.loadRoles();
+         },
+         error: () => this.toast.error('Failed to delete role')
+      });
    }
 }
