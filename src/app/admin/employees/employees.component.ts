@@ -5,7 +5,7 @@ import {LucideAngularModule} from 'lucide-angular';
 
 import {getClickHandler} from '../../common/utils/page-action-dispatcher';
 import {ToastService} from '../../common/toast/toast.service';
-import {PageHeaderComponent} from '../../views/admin-views/dashboard/page-header/page-header.component';
+import {PageHeaderComponent} from '../dashboard/page-header/page-header.component';
 import {ModalComponent} from '../../views/shared/modal/modal.component';
 import {DeleteConfirmComponent} from '../../views/shared/delete-confirm/delete-confirm-component';
 import {OrganizationDto} from '../../models/organization';

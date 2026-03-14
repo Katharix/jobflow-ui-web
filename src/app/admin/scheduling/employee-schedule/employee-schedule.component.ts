@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { PageHeaderComponent } from '../../../views/admin-views/dashboard/page-header/page-header.component';
+import { PageHeaderComponent } from '../../dashboard/page-header/page-header.component';
 
 @Component({
   selector: 'app-employee-schedule',

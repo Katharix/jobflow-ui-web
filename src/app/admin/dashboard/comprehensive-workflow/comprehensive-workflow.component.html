@@ -1,0 +1,21 @@
+<section class="workflow" *ngIf="flowSteps.length">
+   <header class="workflow__header">
+      <h2>Comprehensive workflow</h2>
+      <p>Two clear steps per row. Follow left to right.</p>
+   </header>
+
+   <div class="workflow__grid">
+      <article *ngFor="let step of flowSteps" [class]="getFlowStepStatusClass(step)">
+         <div class="workflow-step__meta">
+            <span>{{ step.step }}</span>
+            <strong>{{ getFlowStepStatusLabel(step) }}</strong>
+         </div>
+
+         <h3>{{ step.title }}</h3>
+         <p>{{ step.description }}</p>
+         <small>{{ step.metric }}</small>
+
+         <a [routerLink]="step.route" [queryParams]="step.queryParams || null">{{ step.ctaLabel }}</a>
+      </article>
+   </div>
+</section>

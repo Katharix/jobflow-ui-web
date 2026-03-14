@@ -50,4 +50,12 @@ describe('JobsService', () => {
 
       expect(apiSpy.get).toHaveBeenCalledWith('job/scheduled', {start, end});
    });
+
+   it('gets a single job by id', () => {
+      apiSpy.get.and.returnValue(of({id: 'job-1'} as any));
+
+      service.getById('job-1').subscribe();
+
+      expect(apiSpy.get).toHaveBeenCalledWith('job/job-1');
+   });
 });

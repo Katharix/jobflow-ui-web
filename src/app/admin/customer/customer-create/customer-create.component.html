@@ -1,22 +1,22 @@
 <div class="row g-3">
    <div class="col-12 col-md-6">
       <label class="form-label">First Name <span class="text-danger">*</span></label>
-      <input class="form-control form-control-lg" [(ngModel)]="firstName"/>
+      <input pInputText pSize="small" class="w-100" [(ngModel)]="firstName" />
    </div>
 
    <div class="col-12 col-md-6">
       <label class="form-label">Last Name</label>
-      <input class="form-control form-control-lg" [(ngModel)]="lastName"/>
+      <input pInputText pSize="small" class="w-100" [(ngModel)]="lastName" />
    </div>
 
    <div class="col-12 col-md-6">
       <label class="form-label">Email <span class="text-danger">*</span></label>
-      <input class="form-control form-control-lg" [(ngModel)]="email"/>
+      <input pInputText pSize="small" type="email" class="w-100" [(ngModel)]="email" />
    </div>
 
    <div class="col-12 col-md-6">
       <label class="form-label">Phone <span class="text-danger">*</span></label>
-      <input class="form-control form-control-lg" [(ngModel)]="phone"/>
+      <input pInputText pSize="small" type="tel" class="w-100" [(ngModel)]="phone" />
    </div>
 
    <div class="col-12 d-flex justify-content-end gap-2 pt-2">

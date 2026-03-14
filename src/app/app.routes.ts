@@ -4,7 +4,7 @@ import {AdminLayoutComponent} from './layouts/admin-layout/admin-layout.componen
 import {HomeComponent} from './views/home/home.component';
 import {authGuard} from './core/guards/auth.guard';
 import {subscriptionGuard} from './core/guards/subscription.guard';
-import {DashboardComponent} from './views/admin-views/dashboard/dashboard.component';
+import {DashboardComponent} from './admin/dashboard/dashboard.component';
 import {SubscribeComponent} from './views/subscription-views/subscribe/subscribe.component';
 import {AuthLayoutComponent} from './layouts/auth-layout/auth-layout.component';
 import {InvoiceComponent} from './views/general/invoice/invoice.component';

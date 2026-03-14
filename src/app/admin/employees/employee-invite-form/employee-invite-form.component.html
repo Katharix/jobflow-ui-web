@@ -2,31 +2,26 @@
   <div class="row">
     <div class="col-md-6 mb-3">
       <label class="form-label fw-semibold text-muted">First Name</label>
-      <input type="text" formControlName="firstName" class="form-control" />
+      <input pInputText pSize="small" type="text" formControlName="firstName" class="w-100" />
     </div>
     <div class="col-md-6 mb-3">
       <label class="form-label fw-semibold text-muted">Last Name</label>
-      <input type="text" formControlName="lastName" class="form-control" />
+      <input pInputText pSize="small" type="text" formControlName="lastName" class="w-100" />
     </div>
   </div>
 
   <div class="mb-3">
     <label class="form-label fw-semibold text-muted">Email Address</label>
-    <input type="email" formControlName="email" class="form-control" />
+    <input pInputText pSize="small" type="email" formControlName="email" class="w-100" />
   </div>
 
   <div class="mb-3">
     <label class="form-label fw-semibold text-muted">Phone Number</label>
-    <input type="tel" formControlName="phoneNumber" class="form-control" />
+    <input pInputText pSize="small" type="tel" formControlName="phoneNumber" class="w-100" />
   </div>
 
   <div class="mb-3">
     <label class="form-label fw-semibold text-muted">Employee Role</label>
-    <select formControlName="roleId" class="form-select">
-      <option value="">Select a Role</option>
-      <option *ngFor="let role of roles" [value]="role.id">
-        {{ role.name }}
-      </option>
-    </select>
+    <p-select formControlName="roleId" [options]="roles" optionLabel="name" optionValue="id" size="small" placeholder="Select a Role" [fluid]="true" />
   </div>
 </form>

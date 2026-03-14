@@ -6,6 +6,8 @@ import {ButtonModule} from 'primeng/button';
 
 export interface JobflowGridColumn {
    field?: string;
+   sortField?: string;
+   searchFields?: string[];
    headerText: string;
    width?: number;
    textAlign?: 'Left' | 'Right' | 'Center';
@@ -97,10 +99,13 @@ export class JobflowGridComponent {
    }
 
    get globalFilterFields(): string[] {
-      return this.columns
-         .filter(col => !!col.field && !col.template)
-         .map(col => col.field!)
-         .filter(Boolean);
+      const fields = this.columns.flatMap((col) => {
+         const explicitSearchFields = col.searchFields ?? [];
+         const baseField = col.field ? [col.field] : [];
+         return [...baseField, ...explicitSearchFields];
+      });
+
+      return Array.from(new Set(fields.filter(Boolean)));
    }
 
    trackByHeader(_index: number, col: JobflowGridColumn): string {
@@ -122,11 +127,11 @@ export class JobflowGridComponent {
    }
 
    getSortableField(col: JobflowGridColumn): string | undefined {
-      if (!this.allowSorting || !col.field || col.template) {
+      if (!this.allowSorting || col.commands?.length) {
          return undefined;
       }
 
-      return col.field;
+      return col.sortField ?? col.field;
    }
 
    onToolbarItemClick(item: JobflowGridToolbarItem | string): void {

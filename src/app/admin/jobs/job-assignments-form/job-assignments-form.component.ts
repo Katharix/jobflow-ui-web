@@ -1,6 +1,10 @@
 import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { SelectModule } from 'primeng/select';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { DatePickerModule } from 'primeng/datepicker';
+import { TextareaModule } from 'primeng/textarea';
 import { ScheduleType } from '../models/assignment';
 import { RecurrenceRuleUpsertRequest } from '../models/recurrence-rule';
 
@@ -9,10 +13,26 @@ type ScheduleMode = 'OneTime' | 'Recurring';
 @Component({
    selector: 'job-assignment-form',
    standalone: true,
-   imports: [CommonModule, ReactiveFormsModule],
+   imports: [CommonModule, ReactiveFormsModule, SelectModule, InputNumberModule, DatePickerModule, TextareaModule],
    templateUrl: './job-assignments-form.component.html',
 })
 export class JobAssignmentFormComponent implements OnInit {
+
+   scheduleModeOptions = [
+      { label: 'One Time', value: 'OneTime' },
+      { label: 'Recurring', value: 'Recurring' }
+   ];
+
+   patternOptions = [
+      { label: 'Weekly', value: 'Weekly' },
+      { label: 'Monthly', value: 'Monthly' }
+   ];
+
+   endTypeOptions = [
+      { label: 'Never', value: 'Never' },
+      { label: 'On Date', value: 'OnDate' },
+      { label: 'After Count', value: 'AfterCount' }
+   ];
 
    @Input() jobId!: string;
    @Input() scheduledStart!: Date;

@@ -1,6 +1,10 @@
 import { Component, Inject, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { TextareaModule } from 'primeng/textarea';
 import { PriceBookItemType, PriceBookItemDto } from '../services/price-book-item.service';
 import { ModalRef } from '../../../common/modal/modal-ref';
 import { MODAL_DATA } from '../../../common/modal/modal.tokens';
@@ -28,7 +32,7 @@ export interface EditItemResult {
 @Component({
   selector: 'app-add-edit-pricebook-item-dialog',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, InputTextModule, SelectModule, InputNumberModule, TextareaModule],
   templateUrl: './add-edit-pricebook-item-dialog.component.html',
   styleUrl: './add-edit-pricebook-item-dialog.component.scss'
 })
@@ -36,6 +40,12 @@ export class AddEditPricebookItemDialogComponent {
   private fb = inject(FormBuilder);
   private ref = inject<ModalRef<EditItemResult>>(ModalRef as any);
   data = inject<EditItemData>(MODAL_DATA);
+
+  typeOptions = [
+    { label: 'Material', value: 0 },
+    { label: 'Service', value: 1 },
+    { label: 'Product', value: 2 }
+  ];
 
   form = this.fb.group({
     id:        [this.data.item?.id ?? null],

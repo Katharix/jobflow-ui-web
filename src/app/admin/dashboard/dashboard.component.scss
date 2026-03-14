@@ -1,0 +1,143 @@
+.dashboard-page {
+   display: grid;
+   gap: 1rem;
+}
+
+.dashboard-welcome {
+   border: 1px solid var(--bs-border-color);
+   border-radius: 0.85rem;
+   background: var(--bs-body-bg);
+   padding: 0.95rem 1rem;
+   display: flex;
+   justify-content: space-between;
+   align-items: flex-start;
+   gap: 1rem;
+}
+
+.dashboard-welcome__message {
+   h1 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--bs-heading-color);
+   }
+
+   p {
+      margin: 0.3rem 0 0;
+      color: var(--bs-secondary-color);
+      font-size: 0.82rem;
+   }
+}
+
+.dashboard-welcome__meta {
+   display: grid;
+   justify-items: end;
+   gap: 0.2rem;
+   text-align: right;
+
+   strong {
+      font-size: 0.84rem;
+      color: var(--bs-heading-color);
+      font-weight: 700;
+      white-space: nowrap;
+   }
+
+}
+
+.dashboard-weather {
+   display: inline-flex;
+   align-items: center;
+   gap: 0.4rem;
+   color: var(--bs-secondary-color);
+   font-size: 0.78rem;
+   white-space: nowrap;
+
+   i {
+      color: var(--bs-primary);
+      font-size: 0.78rem;
+   }
+}
+
+.dashboard-weather__action {
+   border: 0;
+   background: transparent;
+   padding: 0;
+   color: var(--bs-primary);
+   font-size: 0.74rem;
+   font-weight: 600;
+   text-decoration: underline;
+   justify-self: end;
+}
+
+.dashboard-grid {
+   display: grid;
+   grid-template-columns: repeat(12, minmax(0, 1fr));
+   gap: 1rem;
+}
+
+.dashboard-panel {
+   border: 1px solid var(--bs-border-color);
+   border-radius: 0.85rem;
+   background: var(--bs-body-bg);
+   padding: 0.85rem;
+   display: grid;
+   gap: 0.7rem;
+}
+
+.dashboard-panel--onboarding {
+   grid-column: 1 / -1;
+}
+
+.dashboard-command-center {
+   grid-column: 1 / -1;
+}
+
+.dashboard-panel__header {
+   display: flex;
+   align-items: baseline;
+   justify-content: space-between;
+   gap: 0.5rem;
+
+   h2 {
+      margin: 0;
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--bs-heading-color);
+   }
+
+   span {
+      color: var(--bs-secondary-color);
+      font-size: 0.76rem;
+      white-space: nowrap;
+   }
+}
+
+@media (max-width: 991px) {
+   .dashboard-welcome {
+      flex-direction: column;
+      align-items: flex-start;
+   }
+
+   .dashboard-welcome__meta {
+      justify-items: start;
+      text-align: left;
+   }
+
+   .dashboard-weather__action {
+      justify-self: start;
+   }
+
+   .dashboard-grid {
+      grid-template-columns: 1fr;
+   }
+
+   .dashboard-panel--onboarding,
+   .dashboard-command-center {
+      grid-column: span 1;
+   }
+
+   .dashboard-panel__header {
+      flex-direction: column;
+      align-items: flex-start;
+   }
+}

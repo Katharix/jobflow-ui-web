@@ -6,6 +6,8 @@ export function mapAssignmentsToCalendarEvents(
 ): CalendarEvent[] {
    return assignments.map(a => ({
       Id: a.id,
+      EntityId: a.id,
+      EntityType: a.scheduleType,
       Subject: a.jobTitle ?? 'Assignment',
       StartTime: new Date(a.scheduledStart),
       EndTime: a.scheduledEnd

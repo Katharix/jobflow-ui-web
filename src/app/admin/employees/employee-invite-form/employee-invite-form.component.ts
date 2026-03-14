@@ -2,6 +2,8 @@
 import {Component, EventEmitter, inject, Output} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
+import {InputTextModule} from 'primeng/inputtext';
+import {SelectModule} from 'primeng/select';
 import {EmployeeRoleService} from '../../employee-roles/services/employee-role.service';
 import {EmployeeRole} from '../../employee-roles/models/employee-role';
 import {OrganizationContextService} from '../../../services/shared/organization-context.service';
@@ -14,7 +16,7 @@ import {EmployeeService} from "../services/employee.service";
 @Component({
    selector: 'app-employee-invite-form',
    standalone: true,
-   imports: [CommonModule, ReactiveFormsModule],
+   imports: [CommonModule, ReactiveFormsModule, InputTextModule, SelectModule],
    templateUrl: './employee-invite-form.component.html'
 })
 export class EmployeeInviteFormComponent {

@@ -37,6 +37,10 @@ export class JobsService {
       );
    }
 
+   getById(id: string): Observable<Job> {
+      return this.api.get<Job>(`${this.apiUrl}${id}`);
+   }
+
    getAllJobs(): Observable<Job[]> {
       return this.api.get<any>(
          `${this.apiUrl}all`

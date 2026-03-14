@@ -1,12 +1,13 @@
 import {Component, OnInit, TemplateRef, ViewChild, inject} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
+import {InputTextModule} from 'primeng/inputtext';
 import {ActivatedRoute} from '@angular/router';
 import {ToastService} from '../../common/toast/toast.service';
 import {EmployeeRole} from './models/employee-role';
 import {EmployeeRoleService} from './services/employee-role.service';
 import {OrganizationContextService} from '../../services/shared/organization-context.service';
-import {PageHeaderComponent} from "../../views/admin-views/dashboard/page-header/page-header.component";
+import {PageHeaderComponent} from "../dashboard/page-header/page-header.component";
 import {ModalComponent} from '../../views/shared/modal/modal.component';
 import {
    JobflowGridColumn,
@@ -19,7 +20,7 @@ import {
    standalone: true,
    templateUrl: './employee-roles.component.html',
    styleUrls: ['./employee-roles.component.scss'],
-   imports: [CommonModule, ReactiveFormsModule, JobflowGridComponent, PageHeaderComponent, ModalComponent]
+   imports: [CommonModule, ReactiveFormsModule, InputTextModule, JobflowGridComponent, PageHeaderComponent, ModalComponent]
 })
 export class EmployeeRolesComponent implements OnInit {
    private employeeRoleService = inject(EmployeeRoleService);

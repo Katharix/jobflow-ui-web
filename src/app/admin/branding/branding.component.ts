@@ -1,6 +1,9 @@
 import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
+import {InputTextModule} from 'primeng/inputtext';
+import {TextareaModule} from 'primeng/textarea';
+import {FloatLabelModule} from 'primeng/floatlabel';
 import {ColorBlockModule} from 'ngx-color/block';
 import {ColorTwitterModule} from 'ngx-color/twitter';
 import {LucideAngularModule} from 'lucide-angular';
@@ -8,14 +11,14 @@ import {OrganizationDto} from '../../models/organization';
 import {BrandingDto} from '../../models/organization-branding';
 import {FileUploadService} from './services/file-upload.service';
 import {OrganizationContextService} from '../../services/shared/organization-context.service';
-import {PageHeaderComponent} from '../../views/admin-views/dashboard/page-header/page-header.component';
+import {PageHeaderComponent} from '../dashboard/page-header/page-header.component';
 import {OrganizationBrandingService} from './services/organization-branding.service';
 
 
 @Component({
    selector: 'app-branding',
    standalone: true,
-   imports: [CommonModule, ReactiveFormsModule, ColorBlockModule, ColorTwitterModule, LucideAngularModule, PageHeaderComponent],
+   imports: [CommonModule, ReactiveFormsModule, InputTextModule, TextareaModule, FloatLabelModule, ColorBlockModule, ColorTwitterModule, LucideAngularModule, PageHeaderComponent],
    templateUrl: './branding.component.html',
    styleUrl: './branding.component.scss'
 })

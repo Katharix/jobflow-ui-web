@@ -1,9 +1,9 @@
 import {Component, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Invoice, InvoiceStatus} from '../../models/invoice';
 import {InvoiceService} from './services/invoice.service';
-import {PageHeaderComponent} from '../../views/admin-views/dashboard/page-header/page-header.component';
+import {PageHeaderComponent} from '../dashboard/page-header/page-header.component';
 import {JobflowGridColumn, JobflowGridComponent, JobflowGridPageSettings} from '../../common/jobflow-grid/jobflow-grid.component';
 import {ToastService} from '../../common/toast/toast.service';
 
@@ -32,6 +32,7 @@ export class InvoicesComponent implements OnInit {
    columns: JobflowGridColumn[] = [];
    items: Invoice[] = [];
    error: string | null = null;
+   private returnToCommandCenter = false;
 
    pageSettings: JobflowGridPageSettings = {
       pageSize: 20,
@@ -42,11 +43,13 @@ export class InvoicesComponent implements OnInit {
 
    constructor(
       private invoiceService: InvoiceService,
-      private router: Router
+      private router: Router,
+      private route: ActivatedRoute
    ) {
    }
 
    ngOnInit(): void {
+      this.returnToCommandCenter = this.route.snapshot.queryParamMap.get('returnTo') === 'dashboard-command-center';
       this.buildColumns();
       this.load();
    }
@@ -61,6 +64,8 @@ export class InvoicesComponent implements OnInit {
          {
             headerText: 'Client',
             width: 220,
+            sortField: 'organizationClient.firstName',
+            searchFields: ['organizationClient.firstName', 'organizationClient.lastName', 'organizationClient.emailAddress'],
             template: this.clientTemplate
          },
          {
@@ -92,6 +97,8 @@ export class InvoicesComponent implements OnInit {
          {
             headerText: 'Status',
             width: 120,
+            sortField: 'status',
+            searchFields: ['status'],
             template: this.statusTemplate
          },
          {
@@ -169,7 +176,9 @@ export class InvoicesComponent implements OnInit {
    }
 
    openInvoice(invoice: Invoice): void {
-      this.router.navigate(['/invoice/view', invoice.id]);
+      this.router.navigate(['/invoice/view', invoice.id], {
+         queryParams: this.returnToCommandCenter ? { returnTo: 'dashboard-command-center' } : undefined
+      });
    }
 
    private resolveStatus(rawStatus: InvoiceStatus | number | string): InvoiceStatus | null {

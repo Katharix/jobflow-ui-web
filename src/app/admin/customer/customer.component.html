@@ -10,9 +10,9 @@
 <jobflow-drawer
    [open]="isDrawerOpen"
    title="Add Client"
-   (closed)="closeDrawer()"
+   (closed)="onDrawerClosed()"
 >
-   <customer-create/>
+   <customer-create (saved)="onCreateSaved()" (cancelled)="onCreateCancelled()"/>
 </jobflow-drawer>
 
 <ng-template #clientNameTemplate let-client>

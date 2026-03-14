@@ -1,19 +1,23 @@
-import {Component} from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import {CustomersService} from "../services/customer.service";
 import {OrganizationContextService} from "../../../services/shared/organization-context.service";
-import {Router} from "@angular/router";
 import {FormsModule} from "@angular/forms";
+import {InputTextModule} from 'primeng/inputtext';
 
 @Component({
    selector: 'customer-create',
    standalone: true,
    imports: [
-      FormsModule
+        FormsModule,
+        InputTextModule
    ],
    templateUrl: './customer-create.component.html',
    styleUrl: './customer-create.component.scss'
 })
 export class CustomerCreateComponent {
+   @Output() saved = new EventEmitter<void>();
+   @Output() cancelled = new EventEmitter<void>();
+
    organizationId: string | null = null;
    firstName = '';
    lastName = '';
@@ -25,8 +29,7 @@ export class CustomerCreateComponent {
 
    constructor(
       private customers: CustomersService,
-      private orgContext: OrganizationContextService,
-      private router: Router
+      private orgContext: OrganizationContextService
    ) {
       this.orgContext.org$.subscribe(org => {
          this.organizationId = org?.id ?? null;
@@ -47,7 +50,7 @@ export class CustomerCreateComponent {
          emailAddress: this.email || undefined,
          phoneNumber: this.phone || undefined
       }).subscribe({
-         next: () => this.router.navigate(['/admin']),
+         next: () => this.saved.emit(),
          error: () => {
             this.saving = false;
             this.error = 'Failed to create customer.';
@@ -56,6 +59,6 @@ export class CustomerCreateComponent {
    }
 
    cancel(): void {
-
+      this.cancelled.emit();
    }
 }

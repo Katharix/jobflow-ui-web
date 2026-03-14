@@ -17,7 +17,7 @@
 <jobflow-drawer
   [open]="showAssignmentModal"
   title="Schedule Job"
-  (closed)="showAssignmentModal = false"
+  (closed)="onAssignmentDrawerClosed()"
 >
   <job-assignment-form
     #assignmentForm

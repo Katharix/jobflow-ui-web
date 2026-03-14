@@ -1,6 +1,9 @@
 import {Component, Input, Output, EventEmitter, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
+import {InputTextModule} from 'primeng/inputtext';
+import {SelectModule} from 'primeng/select';
+import {CheckboxModule} from 'primeng/checkbox';
 import {Employee} from '../models/employee';
 import {EmployeeRoleService} from '../../employee-roles/services/employee-role.service';
 import {EmployeeRole} from '../../employee-roles/models/employee-role';
@@ -9,7 +12,7 @@ import {OrganizationContextService} from '../../../services/shared/organization-
 @Component({
    selector: 'app-employee-form',
    standalone: true,
-   imports: [CommonModule, ReactiveFormsModule],
+   imports: [CommonModule, ReactiveFormsModule, InputTextModule, SelectModule, CheckboxModule],
    templateUrl: './employee-form.component.html',
    styleUrls: ['./employee-form.component.scss']
 })

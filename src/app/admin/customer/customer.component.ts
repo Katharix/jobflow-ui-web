@@ -4,7 +4,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {OrganizationContextService} from "../../services/shared/organization-context.service";
 import {CustomersService} from "./services/customer.service";
-import {PageHeaderComponent} from "../../views/admin-views/dashboard/page-header/page-header.component";
+import {PageHeaderComponent} from "../dashboard/page-header/page-header.component";
 import {getClickHandler} from "../../common/utils/page-action-dispatcher";
 import {
    JobflowGridColumn,
@@ -40,6 +40,8 @@ export class CustomerComponent {
    isDrawerOpen = false;
    editingClient: any | null = null;
    private onboardingActionHandled = false;
+   private returnToCommandCenter = false;
+   private suppressNextDrawerClosedHandler = false;
 
 
    private toast = inject(ToastService);
@@ -99,6 +101,7 @@ export class CustomerComponent {
          if (this.onboardingActionHandled) return;
          if (params.get('onboardingAction') !== 'open-client-drawer') return;
 
+         this.returnToCommandCenter = params.get('returnTo') === 'dashboard-command-center';
          this.openAddClient();
          this.onboardingActionHandled = true;
       });
@@ -144,6 +147,8 @@ export class CustomerComponent {
          {
             headerText: 'Client Name',
             width: 100,
+            sortField: 'firstName',
+            searchFields: ['firstName', 'lastName'],
             template: this.clientNameTemplate
          },
          {
@@ -165,6 +170,40 @@ export class CustomerComponent {
 
    cancel(): void {
       this.closeDrawer();
+   }
+
+   onCreateSaved(): void {
+      if (this.returnToCommandCenter) {
+         this.suppressNextDrawerClosedHandler = true;
+         this.router.navigate(['/admin'], {fragment: 'dashboard-command-center'});
+         return;
+      }
+
+      this.load();
+      this.closeDrawer();
+   }
+
+   onCreateCancelled(): void {
+      if (this.returnToCommandCenter) {
+         this.suppressNextDrawerClosedHandler = true;
+         this.router.navigate(['/admin'], {fragment: 'dashboard-command-center'});
+         return;
+      }
+
+      this.closeDrawer();
+   }
+
+   onDrawerClosed(): void {
+      if (this.suppressNextDrawerClosedHandler) {
+         this.suppressNextDrawerClosedHandler = false;
+         return;
+      }
+
+      this.closeDrawer();
+
+      if (this.returnToCommandCenter) {
+         this.router.navigate(['/admin'], {fragment: 'dashboard-command-center'});
+      }
    }
 
    openAddClient(): void {
