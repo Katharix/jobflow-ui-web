@@ -1,6 +1,6 @@
 import {of} from 'rxjs';
 import {JobsService} from './jobs.service';
-import {BaseApiService} from '../../../services/base-api.service';
+import {BaseApiService} from '../../../services/shared/base-api.service';
 
 describe('JobsService', () => {
    let service: JobsService;

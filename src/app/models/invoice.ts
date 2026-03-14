@@ -48,3 +48,16 @@ export interface InvoiceLineItem {
    unitPrice: number;
    lineTotal: number;
 }
+
+export interface CreateInvoiceLineItemRequest {
+   description: string;
+   quantity: number;
+   unitPrice: number;
+}
+
+export interface CreateInvoiceRequest {
+   jobId: string;
+   invoiceDate?: string;
+   dueDate?: string;
+   lineItems: CreateInvoiceLineItemRequest[];
+}

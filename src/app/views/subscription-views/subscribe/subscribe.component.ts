@@ -1,16 +1,16 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { OrganizationType } from '../../../models/organization-type';
-import { OrganizationTypeService } from '../../../services/organization-type.service';
-import { CommonModule, NgStyle } from '@angular/common';
+import { OrganizationTypeService } from '../../../services/shared/organization-type.service';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { OrganizationDto } from '../../../models/organization';
-import { OrganizationService } from '../../../services/organization.service';
-import { PaymentService } from '../../../services/payment.service';
+import { OrganizationService } from '../../../services/shared/organization.service';
+import { PaymentService } from '../../../services/shared/payment.service';
 import { PaymentSessionRequest } from '../../../models/payment-session-request';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { US_STATES } from '../../../common/constants';
-import { LoadingService } from '../../../services/loading-service.service';
+import { LoadingService } from '../../../services/shared/loading-service.service';
 import { Observable } from 'rxjs';
 
 declare const google: any;
@@ -18,7 +18,7 @@ declare const google: any;
 @Component({
    selector: 'app-subscribe',
    standalone: true,
-   imports: [NgStyle, RouterLink, FormsModule, CommonModule],
+   imports: [RouterLink, FormsModule, CommonModule],
    templateUrl: './subscribe.component.html',
    schemas: [CUSTOM_ELEMENTS_SCHEMA],
    styleUrl: './subscribe.component.scss'

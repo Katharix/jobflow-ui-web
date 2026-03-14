@@ -9,16 +9,17 @@ import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {PageHeaderComponent} from "../../views/admin-views/dashboard/page-header/page-header.component";
 import {
+   JobflowGridCommandClickEventArgs,
    JobflowGridColumn,
-   JobflowGridComponent
+   JobflowGridComponent,
+   JobflowGridPageSettings
 } from "../../common/jobflow-grid/jobflow-grid.component";
 import {JobflowDrawerComponent} from "../../common/jobflow-drawer/jobflow-drawer.component";
 import {ToastService} from "../../common/toast/toast.service";
 import {OrganizationContextService} from "../../services/shared/organization-context.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {JobsService} from "./services/jobs.service";
 import {getClickHandler} from "../../common/utils/page-action-dispatcher";
-import {CommandClickEventArgs, PageSettingsModel} from "@syncfusion/ej2-angular-grids";
 import {CreateJobComponent} from "./job-create/job-create.component";
 import {formatDateTime, formatPhone} from "../../common/utils/app-formaters";
 import {Job, JobLifecycleStatus, JobLifecycleStatusLabels} from "./models/job";
@@ -53,12 +54,13 @@ export class JobComponent implements OnInit {
    organizationId: string | null = null;
    isDrawerOpen = false;
    editingJob: any | null = null;
+   private onboardingActionHandled = false;
 
    items: Job[] = [];
    columns: JobflowGridColumn[] = [];
    error: string | null = null;
 
-   pageSettings: PageSettingsModel = {
+   pageSettings: JobflowGridPageSettings = {
       pageSize: 20,
       pageSizes: [10, 20, 50, 100]
    };
@@ -80,7 +82,8 @@ export class JobComponent implements OnInit {
    constructor(
       private jobs: JobsService,
       private orgContext: OrganizationContextService,
-      private router: Router
+      private router: Router,
+      private route: ActivatedRoute
    ) {
       this.orgContext.org$.subscribe(org => {
          this.organizationId = org?.id ?? null;
@@ -93,6 +96,14 @@ export class JobComponent implements OnInit {
       if (this.organizationId) {
          this.load();
       }
+
+      this.route.queryParamMap.subscribe(params => {
+         if (this.onboardingActionHandled) return;
+         if (params.get('onboardingAction') !== 'open-job-drawer') return;
+
+         this.openAddJob();
+         this.onboardingActionHandled = true;
+      });
    }
 
    private buildColumns(): void {
@@ -146,7 +157,7 @@ export class JobComponent implements OnInit {
       return !job.hasAssignments;
    }
 
-   onCommandClick(args: CommandClickEventArgs) {
+   onCommandClick(args: JobflowGridCommandClickEventArgs) {
       const row = args.rowData;
 
       switch (args.commandColumn?.type) {

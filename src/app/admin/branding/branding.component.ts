@@ -6,7 +6,7 @@ import {ColorTwitterModule} from 'ngx-color/twitter';
 import {LucideAngularModule} from 'lucide-angular';
 import {OrganizationDto} from '../../models/organization';
 import {BrandingDto} from '../../models/organization-branding';
-import {FileUploadService} from '../../services/file-upload.service';
+import {FileUploadService} from './services/file-upload.service';
 import {OrganizationContextService} from '../../services/shared/organization-context.service';
 import {PageHeaderComponent} from '../../views/admin-views/dashboard/page-header/page-header.component';
 import {OrganizationBrandingService} from './services/organization-branding.service';

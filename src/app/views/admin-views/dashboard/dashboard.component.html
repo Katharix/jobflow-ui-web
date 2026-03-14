@@ -1,9 +1,143 @@
-<div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
-  <div>
-    <h4 class="mb-3 mb-md-0">Welcome, {{ org?.organizationName || 'there' }}!</h4>
-  </div>
+<section class="dashboard-page">
+   <header class="dashboard-header">
+      <div>
+         <h1>Welcome back, {{ org?.organizationName || 'there' }}</h1>
+         <p>Run today faster with a focused snapshot of jobs, invoices, and team workload.</p>
+      </div>
 
-</div>
-<jobflow-onboarding-checklist
-   [organizationId]="organizationId">
-</jobflow-onboarding-checklist>
+      <div class="dashboard-header__actions">
+         <small *ngIf="lastUpdated">Updated {{ lastUpdated | date: 'MMM d, h:mm a' }}</small>
+         <button type="button" class="dashboard-refresh" (click)="refresh()" [disabled]="isLoading">
+            {{ isLoading ? 'Refreshing…' : 'Refresh dashboard' }}
+         </button>
+      </div>
+   </header>
+
+   <div class="dashboard-warning" *ngIf="loadWarning">
+      {{ loadWarning }}
+   </div>
+
+   <section class="dashboard-kpis" *ngIf="kpis.length">
+      <article class="kpi-card" *ngFor="let kpi of kpis" [ngClass]="'kpi-card--' + kpi.tone">
+         <h3>{{ kpi.label }}</h3>
+         <p class="kpi-card__value">{{ kpi.value }}</p>
+         <p class="kpi-card__helper">{{ kpi.helper }}</p>
+      </article>
+   </section>
+
+   <section class="dashboard-grid">
+      <article class="dashboard-panel dashboard-panel--full" *ngIf="!onboardingComplete">
+         <div class="dashboard-panel__header">
+            <h2>Onboarding progress</h2>
+            <span>Complete setup faster</span>
+         </div>
+
+         <jobflow-onboarding-checklist [organizationId]="organizationId" (allCompleted)="onboardingComplete = true"></jobflow-onboarding-checklist>
+      </article>
+
+      <article class="dashboard-panel dashboard-panel--wide">
+         <div class="dashboard-panel__header">
+            <h2>Quick actions</h2>
+            <span>Most-used workflows</span>
+         </div>
+
+         <div class="quick-actions">
+            <a *ngFor="let action of quickActions" class="quick-action" [routerLink]="action.route">
+               <i [class]="action.icon"></i>
+               <div>
+                  <h3>{{ action.label }}</h3>
+                  <p>{{ action.description }}</p>
+               </div>
+            </a>
+         </div>
+      </article>
+
+      <article class="dashboard-panel">
+         <div class="dashboard-panel__header">
+            <h2>Financial health</h2>
+            <span>Outstanding and collections</span>
+         </div>
+
+         <div class="financial-stat">
+            <p class="financial-stat__label">Outstanding balance</p>
+            <p class="financial-stat__value">{{ outstandingBalance | currency }}</p>
+         </div>
+
+         <div class="financial-meter">
+            <div class="financial-meter__meta">
+               <span>Collection rate</span>
+               <strong>{{ invoiceCollectionRate }}%</strong>
+            </div>
+            <div class="financial-meter__track">
+               <div class="financial-meter__fill" [style.width.%]="invoiceCollectionRate"></div>
+            </div>
+         </div>
+      </article>
+
+      <article class="dashboard-panel">
+         <div class="dashboard-panel__header">
+            <h2>Today’s jobs</h2>
+            <span>{{ todayJobs.length }} scheduled</span>
+         </div>
+
+         <ul class="dashboard-list" *ngIf="todayJobs.length; else noTodayJobs">
+            <li *ngFor="let job of todayJobs; trackBy: trackById">
+               <div>
+                  <h3>{{ job.title }}</h3>
+                  <p>{{ job.organizationClient.firstName }} {{ job.organizationClient.lastName }}</p>
+               </div>
+               <time>{{ job.scheduledStart | date: 'h:mm a' }}</time>
+            </li>
+         </ul>
+
+         <ng-template #noTodayJobs>
+            <p class="empty-state">No jobs are scheduled today.</p>
+         </ng-template>
+      </article>
+
+      <article class="dashboard-panel">
+         <div class="dashboard-panel__header">
+            <h2>Upcoming jobs</h2>
+            <span>Next 6 items</span>
+         </div>
+
+         <ul class="dashboard-list" *ngIf="upcomingJobs.length; else noUpcomingJobs">
+            <li *ngFor="let job of upcomingJobs; trackBy: trackById">
+               <div>
+                  <h3>{{ job.title }}</h3>
+                  <p>{{ job.organizationClient.firstName }} {{ job.organizationClient.lastName }}</p>
+               </div>
+               <time>{{ job.scheduledStart | date: 'MMM d, h:mm a' }}</time>
+            </li>
+         </ul>
+
+         <ng-template #noUpcomingJobs>
+            <p class="empty-state">No upcoming jobs found.</p>
+         </ng-template>
+      </article>
+
+      <article class="dashboard-panel">
+         <div class="dashboard-panel__header">
+            <h2>Invoices needing attention</h2>
+            <span>{{ invoiceAttention.length }} open</span>
+         </div>
+
+         <ul class="dashboard-list" *ngIf="invoiceAttention.length; else noInvoices">
+            <li *ngFor="let invoice of invoiceAttention; trackBy: trackById">
+               <div>
+                  <h3>#{{ invoice.invoiceNumber }}</h3>
+                  <p>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</p>
+               </div>
+               <div class="invoice-meta">
+                  <span [class]="getInvoiceStatusClass(invoice)">{{ getInvoiceStatusLabel(invoice) }}</span>
+                  <strong>{{ invoice.balanceDue | currency }}</strong>
+               </div>
+            </li>
+         </ul>
+
+         <ng-template #noInvoices>
+            <p class="empty-state">No invoices need attention.</p>
+         </ng-template>
+      </article>
+   </section>
+</section>

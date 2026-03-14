@@ -24,22 +24,25 @@
 
 <!-- Employee Grid -->
 <div *ngIf="rolesExist && !checkingRoles" class="card shadow-sm mt-4">
-   <ejs-grid
-      #employeeGrid
-      [dataSource]="employees"
+   <ng-template #actionsTemplate let-employee>
+      <button type="button" class="btn btn-sm btn-outline-primary me-2" (click)="onEditEmployee(employee)">
+         Edit
+      </button>
+      <button type="button" class="btn btn-sm btn-outline-danger" (click)="onDeleteEmployee(employee)">
+         Delete
+      </button>
+   </ng-template>
+
+   <jobflow-grid
+      [data]="employees"
+      [columns]="columns"
       [allowPaging]="true"
-      [pageSettings]="{ pageSize: 10 }"
       [allowSorting]="true"
-      [allowFiltering]="true"
-      (commandClick)="onCommandClick($event)"
-   >
-      <e-columns>
-         <e-column field="firstName" headerText="Name" width="200" [valueAccessor]="fullNameAccessor"></e-column>
-         <e-column field="email" headerText="Email" width="250"></e-column>
-         <e-column field="roleName" headerText="Role" width="200"></e-column>
-         <e-column headerText="Actions" [commands]="commands" width="120"></e-column>
-      </e-columns>
-   </ejs-grid>
+      [allowFiltering]="false"
+      [showSearchBar]="false"
+      [pageSettings]="pageSettings"
+      [height]="500"
+   ></jobflow-grid>
 </div>
 
 <jobflow-modal

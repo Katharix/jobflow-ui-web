@@ -8,7 +8,7 @@ import MetisMenu from 'metismenujs';
 
 import { MENU } from './menu';
 import { MenuItem, SubscriptionPlan } from './menu.model';
-import { LogoutService } from '../../../services/logout.service';
+import { LogoutService } from '../services/logout.service';
 import { OrganizationContextService } from '../../../services/shared/organization-context.service';
 import { OrganizationDto } from '../../../models/organization';
 
@@ -33,6 +33,7 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
   menuItems: MenuItem[] = [];
   org: OrganizationDto | null = null;
   onboardingComplete = false;
+  showLogoutModal = false;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
@@ -109,7 +110,16 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
     return item.subItems !== undefined && item.subItems.length > 0;
   }
 
-  logout() {
+  openLogoutModal(): void {
+    this.showLogoutModal = true;
+  }
+
+  closeLogoutModal(): void {
+    this.showLogoutModal = false;
+  }
+
+  logout(): void {
+    this.showLogoutModal = false;
     this.logoutService.logout();
   }
 

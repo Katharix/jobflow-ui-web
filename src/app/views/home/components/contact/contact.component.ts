@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ContactFormRequest } from '../../../../models/contact-form-request';
 import { FormsModule } from '@angular/forms';
-import { EmailService } from '../../../../services/email.service';
+import { EmailService } from '../../services/email.service';
 import { RecaptchaModule } from 'ng-recaptcha';
 import { environment } from '../../../../../environments/environment';
 import { CommonModule } from '@angular/common';

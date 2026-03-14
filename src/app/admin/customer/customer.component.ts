@@ -1,17 +1,21 @@
 import {Component, inject, TemplateRef, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {OrganizationContextService} from "../../services/shared/organization-context.service";
 import {CustomersService} from "./services/customer.service";
 import {PageHeaderComponent} from "../../views/admin-views/dashboard/page-header/page-header.component";
 import {getClickHandler} from "../../common/utils/page-action-dispatcher";
-import {JobflowGridColumn, JobflowGridComponent} from "../../common/jobflow-grid/jobflow-grid.component";
+import {
+   JobflowGridColumn,
+   JobflowGridCommandClickEventArgs,
+   JobflowGridCommandModel,
+   JobflowGridComponent,
+   JobflowGridPageSettings
+} from "../../common/jobflow-grid/jobflow-grid.component";
 import {PriceBookItemDto} from "../pricebook/services/price-book-item.service";
 import {ToastService} from "../../common/toast/toast.service";
 import {Client} from "./models/customer";
-import {CommandClickEventArgs, CommandModel, PageSettingsModel, ToolbarItems} from "@syncfusion/ej2-angular-grids";
-import {ClickEventArgs} from "@syncfusion/ej2-navigations";
 import {JobflowDrawerComponent} from "../../common/jobflow-drawer/jobflow-drawer.component";
 import {CustomerCreateComponent} from "./customer-create/customer-create.component";
 import {formatPhone} from "../../common/utils/app-formaters";
@@ -35,6 +39,7 @@ export class CustomerComponent {
    error: string | null = null;
    isDrawerOpen = false;
    editingClient: any | null = null;
+   private onboardingActionHandled = false;
 
 
    private toast = inject(ToastService);
@@ -42,7 +47,8 @@ export class CustomerComponent {
    constructor(
       private customers: CustomersService,
       private orgContext: OrganizationContextService,
-      private router: Router
+      private router: Router,
+      private route: ActivatedRoute
    ) {
       this.orgContext.org$.subscribe(org => {
          this.organizationId = org?.id ?? null;
@@ -62,7 +68,7 @@ export class CustomerComponent {
       click: getClickHandler(action.key, this.getActionMap())
    }));
 
-   commandButtons: CommandModel[] = [
+   commandButtons: JobflowGridCommandModel[] = [
       {
          type: 'Edit',
          buttonOption: {
@@ -81,13 +87,21 @@ export class CustomerComponent {
       }
    ];
 
-   pageSettings: PageSettingsModel = {pageSize: 20, pageSizes: [10, 20, 50, 100]};
+   pageSettings: JobflowGridPageSettings = {pageSize: 20, pageSizes: [10, 20, 50, 100]};
 
    ngOnInit(): void {
       this.buildColumns();
       if (this.organizationId) {
          this.load();
       }
+
+      this.route.queryParamMap.subscribe(params => {
+         if (this.onboardingActionHandled) return;
+         if (params.get('onboardingAction') !== 'open-client-drawer') return;
+
+         this.openAddClient();
+         this.onboardingActionHandled = true;
+      });
    }
 
    private getActionMap() {
@@ -112,7 +126,7 @@ export class CustomerComponent {
 
    }
 
-   onCommandClick(args: CommandClickEventArgs) {
+   onCommandClick(args: JobflowGridCommandClickEventArgs) {
       const row = args.rowData as PriceBookItemDto;
 
       switch (args.commandColumn?.type) {
@@ -133,7 +147,7 @@ export class CustomerComponent {
             template: this.clientNameTemplate
          },
          {
-            field: 'email',
+            field: 'emailAddress',
             headerText: 'Email Address',
             width: 100
          },

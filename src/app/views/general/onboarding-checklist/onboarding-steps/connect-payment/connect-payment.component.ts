@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PaymentService } from '../../../../../services/payment.service';
+import { PaymentService } from '../../../../../services/shared/payment.service';
 import { OrganizationContextService } from '../../../../../services/shared/organization-context.service';
 import { PaymentProviders } from '../data';
 import { CommonModule } from '@angular/common';

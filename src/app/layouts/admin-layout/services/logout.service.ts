@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {Auth, signOut} from '@angular/fire/auth';
-import {OrganizationContextService} from './shared/organization-context.service';
+import {OrganizationContextService} from '../../../services/shared/organization-context.service';
 
 @Injectable({providedIn: 'root'})
 export class LogoutService {
@@ -21,11 +21,9 @@ export class LogoutService {
       try {
          await signOut(this.auth);
       } catch (err) {
-         // Firebase signOut is idempotent; failures here are non-fatal
          console.warn('Sign out error (ignored):', err);
       }
 
-      // 🔥 Clear app-level state ONLY (not auth)
       this.orgContext.clearOrganization();
 
       await this.router.navigateByUrl('/auth/login');

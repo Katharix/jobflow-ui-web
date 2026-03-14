@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {loadStripe, Stripe, StripeElements} from '@stripe/stripe-js';
-import {PaymentService} from "../../../../services/payment.service";
+import {PaymentService} from "../../../../services/shared/payment.service";
 import {firstValueFrom} from "rxjs";
 
 @Component({

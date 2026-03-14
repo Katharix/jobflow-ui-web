@@ -1,14 +1,16 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { loadStripe, Stripe } from '@stripe/stripe-js';
-import { BaseApiService } from './base-api.service';
+import { BaseApiService } from '../../../services/shared/base-api.service';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class StripeService {
   private stripePromise = loadStripe('pk_test_YourPublicKey');
-  apiBaseUrl: string = ''
-  constructor(private baseApiService: BaseApiService) {
-    this.apiBaseUrl = 'stripe/'
+  apiBaseUrl: string = '';
+  private baseApiService = inject(BaseApiService);
+
+  constructor() {
+    this.apiBaseUrl = 'stripe/';
   }
 
   async createConnectedAccount(): Promise<string> {

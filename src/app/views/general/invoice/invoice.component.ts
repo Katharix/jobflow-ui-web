@@ -1,11 +1,11 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {InvoiceService} from '../../../services/invoice.service';
+import {InvoiceService} from '../../../admin/invoices/services/invoice.service';
 import {ActivatedRoute} from '@angular/router';
 import {CommonModule} from '@angular/common';
 import {Invoice, InvoiceStatus} from '../../../models/invoice';
 import {LucideAngularModule} from 'lucide-angular';
-import {LoadingService} from '../../../services/loading-service.service';
-import {PaymentService} from "../../../services/payment.service";
+import {LoadingService} from '../../../services/shared/loading-service.service';
+import {PaymentService} from "../../../services/shared/payment.service";
 import {firstValueFrom} from "rxjs";
 import {loadStripe, Stripe, StripeElements} from "@stripe/stripe-js";
 import {OrganizationContextService} from "../../../services/shared/organization-context.service";

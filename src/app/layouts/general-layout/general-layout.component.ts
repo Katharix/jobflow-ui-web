@@ -1,13 +1,12 @@
 import { ChangeDetectorRef, Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { LoadingService } from '../../services/loading-service.service';
-import { LoadingOverlayComponent } from "../../common/app-loading-overlay/app-loading-overlay.component";
+import { LoadingService } from '../../services/shared/loading-service.service';
+import { PreloaderComponent } from '../../landing/preloader.component';
 
 @Component({
   selector: 'app-general-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, LoadingOverlayComponent],
+  imports: [RouterOutlet, PreloaderComponent],
   templateUrl: './general-layout.component.html',
   styleUrl: './general-layout.component.scss',
     encapsulation: ViewEncapsulation.None

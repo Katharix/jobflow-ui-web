@@ -1,71 +1,67 @@
-import {Component, ViewChild, OnInit, inject} from '@angular/core';
+import {Component, OnInit, TemplateRef, ViewChild, inject} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {ActivatedRoute, Router} from '@angular/router';
 import {LucideAngularModule} from 'lucide-angular';
-import {
-   GridComponent,
-   GridModule,
-   PageService,
-   SortService,
-   ToolbarService,
-   EditService,
-   FilterService,
-   CommandModel,
-   CommandColumnService,
-   CommandClickEventArgs
-} from '@syncfusion/ej2-angular-grids';
+
 import {getClickHandler} from '../../common/utils/page-action-dispatcher';
+import {ToastService} from '../../common/toast/toast.service';
 import {PageHeaderComponent} from '../../views/admin-views/dashboard/page-header/page-header.component';
 import {ModalComponent} from '../../views/shared/modal/modal.component';
-import {EmployeeFormComponent} from './employee-form/employee-form.component';
+import {DeleteConfirmComponent} from '../../views/shared/delete-confirm/delete-confirm-component';
+import {OrganizationDto} from '../../models/organization';
+import {OrganizationContextService} from '../../services/shared/organization-context.service';
+
 import {Employee} from './models/employee';
 import {EmployeeService} from './services/employee.service';
-import {OrganizationContextService} from '../../services/shared/organization-context.service';
-import {OrganizationDto} from '../../models/organization';
 import {EmployeeRoleService} from '../employee-roles/services/employee-role.service';
-import {ToastService} from '../../common/toast/toast.service';
-import {Router} from '@angular/router';
-import {EmployeeInviteFormComponent} from "./employee-invite-form/employee-invite-form.component";
-import {DeleteConfirmComponent} from "../../views/shared/delete-confirm/delete-confirm-component";
+import {EmployeeFormComponent} from './employee-form/employee-form.component';
+import {EmployeeInviteFormComponent} from './employee-invite-form/employee-invite-form.component';
+import {
+   JobflowGridColumn,
+   JobflowGridComponent,
+   JobflowGridPageSettings
+} from '../../common/jobflow-grid/jobflow-grid.component';
 
 @Component({
    selector: 'app-employees',
    standalone: true,
+   templateUrl: './employees.component.html',
+   styleUrls: ['./employees.component.scss'],
    imports: [
       CommonModule,
       LucideAngularModule,
-      GridModule,
+      JobflowGridComponent,
       PageHeaderComponent,
       ModalComponent,
       EmployeeFormComponent,
       EmployeeInviteFormComponent,
       DeleteConfirmComponent
-   ],
-   providers: [PageService, SortService, ToolbarService, EditService, FilterService, CommandColumnService],
-   templateUrl: './employees.component.html',
-   styleUrl: './employees.component.scss'
+   ]
 })
 export class EmployeesComponent implements OnInit {
-   @ViewChild('employeeGrid') employeeGrid!: GridComponent;
+   @ViewChild('actionsTemplate', {static: true}) actionsTemplate!: TemplateRef<any>;
    @ViewChild('inviteForm') inviteForm!: EmployeeInviteFormComponent;
    @ViewChild(EmployeeFormComponent) employeeFormComponent!: EmployeeFormComponent;
 
-
    organizationId: string | null = null;
    organization!: OrganizationDto;
+
    showInviteModal = false;
    showAddEmployeeModal = false;
+   showDeleteModal = false;
    isEditing = false;
+
    selectedEmployee?: Employee;
    selectedEmployeeName = '';
-   showDeleteModal = false;
-
 
    employees: Employee[] = [];
+   columns: JobflowGridColumn[] = [];
+   pageSettings: JobflowGridPageSettings = {pageSize: 10, pageSizes: [10, 20, 50]};
    rolesExist = false;
    checkingRoles = true;
+   private onboardingActionHandled = false;
 
-   // --- Header Actions ---
-   headerActions = [
+   public headerActions = [
       {
          key: 'invite',
          label: 'Invite',
@@ -83,25 +79,12 @@ export class EmployeesComponent implements OnInit {
       click: getClickHandler(action.key, this.getActionMap())
    }));
 
-   // --- Syncfusion command column ---
-   public commands: CommandModel[] = [
-      {
-         type: 'Edit',
-         buttonOption: {content: 'Edit', cssClass: 'e-flat e-primary me-2'}
-      },
-      {
-         type: 'Delete',
-         buttonOption: {content: 'Delete', cssClass: 'e-flat e-danger'}
-      }
-   ];
-
-
    private employeeService = inject(EmployeeService);
    private organizationContext = inject(OrganizationContextService);
    private employeeRoleService = inject(EmployeeRoleService);
    public toast = inject(ToastService);
    public router = inject(Router);
-
+   private route = inject(ActivatedRoute);
 
    constructor() {
       this.organizationContext.org$.subscribe(org => {
@@ -113,13 +96,33 @@ export class EmployeesComponent implements OnInit {
    }
 
    ngOnInit(): void {
+      this.columns = [
+         {field: 'firstName', headerText: 'Name', valueAccessor: this.fullNameAccessor},
+         {field: 'email', headerText: 'Email'},
+         {field: 'roleName', headerText: 'Role'},
+         {headerText: 'Actions', width: 180, textAlign: 'Right', template: this.actionsTemplate}
+      ];
       this.checkRolesBeforeLoad();
+
+      this.route.queryParamMap.subscribe(params => {
+         if (this.onboardingActionHandled) return;
+         if (params.get('onboardingAction') !== 'open-employee-modal') return;
+
+         this.onAddEmployeeClick();
+         this.onboardingActionHandled = true;
+      });
    }
+
+   fullNameAccessor = (_field: string, data: Employee): string => {
+      const first = data.firstName ?? '';
+      const last = data.lastName ?? '';
+      return `${first} ${last}`.trim();
+   };
 
    checkRolesBeforeLoad(): void {
       if (!this.organizationId) return;
-      this.checkingRoles = true;
 
+      this.checkingRoles = true;
       this.employeeRoleService.getByOrganization().subscribe({
          next: (roles) => {
             this.rolesExist = roles.length > 0;
@@ -142,27 +145,16 @@ export class EmployeesComponent implements OnInit {
 
    loadEmployees(): void {
       if (!this.organizationId) return;
+
       this.employeeService.getByOrganization().subscribe({
          next: (res) => {
             this.employees = res;
-            if (this.employeeGrid) this.employeeGrid.refresh();
          },
-         error: (err) => console.error('Error loading employees', err)
+         error: (err) => {
+            console.error('Error loading employees', err);
+         }
       });
    }
-
-   private getActionMap() {
-      return {
-         invite: () => this.onInviteClick(),
-         add: () => this.onAddEmployeeClick()
-      };
-   }
-
-   fullNameAccessor = (field: string, data: any, column: any) => {
-      const first = data.firstName ?? '';
-      const last = data.lastName ?? '';
-      return `${first} ${last}`.trim();
-   };
 
    onInviteClick(): void {
       this.showInviteModal = true;
@@ -177,6 +169,18 @@ export class EmployeesComponent implements OnInit {
       this.isEditing = false;
       this.selectedEmployee = undefined;
       this.showAddEmployeeModal = true;
+   }
+
+   onEditEmployee(rowData: Employee): void {
+      this.isEditing = true;
+      this.selectedEmployee = {...rowData};
+      this.showAddEmployeeModal = true;
+   }
+
+   onDeleteEmployee(rowData: Employee): void {
+      this.selectedEmployee = rowData;
+      this.selectedEmployeeName = `${rowData.firstName ?? ''} ${rowData.lastName ?? ''}`.trim();
+      this.showDeleteModal = true;
    }
 
    onModalCancel(): void {
@@ -198,82 +202,47 @@ export class EmployeesComponent implements OnInit {
          });
          return;
       }
-      this.employeeService.employeeExistByEmail(
-         employeeData.email!
-      )
-         .subscribe({
-            next: (exists) => {
-               if (exists) {
-                  this.toast.warning(`${employeeData.email} already exists`, 'Warning');
-                  return; // 🚫 DO NOT CONTINUE
-               }
 
-               // Only create if it doesn't exist
-               this.employeeService.create(employeeData).subscribe({
-                  next: () => {
-                     this.loadEmployees();
-                     this.showAddEmployeeModal = false;
-                     this.toast.success('Employee added', 'Success');
-                  },
-                  error: () => this.toast.error('Failed to add employee', 'Failed')
-               });
-            },
-            error: () =>
-               this.toast.error('Failed to check employee email', 'Failed')
-         });
+      this.employeeService.employeeExistByEmail(employeeData.email!).subscribe({
+         next: (exists) => {
+            if (exists) {
+               this.toast.warning(`${employeeData.email} already exists`, 'Warning');
+               return;
+            }
+
+            this.employeeService.create(employeeData).subscribe({
+               next: () => {
+                  this.loadEmployees();
+                  this.showAddEmployeeModal = false;
+                  this.toast.success('Employee added', 'Success');
+               },
+               error: () => this.toast.error('Failed to add employee', 'Failed')
+            });
+         },
+         error: () => this.toast.error('Failed to check employee email', 'Failed')
+      });
    }
 
-
-   onCommandClick(args: CommandClickEventArgs): void {
-      const row = args.rowData as Employee;
-
-      if (args.commandColumn?.type === 'Edit') {
-         this.onEditCommandClick(args);
-         return;
-      }
-
-      if (args.commandColumn?.type === 'Delete') {
-         this.onDeleteEmployee(row);
-         return;
-      }
+   onInviteSubmit(): void {
+      this.inviteForm.submit();
    }
 
-   onEditCommandClick(args: CommandClickEventArgs): void {
-      const rowData = args.rowData as Employee;
-      this.isEditing = true;
-      this.selectedEmployee = {...rowData};
-      this.showAddEmployeeModal = true;
-   }
-
-   onDeleteEmployee(employee: Employee): void {
-      if (!employee || !employee.id) return;
-      this.selectedEmployee = employee;
-      this.selectedEmployeeName = `${employee.firstName} ${employee.lastName}`.trim();
-      this.showDeleteModal = true;
-      return;
-
-   }
-
-   closeInviteModal() {
-      this.showInviteModal = false;
-   }
-
-   onInviteSubmit() {
-      this.inviteForm.submit(); // call child form method
-   }
-
-   onInviteSuccess(invite: any) {
+   onInviteSuccess(invite: any): void {
       this.closeInviteModal();
       const name = `${invite.firstName ?? ''} ${invite.lastName ?? ''}`.trim() || 'Employee';
       this.toast.success(`Invite sent to ${name}`, 'Success');
    }
 
-   closeDeleteModal() {
+   closeInviteModal(): void {
+      this.showInviteModal = false;
+   }
+
+   closeDeleteModal(): void {
       this.showDeleteModal = false;
       this.selectedEmployee = undefined;
    }
 
-   confirmDelete() {
+   confirmDelete(): void {
       if (!this.selectedEmployee?.id) return;
 
       this.employeeService.delete(this.selectedEmployee.id).subscribe({
@@ -289,4 +258,10 @@ export class EmployeesComponent implements OnInit {
       });
    }
 
+   private getActionMap() {
+      return {
+         invite: () => this.onInviteClick(),
+         add: () => this.onAddEmployeeClick()
+      };
+   }
 }

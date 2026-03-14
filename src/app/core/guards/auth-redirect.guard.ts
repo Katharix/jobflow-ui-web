@@ -5,7 +5,7 @@ import { Auth } from '@angular/fire/auth';
 @Injectable({ providedIn: 'root' })
 export class AuthRedirectGuard implements CanActivate {
   private router = inject(Router);
-  private auth = inject(Auth); // ✅ safe inject (waits for provider init)
+  private auth = inject(Auth);
 
   canActivate(): boolean {
     const user = this.auth.currentUser;

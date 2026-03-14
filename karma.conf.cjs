@@ -1,4 +1,29 @@
 const path = require('path');
+const fs = require('fs');
+
+const chromeCandidates = [
+  process.env.CHROME_BIN,
+  'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+  'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+  'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+  'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+  '/usr/bin/google-chrome',
+  '/usr/bin/google-chrome-stable',
+  '/usr/bin/chromium',
+  '/usr/bin/chromium-browser'
+].filter(Boolean);
+
+const detectedChromeBin = chromeCandidates.find(candidate => {
+  try {
+    return fs.existsSync(candidate);
+  } catch {
+    return false;
+  }
+});
+
+if (detectedChromeBin) {
+  process.env.CHROME_BIN = detectedChromeBin;
+}
 
 module.exports = function (config) {
   config.set({
