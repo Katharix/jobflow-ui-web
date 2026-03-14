@@ -95,11 +95,10 @@
           Business Info
         </h5>
 
-        <div class="form-floating mb-3">
-          <input type="text" id="taglineInput" class="form-control shadow-sm rounded-3" formControlName="tagline"
-            placeholder="Tagline" />
+        <p-floatlabel class="w-100 mb-3">
+          <input pInputText pSize="small" id="taglineInput" type="text" formControlName="tagline" class="w-100" />
           <label for="taglineInput">Tagline</label>
-        </div>
+        </p-floatlabel>
       </div>
 
       <!-- Footer Note -->
@@ -109,11 +108,10 @@
           Invoice Footer Note
         </h5>
 
-        <div class="form-floating">
-          <textarea id="footerNote" rows="3" class="form-control shadow-sm rounded-3" formControlName="footerNote"
-            placeholder="Thanks for your business!"></textarea>
+        <p-floatlabel class="w-100">
+          <textarea pTextarea id="footerNote" rows="3" formControlName="footerNote" class="w-100"></textarea>
           <label for="footerNote">Footer Note</label>
-        </div>
+        </p-floatlabel>
       </div>
 
       <!-- Save Button -->

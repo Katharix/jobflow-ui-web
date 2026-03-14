@@ -1,0 +1,37 @@
+<section class="dashboard-page">
+   <section class="dashboard-welcome">
+      <div class="dashboard-welcome__message">
+         <h1>{{ welcomeTitle }}</h1>
+         <p>{{ welcomeSubtext }}</p>
+      </div>
+
+      <div class="dashboard-welcome__meta">
+         <strong>{{ currentDateTime }}</strong>
+         <span class="dashboard-weather">
+            <i [class]="weatherIconClass" aria-hidden="true"></i>
+            <span>{{ weatherStatusText }}</span>
+         </span>
+         <button type="button" class="dashboard-weather__action" (click)="refreshWeatherFromLocation()">
+            Use my location
+         </button>
+      </div>
+   </section>
+
+   <section class="dashboard-grid">
+      <article class="dashboard-panel dashboard-panel--onboarding">
+         <div class="dashboard-panel__header">
+            <h2>Onboarding checklist</h2>
+            <span>Complete setup once for a smoother daily flow</span>
+         </div>
+
+         <jobflow-onboarding-checklist [organizationId]="organizationId"></jobflow-onboarding-checklist>
+      </article>
+
+      <section id="dashboard-command-center" class="dashboard-command-center">
+         <app-jobflow-command-center
+            [primaryActions]="primaryActions"
+            [flowSteps]="flowSteps"
+         ></app-jobflow-command-center>
+      </section>
+   </section>
+</section>

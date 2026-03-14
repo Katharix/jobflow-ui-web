@@ -10,9 +10,9 @@
 <jobflow-drawer
    [open]="isDrawerOpen"
    title="Add Job"
-   (closed)="closeDrawer()"
+   (closed)="onDrawerClosed()"
 >
-   <job-create/>
+   <job-create (saved)="onCreateSaved()" (cancelled)="onCreateCancelled()"/>
 </jobflow-drawer>
 
 <ng-template #jobTitleTemplate let-job>

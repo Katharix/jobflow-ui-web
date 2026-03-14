@@ -1,16 +1,11 @@
-import {Component} from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {Router} from '@angular/router';
 import {OrganizationContextService} from "../../../services/shared/organization-context.service";
 import {CustomersService} from "../../customer/services/customer.service";
 import {CreateJobRequest, JobsService} from "../services/jobs.service";
-import {
-   NgLabelTemplateDirective,
-   NgOptionComponent,
-   NgOptionTemplateDirective,
-   NgSelectComponent
-} from '@ng-select/ng-select';
+import {InputTextModule} from 'primeng/inputtext';
+import {SelectModule} from 'primeng/select';
 
 @Component({
    selector: 'job-create',
@@ -18,14 +13,15 @@ import {
    imports: [
       CommonModule,
       FormsModule,
-      NgLabelTemplateDirective,
-      NgOptionTemplateDirective,
-      NgSelectComponent,
-      NgOptionComponent
+        InputTextModule,
+        SelectModule
    ],
    templateUrl: './job-create.component.html'
 })
 export class CreateJobComponent {
+   @Output() saved = new EventEmitter<void>();
+   @Output() cancelled = new EventEmitter<void>();
+
    organizationId: string | null = null;
 
    customers: any[] = [];
@@ -38,8 +34,7 @@ export class CreateJobComponent {
    constructor(
       private jobsService: JobsService,
       private customersService: CustomersService,
-      private organizationContext: OrganizationContextService,
-      private router: Router
+      private organizationContext: OrganizationContextService
    ) {
       this.organizationContext.org$.subscribe(org => {
          if (!org) return;
@@ -55,7 +50,10 @@ export class CreateJobComponent {
       this.customersService
          .getAllByOrganization()
          .subscribe({
-            next: customers => (this.customers = customers),
+            next: customers => (this.customers = customers.map((c: any) => ({
+               ...c,
+               displayName: `${c.firstName} ${c.lastName}`
+            }))),
             error: () => (this.error = 'Failed to load customers.')
          });
    }
@@ -75,11 +73,15 @@ export class CreateJobComponent {
       };
 
       this.jobsService.upsertJob(payload).subscribe({
-         next: () => this.router.navigate(['/admin']),
+         next: () => this.saved.emit(),
          error: () => {
             this.saving = false;
             this.error = 'Failed to create job.';
          }
       });
+   }
+
+   cancel(): void {
+      this.cancelled.emit();
    }
 }

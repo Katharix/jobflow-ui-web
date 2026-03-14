@@ -15,7 +15,7 @@ import {
    EditItemData,
    EditItemResult
 } from '../add-edit-pricebook-item-dialog/add-edit-pricebook-item-dialog.component';
-import {PageHeaderComponent} from "../../../views/admin-views/dashboard/page-header/page-header.component";
+import {PageHeaderComponent} from "../../dashboard/page-header/page-header.component";
 import {PriceBookCategoryService} from '../services/price-book-category.service';
 import {
    JobflowGridColumn,

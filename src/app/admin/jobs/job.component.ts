@@ -7,7 +7,7 @@
 } from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {PageHeaderComponent} from "../../views/admin-views/dashboard/page-header/page-header.component";
+import {PageHeaderComponent} from "../dashboard/page-header/page-header.component";
 import {
    JobflowGridCommandClickEventArgs,
    JobflowGridColumn,
@@ -55,6 +55,8 @@ export class JobComponent implements OnInit {
    isDrawerOpen = false;
    editingJob: any | null = null;
    private onboardingActionHandled = false;
+   private returnToCommandCenter = false;
+   private suppressNextDrawerClosedHandler = false;
 
    items: Job[] = [];
    columns: JobflowGridColumn[] = [];
@@ -98,6 +100,8 @@ export class JobComponent implements OnInit {
       }
 
       this.route.queryParamMap.subscribe(params => {
+         this.returnToCommandCenter = params.get('returnTo') === 'dashboard-command-center';
+
          if (this.onboardingActionHandled) return;
          if (params.get('onboardingAction') !== 'open-job-drawer') return;
 
@@ -112,11 +116,14 @@ export class JobComponent implements OnInit {
          {
             headerText: 'Job',
             width: 220,
+            sortField: 'title',
+            searchFields: ['title', 'organizationClient.firstName', 'organizationClient.lastName'],
             template: this.jobTitleTemplate
          },
          {
             headerText: 'Status',
             width: 120,
+            sortField: 'lifecycleStatus',
             template: this.statusTemplate
          },
          {
@@ -182,12 +189,49 @@ export class JobComponent implements OnInit {
       this.editingJob = null;
    }
 
+   onCreateSaved(): void {
+      if (this.returnToCommandCenter) {
+         this.suppressNextDrawerClosedHandler = true;
+         this.router.navigate(['/admin'], {fragment: 'dashboard-command-center'});
+         return;
+      }
+
+      this.load();
+      this.closeDrawer();
+   }
+
+   onCreateCancelled(): void {
+      if (this.returnToCommandCenter) {
+         this.suppressNextDrawerClosedHandler = true;
+         this.router.navigate(['/admin'], {fragment: 'dashboard-command-center'});
+         return;
+      }
+
+      this.closeDrawer();
+   }
+
+   onDrawerClosed(): void {
+      if (this.suppressNextDrawerClosedHandler) {
+         this.suppressNextDrawerClosedHandler = false;
+         return;
+      }
+
+      this.closeDrawer();
+
+      if (this.returnToCommandCenter) {
+         this.router.navigate(['/admin'], {fragment: 'dashboard-command-center'});
+      }
+   }
+
    scheduleJob(job: any) {
-      this.router.navigate([
-         '/admin/jobs',
-         job.id,
-         'schedule'
-      ]);
+      this.router.navigate(
+         ['/admin/jobs', job.id, 'schedule'],
+         {
+            queryParams: this.returnToCommandCenter
+               ? { returnTo: 'dashboard-command-center' }
+               : undefined
+         }
+      );
    }
 
    private resolveLifecycleStatus(job: any): JobLifecycleStatus | null {

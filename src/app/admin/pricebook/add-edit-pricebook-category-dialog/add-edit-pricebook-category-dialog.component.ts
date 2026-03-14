@@ -1,6 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { TextareaModule } from 'primeng/textarea';
 import { ModalRef } from '../../../common/modal/modal-ref';
 import { MODAL_DATA } from '../../../common/modal/modal.tokens';
 
@@ -19,7 +21,7 @@ export interface AddEditCategoryResult {
 @Component({
   selector: 'app-add-edit-pricebook-category-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, InputTextModule, TextareaModule],
   templateUrl: './add-edit-pricebook-category-dialog.component.html',
   styleUrl: './add-edit-pricebook-category-dialog.component.scss'
 })

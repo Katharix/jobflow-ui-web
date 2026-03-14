@@ -11,7 +11,7 @@ import {
 } from '@syncfusion/ej2-angular-schedule';
 import { LucideAngularModule } from 'lucide-angular';
 import { JobflowCalendarComponent } from '../../../common/jobflow-calendar/jobflow-calendar.component';
-import { PageHeaderComponent } from '../../../views/admin-views/dashboard/page-header/page-header.component';
+import { PageHeaderComponent } from '../../dashboard/page-header/page-header.component';
 
 
 @Component({

@@ -31,7 +31,7 @@
 
 
    <!-- Optional Room Filter -->
-   <div *ngIf="mode === 'dispatch' && filters?.length" class="col-auto ms-auto">
+   <div *ngIf="mode === 'dispatch' && filters.length" class="col-auto ms-auto">
       <select class="form-select form-select-sm"
               [(ngModel)]="selectedFilter"
               (change)="onFilterChange($event)">

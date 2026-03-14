@@ -1,45 +1,41 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-2">
   <div class="mb-3 d-none">
-  <input type="text" formControlName="organizationId" class="form-control" />
+  <input pInputText pSize="small" type="text" formControlName="organizationId" class="w-100" />
 </div>
   <div class="mb-3 d-none">
-    <input type="text" formControlName="id" class="form-control" />
+    <input pInputText pSize="small" type="text" formControlName="id" class="w-100" />
   </div>
 
   <div class="mb-3">
     <label class="form-label fw-semibold text-muted">First Name</label>
-    <input type="text" formControlName="firstName" class="form-control" />
+    <input pInputText pSize="small" type="text" formControlName="firstName" class="w-100" />
   </div>
 
   <div class="mb-3">
     <label class="form-label fw-semibold text-muted">Last Name</label>
-    <input type="text" formControlName="lastName" class="form-control" />
+    <input pInputText pSize="small" type="text" formControlName="lastName" class="w-100" />
   </div>
 
   <div class="mb-3">
     <label class="form-label fw-semibold text-muted">Email</label>
-    <input type="email" formControlName="email" class="form-control" />
+    <input pInputText pSize="small" type="email" formControlName="email" class="w-100" />
   </div>
 
  <div class="mb-3">
     <label class="form-label fw-semibold text-muted">Phone Number</label>
-    <input type="tel" formControlName="phoneNumber" class="form-control" />
+    <input pInputText pSize="small" type="tel" formControlName="phoneNumber" class="w-100" />
   </div>
 
   <div class="mb-3">
     <label for="role" class="form-label fw-semibold">Role</label>
-    <select id="role" formControlName="roleId" class="form-select" required>
-      <option value="" disabled>Select a role</option>
-      <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
-    </select>
+    <p-select id="role" formControlName="roleId" [options]="roles" optionLabel="name" optionValue="id" size="small" placeholder="Select a role" [fluid]="true" />
     <div *ngIf="form.get('roleId')?.invalid && form.get('roleId')?.touched" class="text-danger small">
       Role is required.
     </div>
   </div>
 
-
-  <div class="form-check">
-    <input class="form-check-input" type="checkbox" formControlName="isActive" />
-    <label class="form-check-label">Active</label>
+  <div class="d-flex align-items-center gap-2 mt-2">
+    <p-checkbox formControlName="isActive" [binary]="true" inputId="isActive" />
+    <label for="isActive" class="form-check-label">Active</label>
   </div>
 </form>

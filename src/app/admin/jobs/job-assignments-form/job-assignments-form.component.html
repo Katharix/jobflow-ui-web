@@ -2,49 +2,33 @@
 
    <div class="mb-3">
       <label class="form-label fw-semibold text-muted">Schedule Type</label>
-      <select class="form-select" formControlName="scheduleMode">
-         <option value="OneTime">One Time</option>
-         <option value="Recurring">Recurring</option>
-      </select>
+      <p-select formControlName="scheduleMode" [options]="scheduleModeOptions" optionLabel="label" optionValue="value" size="small" [fluid]="true" />
    </div>
 
    <div class="mb-3">
       <label class="form-label fw-semibold text-muted">Start</label>
-      <input
-         type="datetime-local"
-         class="form-control"
-         formControlName="scheduledStart">
+      <p-datepicker formControlName="scheduledStart" [showTime]="true" [fluid]="true" />
    </div>
 
    <div class="mb-3">
       <label class="form-label fw-semibold text-muted">End</label>
-      <input
-         type="datetime-local"
-         class="form-control"
-         formControlName="scheduledEnd">
+      <p-datepicker formControlName="scheduledEnd" [showTime]="true" [fluid]="true" />
    </div>
 
    <div class="mb-3">
       <label class="form-label fw-semibold text-muted">Notes</label>
-      <textarea
-         rows="3"
-         class="form-control"
-         formControlName="notes">
-      </textarea>
+      <textarea pTextarea rows="3" formControlName="notes" class="w-100"></textarea>
    </div>
 
    <ng-container *ngIf="isRecurring">
       <div class="mb-3">
          <label class="form-label fw-semibold text-muted">Frequency</label>
-         <select class="form-select" formControlName="pattern">
-            <option value="Weekly">Weekly</option>
-            <option value="Monthly">Monthly</option>
-         </select>
+         <p-select formControlName="pattern" [options]="patternOptions" optionLabel="label" optionValue="value" size="small" [fluid]="true" />
       </div>
 
       <div class="mb-3">
          <label class="form-label fw-semibold text-muted">Interval</label>
-         <input class="form-control" type="number" min="1" formControlName="interval" />
+         <p-inputnumber formControlName="interval" [min]="1" [fluid]="true" />
       </div>
 
       <div class="mb-3" *ngIf="form.get('pattern')?.value === 'Weekly'">
@@ -64,26 +48,22 @@
 
       <div class="mb-3" *ngIf="form.get('pattern')?.value === 'Monthly'">
          <label class="form-label fw-semibold text-muted">Day of Month</label>
-         <input class="form-control" type="number" min="1" max="31" formControlName="dayOfMonth" />
+         <p-inputnumber formControlName="dayOfMonth" [min]="1" [max]="31" [fluid]="true" />
       </div>
 
       <div class="mb-3">
          <label class="form-label fw-semibold text-muted">Ends</label>
-         <select class="form-select" formControlName="endType">
-            <option value="Never">Never</option>
-            <option value="OnDate">On Date</option>
-            <option value="AfterCount">After Count</option>
-         </select>
+         <p-select formControlName="endType" [options]="endTypeOptions" optionLabel="label" optionValue="value" size="small" [fluid]="true" />
       </div>
 
       <div class="mb-3" *ngIf="form.get('endType')?.value === 'OnDate'">
          <label class="form-label fw-semibold text-muted">End Date</label>
-         <input class="form-control" type="date" formControlName="endDate" />
+         <p-datepicker formControlName="endDate" [fluid]="true" />
       </div>
 
       <div class="mb-3" *ngIf="form.get('endType')?.value === 'AfterCount'">
          <label class="form-label fw-semibold text-muted">Occurrences</label>
-         <input class="form-control" type="number" min="1" formControlName="occurrenceCount" />
+         <p-inputnumber formControlName="occurrenceCount" [min]="1" [fluid]="true" />
       </div>
    </ng-container>
 

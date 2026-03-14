@@ -1,21 +1,74 @@
 <app-page-header
    title="Help"
-   subtitle="Frequently asked questions"
+   subtitle="Support center and frequently asked questions"
 ></app-page-header>
 
-<div class="card">
-   <div class="card-body">
-      <p class="text-muted mb-4">
-         Find quick answers to common questions about invoices, clients, and account setup.
-      </p>
-
-      <div class="d-flex flex-column gap-2">
-         <details class="faq-item" *ngFor="let faq of faqs">
-            <summary class="faq-question">{{ faq.question }}</summary>
-            <div class="faq-answer">
-               {{ faq.answer }}
-            </div>
-         </details>
+<section class="help-layout">
+   <div class="card">
+      <div class="card-body help-hero">
+         <div>
+            <h5 class="mb-2">Need answers fast?</h5>
+            <p class="text-muted mb-0">
+               Search the knowledge base below to find guidance on billing, clients, jobs, branding, and support.
+            </p>
+         </div>
+         <p-tag value="Admin Help Center" severity="secondary" [rounded]="true"></p-tag>
       </div>
    </div>
-</div>
+
+   <div class="card">
+      <div class="card-body">
+         <div class="help-toolbar">
+            <div class="search-field">
+               <label class="form-label fw-semibold mb-2" for="helpSearch">Search FAQs</label>
+               <input
+                  id="helpSearch"
+                  pInputText
+                  pSize="small"
+                  class="w-100"
+                  placeholder="Try: invoice status, add client, branding"
+                  [(ngModel)]="searchTerm"
+               />
+            </div>
+            <button
+               pButton
+               type="button"
+               label="Clear"
+               severity="secondary"
+               [outlined]="true"
+               (click)="clearSearch()"
+               [disabled]="!searchTerm.trim()"
+            ></button>
+         </div>
+
+         <div class="help-results-meta">
+            <span class="text-muted">{{ resultCount }} result{{ resultCount === 1 ? '' : 's' }}</span>
+         </div>
+
+         <ng-container *ngIf="filteredFaqs.length; else noResults">
+            <p-accordion [multiple]="true">
+               <p-accordionTab *ngFor="let faq of filteredFaqs" [header]="faq.question">
+                  <div class="faq-content">
+                     <p-tag
+                        [value]="faq.category"
+                        [severity]="getCategorySeverity(faq.category)"
+                        [rounded]="true"
+                     ></p-tag>
+                     <p class="mb-0 text-muted">
+                        {{ faq.answer }}
+                     </p>
+                  </div>
+               </p-accordionTab>
+            </p-accordion>
+         </ng-container>
+
+         <ng-template #noResults>
+            <div class="empty-state">
+               <h6 class="mb-2">No matching FAQs</h6>
+               <p class="text-muted mb-3">Try a broader keyword or clear the search to view all help topics.</p>
+               <button pButton type="button" label="Show all FAQs" (click)="clearSearch()"></button>
+            </div>
+         </ng-template>
+      </div>
+   </div>
+</section>

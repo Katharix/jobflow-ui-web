@@ -32,7 +32,7 @@
 >
   <div [formGroup]="roleForm">
     <label class="form-label fw-semibold" for="roleName">Role Name</label>
-    <input id="roleName" type="text" class="form-control" formControlName="name" placeholder="Enter role name" />
+    <input pInputText pSize="small" id="roleName" type="text" formControlName="name" placeholder="Enter role name" class="w-100" />
     <div
       class="text-danger small mt-2"
       *ngIf="roleForm.controls.name.touched && roleForm.controls.name.invalid"

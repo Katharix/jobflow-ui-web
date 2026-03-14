@@ -4,21 +4,28 @@
    </div>
    <div class="col-12 col-md-6">
       <label class="form-label">Customer <span class="text-danger">*</span></label>
-      <ng-select
-         [searchable]="true"
-         [(ngModel)]="selectedCustomerId">
-         <ng-option *ngFor="let customer of customers"
-                    [value]="customer.id">
-            {{ customer.firstName }} {{ customer.lastName }}
-         </ng-option>
-      </ng-select>
+      <p-select
+         [(ngModel)]="selectedCustomerId"
+         [options]="customers"
+         optionLabel="displayName"
+         optionValue="id"
+         [filter]="true"
+         size="small"
+         [fluid]="true"
+         placeholder="Select a customer" />
    </div>
    <div class="col-12 col-md-6">
       <label class="form-label">Job Title <span class="text-danger">*</span></label>
-      <input class="form-control form-control-lg" [(ngModel)]="title"/>
+      <input pInputText [fluid]="true" pSize="small" [(ngModel)]="title" />
    </div>
 </div>
 <br>
-<button type="button" class="btn btn-primary" (click)="save()" [disabled]="saving">
-   {{ saving ? 'Saving…' : 'Save Job' }}
-</button>
+<div class="d-flex justify-content-end gap-2">
+   <button type="button" class="btn btn-light" (click)="cancel()" [disabled]="saving">
+      Cancel
+   </button>
+
+   <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saving">
+      {{ saving ? 'Saving…' : 'Save Job' }}
+   </button>
+</div>
