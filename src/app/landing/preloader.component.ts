@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, type OnInit } from '@angular/core';
+import { Component, Input, type OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-preloader',
@@ -22,15 +22,20 @@ import { Component, type OnInit } from '@angular/core';
   styles: ``,
 })
 export class PreloaderComponent implements OnInit {
+  @Input() autoHideMs: number | null = null;
 
   ngOnInit(): void {
-    const style = document.getElementById('preloader')?.style
+    if (this.autoHideMs === null || this.autoHideMs < 0) {
+      return;
+    }
+
+    const style = document.getElementById('preloader')?.style;
     setTimeout(() => {
       if (style) {
         style.visibility = 'hidden';
         style.opacity = '0';
       }
-    }, 500);
+    }, this.autoHideMs);
   }
 
 }

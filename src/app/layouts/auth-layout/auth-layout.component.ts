@@ -6,7 +6,7 @@ import {
    RouterOutlet
 } from '@angular/router';
 import {PreloaderComponent} from "../../landing/preloader.component";
-import {LoadingService} from '../../services/loading-service.service';
+import {LoadingService} from '../../services/shared/loading-service.service';
 import {CommonModule} from '@angular/common';
 
 @Component({

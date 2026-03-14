@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {InvoicesService} from "../services/invoices.service";
 import {OrganizationContextService} from "../../../services/shared/organization-context.service";
+import {CreateInvoiceLineItemRequest, CreateInvoiceRequest} from "../../../models/invoice";
 
 @Component({
    selector: 'jobflow-job-invoice',
@@ -17,7 +18,7 @@ export class JobInvoiceComponent {
    invoiceId: string | null = null;
 
 
-   lineItems = [
+   lineItems: CreateInvoiceLineItemRequest[] = [
       { description: '', quantity: 1, unitPrice: 0 }
    ];
 
@@ -53,7 +54,7 @@ export class JobInvoiceComponent {
       this.saving = true;
       this.error = null;
 
-      const payload = {
+      const payload: CreateInvoiceRequest = {
          jobId: this.jobId,
          lineItems: this.lineItems
       };
@@ -61,7 +62,6 @@ export class JobInvoiceComponent {
       this.invoicesService.createInvoice(this.organizationId, payload)
          .subscribe({
             next: (invoice) => {
-               // @ts-ignore
                this.invoiceId = invoice.id;
                this.saving = false;
             },

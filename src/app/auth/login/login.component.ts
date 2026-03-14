@@ -3,7 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {Auth, GoogleAuthProvider, signInWithPopup} from '@angular/fire/auth';
-import {AuthService} from '../../services/auth.service';
+import {AuthService} from '../services/auth.service';
 import {OrganizationContextService} from '../../services/shared/organization-context.service';
 
 

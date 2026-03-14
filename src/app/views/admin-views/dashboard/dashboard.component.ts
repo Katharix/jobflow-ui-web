@@ -7,7 +7,7 @@ import { catchError, finalize, takeUntil } from 'rxjs/operators';
 import { OrganizationDto } from '../../../models/organization';
 import { Invoice, InvoiceStatus } from '../../../models/invoice';
 import { OrganizationContextService } from '../../../services/shared/organization-context.service';
-import { InvoiceService } from '../../../services/invoice.service';
+import { InvoiceService } from '../../../admin/invoices/services/invoice.service';
 import { OnboardingChecklistComponent } from '../../general/onboarding-checklist/onboarding-checklist.component';
 import { JobsService } from '../../../admin/jobs/services/jobs.service';
 import { Job, JobLifecycleStatus } from '../../../admin/jobs/models/job';

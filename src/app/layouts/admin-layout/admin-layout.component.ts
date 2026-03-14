@@ -11,7 +11,7 @@ import {AdminSidebarComponent} from "./admin-sidebar/admin-sidebar.component";
 import {AdminNavbarComponent} from './admin-navbar/admin-navbar.component';
 import {AdminFooterComponent} from './admin-footer/admin-footer.component';
 import {PreloaderComponent} from "../../landing/preloader.component";
-import {LoadingService} from '../../services/loading-service.service';
+import {LoadingService} from '../../services/shared/loading-service.service';
 import {CommonModule} from '@angular/common';
 import {filter} from 'rxjs';
 import {NavItem} from '../../models/nav-item';

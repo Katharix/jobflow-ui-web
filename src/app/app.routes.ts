@@ -2,7 +2,7 @@ import {Routes} from '@angular/router';
 import {PublicLayoutComponent} from './layouts/public-layout/public-layout.component';
 import {AdminLayoutComponent} from './layouts/admin-layout/admin-layout.component';
 import {HomeComponent} from './views/home/home.component';
-import {authGuard} from './services/auth.guard';
+import {authGuard} from './core/guards/auth.guard';
 import {subscriptionGuard} from './core/guards/subscription.guard';
 import {DashboardComponent} from './views/admin-views/dashboard/dashboard.component';
 import {SubscribeComponent} from './views/subscription-views/subscribe/subscribe.component';

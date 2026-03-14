@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { OrganizationContextService } from './shared/organization-context.service';
 import { map, take } from 'rxjs';
+import { OrganizationContextService } from '../../services/shared/organization-context.service';
 
 export const redirectIfOnboardedGuard: CanActivateFn = () => {
   const orgContext = inject(OrganizationContextService);

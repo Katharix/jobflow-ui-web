@@ -4,7 +4,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { ChatService } from '../../services/chat.service';
+import { ChatService } from './services/chat.service';
 
 interface ChatMessage {
   id?: string;

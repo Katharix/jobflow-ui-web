@@ -12,9 +12,9 @@ import {
 import {doc, Firestore, setDoc} from '@angular/fire/firestore';
 import {Organization, OrganizationRequest, OrganizationDto} from '../../models/organization';
 import {OrganizationType} from '../../models/organization-type';
-import {OrganizationTypeService} from '../../services/organization-type.service';
-import {OrganizationService} from '../../services/organization.service';
-import {StripeService} from '../../services/stripe.service';
+import {OrganizationTypeService} from '../../services/shared/organization-type.service';
+import {OrganizationService} from '../../services/shared/organization.service';
+import {StripeService} from './services/stripe.service';
 import {OrganizationContextService} from '../../services/shared/organization-context.service';
 
 @Component({

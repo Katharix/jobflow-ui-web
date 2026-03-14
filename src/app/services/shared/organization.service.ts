@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BaseApiService } from './base-api.service';
-import { Organization, OrganizationDto, OrganizationRequest } from '../models/organization';
+import { Organization, OrganizationDto, OrganizationRequest } from '../../models/organization';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class OrganizationService {
   organizationUrl: string;
+
   constructor(private api: BaseApiService) {
     this.organizationUrl = 'organizations/';
   }
@@ -23,6 +24,7 @@ export class OrganizationService {
   createOrganization(org: OrganizationDto): Observable<Organization> {
     return this.api.post<Organization>(`${this.organizationUrl}create`, org);
   }
+
   getOrganizationById(org: OrganizationRequest): Observable<Organization> {
     return this.api.post<Organization>(`${this.organizationUrl}retrieve`, org);
   }

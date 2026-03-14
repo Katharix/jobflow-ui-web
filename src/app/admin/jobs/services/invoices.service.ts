@@ -1,19 +1,17 @@
 import { Injectable } from '@angular/core';
-import { BaseApiService } from '../../../services/base-api.service';
+import { CreateInvoiceRequest, Invoice } from '../../../models/invoice';
+import { InvoiceService } from '../../invoices/services/invoice.service';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class InvoicesService {
-   private apiUrl = 'invoice/';
+   constructor(private invoiceService: InvoiceService) {}
 
-   constructor(private api: BaseApiService) {}
-
-   createInvoice(organizationId: string, payload: any) {
-      return this.api.post(
-         `${this.apiUrl}${organizationId}`,
-         payload
-      );
+   createInvoice(organizationId: string, request: CreateInvoiceRequest): Observable<Invoice> {
+      return this.invoiceService.create(organizationId, request);
    }
-   sendInvoice(invoiceId: string) {
-      return this.api.post(`invoice/${invoiceId}/send`, {});
+
+   sendInvoice(invoiceId: string): Observable<void> {
+      return this.invoiceService.sendInvoice(invoiceId);
    }
 }

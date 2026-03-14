@@ -1,12 +1,13 @@
-import { Injectable } from '@angular/core';
-import { BaseApiService } from './base-api.service';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '@angular/fire/auth'; // ✅ All from AngularFire
+import { inject, Injectable } from '@angular/core';
+import { BaseApiService } from '../../services/shared/base-api.service';
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '@angular/fire/auth';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   authUrl = 'auth/';
+  private api = inject(BaseApiService);
 
-  constructor(private auth: Auth, private api: BaseApiService) {}
+  constructor(private auth: Auth) {}
 
   login(email: string, password: string) {
     return signInWithEmailAndPassword(this.auth, email, password);

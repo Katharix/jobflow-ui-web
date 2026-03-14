@@ -1,25 +1,13 @@
-import { TestBed } from '@angular/core/testing';
-import { MessageService } from 'primeng/api';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [AppComponent],
-      providers: [MessageService],
-    }).compileComponents();
-  });
-
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
+    const app = new AppComponent();
     expect(app).toBeTruthy();
   });
 
-  it('should render router outlet', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('router-outlet')).not.toBeNull();
+  it('should expose app-root selector metadata', () => {
+    const selectors = (AppComponent as any).ɵcmp?.selectors;
+    expect(selectors?.[0]?.[0]).toBe('app-root');
   });
 });

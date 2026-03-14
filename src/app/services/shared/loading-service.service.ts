@@ -20,14 +20,11 @@ export class LoadingService {
   );
 
   constructor(private router: Router) {
-
-    // Automatically clear forced loading when navigation finishes
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.reset();
       }
     });
-
   }
 
   show() {
@@ -43,10 +40,6 @@ export class LoadingService {
     }
   }
 
-  /**
-   * Forces loader to stay visible until Angular navigation occurs.
-   * Useful for redirects (Stripe, OAuth, etc.)
-   */
   forceShowUntilNavigation() {
     this._forceLoading.next(true);
     this._loading.next(true);

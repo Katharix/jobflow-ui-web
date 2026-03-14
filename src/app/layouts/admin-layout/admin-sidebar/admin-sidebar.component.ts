@@ -8,7 +8,7 @@ import MetisMenu from 'metismenujs';
 
 import { MENU } from './menu';
 import { MenuItem, SubscriptionPlan } from './menu.model';
-import { LogoutService } from '../../../services/logout.service';
+import { LogoutService } from '../services/logout.service';
 import { OrganizationContextService } from '../../../services/shared/organization-context.service';
 import { OrganizationDto } from '../../../models/organization';
 

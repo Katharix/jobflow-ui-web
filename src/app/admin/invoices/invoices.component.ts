@@ -2,7 +2,7 @@ import {Component, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {Router} from '@angular/router';
 import {Invoice, InvoiceStatus} from '../../models/invoice';
-import {InvoiceService} from '../../services/invoice.service';
+import {InvoiceService} from './services/invoice.service';
 import {PageHeaderComponent} from '../../views/admin-views/dashboard/page-header/page-header.component';
 import {JobflowGridColumn, JobflowGridComponent, JobflowGridPageSettings} from '../../common/jobflow-grid/jobflow-grid.component';
 import {ToastService} from '../../common/toast/toast.service';

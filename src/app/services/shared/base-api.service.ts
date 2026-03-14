@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {environment} from '../../environments/environment';
+import {environment} from '../../../environments/environment';
 import {Observable} from 'rxjs';
 
 type QueryParams =
@@ -68,6 +68,13 @@ export class BaseApiService {
    delete<T>(endpoint: string, includeAuth = true): Observable<T> {
       return this.http.delete<T>(`${this.baseUrl}/${endpoint}`, {
          headers: this.getHeaders(includeAuth)
+      });
+   }
+
+   getBlob(endpoint: string, includeAuth = true): Observable<Blob> {
+      return this.http.get(`${this.baseUrl}/${endpoint}`, {
+         headers: this.getHeaders(includeAuth),
+         responseType: 'blob'
       });
    }
 }

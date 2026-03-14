@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { BrevoListEnum, NewsletterRequest } from '../../../../models/newsletter-request';
-import { EmailService } from '../../../../services/email.service';
+import { EmailService } from '../../services/email.service';
 import { FormsModule } from '@angular/forms';
 import { RecaptchaModule } from 'ng-recaptcha';
 import { environment } from '../../../../../environments/environment';
