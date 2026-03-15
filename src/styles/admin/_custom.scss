@@ -451,6 +451,12 @@
    z-index: 1200 !important;
 }
 
+/* Loading overlay in admin layout — semi-transparent so content beneath is visible */
+.preloader-overlay #preloader {
+   background-color: rgba(var(--#{$prefix}body-bg-rgb, 255, 255, 255), 0.45);
+   backdrop-filter: blur(2px);
+}
+
 /* Optional UX tweak: clicks pass through except on the toast itself */
 .app-toast-overlay .toast-container {
    pointer-events: none;

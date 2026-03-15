@@ -27,6 +27,9 @@ import {
 import {JobComponent} from "./admin/jobs/job.component";
 import {InvoicesComponent} from "./admin/invoices/invoices.component";
 import {HelpComponent} from "./admin/help/help.component";
+import {EstimatesComponent} from "./admin/estimates/estimates.component";
+import {EstimateComponent} from "./views/general/estimate/estimate.component";
+import {NotFoundComponent} from "./views/general/not-found/not-found.component";
 
 
 export const routes: Routes = [
@@ -85,6 +88,10 @@ export const routes: Routes = [
             component: InvoicesComponent
          },
          {
+            path: 'estimates',
+            component: EstimatesComponent
+         },
+         {
             path: 'help',
             component: HelpComponent
          },
@@ -96,7 +103,7 @@ export const routes: Routes = [
    },
    {
       path: 'onboarding',
-      component: AdminLayoutComponent, // ✅ still use admin layout
+      component: AdminLayoutComponent, 
       children: [
          {
             path: '',
@@ -121,6 +128,17 @@ export const routes: Routes = [
       children: [
          {path: '', component: InvoiceComponent},
       ]
+   },
+   {
+      path: 'estimate/view/:id',
+      component: GeneralLayoutComponent,
+      children: [
+         {path: '', component: EstimateComponent},
+      ]
+   },
+   {
+      path: '**',
+      component: NotFoundComponent
    }
 ];
 
