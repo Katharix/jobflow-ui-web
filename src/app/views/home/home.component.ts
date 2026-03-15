@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { PreloaderComponent } from "../../landing/preloader.component";
-import { PublicNavbarComponent } from "../../layouts/public-layout/public-navbar/public-navbar.component";
 import { HeroComponent } from "./components/hero/hero.component";
 import { FeaturesComponent } from "./components/features/features.component";
 import { CtaComponent } from "./components/cta/cta.component";

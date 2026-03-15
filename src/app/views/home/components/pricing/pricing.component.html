@@ -7,30 +7,30 @@
               <i class="ti ti-receipt-2 text-white f-18"></i>
             </span>
             <i class="ti ti-line-dashed text-primary fs-5"></i>
-            <span class="badge bg-light border text-primary py-2 px-3 f-14">Price</span>
+            <span class="badge bg-light border text-primary py-2 px-3 f-14">Pricing</span>
           </p>
-          <h3>Simple Pricing, Built for Busy Pros</h3>
+          <h3>Choose the Right Plan for Your Stage of Growth</h3>
           <p class="text-muted">
-            No confusing tiers. No hidden fees. Just one powerful platform to run your business — without breaking the bank.
+            Start with the essentials, then add more workflow control as your team expands. Every plan includes the Job Flow foundation for scheduling, estimating, invoicing, and payments.
           </p>
           <ul class="p-0 list-unstyled d-flex flex-column gap-3 text-muted fw-medium mt-3">
-            <li><i class="ti ti-circle-check text-success me-1 align-middle"></i> Easy Job Scheduling</li>
-            <li><i class="ti ti-circle-check text-success me-1 align-middle"></i> Client Messaging & Notifications</li>
-            <li><i class="ti ti-circle-check text-success me-1 align-middle"></i> Invoicing & Payment Tracking</li>
-            <li><i class="ti ti-circle-check text-success me-1 align-middle"></i> Calendar & Crew Management</li>
-            <li><i class="ti ti-circle-check text-success me-1 align-middle"></i> Access Anywhere</li>
+            <li><i class="ti ti-circle-check text-success me-1 align-middle"></i> <strong>Go:</strong> Core scheduling, estimates, invoices, and payments for owner-operators.</li>
+            <li><i class="ti ti-circle-check text-success me-1 align-middle"></i> <strong>Flow:</strong> Team assignments, advanced scheduling, reminders, and follow-ups for growing crews.</li>
+            <li><i class="ti ti-circle-check text-success me-1 align-middle"></i> <strong>Max:</strong> Custom branding, automation, and priority support for high-volume operations.</li>
+            <li><i class="ti ti-circle-check text-success me-1 align-middle"></i> Upgrade anytime without changing how your team works.</li>
           </ul>
           
         </div>
         <div class="col-lg-8">
           <div class="text-center mb-4">
             <div class="d-flex justify-content-center gap-2">
-              <p class="mb-0 text-muted">Bill Annually</p>
+              <p class="mb-0 fw-medium" [class.text-primary]="!isAnnual" [class.text-muted]="isAnnual">Monthly</p>
               <div class="form-check form-switch">
                 <input class="form-check-input shadow-none" type="checkbox" role="switch" id="flexSwitchCheckChecked" (change)="toggleBilling()" [checked]="isAnnual">
               </div>
-              <p class="mb-0 text-dark fw-medium">Bill Monthly</p>
+              <p class="mb-0 fw-medium" [class.text-primary]="isAnnual" [class.text-muted]="!isAnnual">Annual</p>
             </div>
+            <p class="text-muted small mb-0 mt-2">Annual billing includes your best savings.</p>
           </div>
           <div class="row g-3">
             <div class="col-lg-6" *ngFor="let plan of plans">
@@ -56,7 +56,7 @@
                   </ul>
                 </div>
                 <div class="card-footer border-0">
-                  <button  href="#!" class="btn" [ngClass]="plan.buttonClass + ' w-100'" (click)="subscribeToPlan(plan.name)">Purchase Now</button >
+                  <button class="btn" [ngClass]="plan.buttonClass + ' w-100'" (click)="subscribeToPlan(plan.name)">Select {{ plan.name }}</button>
                 </div>
               </div>
               

@@ -2,7 +2,7 @@
   [ngClass]="navbarLight ? 'navbar-light' : 'navbar-dark'" id="navbar-sticky">
   <div class="container">
 
-    <a class="logo text-uppercase" href="index.html">
+    <a class="logo text-uppercase" routerLink="/" (click)="isCollapsed = true">
       <img src="/assets/public/images/Asset 1.png" alt="" class="logo-light" style="height: 30px;" />
       <img src="/assets/public/images/Asset 1.png" alt="" class="logo-dark" style="height: 30px;" />
     </a>
@@ -21,7 +21,7 @@
             [routerLink]="item === 'login' ? '/admin' : null"
             [href]="item !== 'login' ? '#' + item : null"
             class="nav-link"
-            (click)="item !== 'login' && scrollToSection(item); isCollapsed = true"
+            (click)="item !== 'login' && scrollToSection(item)"
             [class.active]="isActiveSection(item)">
             {{ item | titlecase }}
           </a>

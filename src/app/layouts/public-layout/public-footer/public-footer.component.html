@@ -1,77 +1,61 @@
 <footer class="footer-part bg-dark py-5 pb-4">
-    <div class="container">
-      <div class="row mt-5 pb-5 justify-content-between g-3">
-        <div class="col-lg-3">
-          <div class="footer-about">
-            <div class="logo mb-4">
-              <a class="logo text-uppercase" href="index.html">
-                <img src="/assets/public/images/Asset 1.png" alt="" class="logo-light" style="height: 30px;" />
-                <img src="/assets/public/images/Asset 1.png" alt="" class="logo-dark" style="height: 30px;" />
-              </a>
-            </div>
-            <p class="text-white mb-4">Powerful reports, smart data visualizations, and actionable insights to help you grow and manage your business with confidence.
-            </p>
-            <a href="#!" class="btn btn-primary btn-sm">Subscribe</a>
-          </div>
+  <div class="container">
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-4">
+        <a class="logo text-uppercase d-inline-block mb-4" [routerLink]="'/'">
+          <img src="/assets/public/images/Asset 1.png" alt="Job Flow" class="logo-light" style="height: 30px;" />
+          <img src="/assets/public/images/Asset 1.png" alt="Job Flow" class="logo-dark" style="height: 30px;" />
+        </a>
+
+        <h5 class="text-white mb-3">Built to Run Service Teams Efficiently</h5>
+        <p class="text-white-50 mb-3">
+          Job Flow combines scheduling, estimates, invoicing, and payments in one operating system so your team can move faster and close more jobs.
+        </p>
+
+        <ul class="list-unstyled footer-value-list mb-4">
+          <li><i class="ti ti-circle-check text-success me-2"></i>Schedule and dispatch jobs with confidence</li>
+          <li><i class="ti ti-circle-check text-success me-2"></i>Create estimates and invoices in minutes</li>
+          <li><i class="ti ti-circle-check text-success me-2"></i>Accept online payments and reduce receivables</li>
+        </ul>
+
+        <div class="d-flex flex-wrap gap-2">
+          <a href="#pricing" class="btn btn-primary btn-sm">See Plans</a>
+          <a href="#contact" class="btn btn-outline-light btn-sm">Contact Sales</a>
         </div>
-  
-        @for (item of footerLinks; track $index) {
-        <div class="col-lg-2">
-          <h5 class="text-white fw-medium">{{item.title}}</h5>
-          <ul class="mt-4">
-            @for (link of item.links; track $index) {
-            <li>
-              <a href="javascript:void(0);" class="ms-0">{{link}}</a>
-            </li>
+      </div>
+
+      @for (group of footerLinkGroups; track $index) {
+        <div class="col-6 col-lg-2">
+          <h6 class="text-white text-uppercase mb-3 footer-group-title">{{ group.title }}</h6>
+          <ul class="list-unstyled mb-0 footer-links-list">
+            @for (link of group.links; track $index) {
+              <li class="mb-2">
+                @if (link.routerLink) {
+                  <a class="text-white-50" [routerLink]="link.routerLink">{{ link.label }}</a>
+                } @else {
+                  <a class="text-white-50" [attr.href]="link.href || '#'">{{ link.label }}</a>
+                }
+              </li>
             }
           </ul>
         </div>
-        }
-  
+      }
+    </div>
+
+    <hr class="footer-divider my-4" />
+
+    <div class="row g-3 align-items-center justify-content-between">
+      <div class="col-lg-8">
+        <p class="m-0 text-white-50">
+          © {{ currentYear }} Job Flow. A product by {{ credits.name }}. All rights reserved.
+        </p>
       </div>
-      <hr class="border-primary">
-      <div class="row align-items-center justify-content-between g-3">
-        <div class="col-lg-5">
-          <p class="m-0 fs-6 text-white-50">
-            © {{currentYear}}
-             Job Flow. A product by <a href="javascript:void(0);" class="text-white">{{credits.name}}.</a>
-             All rights reserved.
-          </p>
-        </div>
-        <!-- <div class="col-lg-4 text-lg-center">
-          <ul class="d-flex gap-2 m-0 align-items-center justify-content-center">
-            <li class="m-0">
-              <div class="icon d-flex rounded-circle align-items-center justify-content-center">
-                <a href="javascript:void(0);" class="text-dark f-18"><i class="ti ti-brand-facebook"></i></a>
-              </div>
-            </li>
-            <li class="m-0">
-              <div class="icon d-flex rounded-circle align-items-center justify-content-center">
-                <a href="javascript:void(0);" class="text-dark f-18"><i class="ti ti-brand-x"></i></a>
-              </div>
-            </li>
-            <li class="m-0">
-              <div class="icon d-flex rounded-circle align-items-center justify-content-center">
-                <a href="javascript:void(0);" class="text-dark f-18"><i class="ti ti-brand-youtube"></i></a>
-              </div>
-            </li>
-            <li class="m-0">
-              <div class="icon d-flex rounded-circle align-items-center justify-content-center">
-                <a href="javascript:void(0);" class="text-dark f-18"><i class="ti ti-brand-instagram"></i></a>
-              </div>
-            </li>
-          </ul>
-        </div> -->
-        <div class="col-lg-3 text-lg-center">
-          <div class="row g-3">
-            <div class="col-lg-6">
-              <a href="javascript:void(0);" class="text-white">Terms and Conditions</a>
-            </div>
-            <div class="col-lg-6">
-              <a href="javascript:void(0);" class="text-white">Privacy Policy</a>
-            </div>
-          </div>
+      <div class="col-lg-4 text-lg-end">
+        <div class="d-flex gap-3 justify-content-lg-end">
+          <a href="#" class="text-white-50">Terms</a>
+          <a href="#" class="text-white-50">Privacy</a>
         </div>
       </div>
     </div>
-  </footer>
+  </div>
+</footer>

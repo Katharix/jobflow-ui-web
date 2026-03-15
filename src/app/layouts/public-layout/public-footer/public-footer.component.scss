@@ -1,0 +1,32 @@
+:host {
+	display: block;
+}
+
+.footer-group-title {
+	letter-spacing: 0.04em;
+	font-size: 0.75rem;
+}
+
+.footer-links-list a,
+.footer-value-list li {
+	font-size: 0.92rem;
+}
+
+.footer-links-list a {
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+.footer-links-list a:hover {
+	color: var(--bs-white) !important;
+}
+
+.footer-value-list li {
+	color: var(--bs-gray-300);
+	margin-bottom: 0.45rem;
+}
+
+.footer-divider {
+	border-color: var(--bs-primary);
+	opacity: 0.35;
+}
