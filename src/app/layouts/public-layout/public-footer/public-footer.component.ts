@@ -1,57 +1,65 @@
 import { credits, currentYear } from '../../../common/constants';
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
-type FooterLinkType = {
-  title: string,
-  links: string[]
+type FooterLink = {
+  label: string;
+  href?: string;
+  routerLink?: string;
+};
 
-}
+type FooterLinkGroup = {
+  title: string;
+  links: FooterLink[];
+};
+
 @Component({
   selector: 'app-public-footer',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './public-footer.component.html',
   styleUrl: './public-footer.component.scss'
 })
 export class PublicFooterComponent {
-  currentYear = currentYear
-  credits = credits
+  currentYear = currentYear;
+  credits = credits;
 
-  footerLinks: FooterLinkType[] = [
+  footerLinkGroups: FooterLinkGroup[] = [
     {
-      title: "Solution",
+      title: 'Product',
       links: [
-        "Enterprise",
-        "By Workflow",
-        "By Team"
-      ]
+        { label: 'Scheduling & Dispatch', href: '#features' },
+        { label: 'Estimates', href: '#features' },
+        { label: 'Invoices & Payments', href: '#features' },
+        { label: 'Pricing', href: '#pricing' },
+      ],
     },
     {
-      title: "Company",
+      title: 'Who It\'s For',
       links: [
-        "About Us",
-        "News & Press",
-        "Our Customer",
-        "Leadership",
-        "Careers"
-      ]
+        { label: 'Contractors', href: '#about' },
+        { label: 'Landscaping Teams', href: '#about' },
+        { label: 'Painting Crews', href: '#about' },
+        { label: 'Home Service Businesses', href: '#about' },
+      ],
     },
     {
-      title: "Resources",
+      title: 'Get Started',
       links: [
-        "Blog",
-        "Webinar & Events",
-        "Podcast",
-        "E-book & Guides"
-      ]
+        { label: 'See Plans', href: '#pricing' },
+        { label: 'Contact Sales', href: '#contact' },
+        { label: 'Sign In', routerLink: '/auth/login' },
+        { label: 'Subscribe', href: '#contact' },
+      ],
     },
     {
-      title: "Contact Us",
+      title: 'Company',
       links: [
-        "Contact Sales",
-        "Become Partner",
-        "Affiliate Program"
-      ]
-    }
-  ]
+        { label: 'About Job Flow', href: '#about' },
+        { label: 'Product Updates', href: '#contact' },
+        { label: 'Terms & Conditions', href: '#' },
+        { label: 'Privacy Policy', href: '#' },
+      ],
+    },
+  ];
 }

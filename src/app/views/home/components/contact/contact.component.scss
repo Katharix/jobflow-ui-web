@@ -1,0 +1,39 @@
+:host {
+	display: block;
+}
+
+#contact {
+	scroll-margin-top: 95px;
+}
+
+.contact-info-card {
+	background: var(--bs-primary);
+	border-radius: 0.85rem;
+	padding: 1.5rem;
+}
+
+.custom-form {
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	border-radius: 0.85rem;
+	background: #fff;
+}
+
+.form-label {
+	font-weight: 600;
+	color: var(--bs-dark);
+	margin-bottom: 0.45rem;
+}
+
+.custom-form .form-control:focus {
+	box-shadow: none;
+	border-color: var(--bs-primary);
+}
+
+.contact-benefits li {
+	margin-bottom: 0.5rem;
+}
+
+.card .btn,
+button[type='submit'] {
+	cursor: pointer;
+}

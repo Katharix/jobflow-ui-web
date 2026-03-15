@@ -107,13 +107,13 @@ export const plans: PricingPlan[] = [
     annualPrice: 278,
     duration: 'Month',
     savings: 'Save $70',
-    description: 'Just what you need to get rolling.',
+    description: 'Best for solo operators who need a reliable daily workflow.',
     badge: 'bg-success-subtle text-success',
     buttonClass: 'btn-primary',
     features: [
-      'Basic job scheduling',
-      'Invoicing & payments',
-      'Client contact list',
+      'Job scheduling and calendar view',
+      'Estimates, invoices, and payments',
+      'Customer records and job history',
       'Email notifications',
     ]
   },
@@ -123,14 +123,15 @@ export const plans: PricingPlan[] = [
     annualPrice: 564,
     duration: 'Month',
     savings: 'Save $144',
-    description: 'Everything you need to run the show.',
+    description: 'Best for growing teams managing multiple jobs per day.',
     badge: 'bg-success-subtle text-success',
     buttonClass: 'btn-info',
     features: [
       'Everything in Go',
-      'Team & crew assignments',
-      'Calendar view with drag-and-drop',
-      'Text message reminders'
+      'Team and crew assignments',
+      'Advanced scheduling workflow',
+      'Text message reminders',
+      'Estimate follow-up tools'
     ]
   },
   {
@@ -139,14 +140,15 @@ export const plans: PricingPlan[] = [
     annualPrice: 864,
     duration: 'Month',
     savings: 'Save $204',
-    description: 'For crews that don’t slow down.',
+    description: 'Best for scaling operations that need automation and control.',
     badge: 'bg-success-subtle text-success',
     buttonClass: 'btn-info',
     features: [
       'Everything in Flow',
       'Custom branding (logo, colors)',
       'Automated job follow-ups',
-      'Priority email & chat support'
+      'Priority support',
+      'Expanded admin controls'
     ]
   }
 ];

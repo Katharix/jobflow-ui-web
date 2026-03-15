@@ -1,5 +1,5 @@
 import { CommonModule, TitleCasePipe } from '@angular/common';
-import { Component, HostListener, Input, input } from '@angular/core';
+import { Component, HostListener, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -11,7 +11,7 @@ import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './public-navbar.component.scss'
 })
 export class PublicNavbarComponent {
-  navLinks=["home","about","features","pricing","contact"]
+  navLinks = ['home', 'about', 'features', 'pricing', 'contact'];
 
   @Input() navbarLight?: boolean
   isCollapsed = true;
@@ -19,38 +19,34 @@ export class PublicNavbarComponent {
 
   currentSection = 'home';
 
-    // Listen to scroll event
-    @HostListener('window:scroll', ['$event'])
-    onWindowScroll() {
-      this.checkActiveSection();
-      this.isSticky = window.scrollY >= 50
-    }
-  
-    // Check which section is currently in view 249965
-    checkActiveSection() {
-      const sections = document.querySelectorAll('.section');
-      const scrollPosition = window.pageYOffset + 50; // You can adjust the offset based on your needs
-  
-      sections.forEach((section: any) => {
-        if (scrollPosition >= section.offsetTop && scrollPosition < section.offsetTop + section.offsetHeight) {
-          this.currentSection = section.id;
-        }
-      });
-    }
-  
-    // Scroll to a specific section when a navbar link is clicked
-    scrollToSection(sectionId: string) {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        window.scrollTo({
-          top: element.offsetTop,
-          behavior: 'smooth'
-        });
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    this.checkActiveSection();
+    this.isSticky = window.scrollY >= 50;
+  }
+
+  checkActiveSection(): void {
+    const sections = document.querySelectorAll<HTMLElement>('section[id]');
+    const scrollPosition = window.pageYOffset + 120;
+
+    sections.forEach((section) => {
+      if (scrollPosition >= section.offsetTop && scrollPosition < section.offsetTop + section.offsetHeight) {
+        this.currentSection = section.id;
       }
-    }
-  
-    // Check if the section is active
-    isActiveSection(sectionId: string): boolean {
-      return this.currentSection === sectionId;
-    }
+    });
+  }
+
+  scrollToSection(sectionId: string): void {
+    const element = document.getElementById(sectionId);
+    if (!element) return;
+
+    const navbarOffset = 85;
+    const top = Math.max(element.offsetTop - navbarOffset, 0);
+    window.scrollTo({ top, behavior: 'smooth' });
+    this.isCollapsed = true;
+  }
+
+  isActiveSection(sectionId: string): boolean {
+    return this.currentSection === sectionId;
+  }
 }
