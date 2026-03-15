@@ -1,0 +1,121 @@
+<app-page-header
+  title="Estimates"
+  subtitle="Manage quotes and estimates for your clients"
+  [actions]="[{ label: 'New Estimate', icon: 'plus', class: 'btn-primary', click: openNew.bind(this) }]">
+</app-page-header>
+
+<div *ngIf="error" class="alert alert-danger mb-3">{{ error }}</div>
+
+<!-- Client cell template -->
+<ng-template #clientTemplate let-estimate>
+  <div class="estimate-client-cell">
+    <div class="estimate-client-name">{{ getClientName(estimate) }}</div>
+    <div class="estimate-client-email">{{ getClientEmail(estimate) }}</div>
+  </div>
+</ng-template>
+
+<!-- Status chip template -->
+<ng-template #statusTemplate let-estimate>
+  <span class="estimate-status-chip" [ngClass]="getStatusClass(estimate)">
+    {{ getStatusLabel(estimate) }}
+  </span>
+</ng-template>
+
+<!-- Actions template -->
+<ng-template #actionsTemplate let-estimate>
+  <div class="estimate-actions">
+    <button type="button" class="btn btn-sm btn-link" (click)="openEdit(estimate)">
+      Edit
+    </button>
+    <button
+      type="button"
+      class="btn btn-sm btn-link text-primary"
+      (click)="openSend(estimate)"
+      [disabled]="resolveStatus(estimate.status) === 3">
+      Send
+    </button>
+    <button type="button" class="btn btn-sm btn-link text-danger" (click)="deleteEstimate(estimate)">
+      Delete
+    </button>
+  </div>
+</ng-template>
+
+<!-- Grid -->
+<jobflow-grid
+  [data]="items"
+  [columns]="columns"
+  [pageSettings]="pageSettings"
+  [showSearchBar]="true">
+</jobflow-grid>
+
+<!-- Create / Edit Drawer -->
+<jobflow-drawer
+  [open]="isFormDrawerOpen"
+  [title]="editingEstimate ? 'Edit Estimate' : 'New Estimate'"
+  [width]="660"
+  (closed)="onFormCancelled()">
+  <estimate-form
+    *ngIf="isFormDrawerOpen"
+    [estimate]="editingEstimate"
+    (saved)="onFormSaved($event)"
+    (cancelled)="onFormCancelled()">
+  </estimate-form>
+</jobflow-drawer>
+
+<!-- Send Drawer -->
+<jobflow-drawer
+  [open]="isSendDrawerOpen"
+  title="Send Estimate"
+  [width]="440"
+  (closed)="isSendDrawerOpen = false">
+  <ng-container *ngIf="isSendDrawerOpen && estimateToSend">
+    <div class="send-form">
+      <p class="text-muted mb-4">
+        Sending estimate <strong>{{ estimateToSend.estimateNumber }}</strong>.
+        Confirm the recipient's email and include an optional personal message.
+      </p>
+
+      <div *ngIf="sendError" class="alert alert-danger mb-3">{{ sendError }}</div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">
+          Recipient Email <span class="text-danger">*</span>
+        </label>
+        <input
+          type="email"
+          class="form-control"
+          [(ngModel)]="sendEmail"
+          placeholder="client@example.com" />
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label fw-semibold">
+          Message <span class="text-muted fw-normal">(optional)</span>
+        </label>
+        <textarea
+          class="form-control"
+          rows="4"
+          [(ngModel)]="sendMessage"
+          placeholder="Include a personal note with this estimate…">
+        </textarea>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          (click)="isSendDrawerOpen = false"
+          [disabled]="sending">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="confirmSend()"
+          [disabled]="sending || !sendEmail.trim()">
+          {{ sending ? 'Sending…' : 'Send Estimate' }}
+        </button>
+      </div>
+    </div>
+  </ng-container>
+</jobflow-drawer>

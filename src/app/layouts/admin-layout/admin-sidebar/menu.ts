@@ -8,7 +8,7 @@ export const MENU: MenuItem[] = [
       subItems: [
          { label: 'Jobs', icon: '', link: '/admin/jobs' },
          { label: 'Invoicing', icon: 'file-text', link: '/admin/invoices' },
-         { label: 'Estimates', icon: 'file', link: '/apps/email/inbox' },
+         { label: 'Estimates', icon: 'file', link: '/admin/estimates' },
          { label: 'Tracking', icon: 'navigation', link: '/apps/email/inbox', minPlan: 'Max' },
          { label: 'Settings', icon: 'settings', link: '/admin/settings/branding', minPlan: 'Flow' }
       ]
