@@ -1,15 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import {
-  ScheduleModule,
-  DayService,
-  WeekService,
-  WorkWeekService,
-  MonthService,
-  AgendaService
-} from '@syncfusion/ej2-angular-schedule';
-import { LucideAngularModule } from 'lucide-angular';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { JobflowCalendarComponent } from '../../../common/jobflow-calendar/jobflow-calendar.component';
 import { PageHeaderComponent } from '../../dashboard/page-header/page-header.component';
 
@@ -17,16 +7,12 @@ import { PageHeaderComponent } from '../../dashboard/page-header/page-header.com
 @Component({
   selector: 'app-job-schedule',
   standalone: true,
-  imports: [FormsModule, CommonModule, PageHeaderComponent, ScheduleModule, LucideAngularModule, JobflowCalendarComponent],
+  imports: [CommonModule, PageHeaderComponent, JobflowCalendarComponent],
   templateUrl: './job-schedule.component.html',
   styleUrls: ['./job-schedule.component.scss'],
-  providers: [DayService, WeekService, WorkWeekService, MonthService, AgendaService],
   encapsulation: ViewEncapsulation.None
 })
 export class JobScheduleComponent {
-constructor(
- private cdRef: ChangeDetectorRef
-) {}
   selectedDate: Date = new Date();
   calendarView: string = 'Week';
 

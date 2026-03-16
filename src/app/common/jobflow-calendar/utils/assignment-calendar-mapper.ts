@@ -1,6 +1,10 @@
 ﻿import {AssignmentDto} from "../../../admin/jobs/models/assignment";
 import {CalendarEvent} from "../models/calendar-event";
 
+function getEventCssClass(scheduleType: number): string {
+   return scheduleType === 1 ? 'jobflow-event-window' : 'jobflow-event-exact';
+}
+
 export function mapAssignmentsToCalendarEvents(
    assignments: AssignmentDto[]
 ): CalendarEvent[] {
@@ -15,6 +19,7 @@ export function mapAssignmentsToCalendarEvents(
          : new Date(
             new Date(a.scheduledStart).getTime() + 60 * 60 * 1000
          ),
+      CssClass: getEventCssClass(a.scheduleType),
       IsReadonly: false
    }));
 }

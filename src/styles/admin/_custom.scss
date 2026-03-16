@@ -261,68 +261,110 @@
    z-index: 2
 }
 
-.p-toast {
-   max-width: min(26rem, calc(100vw - 2rem));
+.jobflow-toast.p-toast {
+   width: min(30rem, calc(100vw - 2rem));
+   max-width: min(30rem, calc(100vw - 2rem));
 }
 
-.p-toast .p-toast-message {
+.jobflow-toast.p-toast .p-toast-message {
    background: $white;
    border: 1px solid $gray-200;
-   border-radius: 1rem;
-   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+   border-left-width: 4px;
+   border-radius: 0.9rem;
+   box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
    color: $gray-900;
 }
 
-.p-toast .p-toast-message .p-toast-summary {
+.jobflow-toast.p-toast .p-toast-message-content {
+   align-items: flex-start;
+   gap: 0.5rem;
+}
+
+.jobflow-toast.p-toast .p-toast-summary {
    color: $gray-900;
+   font-size: 0.95rem;
    font-weight: 700;
+   letter-spacing: 0.01em;
 }
 
-.p-toast .p-toast-message .p-toast-detail {
+.jobflow-toast.p-toast .p-toast-detail {
    color: $gray-700;
+   margin: 0.2rem 0 0;
+   line-height: 1.4;
 }
 
-.p-toast .p-toast-message .p-toast-icon-close {
-   color: $gray-600;
+.jobflow-toast.p-toast .p-toast-message .p-toast-close-button,
+.jobflow-toast.p-toast .p-toast-message .p-toast-message-content .p-toast-close-button,
+.jobflow-toast.p-toast .p-toast-message .p-toast-close-button .p-toast-icon-close,
+.jobflow-toast.p-toast .p-toast-message .p-toast-close-button .p-toast-close-icon,
+.jobflow-toast.p-toast .p-toast-message .p-toast-icon-close,
+.jobflow-toast.p-toast .p-toast-message .p-toast-close-icon {
+   color: $primary !important;
+   fill: $primary !important;
+   stroke: $primary !important;
 }
 
-.p-toast .p-toast-message-success {
-   background: rgba($success, 0.12);
-   border-color: rgba($success, 0.35);
+.jobflow-toast.p-toast .p-toast-message .p-toast-close-button::before,
+.jobflow-toast.p-toast .p-toast-message .p-toast-close-button .p-toast-icon-close::before,
+.jobflow-toast.p-toast .p-toast-message .p-toast-close-button .p-toast-close-icon::before,
+.jobflow-toast.p-toast .p-toast-message .p-toast-icon-close::before,
+.jobflow-toast.p-toast .p-toast-message .p-toast-close-icon::before {
+   color: $primary !important;
 }
 
-.p-toast .p-toast-message-success .p-toast-message-icon,
-.p-toast .p-toast-message-success .p-toast-summary {
+.jobflow-toast.p-toast .p-toast-message .p-toast-close-button,
+.jobflow-toast.p-toast .p-toast-message .p-toast-message-content .p-toast-close-button {
+   border-radius: 999px;
+   transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.jobflow-toast.p-toast .p-toast-message .p-toast-close-button:hover,
+.jobflow-toast.p-toast .p-toast-message .p-toast-close-button:focus-visible,
+.jobflow-toast.p-toast .p-toast-message .p-toast-message-content .p-toast-close-button:hover,
+.jobflow-toast.p-toast .p-toast-message .p-toast-message-content .p-toast-close-button:focus-visible {
+   color: darken($primary, 10%) !important;
+   fill: darken($primary, 10%) !important;
+   stroke: darken($primary, 10%) !important;
+   background: rgba($primary, 0.08);
+}
+
+.jobflow-toast.p-toast .p-toast-message-success {
+   border-left-color: $success;
+   background: rgba($success, 0.1);
+}
+
+.jobflow-toast.p-toast .p-toast-message-success .p-toast-message-icon,
+.jobflow-toast.p-toast .p-toast-message-success .p-toast-summary {
    color: $success;
 }
 
-.p-toast .p-toast-message-info {
-   background: rgba($info, 0.14);
-   border-color: rgba($info, 0.38);
+.jobflow-toast.p-toast .p-toast-message-info {
+   border-left-color: $info;
+   background: rgba($info, 0.12);
 }
 
-.p-toast .p-toast-message-info .p-toast-message-icon,
-.p-toast .p-toast-message-info .p-toast-summary {
+.jobflow-toast.p-toast .p-toast-message-info .p-toast-message-icon,
+.jobflow-toast.p-toast .p-toast-message-info .p-toast-summary {
    color: $info;
 }
 
-.p-toast .p-toast-message-warn {
+.jobflow-toast.p-toast .p-toast-message-warn {
+   border-left-color: $warning;
    background: rgba($warning, 0.14);
-   border-color: rgba($warning, 0.4);
 }
 
-.p-toast .p-toast-message-warn .p-toast-message-icon,
-.p-toast .p-toast-message-warn .p-toast-summary {
+.jobflow-toast.p-toast .p-toast-message-warn .p-toast-message-icon,
+.jobflow-toast.p-toast .p-toast-message-warn .p-toast-summary {
    color: $warning;
 }
 
-.p-toast .p-toast-message-error {
-   background: rgba($danger, 0.12);
-   border-color: rgba($danger, 0.34);
+.jobflow-toast.p-toast .p-toast-message-error {
+   border-left-color: $danger;
+   background: rgba($danger, 0.1);
 }
 
-.p-toast .p-toast-message-error .p-toast-message-icon,
-.p-toast .p-toast-message-error .p-toast-summary {
+.jobflow-toast.p-toast .p-toast-message-error .p-toast-message-icon,
+.jobflow-toast.p-toast .p-toast-message-error .p-toast-summary {
    color: $danger;
 }
 
