@@ -119,7 +119,6 @@ export class CustomerComponent {
             this.items = (list ?? []).sort((a, b) => a.firstName.localeCompare(b.lastName));
          },
          error: e => {
-            this.toast.error('Failed to load items');
             console.error(e);
          }
       });
