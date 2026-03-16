@@ -33,9 +33,7 @@ export class NavService {
          {label: 'Clients', icon: '', route: '/general/edit-profile'}
       ],
       '/admin/company': [
-         {label: 'Jobs', icon: '', route: '/admin/jobs', allowDeepMatch: true},
-         {label: 'Invoicing', icon: '', route: '/admin/invoices', allowDeepMatch: true},
-         {label: 'Estimates', icon: '', route: '/admin/estimates', allowDeepMatch: true}
+         {label: 'Invoicing', icon: '', route: '/admin/invoices', allowDeepMatch: true}
       ],
       '/admin/dispatch': [
          {label: 'Dispatch', icon: '', route: '/admin/dispatch'},

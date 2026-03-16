@@ -1,186 +1,505 @@
+@import "../../../styles/variables";
 
-$white:        #FAFBFF !default;
-$gray-100:     #f8f9fa !default;
-$gray-200:     #e9ecef !default;
-$gray-300:     #dee2e6 !default;
-$gray-400:     #cbd1db !default;
-$gray-500:     #aeb7c5 !default;
-$gray-600:     #7987a1 !default;
-$gray-700:     #41516c !default;
-$gray-800:     #212a3a !default;
-$gray-900:     #060c17 !default;
-$black:        #000 !default;
+.jobflow-calendar-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 
-$primary:         #3F67DA !default;
-$secondary:       $gray-600 !default;
-$success:         #B9E28C !default;
-$info:            #66d1d1 !default;
-$warning:         #F0A202 !default;
-$danger:          #DC493A !default;
-$light:           $gray-200 !default;
-/* 📅 JobFlow Scheduler Theme */
-.e-schedule.jobflow-scheduler {
-  background-color: #ffffff;
-  border-radius: 1rem;
+.calendar-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
-  font-family: 'Inter', sans-serif;
-  font-size: 0.875rem;
-  overflow: hidden;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
 }
 
-.e-schedule.jobflow-scheduler .e-toolbar {
-  display: none;
+.calendar-toolbar__group {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
 }
 
-/* Header cells (Sun, Mon...) */
-.e-schedule.jobflow-scheduler .e-header-cells {
-  background-color: #f9fafb;
-  color: #000;
-  font-weight: 600;
-  font-size: 0.875rem;
-  padding: 0.75rem 0.5rem;
-  text-align: center;
-  border-bottom: 1px solid #e5e7eb;
+.calendar-toolbar__group--primary {
+  justify-content: space-between;
+  flex: 1 1 24rem;
+}
+
+.calendar-toolbar__group--secondary {
+  justify-content: flex-end;
+  flex: 1 1 34rem;
+}
+
+.calendar-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.calendar-title-block__eyebrow {
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.date-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.35rem 0.45rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.date-nav__label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
   white-space: nowrap;
 }
 
-/* Appointment block styling */
-.e-schedule.jobflow-scheduler .e-appointment {
-  background-color: $primary;
-  color: $white;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  font-size: 0.75rem;
-  padding: 6px 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-  line-height: 1.4;
+.calendar-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.6rem;
+  color: #475569;
+  background: #ffffff;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: #f8fafc;
+    color: #0f172a;
+    outline: none;
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+  }
 }
 
-/* Sidebar resource labels (if used) */
-.e-schedule.jobflow-scheduler .e-resource-cells {
-  background-color: #f3f4f6;
-  color: #4b5563;
-  font-weight: 600;
-  font-size: 0.75rem;
-  border-right: 1px solid #e5e7eb;
+.calendar-today-btn {
+  border: 1px solid #cbd5f5;
+  border-radius: 0.7rem;
+  background: #eef2ff;
+  color: #3730a3;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.6rem 0.95rem;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: #e0e7ff;
+    border-color: #a5b4fc;
+    color: #312e81;
+    outline: none;
+  }
 }
 
-/* Calendar body background + grid lines */
-.e-schedule.jobflow-scheduler .e-content-wrap {
-  background-color: $white;
-  border-top: 1px solid #e5e7eb;
+.calendar-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: #ffffff;
 }
 
-/* Empty state messaging */
-.e-schedule.jobflow-scheduler .e-empty-cell,
-.e-schedule.jobflow-scheduler .e-appointment-container:empty::before {
-  content: "No jobs scheduled for this time";
-  display: block;
-  text-align: center;
-  color: #9ca3af;
-  font-style: italic;
-  padding: 2rem 0;
-  font-size: 0.8125rem;
+.calendar-summary__item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 0.65rem;
+  background: #f8fafc;
 }
 
-/* Highlight current day column */
-.e-schedule.jobflow-scheduler .e-current-day {
-  background-color: $white;
+.calendar-summary__value {
+  color: #0f172a;
+  font-size: 0.85rem;
   font-weight: 700;
 }
 
-/* Time grid lines and header borders */
-.e-schedule.jobflow-scheduler .e-work-cells,
-.e-schedule.jobflow-scheduler .e-header-cells {
+.calendar-summary__label {
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.calendar-view-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 0.7rem;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.calendar-view-btn {
+  border: 0;
+  border-radius: 0.55rem;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.6rem 0.95rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: #f1f5f9;
+    color: #1e293b;
+    outline: none;
+  }
+
+  &.active-view {
+    background: #0f172a;
+    color: #f8fafc;
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.12);
+  }
+}
+
+.calendar-filter select {
+  min-width: 10.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.7rem;
+  background: #ffffff;
+  color: #1f2937;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.2;
+  padding: 0.65rem 2.1rem 0.65rem 0.85rem;
+
+  &:focus-visible {
+    border-color: #94a3b8;
+    outline: none;
+    box-shadow: 0 0 0 0.16rem rgba(148, 163, 184, 0.28);
+  }
+
+  option {
+    color: $gray-900;
+    background: $white;
+  }
+}
+
+.calendar-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding-left: 0.25rem;
+}
+
+.calendar-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.calendar-legend__swatch {
+  width: 0.72rem;
+  height: 0.72rem;
+  border-radius: 0.25rem;
+}
+
+.calendar-legend__swatch--exact {
+  background: #60a5fa;
+}
+
+.calendar-legend__swatch--window {
+  background: #fbbf24;
+}
+
+.calendar-frame {
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+  padding: 0.6rem;
+}
+
+.jobflow-scheduler .fc {
+  border: 0;
+  border-radius: 0.9rem;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 0.85rem;
+}
+
+.jobflow-scheduler .fc .fc-scrollgrid,
+.jobflow-scheduler .fc .fc-scrollgrid td,
+.jobflow-scheduler .fc .fc-scrollgrid th {
   border-color: #e5e7eb;
 }
 
-/* Reduce padding inside cells */
-.e-schedule.jobflow-scheduler .e-schedule-table td {
-  padding: 0.25rem;
+.jobflow-scheduler .fc .fc-col-header-cell {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.4rem 0;
 }
 
-/* Time label column */
-.e-schedule.jobflow-scheduler .e-time-cells {
-  color: #6b7280;
-  font-size: 0.75rem;
-  font-weight: 500;
+.jobflow-scheduler .fc .fc-col-header-cell-cushion,
+.jobflow-scheduler .fc .fc-daygrid-day-number,
+.jobflow-scheduler .fc .fc-daygrid-day-top a {
+  color: #475569;
+  text-decoration: none;
 }
 
-/* Hover effect on time cells */
-.e-schedule.jobflow-scheduler .e-work-cells:hover {
-  background-color: #f9fafb;
+.jobflow-scheduler .fc .fc-timegrid-axis-cushion,
+.jobflow-scheduler .fc .fc-timegrid-slot-label-cushion {
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
-/* 🎛️ Custom JobFlow Toolbar Styling */
-.calendar-toolbar {
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
+.jobflow-scheduler .fc .fc-timegrid-slot,
+.jobflow-scheduler .fc .fc-daygrid-day {
+  background: #ffffff;
+}
+
+.jobflow-scheduler .fc .fc-timegrid-slot {
+  height: 3.4rem;
+}
+
+.jobflow-scheduler.dispatch .fc .fc-timegrid-col-frame:hover,
+.jobflow-scheduler.dispatch .fc .fc-daygrid-day-frame:hover {
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.jobflow-scheduler .fc .fc-day-today {
+  background: rgba(59, 130, 246, 0.08) !important;
+}
+
+.jobflow-scheduler .fc .fc-timegrid-col.fc-day-today {
+  background: rgba(59, 130, 246, 0.05) !important;
+}
+
+.jobflow-scheduler .fc .fc-highlight {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.jobflow-scheduler .fc .fc-timegrid-now-indicator-line {
+  border-color: #ef4444;
+}
+
+.jobflow-scheduler .fc .fc-timegrid-now-indicator-arrow {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.jobflow-scheduler .fc .fc-event {
+  border: 0;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: #0f172a;
+  box-shadow: none;
+  padding: 0;
+}
+
+.jobflow-scheduler .fc .fc-event-main,
+.jobflow-scheduler .fc .fc-event-title,
+.jobflow-scheduler .fc .fc-event-time {
+  color: inherit;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.jobflow-scheduler.dispatch .fc .fc-event:hover {
+  transform: translateY(-1px);
+}
+
+.jobflow-scheduler .fc .fc-event.jobflow-event-exact {
+  background: transparent;
+}
+
+.jobflow-scheduler .fc .fc-event.jobflow-event-window {
+  background: transparent;
+}
+
+.jobflow-scheduler .fc .fc-event.jobflow-event-default {
+  background: transparent;
+}
+
+.jobflow-event-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  min-height: 100%;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.7rem;
+  background: #ffffff;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.06);
+}
+
+.jobflow-event-card__time {
+  color: #64748b;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.jobflow-event-card__title {
+  color: #0f172a;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.jobflow-event-card__meta {
+  color: #64748b;
+  font-size: 0.62rem;
+  font-weight: 600;
+}
+
+.jobflow-event-card--exact {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+
+.jobflow-event-card--window {
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.jobflow-event-card--default {
+  border-color: #e5e7eb;
+  background: #f8fafc;
+}
+
+.jobflow-event-card.is-compact {
+  padding: 0.28rem 0.4rem;
+  border-radius: 0.6rem;
+}
+
+.jobflow-event-card.is-compact .jobflow-event-card__time,
+.jobflow-event-card.is-compact .jobflow-event-card__meta {
+  display: none;
+}
+
+.jobflow-scheduler .fc .fc-daygrid-day-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.8rem;
+  height: 1.8rem;
+  margin: 0.4rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+}
+
+.jobflow-scheduler .fc .fc-day-today .fc-daygrid-day-number {
+  background: #dbeafe;
+  color: #1e3a8a;
+}
+
+.jobflow-scheduler .fc .fc-timegrid-axis {
+  background: #f8fafc;
+}
+
+.jobflow-scheduler .fc .fc-timegrid-divider,
+.jobflow-scheduler .fc .fc-cell-shaded {
+  background: #f8fafc;
+}
+
+.jobflow-scheduler .fc .fc-button,
+.jobflow-scheduler .fc .fc-toolbar {
+  display: none;
+}
+
+.jobflow-scheduler.context .fc .fc-event {
+  cursor: default;
+}
+
+@media (max-width: 992px) {
+  .calendar-toolbar {
+    padding: 0.9rem;
+  }
+
+  .calendar-toolbar__group {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .calendar-filter {
+    width: 100%;
+  }
+
+  .calendar-filter select {
+    width: 100%;
+  }
+
+  .calendar-summary,
+  .calendar-legend {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-title-block {
+    width: 100%;
+  }
 
   .date-nav {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #1f2937;
-    padding: 0.5rem 1rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    width: 100%;
+    justify-content: space-between;
   }
 
-  button {
-    border-radius: 0.5rem;
-    font-size: 0.75rem;
-    padding: 0.5rem 1rem;
-    font-weight: 600;
-    transition: all 0.2s ease;
+  .calendar-view-switch {
+    width: 100%;
+    justify-content: space-between;
   }
 
-  .active-view {
-    background-color: $primary;
-    color: $white !important;
-    border-color: $primary;
+  .calendar-view-btn {
+    flex: 1;
   }
 
-  .form-select {
-    padding: 0.375rem 0.75rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    border-color: #d1d5db;
-    border-radius: 0.5rem;
-
-    &:hover {
-      border-color: #9ca3af;
-    }
+  .calendar-today-btn {
+    width: 100%;
   }
 
-  @media (max-width: 768px) {
+  .calendar-summary {
+    justify-content: space-between;
+  }
+
+  .calendar-summary__item {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .calendar-legend {
     flex-direction: column;
-    align-items: stretch;
-
-    .date-nav {
-      width: 100%;
-      justify-content: space-between;
-    }
-
-    button,
-    .form-select {
-      width: 100%;
-      margin-bottom: 0.5rem;
-    }
-
-    .col-auto.ms-auto {
-      margin-left: 0 !important;
-    }
+    align-items: flex-start;
+    gap: 0.45rem;
   }
-}
 
-/* 🖱 Lucide Icons */
-lucide-icon.cursor-pointer {
-  cursor: pointer;
-
-  &:hover {
-    opacity: 0.75;
-    transition: opacity 0.2s ease-in-out;
+  .calendar-frame {
+    padding: 0.4rem;
+    border-radius: 0.85rem;
   }
 }
