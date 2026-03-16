@@ -3,10 +3,10 @@
 // 
 
 .btn {
-  padding: 12px 25px;
-  transition: all 0.5s;
-  font-weight: 500;
-  border-radius: 30px;
+    padding: 10px 22px;
+    transition: all 0.2s ease;
+    font-weight: 600;
+    border-radius: 10px;
   font-family: $font-secondary;
   box-shadow: none !important;
 
@@ -19,7 +19,6 @@
       &.btn-#{$color} {
           background-color: #{$value} !important;
           border: 1px solid #{$value} !important;
-          border-bottom: 3px solid #{darken($value, 5%)} !important;
           color: $white !important;
 
           &:hover,
@@ -27,9 +26,8 @@
           &.focus,
           &:active,
           &.active {
-              background-color: #{darken($value, 7%)} !important;
-              border:1px solid #{darken($value, 7%)} !important;
-              border-bottom: 3px solid #{darken($value, 10%)} !important;
+              background-color: #{darken($value, 6%)} !important;
+              border:1px solid #{darken($value, 6%)} !important;
           }
       }
 
@@ -42,8 +40,7 @@
   &.btn-light,
   &.btn-white {
       background-color: $white;
-      border: 1px solid $white;
-      border-bottom: 3px solid darken($white, 12%) !important;
+      border: 1px solid $gray-200;
       color: $primary !important;
 
       &:hover,
@@ -51,9 +48,8 @@
       &.focus,
       &:active,
       &.active {
-          background-color: darken($white, 7%) !important;
-          border-color: darken($white, 7%) !important;
-          border-bottom: 3px solid darken($white, 15%) !important;
+          background-color: $gray-100 !important;
+          border-color: $gray-200 !important;
       }
   }
 
@@ -61,7 +57,7 @@
   &.btn-outline-white {
       border: 1px solid $white !important;
       color: $white !important;
-      text-transform: uppercase;
+      text-transform: none;
 
       &:hover,
       &:focus,
@@ -72,6 +68,48 @@
           color: $dark !important;
       }
   }
+}
+
+.badge {
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.45rem 0.7rem;
+    border-radius: 999px;
+}
+
+.jf-eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: $primary;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+}
+
+.jf-section-title {
+    font-size: clamp(2rem, 2.6vw, 2.8rem);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+}
+
+.jf-section-lead {
+    font-size: 1rem;
+    color: $gray-600;
+}
+
+.jf-placeholder {
+    background: linear-gradient(120deg, rgba(148, 163, 184, 0.12), rgba(59, 130, 246, 0.12));
+    border-radius: 18px;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.jf-placeholder--tall {
+    height: 320px;
+}
+
+.jf-placeholder--cta {
+    height: 140px;
 }
 
 // Modal-box

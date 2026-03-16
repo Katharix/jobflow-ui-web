@@ -5,3 +5,118 @@
 #about {
 	scroll-margin-top: 95px;
 }
+
+.jf-about {
+	background: #ffffff;
+}
+
+.jf-section-title {
+	font-size: clamp(1.9rem, 2.5vw, 2.6rem);
+	margin-bottom: 1rem;
+}
+
+.jf-section-lead {
+	font-size: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.jf-checklist {
+	display: grid;
+	gap: 0.8rem;
+	color: var(--jf-muted);
+	margin-bottom: 1.6rem;
+}
+
+.jf-checklist__item {
+	background: var(--jf-surface-2);
+	border: 1px solid rgba(226, 232, 240, 0.8);
+	border-radius: 12px;
+	padding: 0.75rem 0.9rem;
+	font-weight: 600;
+	color: var(--jf-ink);
+}
+
+.jf-kpi-row {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 1rem;
+}
+
+.jf-kpi {
+	background: #ffffff;
+	border: 1px solid rgba(226, 232, 240, 0.9);
+	border-radius: 14px;
+	padding: 0.8rem 0.9rem;
+}
+
+.jf-kpi__value {
+	font-weight: 700;
+	font-size: 1.2rem;
+	color: var(--jf-ink);
+}
+
+.jf-kpi__label {
+	font-size: 0.78rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--jf-muted);
+}
+
+.jf-preview {
+	background: #ffffff;
+	border-radius: 20px;
+	border: 1px solid rgba(226, 232, 240, 0.9);
+	padding: 1.5rem;
+	box-shadow: 0 24px 50px rgba(15, 23, 42, 0.1);
+}
+
+.jf-preview__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1rem;
+}
+
+.jf-preview__title {
+	font-weight: 700;
+	color: var(--jf-ink);
+}
+
+.jf-preview__pill {
+	background: rgba(59, 130, 246, 0.12);
+	color: var(--jf-accent-strong);
+	border-radius: 999px;
+	padding: 0.3rem 0.7rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+
+.jf-placeholder--tall {
+	height: 320px;
+	margin-bottom: 1rem;
+}
+
+.jf-preview__footer {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+	gap: 0.75rem;
+}
+
+.jf-preview__stat {
+	background: var(--jf-surface-2);
+	border-radius: 12px;
+	border: 1px solid rgba(226, 232, 240, 0.8);
+	padding: 0.6rem 0.75rem;
+}
+
+.jf-preview__stat-value {
+	font-weight: 700;
+	color: var(--jf-ink);
+}
+
+.jf-preview__stat-label {
+	font-size: 0.7rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--jf-muted);
+}

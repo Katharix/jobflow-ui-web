@@ -1,51 +1,32 @@
-<section class="section" id="features">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-7">
-          <div class="title text-center mb-5">
-            <p class="d-flex align-items-center justify-content-center mb-4">
-              <span class="icon bg-primary rounded d-flex justify-content-center align-items-center">
-                <i class="ti ti-key text-white f-18"></i>
-              </span>
-              <i class="ti ti-line-dashed text-primary fs-5"></i>
-              <span class="badge bg-light border text-primary py-2 px-3 f-14">Features</span>
-            </p>
-            <h3>Core Capabilities Built for Service Businesses</h3>
-            <p class="text-muted">
-              Job Flow combines daily operations and revenue workflows in one platform, so your team spends less time on admin and
-              more time completing profitable work.
-            </p>            
-          </div>
-        </div>
+<section class="section jf-features" id="features">
+  <div class="container">
+    <div class="row align-items-end mb-5">
+      <div class="col-lg-6">
+        <p class="jf-eyebrow">Core capabilities</p>
+        <h2 class="jf-section-title">Everything your team needs to run a job start to finish.</h2>
       </div>
-  
-      <!-- Row 1 Features -->
-      <div class="row mt-4 g-3">
-        <div *ngFor="let feature of featuresRow1; let i = index" class="col-6 col-md-3">
-          <div class="features-box text-center" [ngClass]="{ 'border-end': i !== 3 }">
-            <div class="features-icon mb-3">
-              <img [src]="feature.imgSrc" alt="{{ feature.title }}">
-            </div>
-            <div class="features-desc rounded">
-              <h5 class="mb-0 f-16">{{ feature.title }}</h5>
-            </div>
-          </div>
-        </div>
+      <div class="col-lg-6">
+        <p class="jf-section-lead">
+          Keep dispatch, field work, and billing aligned with a platform built for busy service teams.
+        </p>
       </div>
-  
-      <!-- Row 2 Features -->
-      <div class="row mt-5 g-3">
-        <div *ngFor="let feature of featuresRow2; let i = index" class="col-6 col-md-3">
-          <div class="features-box text-center" [ngClass]="{ 'border-end': i !== 3 }">
-            <div class="features-icon mb-3">
-              <img [src]="feature.imgSrc" alt="{{ feature.title }}">
-            </div>
-            <div class="features-desc rounded">
-              <h5 class="mb-0 f-16">{{ feature.title }}</h5>
-            </div>
-          </div>
-        </div>
-      </div>
-  
     </div>
-  </section>
+
+    <div class="row g-4">
+      <div *ngFor="let feature of featuresRow1" class="col-12 col-md-6 col-lg-3">
+        <div class="jf-feature-card">
+          <div class="jf-feature-card__icon">{{ feature.title | slice:0:1 }}</div>
+          <h5>{{ feature.title }}</h5>
+          <p>Track work, communicate with crews, and keep every job visible.</p>
+        </div>
+      </div>
+      <div *ngFor="let feature of featuresRow2" class="col-12 col-md-6 col-lg-3">
+        <div class="jf-feature-card">
+          <div class="jf-feature-card__icon">{{ feature.title | slice:0:1 }}</div>
+          <h5>{{ feature.title }}</h5>
+          <p>Standardize the workflow so nothing slips between teams.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

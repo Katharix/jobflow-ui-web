@@ -6,15 +6,69 @@
 	scroll-margin-top: 95px;
 }
 
-.card {
-	border-radius: 0.9rem;
+.jf-pricing {
+	background: #ffffff;
 }
 
-.card-body {
-	min-height: 440px;
-}
-
-.card-footer .btn {
-	cursor: pointer;
+.jf-billing-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.6rem;
+	margin-bottom: 0.4rem;
 	font-weight: 600;
+}
+
+.jf-price-card {
+	border-radius: 18px;
+	border: 1px solid rgba(226, 232, 240, 0.9);
+	background: #ffffff;
+	box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+	padding: 1.6rem;
+	transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+	height: 100%;
+}
+
+.jf-price-card:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 26px 50px rgba(15, 23, 42, 0.12);
+	border-color: rgba(148, 163, 184, 0.6);
+}
+
+.jf-price-card.is-featured {
+	border-color: rgba(59, 130, 246, 0.6);
+	box-shadow: 0 26px 60px rgba(30, 64, 175, 0.18);
+}
+
+.jf-price-card__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1rem;
+}
+
+.jf-price-card__price {
+	margin-bottom: 1.2rem;
+}
+
+.jf-price-card__value {
+	font-size: 2.2rem;
+	font-weight: 700;
+	color: var(--jf-ink);
+}
+
+.jf-price-card__desc {
+	display: block;
+	color: var(--jf-muted);
+	font-size: 0.9rem;
+}
+
+.jf-price-card__list {
+	list-style: none;
+	padding: 0;
+	margin: 0 0 1.4rem;
+	color: var(--jf-muted);
+}
+
+.jf-price-card__list li {
+	margin-bottom: 0.6rem;
 }
