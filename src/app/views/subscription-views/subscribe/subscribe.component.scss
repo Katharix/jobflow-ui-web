@@ -1,53 +1,96 @@
 :host {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-.onboarding-checklist {
+   display: block;
+}
+
+.subscribe-shell {
+   min-height: 100vh;
+   padding: 140px 0 90px;
+   background: linear-gradient(180deg, #f8fafc 0%, #ffffff 55%, #f1f5f9 100%);
+}
+
+.subscribe-hero {
    max-width: 520px;
 }
 
-.onboarding-checklist .subtitle {
-   color: #666;
-   font-size: 0.9rem;
+.subscribe-hero__logo img {
+   height: 36px;
+   margin-bottom: 1.5rem;
+}
+
+.subscribe-hero__eyebrow {
+   font-size: 0.75rem;
+   letter-spacing: 0.2em;
+   text-transform: uppercase;
+   color: var(--jf-accent);
+   font-weight: 700;
+   margin-bottom: 0.8rem;
+}
+
+.subscribe-hero h1 {
+   font-size: clamp(2.1rem, 3.2vw, 3rem);
+   line-height: 1.1;
    margin-bottom: 1rem;
 }
 
-.onboarding-checklist ul {
-   list-style: none;
-   padding: 0;
-   margin: 0;
+.subscribe-hero__lead {
+   font-size: 1.02rem;
+   color: var(--jf-muted);
+   margin-bottom: 1.6rem;
 }
 
-.onboarding-checklist li {
-   display: flex;
-   align-items: center;
-   padding: 0.5rem 0;
-   gap: 0.75rem;
+.subscribe-hero__checks {
+   display: grid;
+   gap: 0.6rem;
+   font-size: 0.95rem;
+   color: var(--jf-muted);
+   margin-bottom: 2rem;
 }
 
-.onboarding-checklist .status {
-   width: 1.25rem;
-   text-align: center;
-   font-size: 1.1rem;
+.subscribe-hero__image {
+   width: 100%;
+   border-radius: 18px;
+   border: 1px solid rgba(226, 232, 240, 0.9);
+   box-shadow: 0 24px 50px rgba(15, 23, 42, 0.12);
+   background: #ffffff;
 }
 
-.onboarding-checklist li.completed {
-   opacity: 0.55;
+.subscribe-card {
+   background: #ffffff;
+   border: 1px solid rgba(226, 232, 240, 0.9);
+   border-radius: 20px;
+   padding: 2.2rem;
+   box-shadow: 0 24px 50px rgba(15, 23, 42, 0.12);
 }
 
-.onboarding-checklist li.active {
+.subscribe-card__header h2 {
+   margin-bottom: 0.35rem;
+}
+
+.form-label {
    font-weight: 600;
+   color: var(--jf-ink);
 }
 
-.onboarding-checklist li.active .status {
-   color: #2563eb; /* subtle emphasis */
+.form-control,
+.form-select {
+   min-height: 46px;
+   border-radius: 12px;
+   border: 1px solid rgba(226, 232, 240, 0.9);
 }
 
-.onboarding-checklist small {
-   font-weight: normal;
-   color: #666;
-   margin-left: 0.25rem;
+.form-control:focus,
+.form-select:focus {
+   box-shadow: none;
+   border-color: rgba(59, 130, 246, 0.6);
+}
+
+.is-invalid {
+   border-color: rgba(239, 68, 68, 0.6) !important;
+}
+
+@media (max-width: 991px) {
+   .subscribe-shell {
+      padding: 120px 0 80px;
+   }
 }
 

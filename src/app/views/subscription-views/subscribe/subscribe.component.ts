@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ChangeDetector
 import { OrganizationType } from '../../../models/organization-type';
 import { OrganizationTypeService } from '../../../services/shared/organization-type.service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { OrganizationDto } from '../../../models/organization';
 import { OrganizationService } from '../../../services/shared/organization.service';
@@ -26,6 +26,7 @@ declare const google: any;
 export class SubscribeComponent implements AfterViewInit, OnInit {
 
    @ViewChild('addressInput') addressInput?: ElementRef<HTMLInputElement>;
+   @ViewChild('form') form?: NgForm;
 
    email: string = '';
    organizationName: string = '';
@@ -37,10 +38,11 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
    zipCode: string = '';
    error: string = '';
    organizationTypes: OrganizationType[] = [];
-   selectedOrganizationTypeId: string = '00000000-0000-0000-0000-000000000000';
+   selectedOrganizationTypeId: string = '';
    planId: string = '';
    usStates = US_STATES;
    twilioConsent: boolean = false;
+   submitted = false;
 
    isLoading$!: Observable<boolean>;
 
@@ -132,6 +134,12 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
  onSubscribe(e: Event) {
 
   e.preventDefault();
+
+  this.submitted = true;
+  if (this.form?.invalid) {
+     this.form.control.markAllAsTouched();
+     return;
+  }
 
   this.loadingService.show();
 

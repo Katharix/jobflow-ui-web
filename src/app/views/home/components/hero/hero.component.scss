@@ -83,45 +83,30 @@
 	box-shadow: 0 30px 60px rgba(15, 23, 42, 0.12);
 }
 
-.jf-placeholder {
-	background: linear-gradient(120deg, rgba(148, 163, 184, 0.12), rgba(59, 130, 246, 0.12));
+.jf-media-image {
+	width: 100%;
+	height: auto;
+	display: block;
 	border-radius: 18px;
 	border: 1px solid rgba(226, 232, 240, 0.9);
-}
-
-.jf-placeholder--screen {
-	height: 420px;
+	box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
 }
 
 .jf-float-card {
 	position: absolute;
 	background: #ffffff;
 	border-radius: 16px;
-	padding: 0.75rem;
+	padding: 0.5rem;
 	border: 1px solid rgba(226, 232, 240, 0.9);
 	box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
-	width: 160px;
+	width: 180px;
 }
 
-.jf-float-card__title {
-	font-size: 0.75rem;
-	font-weight: 700;
-	color: var(--jf-ink);
-	margin-bottom: 0.5rem;
-}
-
-.jf-float-card__line {
-	height: 8px;
-	border-radius: 999px;
-	background: rgba(148, 163, 184, 0.35);
-	margin-bottom: 0.35rem;
-}
-
-.jf-float-card__pill {
-	height: 18px;
-	border-radius: 999px;
-	background: rgba(59, 130, 246, 0.18);
-	margin-bottom: 0.5rem;
+.jf-float-image {
+	width: 100%;
+	height: auto;
+	display: block;
+	border-radius: 12px;
 }
 
 .jf-float-card--top {
