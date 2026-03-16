@@ -1,127 +1,114 @@
 <app-page-header [title]="'Branding'" [subtitle]="'Customize your look and personalize your invoices'">
 </app-page-header>
 
-<div class="row justify-content-center g-5">
-  <div class="col-md-10 col-lg-8">
-
-    <!-- 🧾 Invoice Preview -->
-    <div class="position-relative mb-5">
-      <div class="position-absolute top-0 start-0 bg-primary text-white px-3 py-1 rounded-bottom-end small shadow-sm">
-        Sample Invoice Preview
+<section class="branding-layout">
+  <div class="card mb-3">
+    <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <h6 class="mb-1">Keep it simple</h6>
+        <p class="text-muted mb-0">Update logo, colors, and invoice text. Changes apply to your outgoing documents.</p>
       </div>
+      <button pButton type="button" label="Save Branding" icon="pi pi-save" (click)="onSave()" [loading]="isSaving"
+              [disabled]="isSaving"></button>
+    </div>
+  </div>
 
-      <div class="border rounded-4 shadow-lg p-5 bg-white">
-        <div class="d-flex align-items-center mb-4">
-          <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo" style="max-height: 50px;"
-            class="me-3 rounded shadow-sm" />
-          <div>
-            <h5 class="mb-1 fw-semibold">{{ brandingForm.value.businessName || 'Your Business' }}</h5>
-            <small class="text-muted">{{ brandingForm.value.tagline || 'Your tagline here' }}</small>
+  <div class="alert alert-success mb-3" *ngIf="saveStatus === 'success'">{{ saveMessage }}</div>
+  <div class="alert alert-danger mb-3" *ngIf="saveStatus === 'error'">{{ saveMessage }}</div>
+
+  <div class="row g-3 align-items-start">
+    <div class="col-lg-7">
+      <form [formGroup]="brandingForm" class="d-grid gap-3">
+        <div class="card">
+          <div class="card-body">
+            <h6 class="mb-3">1. Logo</h6>
+            <div class="d-flex flex-wrap align-items-center gap-3">
+              <label for="logoUpload" class="btn btn-outline-primary mb-0">Choose Logo</label>
+              <input type="file" id="logoUpload" hidden (change)="onLogoSelected($event)" accept="image/*" />
+              <span class="text-muted small">PNG or JPG works best</span>
+            </div>
+            <div class="logo-preview mt-3" *ngIf="logoPreview">
+              <img [src]="logoPreview" alt="Logo preview" class="img-fluid" />
+            </div>
           </div>
         </div>
 
-        <div class="mb-4">
-          <div class="d-flex justify-content-between text-muted">
-            <span>Invoice #</span>
-            <span>#12345</span>
-          </div>
-          <div class="d-flex justify-content-between text-muted">
-            <span>Date</span>
-            <span>June 2, 2025</span>
-          </div>
-          <div class="d-flex justify-content-between fw-bold mt-3">
-            <span>Total</span>
-            <span>$299.00</span>
+        <div class="card">
+          <div class="card-body">
+            <h6 class="mb-3">2. Colors</h6>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Primary</label>
+                <color-block formControlName="primaryColor" triangle="hide" [color]="brandingForm.value.primaryColor"
+                             (onChangeComplete)="onPrimaryColorChange($event)"></color-block>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Secondary</label>
+                <color-block formControlName="secondaryColor" triangle="hide" [color]="brandingForm.value.secondaryColor"
+                             (onChangeComplete)="onSecondaryColorChange($event)"></color-block>
+              </div>
+            </div>
           </div>
         </div>
 
-        <hr />
-        <footer class="text-muted small">
-          {{ brandingForm.value.footerNote || 'Thanks for your business!' }}
-        </footer>
-      </div>
+        <div class="card">
+          <div class="card-body">
+            <h6 class="mb-3">3. Text</h6>
+
+            <p-floatlabel class="w-100 mb-3">
+              <input pInputText id="businessName" type="text" formControlName="businessName" class="w-100" />
+              <label for="businessName">Business Name</label>
+            </p-floatlabel>
+
+            <p-floatlabel class="w-100 mb-3">
+              <input pInputText id="taglineInput" type="text" formControlName="tagline" class="w-100" />
+              <label for="taglineInput">Tagline</label>
+            </p-floatlabel>
+
+            <p-floatlabel class="w-100">
+              <textarea pTextarea id="footerNote" rows="3" formControlName="footerNote" class="w-100"></textarea>
+              <label for="footerNote">Invoice Footer Note</label>
+            </p-floatlabel>
+          </div>
+        </div>
+
+        <div class="text-end">
+          <button pButton type="button" label="Save Branding" icon="pi pi-save" (click)="onSave()" [loading]="isSaving"
+                  [disabled]="isSaving"></button>
+        </div>
+      </form>
     </div>
 
-    <!-- 🎨 Branding Form -->
-    <form [formGroup]="brandingForm" (ngSubmit)="onSave()">
+    <div class="col-lg-5">
+      <div class="card preview-card" [ngStyle]="previewStyles">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0">Live Invoice Preview</h6>
+            <span class="badge text-bg-light">Sample</span>
+          </div>
 
-      <!-- Logo & Colors -->
-      <div class="mb-5">
-        <h5 class="text-muted text-uppercase mb-4 d-flex align-items-center gap-3 fs-6 fw-semibold">
-          <lucide-icon class="text-primary" name="image"></lucide-icon>
-          Logo & Brand Colors
-        </h5>
-
-        <div class="row g-4 align-items-end">
-          <!-- Logo Upload -->
-          <div class="col-md-6 col-lg-4">
-            <label for="logoUpload" class="btn btn-outline-primary w-100 shadow-sm">
-              <lucide-icon class="me-2" name="upload"></lucide-icon>
-              Upload Logo
-            </label>
-            <input type="file" id="logoUpload" hidden (change)="onLogoSelected($event)" accept="image/*" />
-            <div class="mt-3" *ngIf="logoPreview">
-              <img [src]="logoPreview" alt="Logo Preview" class="img-fluid rounded shadow-sm border"
-                style="max-height: 100px;" />
+          <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="preview-logo" *ngIf="logoPreview; else logoPlaceholder">
+              <img [src]="logoPreview" alt="Brand logo" />
+            </div>
+            <ng-template #logoPlaceholder>
+              <div class="preview-logo placeholder-logo">Logo</div>
+            </ng-template>
+            <div>
+              <div class="fw-semibold">{{ brandingForm.value.businessName || 'Your Business Name' }}</div>
+              <small class="text-muted">{{ brandingForm.value.tagline || 'Your tagline here' }}</small>
             </div>
           </div>
 
-          <!-- Primary Color -->
-          <div class="col-md-3 col-lg-4">
-            <div class="card border-light shadow-sm p-3 rounded-3">
-              <label class="form-label fw-semibold">Primary Color</label>
-              <color-block formControlName="primaryColor" triangle="hide" [color]="brandingForm.value.primaryColor"
-                (onChangeComplete)="onPrimaryColorChange($event)">
-              </color-block>
-            </div>
+          <div class="preview-line" [style.borderColor]="brandingForm.value.primaryColor">
+            <div class="d-flex justify-content-between"><span>Invoice #</span><span>#1001</span></div>
+            <div class="d-flex justify-content-between"><span>Date</span><span>Mar 15, 2026</span></div>
+            <div class="d-flex justify-content-between fw-semibold mt-2"><span>Total</span><span>$299.00</span></div>
           </div>
 
-          <!-- Secondary Color -->
-          <div class="col-md-3 col-lg-4">
-            <div class="card border-light shadow-sm p-3 rounded-3">
-              <label class="form-label fw-semibold">Secondary Color</label>
-              <color-block formControlName="secondaryColor" triangle="hide" [color]="brandingForm.value.secondaryColor"
-                (onChangeComplete)="onSecondaryColorChange($event)">
-              </color-block>
-            </div>
-          </div>
+          <div class="mt-3 small text-muted">{{ brandingForm.value.footerNote || 'Thanks for your business.' }}</div>
         </div>
       </div>
-
-      <!-- Business Info -->
-      <div class="mb-5">
-        <h5 class="text-muted text-uppercase mb-4 d-flex align-items-center gap-3 fs-6 fw-semibold">
-          <lucide-icon class="text-primary" name="type"></lucide-icon>
-          Business Info
-        </h5>
-
-        <p-floatlabel class="w-100 mb-3">
-          <input pInputText pSize="small" id="taglineInput" type="text" formControlName="tagline" class="w-100" />
-          <label for="taglineInput">Tagline</label>
-        </p-floatlabel>
-      </div>
-
-      <!-- Footer Note -->
-      <div class="mb-5">
-        <h5 class="text-muted text-uppercase mb-4 d-flex align-items-center gap-3 fs-6 fw-semibold">
-          <lucide-icon class="text-primary" name="file-text"></lucide-icon>
-          Invoice Footer Note
-        </h5>
-
-        <p-floatlabel class="w-100">
-          <textarea pTextarea id="footerNote" rows="3" formControlName="footerNote" class="w-100"></textarea>
-          <label for="footerNote">Footer Note</label>
-        </p-floatlabel>
-      </div>
-
-      <!-- Save Button -->
-      <div class="text-end">
-        <button type="submit" class="btn btn-primary btn-lg px-5 fw-semibold rounded-3 shadow-sm">
-          <lucide-icon class="me-2" name="save"></lucide-icon>
-          Save Changes
-        </button>
-      </div>
-
-    </form>
+    </div>
   </div>
-</div>
+</section>

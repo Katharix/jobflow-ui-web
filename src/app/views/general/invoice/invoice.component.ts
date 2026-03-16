@@ -101,6 +101,16 @@ export class InvoiceComponent implements OnInit {
             this.paymentService.createInvoicePaymentIntent(paymentSessionRequest)
          );
 
+         if (res.url && !res.clientSecret) {
+            window.location.href = res.url;
+            return;
+         }
+
+         if (!res.clientSecret) {
+            this.error = 'Unable to initialize payment.';
+            return;
+         }
+
          // 2. Load Stripe
          this.stripe = await loadStripe(environment.stripePublicKey) as Stripe;
 

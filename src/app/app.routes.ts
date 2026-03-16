@@ -30,6 +30,8 @@ import {HelpComponent} from "./admin/help/help.component";
 import {EstimatesComponent} from "./admin/estimates/estimates.component";
 import {EstimateComponent} from "./views/general/estimate/estimate.component";
 import {NotFoundComponent} from "./views/general/not-found/not-found.component";
+import {BillingPaymentsComponent} from './admin/billing-payments/billing-payments.component';
+import { DispatchComponent } from './admin/dispatch/dispatch.component';
 
 
 export const routes: Routes = [
@@ -96,8 +98,16 @@ export const routes: Routes = [
             component: HelpComponent
          },
          {
+            path: 'dispatch',
+            component: DispatchComponent
+         },
+         {
             path: 'connectedpayment',
             component: ConnectPaymentComponent
+         },
+         {
+            path: 'billing-payments',
+            component: BillingPaymentsComponent
          }
       ]
    },

@@ -7,6 +7,7 @@ import {CommonModule} from '@angular/common';
 import {NavItem} from '../../../models/nav-item';
 import {filter} from 'rxjs/operators';
 import {NavService} from "../services/nav.service";
+import { WeatherWidgetComponent } from '../../../admin/dashboard/weather-widget/weather-widget.component';
 
 
 @Component({
@@ -16,7 +17,8 @@ import {NavService} from "../services/nav.service";
       NgbDropdownModule,
       RouterLink,
       CommonModule,
-      RouterModule
+      RouterModule,
+      WeatherWidgetComponent
    ],
    templateUrl: './admin-navbar.component.html',
    styleUrl: './admin-navbar.component.scss'

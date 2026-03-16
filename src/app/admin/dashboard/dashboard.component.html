@@ -7,13 +7,6 @@
 
       <div class="dashboard-welcome__meta">
          <strong>{{ currentDateTime }}</strong>
-         <span class="dashboard-weather">
-            <i [class]="weatherIconClass" aria-hidden="true"></i>
-            <span>{{ weatherStatusText }}</span>
-         </span>
-         <button type="button" class="dashboard-weather__action" (click)="refreshWeatherFromLocation()">
-            Use my location
-         </button>
       </div>
    </section>
 

@@ -14,8 +14,10 @@ import {Organization, OrganizationRequest, OrganizationDto} from '../../models/o
 import {OrganizationType} from '../../models/organization-type';
 import {OrganizationTypeService} from '../../services/shared/organization-type.service';
 import {OrganizationService} from '../../services/shared/organization.service';
-import {StripeService} from './services/stripe.service';
 import {OrganizationContextService} from '../../services/shared/organization-context.service';
+import { firstValueFrom } from 'rxjs';
+import { PaymentService } from '../../services/shared/payment.service';
+import { PaymentProvider } from '../../models/customer-payment-profile';
 
 @Component({
    selector: 'app-register',
@@ -42,9 +44,9 @@ export class RegisterComponent implements OnInit {
       private router: Router,
       private orgService: OrganizationService,
       private organizationTypeService: OrganizationTypeService,
-      private stripeService: StripeService,
       private route: ActivatedRoute,
-      private orgContext: OrganizationContextService
+      private orgContext: OrganizationContextService,
+      private paymentService: PaymentService
    ) {
    }
 
@@ -113,7 +115,6 @@ export class RegisterComponent implements OnInit {
             userRole: role,
             emailAddress: this.email
          }
-         let org: Organization;
          this.orgService.registerOrganization(orgDto).subscribe({
             next: (data) => {
                this.orgContext.setOrganization(data);
@@ -157,11 +158,10 @@ export class RegisterComponent implements OnInit {
                      userRole: role,
                      emailAddress: user.email ?? this.email.trim()
                   }
-                  let org: Organization;
                   this.orgService.registerOrganization(orgDto).subscribe({
                      next: async (data) => {
-                        org = data;
-                        await this.setupStripeConnectedAccount();
+                        this.orgContext.setOrganization(data);
+                        await this.startPaymentProviderOnboarding(data.id);
                         // this.router.navigate(['/admin']);
                      },
                      error: (err) => console.error(err)
@@ -178,18 +178,18 @@ export class RegisterComponent implements OnInit {
          });
    }
 
-   async setupStripeConnectedAccount() {
+   async startPaymentProviderOnboarding(orgId?: string) {
+      if (!orgId) {
+         return;
+      }
+
       try {
-         // Step 1: Create the connected account
-         const accountId = await this.stripeService.createConnectedAccount();
-
-         // Step 2: Get onboarding link
-         const onboardingUrl = await this.stripeService.generateAccountLink(accountId);
-
-         // Step 3: Redirect to Stripe
-         window.location.href = onboardingUrl;
+         const onboardingResponse = await firstValueFrom(this.paymentService.createConnectedAccount(PaymentProvider.Stripe));
+         if (onboardingResponse?.onboarding) {
+            window.location.href = onboardingResponse.onboarding;
+         }
       } catch (error) {
-         console.error('Error during Stripe onboarding:', error);
+         console.error('Error during payment onboarding:', error);
          alert('Something went wrong. Please try again.');
       }
    }
