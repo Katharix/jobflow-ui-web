@@ -1,22 +1,23 @@
+<div class="container mt-4" *ngIf="callbackStatus">
+  <div
+    class="alert mb-0"
+    [ngClass]="{
+      'alert-info': callbackStatus === 'processing',
+      'alert-success': callbackStatus === 'success',
+      'alert-danger': callbackStatus === 'error'
+    }"
+    role="alert"
+  >
+    <strong *ngIf="callbackProvider">{{ callbackProvider }}:</strong>
+    {{ callbackMessage }}
+  </div>
+</div>
+
 <div class="container my-5" *ngFor="let provider of paymentProviders">
   <div class="row justify-content-center">
     <div class="col-md-8 position-relative">
-      <!-- Coming Soon Overlay -->
-      <div
-        *ngIf="provider.provider === 'Square'"
-        class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-light bg-opacity-75 rounded"
-        style="z-index: 2;"
-      >
-        <div class="text-center">
-          <h3 class="text-primary fw-bold">Coming Soon!</h3>
-        </div>
-      </div>
-
       <!-- Payment Card -->
-      <div
-        class="card shadow-lg border-0 p-4"
-        [class.opacity-50]="provider.provider === 'Square'"
-      >
+      <div class="card shadow-lg border-0 p-4">
         <div class="row align-items-center">
           <!-- Logo + Button -->
           <div class="col-md-6 text-center mb-4 mb-md-0">
@@ -28,8 +29,7 @@
             />
             <button
               class="btn btn-primary btn-lg"
-              [disabled]="provider.provider === 'Square'"
-              (click)="createStripeConnectedAccount()"
+              (click)="createConnectedAccount(provider.provider)"
             >
               Connect {{ provider.provider }}
             </button>

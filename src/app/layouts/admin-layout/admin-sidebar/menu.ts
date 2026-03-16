@@ -13,11 +13,11 @@ export const MENU: MenuItem[] = [
          { label: 'Settings', icon: 'settings', link: '/admin/settings/branding', minPlan: 'Flow' }
       ]
    },
-   { label: 'Dispatch', icon: 'circle-arrow-out-up-left', link: '/admin/messaging', minPlan: 'Flow' },
+   { label: 'Dispatch', icon: 'circle-arrow-out-up-left', link: '/admin/dispatch', minPlan: 'Flow' },
    { label: 'Messaging', icon: 'messages-square', link: '/admin/messaging', minPlan: 'Flow' },
    { label: 'Clients', icon: 'handshake', link: '/admin/clients/create' },
    { label: 'Employees', icon: 'users-round', link: '/admin/employees', minPlan: 'Flow' },
    { label: 'Price Book', icon: 'book-open-text', link: '/admin/pricebook', minPlan: 'Max' },
-   { label: 'Billing & Payments', icon: 'banknote', link: '/apps/chat' },
+   { label: 'Billing & Payments', icon: 'banknote', link: '/admin/billing-payments' },
    { label: 'Reporting', icon: 'chart-no-axes-combined', link: '/apps/chat', minPlan: 'Max' }
 ];

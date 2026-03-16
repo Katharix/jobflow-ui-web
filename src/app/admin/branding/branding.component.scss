@@ -1,0 +1,48 @@
+.branding-layout {
+	.logo-preview {
+		border: 1px solid var(--bs-border-color);
+		border-radius: 0.5rem;
+		padding: 0.75rem;
+		max-width: 220px;
+		background: #fff;
+
+		img {
+			max-height: 70px;
+			width: auto;
+		}
+	}
+
+	.preview-card {
+		position: sticky;
+		top: 1rem;
+	}
+
+	.preview-logo {
+		width: 64px;
+		height: 64px;
+		border: 1px solid var(--bs-border-color);
+		border-radius: 0.5rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+		background: #fff;
+
+		img {
+			max-width: 100%;
+			max-height: 100%;
+			object-fit: contain;
+		}
+	}
+
+	.placeholder-logo {
+		font-size: 0.75rem;
+		color: var(--bs-secondary-color);
+	}
+
+	.preview-line {
+		border-left: 4px solid;
+		padding-left: 0.75rem;
+	}
+}
+

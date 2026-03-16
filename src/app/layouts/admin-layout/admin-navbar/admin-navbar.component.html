@@ -24,9 +24,12 @@
       </ul>
     </div>
 
-    <!-- Right: Sidebar Toggler -->
-    <a href="#" class="sidebar-toggler text-secondary" (click)="toggleSidebar($event)">
-      <i class="feather icon-menu fs-4"></i>
-    </a>
+    <div class="navbar-actions d-flex align-items-center gap-3 ms-3">
+      <app-weather-widget variant="navbar" class="navbar-weather"></app-weather-widget>
+
+      <a href="#" class="sidebar-toggler text-secondary" (click)="toggleSidebar($event)">
+        <i class="feather icon-menu fs-4"></i>
+      </a>
+    </div>
   </div>
 </nav>

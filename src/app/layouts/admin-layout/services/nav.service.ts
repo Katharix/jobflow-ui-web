@@ -5,12 +5,21 @@ import {NavItem} from '../../../models/nav-item';
 
 @Injectable({providedIn: 'root'})
 export class NavService {
+   private readonly billingNavItems: NavItem[] = [
+      {label: 'Billing & Payments', icon: '', route: '/admin/billing-payments'},
+      {label: 'Connected Accounts', icon: '', route: '/admin/connectedpayment', allowDeepMatch: true}
+   ];
+
    private navConfig: { [key: string]: NavItem[] } = {
       '/admin': [],
-      '/admin/company': [
-         {label: 'Invoicing', icon: '', route: '/admin/invoices'},
-         {label: 'Estimates', icon: '', route: '/general/edit-profile'},
-         {label: 'Team Management', icon: '', route: '/general/edit-profile'}
+      '/admin/estimates': [
+         {label: 'Estimates', icon: '', route: '/admin/estimates', allowDeepMatch: true},
+      ],
+        '/admin/invoices': [
+         {label: 'Invoices', icon: '', route: '/admin/invoices', allowDeepMatch: true},
+      ],
+        '/admin/clients': [
+         {label: 'Clients', icon: '', route: '/admin/clients', allowDeepMatch: true},
       ],
       '/admin/settings/branding': [
          {label: 'Branding', icon: '', route: '/admin/settings/branding'},
@@ -23,6 +32,16 @@ export class NavService {
          {label: 'Employees', icon: '', route: '/admin/settings/branding'},
          {label: 'Clients', icon: '', route: '/general/edit-profile'}
       ],
+      '/admin/company': [
+         {label: 'Jobs', icon: '', route: '/admin/jobs', allowDeepMatch: true},
+         {label: 'Invoicing', icon: '', route: '/admin/invoices', allowDeepMatch: true},
+         {label: 'Estimates', icon: '', route: '/admin/estimates', allowDeepMatch: true}
+      ],
+      '/admin/dispatch': [
+         {label: 'Dispatch', icon: '', route: '/admin/dispatch'},
+         {label: 'Schedule', icon: '', route: '/admin/scheduling-jobs', allowDeepMatch: true},
+         {label: 'Jobs', icon: '', route: '/admin/jobs', allowDeepMatch: true}
+      ],
       '/admin/employees': [
          {label: 'Employees', icon: '', route: '/admin/employees'},
          {label: 'Scheduling', icon: '', route: '/admin/employees/scheduling-employees', allowDeepMatch: true},
@@ -32,11 +51,15 @@ export class NavService {
          {label: 'Materials', icon: '', route: '/admin/pricebook', allowDeepMatch: true},
          {label: 'Services', icon: '', route: '/general/edit-profile'}
       ],
+      '/admin/billing-payments': this.billingNavItems,
+      '/admin/connectedpayment': this.billingNavItems
    };
 
    getNavItems(path: string): NavItem[] {
+      const normalizedPath = path.split('?')[0].split('#')[0];
+
       const matchingKey = Object.keys(this.navConfig)
-         .filter(key => path.startsWith(key))
+         .filter(key => normalizedPath.startsWith(key))
          .sort((a, b) => b.length - a.length)[0];
 
       const items = matchingKey ? this.navConfig[matchingKey] : [];
@@ -44,8 +67,22 @@ export class NavService {
       return items.map(item => {
          if (!item.route) return {...item, active: false};
 
-         const isExact = path === item.route;
-         const isDeep = item.allowDeepMatch && path.startsWith(item.route);
+         if (item.route === '/admin/billing-payments') {
+            return {
+               ...item,
+               active: normalizedPath.startsWith('/admin/billing-payments')
+            };
+         }
+
+         if (item.route === '/admin/connectedpayment') {
+            return {
+               ...item,
+               active: normalizedPath.startsWith('/admin/connectedpayment')
+            };
+         }
+
+         const isExact = normalizedPath === item.route;
+         const isDeep = item.allowDeepMatch && normalizedPath.startsWith(item.route);
 
          return {
             ...item,
