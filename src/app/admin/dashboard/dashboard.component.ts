@@ -177,11 +177,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
          {
             step: 'Step 4',
             title: 'Invoice and collect',
-            description: 'Close the loop with timely invoicing and proactive collections.',
+            description: 'Select the right job, then send an invoice without breaking flow.',
             metric: `${this.toCount(invoiceAttention.length)} invoices need follow-up`,
-            ctaLabel: 'Review invoices',
+            ctaLabel: 'Select job',
             route: '/admin/invoices',
-            queryParams: { returnTo: 'dashboard-command-center' },
+            queryParams: {
+               onboardingAction: 'select-job-for-invoice',
+               returnTo: 'dashboard-command-center'
+            },
             status: invoiceAttention.length > 0 ? 'attention' : 'clear'
          }
       ];
