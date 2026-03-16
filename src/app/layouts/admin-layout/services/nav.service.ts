@@ -32,6 +32,9 @@ export class NavService {
          {label: 'Employees', icon: '', route: '/admin/settings/branding'},
          {label: 'Clients', icon: '', route: '/general/edit-profile'}
       ],
+      '/admin/company': [
+         {label: 'Invoicing', icon: '', route: '/admin/invoices', allowDeepMatch: true}
+      ],
       '/admin/dispatch': [
          {label: 'Dispatch', icon: '', route: '/admin/dispatch'},
          {label: 'Schedule', icon: '', route: '/admin/scheduling-jobs', allowDeepMatch: true},
