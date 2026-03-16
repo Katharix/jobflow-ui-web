@@ -5,6 +5,7 @@ import {FormsModule, NgForm} from '@angular/forms';
 import {Auth, GoogleAuthProvider, signInWithPopup} from '@angular/fire/auth';
 import {AuthService} from '../services/auth.service';
 import {OrganizationContextService} from '../../services/shared/organization-context.service';
+import {ToastService} from '../../common/toast/toast.service';
 
 
 @Component({
@@ -33,7 +34,8 @@ export class LoginComponent implements OnInit {
       private router: Router,
       private route: ActivatedRoute,
       private authService: AuthService,
-      private orgContext: OrganizationContextService
+      private orgContext: OrganizationContextService,
+      private toast: ToastService
    ) {
    }
 
@@ -65,15 +67,18 @@ export class LoginComponent implements OnInit {
             next: (res) => {
 
                this.orgContext.setOrganization(res.organization);
+               this.toast.success('Welcome back!', 'Signed in');
                this.router.navigate(['/admin']);
             },
             error: (err) => {
                console.error('Backend login failed:', err);
                this.error = 'Login failed on server. Please try again.';
+               this.toast.error('Login failed. Please try again.');
             }
          });
       } catch (err: any) {
          this.error = err.message;
+         this.toast.error(this.error || 'Login failed.');
       }
    }
 
@@ -92,20 +97,25 @@ export class LoginComponent implements OnInit {
 
                   // ✅ Optional: store info
                   localStorage.setItem('isLoggedin', 'true');
-                  localStorage.setItem('userEmail', res.email);
+                  if (res?.organization) {
+                     this.orgContext.setOrganization(res.organization);
+                  }
 
                   // ✅ Step 4: navigate
+                  this.toast.success('Signed in with Google', 'Success');
                   this.router.navigate(['/admin']);
                },
                error: (err) => {
                   console.error('Backend login error:', err);
                   this.error = 'Login failed. Please try again.';
+                  this.toast.error('Login failed. Please try again.');
                }
             });
          })
          .catch((error) => {
             console.error('Google login error:', error);
             this.error = error.message;
+            this.toast.error('Google sign-in failed. Please try again.');
          });
    }
 

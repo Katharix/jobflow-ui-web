@@ -23,6 +23,10 @@
       <div class="col-lg-7">
         <div class="subscribe-card">
           <div class="subscribe-card__header">
+            <div class="flow-steps" aria-label="Signup steps">
+              <span class="flow-step is-active">1. Subscription</span>
+              <span class="flow-step">2. Create account</span>
+            </div>
             <h2>Purchase subscription plan</h2>
             <p class="text-muted">Complete the details below to continue to checkout.</p>
           </div>
@@ -231,6 +235,12 @@
                 <span *ngIf="isLoading$ | async">Processing...</span>
               </button>
             </div>
+            <p class="form-hint mt-2">
+              Next: After checkout, you will create your JobFlow login.
+            </p>
+            <p *ngIf="isLoading$ | async" class="form-hint">
+              Redirecting you to Stripe checkout...
+            </p>
           </form>
         </div>
       </div>
