@@ -7,7 +7,7 @@ import {
 } from '@angular/router';
 import {PreloaderComponent} from "../../landing/preloader.component";
 import {LoadingService} from '../../services/shared/loading-service.service';
-import {CommonModule} from '@angular/common';
+import {CommonModule, DOCUMENT} from '@angular/common';
 
 @Component({
    selector: 'app-auth-layout',
@@ -20,10 +20,12 @@ import {CommonModule} from '@angular/common';
 export class AuthLayoutComponent {
    private router = inject(Router);
    private loadingService = inject(LoadingService);
+   private document = inject(DOCUMENT);
 
    isLoading$ = this.loadingService.isLoading$;
 
    constructor() {
+      this.resetSidebarClasses();
       this.router.events.subscribe(event => {
 
          if (event instanceof NavigationStart) {
@@ -38,5 +40,9 @@ export class AuthLayoutComponent {
             this.loadingService.hide();
          }
       });
+   }
+
+   private resetSidebarClasses(): void {
+      this.document.body.classList.remove('sidebar-open', 'sidebar-folded', 'open-sidebar-folded', 'settings-open');
    }
 }

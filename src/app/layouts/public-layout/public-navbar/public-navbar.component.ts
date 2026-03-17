@@ -1,7 +1,8 @@
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Component, HostListener, Input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-public-navbar',
@@ -18,6 +19,21 @@ export class PublicNavbarComponent {
   isSticky = false
 
   currentSection = 'home';
+  private pendingSection: string | null = null;
+
+  constructor(private router: Router) {
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe(() => {
+        if (!this.pendingSection) {
+          return;
+        }
+
+        const sectionId = this.pendingSection;
+        this.pendingSection = null;
+        setTimeout(() => this.scrollToSection(sectionId), 0);
+      });
+  }
 
   @HostListener('window:scroll')
   onWindowScroll(): void {
@@ -43,6 +59,18 @@ export class PublicNavbarComponent {
     const navbarOffset = 85;
     const top = Math.max(element.offsetTop - navbarOffset, 0);
     window.scrollTo({ top, behavior: 'smooth' });
+    this.isCollapsed = true;
+  }
+
+  navigateToSection(sectionId: string): void {
+    const onHome = this.router.url === '/' || this.router.url.startsWith('/#');
+    if (onHome) {
+      this.scrollToSection(sectionId);
+      return;
+    }
+
+    this.pendingSection = sectionId;
+    this.router.navigate(['/'], { fragment: sectionId });
     this.isCollapsed = true;
   }
 

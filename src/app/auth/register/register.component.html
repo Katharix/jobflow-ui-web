@@ -16,7 +16,6 @@
             <span><i class="ti ti-circle-check text-success me-2"></i>Secure login with Firebase</span>
             <span><i class="ti ti-circle-check text-success me-2"></i>Ready for billing activation</span>
           </div>
-          <img src="/assets/public/images/creative.svg" alt="JobFlow pattern" class="register-hero__image" />
         </div>
       </div>
 
@@ -121,14 +120,9 @@
             </div>
 
             <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isSubmitting || isGoogleLoading">
+              <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isSubmitting">
                 <span *ngIf="!isSubmitting">Create Account</span>
                 <span *ngIf="isSubmitting">Creating account...</span>
-              </button>
-              <button type="button" class="btn btn-outline-dark" (click)="loginWithGoogle()" [disabled]="isSubmitting || isGoogleLoading">
-                <i class="feather icon-mail me-1"></i>
-                <span *ngIf="!isGoogleLoading">Sign up with Google</span>
-                <span *ngIf="isGoogleLoading">Signing in...</span>
               </button>
             </div>
 

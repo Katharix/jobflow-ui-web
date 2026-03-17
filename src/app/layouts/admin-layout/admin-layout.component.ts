@@ -1,4 +1,5 @@
 import {ChangeDetectorRef, Component, inject, OnInit, ViewEncapsulation} from '@angular/core';
+import {DOCUMENT} from '@angular/common';
 import {
    NavigationEnd,
    RouteConfigLoadEnd,
@@ -30,11 +31,13 @@ export class AdminLayoutComponent implements OnInit {
    private router = inject(Router);
    private loadingService = inject(LoadingService);
    private cdr = inject(ChangeDetectorRef);
+   private document = inject(DOCUMENT);
 
    constructor() {
    }
 
    ngOnInit(): void {
+      this.resetSidebarClasses();
       this.loadingService.isLoading$.subscribe(value => {
          // Use setTimeout to push change detection to the next cycle
          setTimeout(() => {
@@ -42,5 +45,9 @@ export class AdminLayoutComponent implements OnInit {
             this.cdr.detectChanges(); // <-- Safely tell Angular to recheck
          });
       });
+   }
+
+   private resetSidebarClasses(): void {
+      this.document.body.classList.remove('sidebar-open', 'sidebar-folded', 'open-sidebar-folded', 'settings-open');
    }
 }

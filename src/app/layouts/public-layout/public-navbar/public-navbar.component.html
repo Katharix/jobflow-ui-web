@@ -18,10 +18,9 @@
         @for (item of navLinks; track $index) {
         <li class="nav-item">
           <a
-            [routerLink]="item === 'login' ? '/admin' : null"
-            [href]="item !== 'login' ? '#' + item : null"
+            [attr.href]="'/' + '#' + item"
             class="nav-link"
-            (click)="item !== 'login' && scrollToSection(item)"
+            (click)="$event.preventDefault(); navigateToSection(item)"
             [class.active]="isActiveSection(item)">
             {{ item | titlecase }}
           </a>

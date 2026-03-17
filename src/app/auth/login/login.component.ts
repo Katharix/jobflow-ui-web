@@ -2,7 +2,7 @@ import {CommonModule} from '@angular/common';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {FormsModule, NgForm} from '@angular/forms';
-import {Auth, GoogleAuthProvider, signInWithPopup} from '@angular/fire/auth';
+import {Auth} from '@angular/fire/auth';
 import {AuthService} from '../services/auth.service';
 import {OrganizationContextService} from '../../services/shared/organization-context.service';
 import {ToastService} from '../../common/toast/toast.service';
@@ -77,46 +77,50 @@ export class LoginComponent implements OnInit {
             }
          });
       } catch (err: any) {
-         this.error = err.message;
+         this.error = this.mapFirebaseAuthError(err);
          this.toast.error(this.error || 'Login failed.');
       }
    }
 
 
-   loginWithGoogle() {
-      const provider = new GoogleAuthProvider();
 
-      signInWithPopup(this.auth, provider)
-         .then(async (result) => {
-            const user = result.user;
-            const idToken = await user.getIdToken(); // ✅ Step 2
+   private mapFirebaseAuthError(error: any): string {
+      const code = error?.code as string | undefined;
+      if (!code) {
+         return error?.message || 'Something went wrong. Please try again.';
+      }
 
-            // ✅ Step 3: Call backend to create/sync user
-            this.authService.loginWithFirebase(idToken).subscribe({
-               next: (res) => {
+      let message: string;
+      switch (code) {
+         case 'auth/invalid-email':
+            message = 'Please enter a valid email address.';
+            break;
+         case 'auth/user-not-found':
+         case 'auth/wrong-password':
+         case 'auth/invalid-credential':
+            message = 'Incorrect email or password.';
+            break;
+         case 'auth/user-disabled':
+            message = 'This account is disabled. Contact support for help.';
+            break;
+         case 'auth/too-many-requests':
+            message = 'Too many attempts. Please wait a moment and try again.';
+            break;
+         case 'auth/network-request-failed':
+            message = 'Network error. Check your connection and try again.';
+            break;
+         case 'auth/operation-not-allowed':
+            message = 'Email/password sign-in is not enabled for this project.';
+            break;
+         case 'auth/unauthorized-domain':
+            message = 'This domain is not authorized for sign-in.';
+            break;
+         default:
+            message = error?.message || 'Something went wrong. Please try again.';
+            break;
+      }
 
-                  // ✅ Optional: store info
-                  localStorage.setItem('isLoggedin', 'true');
-                  if (res?.organization) {
-                     this.orgContext.setOrganization(res.organization);
-                  }
-
-                  // ✅ Step 4: navigate
-                  this.toast.success('Signed in with Google', 'Success');
-                  this.router.navigate(['/admin']);
-               },
-               error: (err) => {
-                  console.error('Backend login error:', err);
-                  this.error = 'Login failed. Please try again.';
-                  this.toast.error('Login failed. Please try again.');
-               }
-            });
-         })
-         .catch((error) => {
-            console.error('Google login error:', error);
-            this.error = error.message;
-            this.toast.error('Google sign-in failed. Please try again.');
-         });
+      return `${message} (code: ${code})`;
    }
 
 }
