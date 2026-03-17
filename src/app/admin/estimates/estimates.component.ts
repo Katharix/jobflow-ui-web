@@ -185,10 +185,10 @@ export class EstimatesComponent implements OnInit {
         template: this.clientTemplate,
       },
       {
-        field: 'estimateDate',
+        field: 'createdAt',
         headerText: 'Date',
         width: 135,
-        valueAccessor: (_: string, d: Estimate) => this.formatDate(d.estimateDate),
+        valueAccessor: (_: string, d: Estimate) => this.formatDate(d.createdAt),
       },
       {
         field: 'expirationDate',
