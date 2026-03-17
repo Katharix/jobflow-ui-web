@@ -1,85 +1,146 @@
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-xl-5">
-      <div class="p-4 rounded-3 bg-white">
-        <div class="text-center mb-4">
-          <a routerLink=".">
-            <img src="/assets/public/images/Asset 1.png" alt="Logo" style="height: 40px;" />
+<section class="register-shell">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="register-hero">
+          <a routerLink="/" class="register-hero__logo">
+            <img src="/assets/public/images/Asset 1.png" alt="JobFlow" />
           </a>
-          <h5 class="text-muted fw-normal mt-3">Create your account</h5>
+          <p class="register-hero__eyebrow">Join JobFlow</p>
+          <h1>Turn new leads into paid jobs faster.</h1>
+          <p class="register-hero__lead">
+            Set up your account so your team can schedule crews, send estimates, and collect payments.
+          </p>
+          <div class="register-hero__checks">
+            <span><i class="ti ti-circle-check text-success me-2"></i>Instant access to your workspace</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>Secure login with Firebase</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>Ready for billing activation</span>
+          </div>
+          <img src="/assets/public/images/creative.svg" alt="JobFlow pattern" class="register-hero__image" />
         </div>
+      </div>
 
-        <form (ngSubmit)="onRegister($event)">
-          <!-- Company Name -->
-          <div class="form-group form-floating-line mb-4">
-            <input type="text"
-                   class="form-control no-border"
-                   id="orgName"
-                   name="organizationName"
-                   placeholder="Company Name"
-                   [(ngModel)]="organizationName"
-                   disabled />
-          
+      <div class="col-lg-6">
+        <div class="register-card">
+          <div class="register-card__header">
+            <div class="flow-steps" aria-label="Signup steps">
+              <span class="flow-step">1. Subscription</span>
+              <span class="flow-step is-active">2. Create account</span>
+            </div>
+            <h2>Create your account</h2>
+            <p class="text-muted">Finish your details to launch JobFlow.</p>
           </div>
 
-          <!-- Email / Username -->
-          <div class="form-group form-floating-line mb-4">
-            <input type="text"
-                   class="form-control no-border"
-                   id="email"
-                   name="email"
-                   placeholder="Email"
-                   [(ngModel)]="email"
-                    />
-         
-          </div>
+          <form #form="ngForm" (ngSubmit)="onRegister($event)" novalidate>
+            <div *ngIf="submitted && form.invalid" class="alert alert-danger">
+              Please fix the highlighted fields and try again.
+            </div>
 
-          <!-- Password -->
-          <div class="form-group form-floating-line mb-4">
-            <input type="password"
-                   class="form-control no-border"
-                   id="password"
-                   name="password"
-                   placeholder="Password"
-                   [(ngModel)]="password"
-                   required
-                   minlength="8"
-                   [pattern]="pattern"
-                   #passwordModel="ngModel" />
-         
-            <div *ngIf="passwordModel.invalid && passwordModel.touched" class="text-danger mt-1">
-              <div *ngIf="passwordModel.errors?.['required']">Password is required.</div>
-              <div *ngIf="passwordModel.errors?.['minlength']">Minimum 8 characters required.</div>
-              <div *ngIf="passwordModel.errors?.['pattern']">
-                Must include uppercase, lowercase, number, and special character.
+            <div *ngIf="error" class="alert alert-danger">
+              {{ error }}
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label" for="orgName">Company name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="orgName"
+                name="organizationName"
+                placeholder="Company Name"
+                [(ngModel)]="organizationName"
+                disabled
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label" for="email">Work email</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                placeholder="you@company.com"
+                [(ngModel)]="email"
+                required
+                email
+                #emailModel="ngModel"
+                [readonly]="organizationId"
+                [ngClass]="{ 'is-invalid': emailModel.invalid && (emailModel.touched || submitted) }"
+              />
+              <div *ngIf="emailModel.invalid && (emailModel.touched || submitted)" class="text-danger mt-1">
+                <div *ngIf="emailModel.errors?.['required']">Email is required.</div>
+                <div *ngIf="emailModel.errors?.['email']">Enter a valid email address.</div>
+              </div>
+              <div *ngIf="organizationId" class="form-hint mt-1">This is the billing email you entered.</div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label" for="password">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+                placeholder="Create a password"
+                [(ngModel)]="password"
+                required
+                minlength="8"
+                [pattern]="pattern"
+                #passwordModel="ngModel"
+                [ngClass]="{ 'is-invalid': passwordModel.invalid && (passwordModel.touched || submitted) }"
+              />
+              <div *ngIf="passwordModel.invalid && (passwordModel.touched || submitted)" class="text-danger mt-1">
+                <div *ngIf="passwordModel.errors?.['required']">Password is required.</div>
+                <div *ngIf="passwordModel.errors?.['minlength']">Minimum 8 characters required.</div>
+                <div *ngIf="passwordModel.errors?.['pattern']">
+                  Must include uppercase, lowercase, number, and special character.
+                </div>
+              </div>
+              <div class="form-hint mt-1">
+                Use at least 8 characters with upper/lowercase, number, and symbol.
               </div>
             </div>
-          </div>
 
-          <!-- Confirm Password -->
-          <div class="form-group form-floating-line mb-4">
-            <input type="password"
-                   class="form-control no-border"
-                   id="confirmPassword"
-                   name="confirmPassword"
-                   placeholder="Confirm Password"
-                   [(ngModel)]="confirmPassword"
-                   required />
+            <div class="form-group mb-3">
+              <label class="form-label" for="confirmPassword">Confirm password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                [(ngModel)]="confirmPassword"
+                required
+                #confirmPasswordModel="ngModel"
+                [ngClass]="{ 'is-invalid': confirmPasswordModel.invalid && (confirmPasswordModel.touched || submitted) }"
+              />
+              <div *ngIf="confirmPasswordModel.invalid && (confirmPasswordModel.touched || submitted)" class="text-danger mt-1">
+                Confirm your password.
+              </div>
+            </div>
 
-          </div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isSubmitting || isGoogleLoading">
+                <span *ngIf="!isSubmitting">Create Account</span>
+                <span *ngIf="isSubmitting">Creating account...</span>
+              </button>
+              <button type="button" class="btn btn-outline-dark" (click)="loginWithGoogle()" [disabled]="isSubmitting || isGoogleLoading">
+                <i class="feather icon-mail me-1"></i>
+                <span *ngIf="!isGoogleLoading">Sign up with Google</span>
+                <span *ngIf="isGoogleLoading">Signing in...</span>
+              </button>
+            </div>
 
-          <!-- Remember Me -->
-          <div class="form-check mb-3">
-            <input type="checkbox" class="form-check-input" id="authCheck" />
-            <label class="form-check-label" for="authCheck">Remember me</label>
-          </div>
-
-          <!-- Submit -->
-          <div class="d-grid">
-            <button type="submit" class="btn btn-primary">Create Account</button>
-          </div>
-        </form>
+            <div class="register-card__footer">
+              <span>By continuing, you agree to our</span>
+              <a routerLink="/terms">Terms</a>
+              <span>and</span>
+              <a routerLink="/privacy">Privacy Policy</a>.
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</section>

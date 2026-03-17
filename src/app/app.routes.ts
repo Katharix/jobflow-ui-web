@@ -30,6 +30,8 @@ import {HelpComponent} from "./admin/help/help.component";
 import {EstimatesComponent} from "./admin/estimates/estimates.component";
 import {EstimateComponent} from "./views/general/estimate/estimate.component";
 import {NotFoundComponent} from "./views/general/not-found/not-found.component";
+import {TermsComponent} from "./views/general/terms/terms.component";
+import {PrivacyComponent} from "./views/general/privacy/privacy.component";
 import {BillingPaymentsComponent} from './admin/billing-payments/billing-payments.component';
 import { DispatchComponent } from './admin/dispatch/dispatch.component';
 
@@ -39,7 +41,9 @@ export const routes: Routes = [
       path: '',
       component: PublicLayoutComponent,
       children: [
-         {path: '', component: HomeComponent}
+         {path: '', component: HomeComponent},
+         {path: 'terms', component: TermsComponent},
+         {path: 'privacy', component: PrivacyComponent}
       ]
    },
    {path: 'i', loadChildren: () => import('./views/general/invite-accept/invite.routes').then(m => m.INVITE_ROUTES)},

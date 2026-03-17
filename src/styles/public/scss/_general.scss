@@ -2,10 +2,22 @@
 // General
 // 
 
+:root {
+    --jf-ink: #0f172a;
+    --jf-muted: #475569;
+    --jf-line: #e2e8f0;
+    --jf-surface: #ffffff;
+    --jf-surface-2: #f8fafc;
+    --jf-accent: #1d4ed8;
+    --jf-accent-strong: #1e40af;
+    --jf-accent-soft: #eff6ff;
+}
 
 body {
     font-family: $font-primary !important;
     font-size: $base-font !important;
+    color: var(--jf-ink);
+    background-color: var(--jf-surface-2);
 }
 
 h1,
@@ -15,6 +27,8 @@ h4,
 h5,
 h6 {
     font-family: $font-secondary !important;
+    color: var(--jf-ink);
+    letter-spacing: -0.01em;
 }
 
 a {
@@ -24,7 +38,8 @@ a {
 
 p {
     font-size: 16px !important;
-    line-height: 1.6 !important;
+    line-height: 1.7 !important;
+    color: var(--jf-muted);
 }
 
 html {

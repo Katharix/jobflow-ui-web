@@ -4,14 +4,14 @@
 
 
 .section {
-  padding-top: 90px;
-  padding-bottom: 90px;
+  padding-top: 96px;
+  padding-bottom: 96px;
   position: relative;
 }
 
 .section-sm {
-  padding-top: 60px !important;
-  padding-bottom: 60px !important;
+  padding-top: 72px !important;
+  padding-bottom: 72px !important;
   position: relative;
 }
 
@@ -39,7 +39,8 @@
 }
 
 .title h3 {
-  font-size: 26px;
+  font-size: 30px;
+  line-height: 1.25;
 }
 
 .title p.subtitle {
@@ -115,37 +116,41 @@ a.text-custom:hover {
 }
 
 .icon {
-  height: 30px;
-  width: 30px;
+  height: 32px;
+  width: 32px;
+  border-radius: 8px;
 }
 
 .icon-bg {
-  height: 40px;
-  width: 40px;
-  background-color: rgba($primary , 0.1);
+  height: 42px;
+  width: 42px;
+  border-radius: 10px;
+  background-color: rgba($primary , 0.12);
 }
 
 .icon-lg {
-  height: 50px;
-  width: 50px;
-  background-color: rgba($primary , 0.1);
+  height: 54px;
+  width: 54px;
+  border-radius: 12px;
+  background-color: rgba($primary , 0.12);
 }
 
 .img-part {
   &::after {
       content: "";
       position: absolute;
-      right: 128px;
-      height: 300px;
-      width: 300px;
-      bottom: 75%;
-      background-color: rgba($primary , 0.4);
+  right: 110px;
+  height: 260px;
+  width: 260px;
+  bottom: 70%;
+  background-color: rgba($primary , 0.12);
       margin: 0 auto;
-      border-radius: 50%;
+  border-radius: 24px;
       -webkit-transform: translateY(50%);
       transform: translateY(50%);
       -webkit-transition: all .5s;
       transition: all .5s;
+  border: 1px solid rgba($primary, 0.2);
       z-index: -1;
 
       @media(max-width: 568.98px) {

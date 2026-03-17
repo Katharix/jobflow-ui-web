@@ -1,54 +1,100 @@
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-xl-5">
-      <div class="p-4 rounded-3 bg-white">
-        <div class="text-center mb-4">
-          <a routerLink=".">
-            <img src="/assets/public/images/Asset 1.png" alt="Logo" style="height: 40px;" />
+<section class="login-shell">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="login-hero">
+          <a routerLink="/" class="login-hero__logo">
+            <img src="/assets/public/images/Asset 1.png" alt="JobFlow" />
           </a>
-          <h5 class="text-muted fw-normal mt-3">Welcome back! Log in to your account.</h5>
+          <p class="login-hero__eyebrow">Welcome back</p>
+          <h1>Run every job from request to payment.</h1>
+          <p class="login-hero__lead">
+            Sign in to schedule crews, send estimates, and get paid faster with a single workflow.
+          </p>
+          <div class="login-hero__checks">
+            <span><i class="ti ti-circle-check text-success me-2"></i>Dispatch-ready calendar</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>Instant estimate to invoice</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>Modern payment links</span>
+          </div>
+          <img src="/assets/public/images/creative.svg" alt="JobFlow pattern" class="login-hero__image" />
         </div>
+      </div>
 
-        <form #form="ngForm" (ngSubmit)="onLoggedin($event)">
-          <!-- Email -->
-          <div class="form-group form-floating-line mb-4">
-            <input type="email" class="form-control no-border" id="email" name="email" placeholder="Email"
-              [(ngModel)]="email" required email #emailModel="ngModel" />
-            <!-- <label for="email" class="form-label">Email address</label> -->
-            <div *ngIf="emailModel.invalid && emailModel.touched" class="text-danger mt-1">
-              <div *ngIf="emailModel.errors?.['required']">Email is required.</div>
-              <div *ngIf="emailModel.errors?.['email']">Enter a valid email address.</div>
+      <div class="col-lg-6">
+        <div class="login-card">
+          <div class="login-card__header">
+            <h2>Sign in</h2>
+            <p class="text-muted">Use your JobFlow account to continue.</p>
+          </div>
+
+          <form #form="ngForm" (ngSubmit)="onLoggedin($event)" novalidate>
+            <div class="form-group mb-3">
+              <label class="form-label" for="email">Email address</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                placeholder="you@company.com"
+                [(ngModel)]="email"
+                required
+                email
+                #emailModel="ngModel"
+                [ngClass]="{ 'is-invalid': emailModel.invalid && (emailModel.touched || submitted) }"
+              />
+              <div *ngIf="emailModel.invalid && (emailModel.touched || submitted)" class="text-danger mt-1">
+                <div *ngIf="emailModel.errors?.['required']">Email is required.</div>
+                <div *ngIf="emailModel.errors?.['email']">Enter a valid email address.</div>
+              </div>
             </div>
-          </div>
 
-          <!-- Password -->
-          <div class="form-group form-floating-line mb-4">
-            <input type="password" class="form-control no-border" id="password" name="password" placeholder="Password"
-              [(ngModel)]="password" required minlength="6" #passwordModel="ngModel" />
-            <!-- <label for="password" class="form-label">Password</label> -->
-            <div *ngIf="passwordModel.invalid && passwordModel.touched" class="text-danger mt-1">
-              <div *ngIf="passwordModel.errors?.['required']">Password is required.</div>
-              <div *ngIf="passwordModel.errors?.['minlength']">Password must be at least 6 characters.</div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="password">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+                placeholder="Your password"
+                [(ngModel)]="password"
+                required
+                minlength="6"
+                #passwordModel="ngModel"
+                [ngClass]="{ 'is-invalid': passwordModel.invalid && (passwordModel.touched || submitted) }"
+              />
+              <div *ngIf="passwordModel.invalid && (passwordModel.touched || submitted)" class="text-danger mt-1">
+                <div *ngIf="passwordModel.errors?.['required']">Password is required.</div>
+                <div *ngIf="passwordModel.errors?.['minlength']">Password must be at least 6 characters.</div>
+              </div>
             </div>
-          </div>
 
-          <!-- Error -->
-          <div *ngIf="error" class="alert alert-danger">
-            {{ error }}
-          </div>
+            <div *ngIf="submitted && form.invalid" class="alert alert-danger">
+              Please fix the highlighted fields and try again.
+            </div>
 
-          <!-- Buttons -->
-          <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
-              Login
-            </button>
-            <button type="button" class="btn btn-outline-dark" (click)="loginWithGoogle()">
-              <i class="feather icon-mail me-1"></i>
-              Sign in with Google
-            </button>
-          </div>
-        </form>
+            <div *ngIf="error" class="alert alert-danger">
+              {{ error }}
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+                Login
+              </button>
+              <button type="button" class="btn btn-outline-dark" (click)="loginWithGoogle()">
+                <i class="feather icon-mail me-1"></i>
+                Sign in with Google
+              </button>
+            </div>
+
+            <div class="login-card__footer">
+              <span>By continuing, you agree to our</span>
+              <a routerLink="/terms">Terms</a>
+              <span>and</span>
+              <a routerLink="/privacy">Privacy Policy</a>.
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</section>

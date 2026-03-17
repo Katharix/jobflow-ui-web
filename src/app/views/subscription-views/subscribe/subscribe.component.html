@@ -1,150 +1,249 @@
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-10 col-xl-8">
-      <div class="p-4 rounded-3 bg-white">
-        <div class="text-center mb-4">
-          <a routerLink=".">
-            <img src="/assets/public/images/Asset 1.png" alt="Logo" style="height: 40px;" />
+<section class="subscribe-shell">
+  <div class="container">
+    <div class="row align-items-start g-5">
+      <div class="col-lg-5">
+        <div class="subscribe-hero">
+          <a routerLink="/" class="subscribe-hero__logo">
+            <img src="/assets/public/images/Asset 1.png" alt="JobFlow" />
           </a>
-          <h5 class="text-muted fw-normal mt-3">Purchase Subscription Plan</h5>
+          <p class="subscribe-hero__eyebrow">Get started</p>
+          <h1>Launch your JobFlow workspace in minutes.</h1>
+          <p class="subscribe-hero__lead">
+            Enter your business details to activate billing and unlock scheduling, estimates, and payments.
+          </p>
+          <div class="subscribe-hero__checks">
+            <span><i class="ti ti-circle-check text-success me-2"></i>Instant access after checkout</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>Secure payments via Stripe</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>Cancel anytime</span>
+          </div>
+          <img src="/assets/public/images/creative.svg" alt="JobFlow pattern" class="subscribe-hero__image" />
         </div>
+      </div>
 
-        <form #form="ngForm" (ngSubmit)="onSubscribe($event)">
-          <!-- Error Message -->
-          <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ error }}
-            <button type="button" class="btn-close" (click)="error = ''"></button>
+      <div class="col-lg-7">
+        <div class="subscribe-card">
+          <div class="subscribe-card__header">
+            <div class="flow-steps" aria-label="Signup steps">
+              <span class="flow-step is-active">1. Subscription</span>
+              <span class="flow-step">2. Create account</span>
+            </div>
+            <h2>Purchase subscription plan</h2>
+            <p class="text-muted">Complete the details below to continue to checkout.</p>
           </div>
 
-          <!-- Company Name and Type -->
-          <div class="row">
-            <div class="col-md-6 mb-4 form-floating-line">
-              <input type="text" class="form-control no-border" placeholder="Company Name"
-                [(ngModel)]="organizationName" name="organizationName" required minlength="2"
-                #companyNameCtrl="ngModel" />
+          <form #form="ngForm" (ngSubmit)="onSubscribe($event)" novalidate>
+            <div *ngIf="submitted && form.invalid" class="alert alert-danger">
+              Please fix the highlighted fields and try again.
+            </div>
 
-              <div *ngIf="companyNameCtrl.invalid && companyNameCtrl.touched" class="text-danger small">
-                <div *ngIf="companyNameCtrl.errors?.['required']">Company name is required.</div>
-                <div *ngIf="companyNameCtrl.errors?.['minlength']">Minimum 2 characters.</div>
+            <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+              {{ error }}
+              <button type="button" class="btn-close" (click)="error = ''"></button>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Company name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Company Name"
+                  [(ngModel)]="organizationName"
+                  name="organizationName"
+                  required
+                  minlength="2"
+                  #companyNameCtrl="ngModel"
+                  [ngClass]="{ 'is-invalid': companyNameCtrl.invalid && (companyNameCtrl.touched || submitted) }"
+                />
+                <div *ngIf="companyNameCtrl.invalid && (companyNameCtrl.touched || submitted)" class="text-danger small">
+                  <div *ngIf="companyNameCtrl.errors?.['required']">Company name is required.</div>
+                  <div *ngIf="companyNameCtrl.errors?.['minlength']">Minimum 2 characters.</div>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Company type</label>
+                <select
+                  class="form-select"
+                  [(ngModel)]="selectedOrganizationTypeId"
+                  name="organizationType"
+                  required
+                  #orgTypeCtrl="ngModel"
+                  [ngClass]="{ 'is-invalid': orgTypeCtrl.invalid && (orgTypeCtrl.touched || submitted) }"
+                >
+                  <option [ngValue]="''" disabled>Select company type</option>
+                  <option *ngFor="let type of organizationTypes" [ngValue]="type.id">
+                    {{ type.typeName }}
+                  </option>
+                </select>
+                <div *ngIf="orgTypeCtrl.invalid && (orgTypeCtrl.touched || submitted)" class="text-danger small">
+                  Please select a company type.
+                </div>
               </div>
             </div>
 
-            <div class="col-md-6 mb-4 form-floating-line">
-              <select class="form-select no-border" [(ngModel)]="selectedOrganizationTypeId" name="organizationType"
-                required #orgTypeCtrl="ngModel">
-
-                <!-- Placeholder -->
-                <option [ngValue]="'00000000-0000-0000-0000-000000000000'" disabled hidden>
-                  Select company type
-                </option>
-
-                <!-- Real options -->
-                <option *ngFor="let type of organizationTypes" [ngValue]="type.id">
-                  {{ type.typeName }}
-                </option>
-              </select>
-
-              <div *ngIf="orgTypeCtrl.invalid && orgTypeCtrl.touched" class="text-danger small">
-                Please select a company type.
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Work email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="you@company.com"
+                  [(ngModel)]="email"
+                  name="email"
+                  required
+                  email
+                  #emailCtrl="ngModel"
+                  [ngClass]="{ 'is-invalid': emailCtrl.invalid && (emailCtrl.touched || submitted) }"
+                />
+                <div *ngIf="emailCtrl.invalid && (emailCtrl.touched || submitted)" class="text-danger small">
+                  <div *ngIf="emailCtrl.errors?.['required']">Email is required.</div>
+                  <div *ngIf="emailCtrl.errors?.['email']">Enter a valid email.</div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <!-- Email and Phone -->
-          <div class="row">
-            <div class="col-md-6 mb-4 form-floating-line">
-              <input type="email" class="form-control no-border" placeholder="Email" [(ngModel)]="email" name="email"
-                required email #emailCtrl="ngModel" />
-
-              <div *ngIf="emailCtrl.invalid && emailCtrl.touched" class="text-danger small">
-                <div *ngIf="emailCtrl.errors?.['required']">Email is required.</div>
-                <div *ngIf="emailCtrl.errors?.['email']">Enter a valid email.</div>
-              </div>
-            </div>
-
-            <div class="col-md-6 mb-4 form-floating-line">
-              <input type="text" class="form-control no-border" placeholder="Phone Number" [(ngModel)]="phoneNumber"
-                name="phoneNumber" required #phoneCtrl="ngModel" />
-
-              <div *ngIf="phoneCtrl.invalid && phoneCtrl.touched" class="text-danger small">
-                Phone number is required.
-              </div>
-            </div>
-          </div>
-
-          <!-- Address -->
-          <div class="mb-4 form-floating-line">
-            <input type="text" class="form-control no-border" placeholder="Business Address"
-              [(ngModel)]="companyAddress" name="companyAddress" required #addressCtrl="ngModel" #addressInput />
-
-            <div *ngIf="addressCtrl.invalid && addressCtrl.touched" class="text-danger small">
-              Business address is required.
-            </div>
-          </div>
-
-          <div class="mb-4 form-floating-line">
-            <input type="text" class="form-control no-border" placeholder="Business Address 2"
-              [(ngModel)]="companyAddress2" name="companyAddress2" />
-
-          </div>
-
-          <div class="mb-4 form-floating-line">
-            <input type="text" class="form-control no-border" placeholder="City" [(ngModel)]="city" name="city" required
-              #cityCtrl="ngModel" />
-
-            <div *ngIf="cityCtrl.invalid && cityCtrl.touched" class="text-danger small">
-              City is required.
-            </div>
-          </div>
-
-          <!-- State and Zip -->
-          <div class="row">
-            <div class="col-md-6 mb-4 form-floating-line">
-              <select class="form-select no-border" [(ngModel)]="state" name="state" required #stateCtrl="ngModel">
-                <option [ngValue]="null" disabled selected>Select state</option>
-                <option *ngFor="let s of usStates" [value]="s.code">{{ s.name }}</option>
-              </select>
-              <label class="form-label">State</label>
-              <div *ngIf="stateCtrl.invalid && stateCtrl.touched" class="text-danger small">
-                State is required.
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Phone number</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="(555) 555-1234"
+                  [(ngModel)]="phoneNumber"
+                  name="phoneNumber"
+                  required
+                  pattern="^[0-9+()\\s-]{7,}$"
+                  #phoneCtrl="ngModel"
+                  [ngClass]="{ 'is-invalid': phoneCtrl.invalid && (phoneCtrl.touched || submitted) }"
+                />
+                <div *ngIf="phoneCtrl.invalid && (phoneCtrl.touched || submitted)" class="text-danger small">
+                  <div *ngIf="phoneCtrl.errors?.['required']">Phone number is required.</div>
+                  <div *ngIf="phoneCtrl.errors?.['pattern']">Enter a valid phone number.</div>
+                </div>
               </div>
             </div>
 
-            <div class="col-md-6 mb-4 form-floating-line">
-              <input type="text" class="form-control no-border" placeholder="Zip Code" [(ngModel)]="zipCode"
-                name="zipCode" required pattern="^[0-9]{5}$" #zipCtrl="ngModel" />
-
-              <div *ngIf="zipCtrl.invalid && zipCtrl.touched" class="text-danger small">
-                <div *ngIf="zipCtrl.errors?.['required']">Zip code is required.</div>
-                <div *ngIf="zipCtrl.errors?.['pattern']">Zip code must be 5 digits.</div>
+            <div class="mb-3">
+              <label class="form-label">Business address</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Business Address"
+                [(ngModel)]="companyAddress"
+                name="companyAddress"
+                required
+                #addressCtrl="ngModel"
+                #addressInput
+                [ngClass]="{ 'is-invalid': addressCtrl.invalid && (addressCtrl.touched || submitted) }"
+              />
+              <div *ngIf="addressCtrl.invalid && (addressCtrl.touched || submitted)" class="text-danger small">
+                Business address is required.
               </div>
             </div>
-          </div>
 
-          <!-- Consent -->
-          <div class="form-check mb-4">
-            <input class="form-check-input" type="checkbox" id="twilioConsent" name="twilioConsent"
-              [(ngModel)]="twilioConsent" required #twilioConsentCtrl="ngModel" />
-            <label class="form-check-label" for="twilioConsent">
-              I consent to receive SMS or voice calls regarding my subscription and service usage.
-            </label>
-            <div *ngIf="twilioConsentCtrl.invalid && twilioConsentCtrl.touched" class="text-danger small">
-              You must provide consent to continue.
+            <div class="mb-3">
+              <label class="form-label">Business address 2</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Suite, unit, etc."
+                [(ngModel)]="companyAddress2"
+                name="companyAddress2"
+              />
             </div>
-            <small class="form-text text-muted">
-              Message and data rates may apply. You can opt out at any time by replying STOP.
-            </small>
-          </div>
 
-          <!-- Submit -->
-          <div class="d-grid">
-            <button type="submit" class="btn btn-primary" [disabled]="form.invalid || (isLoading$ | async)">
-              <span *ngIf="!(isLoading$ | async)">Purchase</span>
-              <span *ngIf="isLoading$ | async">Processing...</span>
-            </button>
-          </div>
-        </form>
+            <div class="mb-3">
+              <label class="form-label">City</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="City"
+                [(ngModel)]="city"
+                name="city"
+                required
+                #cityCtrl="ngModel"
+                [ngClass]="{ 'is-invalid': cityCtrl.invalid && (cityCtrl.touched || submitted) }"
+              />
+              <div *ngIf="cityCtrl.invalid && (cityCtrl.touched || submitted)" class="text-danger small">
+                City is required.
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">State</label>
+                <select
+                  class="form-select"
+                  [(ngModel)]="state"
+                  name="state"
+                  required
+                  #stateCtrl="ngModel"
+                  [ngClass]="{ 'is-invalid': stateCtrl.invalid && (stateCtrl.touched || submitted) }"
+                >
+                  <option [ngValue]="''" disabled>Select state</option>
+                  <option *ngFor="let s of usStates" [value]="s.code">{{ s.name }}</option>
+                </select>
+                <div *ngIf="stateCtrl.invalid && (stateCtrl.touched || submitted)" class="text-danger small">
+                  State is required.
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Zip code</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Zip Code"
+                  [(ngModel)]="zipCode"
+                  name="zipCode"
+                  required
+                  pattern="^[0-9]{5}$"
+                  #zipCtrl="ngModel"
+                  [ngClass]="{ 'is-invalid': zipCtrl.invalid && (zipCtrl.touched || submitted) }"
+                />
+                <div *ngIf="zipCtrl.invalid && (zipCtrl.touched || submitted)" class="text-danger small">
+                  <div *ngIf="zipCtrl.errors?.['required']">Zip code is required.</div>
+                  <div *ngIf="zipCtrl.errors?.['pattern']">Zip code must be 5 digits.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-check mb-4">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="twilioConsent"
+                name="twilioConsent"
+                [(ngModel)]="twilioConsent"
+                required
+                #twilioConsentCtrl="ngModel"
+                [ngClass]="{ 'is-invalid': twilioConsentCtrl.invalid && (twilioConsentCtrl.touched || submitted) }"
+              />
+              <label class="form-check-label" for="twilioConsent">
+                I consent to receive SMS or voice calls regarding my subscription and service usage.
+              </label>
+              <div *ngIf="twilioConsentCtrl.invalid && (twilioConsentCtrl.touched || submitted)" class="text-danger small">
+                You must provide consent to continue.
+              </div>
+              <small class="form-text text-muted">
+                Message and data rates may apply. You can opt out at any time by replying STOP.
+              </small>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary" [disabled]="form.invalid || (isLoading$ | async)">
+                <span *ngIf="!(isLoading$ | async)">Purchase</span>
+                <span *ngIf="isLoading$ | async">Processing...</span>
+              </button>
+            </div>
+            <p class="form-hint mt-2">
+              Next: After checkout, you will create your JobFlow login.
+            </p>
+            <p *ngIf="isLoading$ | async" class="form-hint">
+              Redirecting you to Stripe checkout...
+            </p>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</section>

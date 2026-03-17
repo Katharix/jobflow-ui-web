@@ -5,4 +5,33 @@
 .subscribe .btn,
 .subscribe .form-control {
 	min-height: 44px;
+	border-radius: 10px !important;
+}
+
+.jf-cta {
+	background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #0b1220 100%);
+}
+
+.jf-cta__panel {
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(148, 163, 184, 0.3);
+	border-radius: 16px;
+	padding: 1.5rem;
+}
+
+.jf-cta__points {
+	display: grid;
+	gap: 0.6rem;
+	color: #e2e8f0;
+	font-size: 0.95rem;
+}
+
+.jf-cta__image {
+	width: 100%;
+	height: auto;
+	display: block;
+	border-radius: 14px;
+	border: 1px solid rgba(148, 163, 184, 0.3);
+	background: rgba(15, 23, 42, 0.2);
+	margin-bottom: 1.2rem;
 }

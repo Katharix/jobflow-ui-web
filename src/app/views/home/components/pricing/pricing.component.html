@@ -1,69 +1,47 @@
-<section class="section" id="pricing">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-lg-4">
-          <p class="d-flex align-items-center mb-4">
-            <span class="icon bg-primary rounded d-flex justify-content-center align-items-center">
-              <i class="ti ti-receipt-2 text-white f-18"></i>
-            </span>
-            <i class="ti ti-line-dashed text-primary fs-5"></i>
-            <span class="badge bg-light border text-primary py-2 px-3 f-14">Pricing</span>
-          </p>
-          <h3>Choose the Right Plan for Your Stage of Growth</h3>
-          <p class="text-muted">
-            Start with the essentials, then add more workflow control as your team expands. Every plan includes the Job Flow foundation for scheduling, estimating, invoicing, and payments.
-          </p>
-          <ul class="p-0 list-unstyled d-flex flex-column gap-3 text-muted fw-medium mt-3">
-            <li><i class="ti ti-circle-check text-success me-1 align-middle"></i> <strong>Go:</strong> Core scheduling, estimates, invoices, and payments for owner-operators.</li>
-            <li><i class="ti ti-circle-check text-success me-1 align-middle"></i> <strong>Flow:</strong> Team assignments, advanced scheduling, reminders, and follow-ups for growing crews.</li>
-            <li><i class="ti ti-circle-check text-success me-1 align-middle"></i> <strong>Max:</strong> Custom branding, automation, and priority support for high-volume operations.</li>
-            <li><i class="ti ti-circle-check text-success me-1 align-middle"></i> Upgrade anytime without changing how your team works.</li>
-          </ul>
-          
+<section class="section jf-pricing" id="pricing">
+  <div class="container">
+    <div class="row align-items-end mb-5">
+      <div class="col-lg-6">
+        <p class="jf-eyebrow">Pricing</p>
+        <h2 class="jf-section-title">Plans that scale with your team and workload.</h2>
+      </div>
+      <div class="col-lg-6">
+        <p class="jf-section-lead">
+          Start with the essentials, then add automation and branding as you grow.
+        </p>
+        <div class="jf-billing-toggle">
+          <span [class.text-primary]="!isAnnual" [class.text-muted]="isAnnual">Monthly</span>
+          <div class="form-check form-switch">
+            <input class="form-check-input shadow-none" type="checkbox" role="switch" id="flexSwitchCheckChecked" (change)="toggleBilling()" [checked]="isAnnual">
+          </div>
+          <span [class.text-primary]="isAnnual" [class.text-muted]="!isAnnual">Annual</span>
         </div>
-        <div class="col-lg-8">
-          <div class="text-center mb-4">
-            <div class="d-flex justify-content-center gap-2">
-              <p class="mb-0 fw-medium" [class.text-primary]="!isAnnual" [class.text-muted]="isAnnual">Monthly</p>
-              <div class="form-check form-switch">
-                <input class="form-check-input shadow-none" type="checkbox" role="switch" id="flexSwitchCheckChecked" (change)="toggleBilling()" [checked]="isAnnual">
-              </div>
-              <p class="mb-0 fw-medium" [class.text-primary]="isAnnual" [class.text-muted]="!isAnnual">Annual</p>
-            </div>
-            <p class="text-muted small mb-0 mt-2">Annual billing includes your best savings.</p>
+        <p class="text-muted small mb-0">Annual billing includes your best savings.</p>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4" *ngFor="let plan of plans">
+        <div class="jf-price-card" [ngClass]="{ 'is-featured': plan.name === 'Flow' }">
+          <div class="jf-price-card__header">
+            <h5>{{ plan.name }}</h5>
+            <span class="badge" [ngClass]="plan.badge">{{ plan.savings }}</span>
           </div>
-          <div class="row g-3">
-            <div class="col-lg-6" *ngFor="let plan of plans">
-              <div class="card border">
-                <div class="card-body text-center p-4">
-                  <h5 [ngClass]="{ 'text-primary': plan.name === 'Go', 'text-info': plan.name === 'Flow' }">
-                    {{ plan.name }}
-                  </h5>
-                  <div class="price-number my-4">
-                    <h2 class="fw-bold m-0 text-dark">{{ getPrice(plan) }}</h2>
-                    <div class="mt-3">
-                      <span class="f-14 text-muted me-1 fw-medium">{{ plan.description }}</span>
-                      <span class="badge" [ngClass]="plan.badge">{{ plan.savings }}</span>
-                      <span class="f-14 text-muted me-1 fw-medium">annually</span>
-                    </div>
-                  </div>
-              
-                  <!-- Features List -->
-                  <ul class="list-unstyled text-start mt-4 mb-0">
-                    <li *ngFor="let feature of plan.features" class="mb-2">
-                      <i class="ti ti-circle-check text-success me-2 align-middle"></i> {{ feature }}
-                    </li>
-                  </ul>
-                </div>
-                <div class="card-footer border-0">
-                  <button class="btn" [ngClass]="plan.buttonClass + ' w-100'" (click)="subscribeToPlan(plan.name)">Select {{ plan.name }}</button>
-                </div>
-              </div>
-              
-            </div>
+          <div class="jf-price-card__price">
+            <span class="jf-price-card__value">{{ getPrice(plan) }}</span>
+            <span class="jf-price-card__desc">{{ plan.description }}</span>
           </div>
+          <ul class="jf-price-card__list">
+            <li *ngFor="let feature of plan.features">
+              <i class="ti ti-circle-check text-success me-2 align-middle"></i> {{ feature }}
+            </li>
+          </ul>
+          <button class="btn" [ngClass]="plan.buttonClass + ' w-100'" (click)="subscribeToPlan(plan.name)">
+            Select {{ plan.name }}
+          </button>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
   

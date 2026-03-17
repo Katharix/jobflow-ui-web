@@ -4,14 +4,14 @@
 
 .footer-part {
     p {
-        font-size: 17px;
+        font-size: 16px;
     }
 
     li {
         margin-bottom: 17px;
         a {
-            font-size: 16px;
-            color: $gray-500;
+            font-size: 15px;
+            color: rgba($white, 0.7);
 
             &:hover {
                 color: $primary !important;
@@ -24,20 +24,21 @@
             position: relative;
         }
         input {
-            padding: 13px 16px;
+            padding: 12px 14px;
             box-shadow: none;
-            border-color: transparent;
-            background-color: $gray-800;
+            border-color: rgba($white, 0.12);
+            background-color: rgba($white, 0.06);
             color: $light;
+            border-radius: 10px;
             &::placeholder {
                 color: $light;
             }
         }
         a {
-            background-color: $gray-800;
+            background-color: rgba($white, 0.08);
             display: inline-block;
-            padding: 6px 14px;
-            border-radius: 5px;
+            padding: 6px 12px;
+            border-radius: 8px;
             color: $white;
             position: absolute;
             right: 0;

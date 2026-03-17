@@ -6,16 +6,126 @@
 	scroll-margin-top: 95px;
 }
 
-.hero-lead {
-	max-width: 760px;
-	margin-left: auto;
-	margin-right: auto;
+.jf-hero {
+	padding: 180px 0 120px;
+	background: linear-gradient(180deg, #f8fafc 0%, #ffffff 45%, #f1f5f9 100%);
 }
 
-.hero-proof {
+.jf-eyebrow {
+	font-size: 0.75rem;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--jf-accent);
+	font-weight: 700;
+	margin-bottom: 0.8rem;
+}
+
+.jf-hero__title {
+	font-size: clamp(2.4rem, 3.6vw, 3.4rem);
+	line-height: 1.08;
+	margin-bottom: 1rem;
+}
+
+.jf-hero__lead {
+	font-size: 1.05rem;
+	color: var(--jf-muted);
+	margin-bottom: 1.6rem;
+}
+
+.jf-cta-group {
+	display: flex;
+	gap: 0.8rem;
+	flex-wrap: wrap;
+	margin-bottom: 1.4rem;
+}
+
+.jf-proof {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 1rem;
+	margin-bottom: 1.2rem;
+}
+
+.jf-proof__item {
+	background: #ffffff;
+	border: 1px solid rgba(226, 232, 240, 0.8);
+	border-radius: 14px;
+	padding: 0.75rem 0.9rem;
+	font-size: 0.9rem;
+	color: var(--jf-muted);
+}
+
+.jf-proof__value {
+	display: block;
+	font-size: 1.2rem;
+	font-weight: 700;
+	color: var(--jf-ink);
+}
+
+.jf-hero__checks {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.9rem 1.4rem;
+	color: var(--jf-muted);
 	font-size: 0.95rem;
 }
 
-.btn {
-	min-width: 150px;
+.jf-hero__media {
+	position: relative;
+}
+
+.jf-media-shell {
+	position: relative;
+	background: #ffffff;
+	border-radius: 24px;
+	border: 1px solid rgba(226, 232, 240, 0.9);
+	padding: 1.5rem;
+	box-shadow: 0 30px 60px rgba(15, 23, 42, 0.12);
+}
+
+.jf-media-image {
+	width: 100%;
+	height: auto;
+	display: block;
+	border-radius: 18px;
+	border: 1px solid rgba(226, 232, 240, 0.9);
+	box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+}
+
+.jf-float-card {
+	position: absolute;
+	background: #ffffff;
+	border-radius: 16px;
+	padding: 0.5rem;
+	border: 1px solid rgba(226, 232, 240, 0.9);
+	box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
+	width: 180px;
+}
+
+.jf-float-image {
+	width: 100%;
+	height: auto;
+	display: block;
+	border-radius: 12px;
+}
+
+.jf-float-card--top {
+	top: -20px;
+	left: -24px;
+}
+
+.jf-float-card--bottom {
+	bottom: -24px;
+	right: -18px;
+}
+
+@media (max-width: 991px) {
+	.jf-hero {
+		padding: 150px 0 100px;
+	}
+
+	.jf-float-card--top,
+	.jf-float-card--bottom {
+		display: none;
+	}
 }
