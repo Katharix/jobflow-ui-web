@@ -4,7 +4,8 @@ import {
   initializeAuth
 } from '@angular/fire/auth';
 import {
-  browserLocalPersistence
+  browserLocalPersistence,
+  browserPopupRedirectResolver
 } from 'firebase/auth'; // ✅ persistence constant comes from firebase/auth
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { firebaseConfig } from '../configs/firebase-config';
@@ -15,7 +16,8 @@ export const firebaseProviders = [
   // ✅ Set default persistence globally
   provideAuth(() =>
     initializeAuth(getApp(), {
-      persistence: browserLocalPersistence
+      persistence: browserLocalPersistence,
+      popupRedirectResolver: browserPopupRedirectResolver
     })
   ),
 

@@ -28,6 +28,8 @@ export class LoginComponent implements OnInit {
    error: string | null = null;
    rememberMe = true;
    submitted = false;
+   isGoogleLoading = false;
+   private googleTimeoutId: number | null = null;
 
    constructor(
       private auth: Auth,
@@ -77,46 +79,127 @@ export class LoginComponent implements OnInit {
             }
          });
       } catch (err: any) {
-         this.error = err.message;
+         this.error = this.mapFirebaseAuthError(err);
          this.toast.error(this.error || 'Login failed.');
       }
    }
 
 
-   loginWithGoogle() {
+   async loginWithGoogle() {
+      if (this.isGoogleLoading) {
+         return;
+      }
+
+      this.isGoogleLoading = true;
+      this.error = null;
       const provider = new GoogleAuthProvider();
+      this.startGoogleTimeout();
 
-      signInWithPopup(this.auth, provider)
-         .then(async (result) => {
-            const user = result.user;
-            const idToken = await user.getIdToken(); // ✅ Step 2
+      try {
+         const result = await signInWithPopup(this.auth, provider);
+         const user = result.user;
+         const idToken = await user.getIdToken(); // ✅ Step 2
 
-            // ✅ Step 3: Call backend to create/sync user
-            this.authService.loginWithFirebase(idToken).subscribe({
-               next: (res) => {
+         // ✅ Step 3: Call backend to create/sync user
+         this.authService.loginWithFirebase(idToken).subscribe({
+            next: (res) => {
 
-                  // ✅ Optional: store info
-                  localStorage.setItem('isLoggedin', 'true');
-                  if (res?.organization) {
-                     this.orgContext.setOrganization(res.organization);
-                  }
-
-                  // ✅ Step 4: navigate
-                  this.toast.success('Signed in with Google', 'Success');
-                  this.router.navigate(['/admin']);
-               },
-               error: (err) => {
-                  console.error('Backend login error:', err);
-                  this.error = 'Login failed. Please try again.';
-                  this.toast.error('Login failed. Please try again.');
+               // ✅ Optional: store info
+               localStorage.setItem('isLoggedin', 'true');
+               if (res?.organization) {
+                  this.orgContext.setOrganization(res.organization);
                }
-            });
-         })
-         .catch((error) => {
-            console.error('Google login error:', error);
-            this.error = error.message;
-            this.toast.error('Google sign-in failed. Please try again.');
+
+               // ✅ Step 4: navigate
+               this.toast.success('Signed in with Google', 'Success');
+               this.router.navigate(['/admin']);
+            },
+            error: (err) => {
+               console.error('Backend login error:', err);
+               this.error = 'Login failed. Please try again.';
+               this.toast.error('Login failed. Please try again.');
+            }
          });
+      } catch (error: any) {
+         if (error?.code === 'auth/cancelled-popup-request') {
+            return;
+         }
+
+         console.error('Google login error:', error);
+         this.error = this.mapFirebaseAuthError(error);
+         this.toast.error(this.error || 'Google sign-in failed. Please try again.');
+      } finally {
+         this.isGoogleLoading = false;
+         this.clearGoogleTimeout();
+      }
+   }
+
+   private startGoogleTimeout(): void {
+      this.clearGoogleTimeout();
+      this.googleTimeoutId = window.setTimeout(() => {
+         if (!this.isGoogleLoading) {
+            return;
+         }
+
+         this.isGoogleLoading = false;
+         this.error = 'Google sign-in did not complete. Close the popup and try again. (code: auth/popup-timeout)';
+         this.toast.error(this.error);
+      }, 20000);
+   }
+
+   private clearGoogleTimeout(): void {
+      if (this.googleTimeoutId !== null) {
+         window.clearTimeout(this.googleTimeoutId);
+         this.googleTimeoutId = null;
+      }
+   }
+
+   private mapFirebaseAuthError(error: any): string {
+      const code = error?.code as string | undefined;
+      if (!code) {
+         return error?.message || 'Something went wrong. Please try again.';
+      }
+
+      let message: string;
+      switch (code) {
+         case 'auth/invalid-email':
+            message = 'Please enter a valid email address.';
+            break;
+         case 'auth/user-not-found':
+         case 'auth/wrong-password':
+         case 'auth/invalid-credential':
+            message = 'Incorrect email or password.';
+            break;
+         case 'auth/user-disabled':
+            message = 'This account is disabled. Contact support for help.';
+            break;
+         case 'auth/too-many-requests':
+            message = 'Too many attempts. Please wait a moment and try again.';
+            break;
+         case 'auth/popup-blocked':
+            message = 'Popup blocked. Allow popups and try again.';
+            break;
+         case 'auth/popup-closed-by-user':
+            message = 'Popup closed before sign-in completed.';
+            break;
+         case 'auth/cancelled-popup-request':
+            message = 'Another sign-in popup is already open.';
+            break;
+         case 'auth/network-request-failed':
+            message = 'Network error. Check your connection and try again.';
+            break;
+         case 'auth/operation-not-allowed':
+            message = 'Google sign-in is not enabled for this project.';
+            break;
+         case 'auth/unauthorized-domain':
+            message = 'This domain is not authorized for sign-in.';
+            break;
+         default:
+            message = error?.message || 'Something went wrong. Please try again.';
+            break;
+      }
+
+      return `${message} (code: ${code})`;
    }
 
 }

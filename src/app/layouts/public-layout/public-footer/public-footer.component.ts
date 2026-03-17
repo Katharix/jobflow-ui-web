@@ -56,9 +56,8 @@ export class PublicFooterComponent {
       title: 'Company',
       links: [
         { label: 'About Job Flow', href: '#about' },
-        { label: 'Product Updates', href: '#contact' },
-        { label: 'Terms & Conditions', href: '#' },
-        { label: 'Privacy Policy', href: '#' },
+        { label: 'Terms & Conditions', routerLink: '/terms' },
+        { label: 'Privacy Policy', routerLink: '/privacy' },
       ],
     },
   ];
