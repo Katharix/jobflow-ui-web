@@ -12,17 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
-  <script>
-    (function () {
-      try {
-        var params = new URLSearchParams(window.location.search);
-        var redirect = params.get('redirect');
-        if (!redirect) return;
-        history.replaceState(null, '', decodeURIComponent(redirect));
-      } catch (_) {
-      }
-    })();
-  </script>
+  <script defer src="assets/js/redirect.js"></script>
   <script
     async
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6EiKJ8OJvywKeOFy_EoyxO4UepISyGDk&libraries=places&v=weekly&loading=async"

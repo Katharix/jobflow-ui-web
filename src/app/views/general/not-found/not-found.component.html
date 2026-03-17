@@ -7,7 +7,11 @@
           <img src="images/others/404.svg" class="img-fluid mb-2" alt="404">
           <h1 class="fw-bolder mb-22 mt-2 tx-80 text-secondary">{{type}}</h1>
           <h4 class="mb-2">{{title}}</h4>
-          <h6 class="text-secondary mb-3 text-center" [innerHTML]="desc"></h6>
+          <h6 class="text-secondary mb-3 text-center">
+            <span *ngFor="let line of descLines; let last = last">
+              {{ line }}<br *ngIf="!last" />
+            </span>
+          </h6>
           <a routerLink="">Back to home</a>
         </div>
       </div>

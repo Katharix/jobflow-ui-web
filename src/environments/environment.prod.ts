@@ -14,6 +14,5 @@ export const environment = {
       successUrl: '',
    },
    stripePublicKey: 'pk_live_51SobeYAKhSZtrupsOaGkJhdEQHAXF2pCqHqpffPXxQlkbc0qzHufQKh1oNOd8Q306ykzlMuooPmnmjnp9pvFrEsM00EHQ4b9AE',
-   reCAPTCHASiteKey: '6LcrDQErAAAAAFWv5_LazDZOsSICxGZI9Cs_UlBl',
-   reCAPTCHASecretKey: '6LcrDQErAAAAAFWv5_LazDZOsSICxGZI9Cs_UlBl'
+   reCAPTCHASiteKey: '6LcrDQErAAAAAFWv5_LazDZOsSICxGZI9Cs_UlBl'
 };

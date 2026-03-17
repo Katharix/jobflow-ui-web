@@ -34,6 +34,7 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
   org: OrganizationDto | null = null;
   onboardingComplete = false;
   showLogoutModal = false;
+  private menuInstance: MetisMenu | null = null;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
@@ -57,6 +58,7 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
 
       // apply plan-based filtering
       this.menuItems = this.filterMenuByPlan(MENU, plan);
+      this.scheduleMenuInit();
     });
 
     // Sidebar-folded on desktop (992px–1199px)
@@ -66,8 +68,21 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Initialize MetisMenu for accordion animation
-    new MetisMenu(this.sidebarMenu.nativeElement);
+    this.scheduleMenuInit();
+  }
+
+  private scheduleMenuInit(): void {
+    if (!this.sidebarMenu?.nativeElement) {
+      return;
+    }
+
+    setTimeout(() => {
+      if (this.menuInstance && typeof this.menuInstance.dispose === 'function') {
+        this.menuInstance.dispose();
+      }
+
+      this.menuInstance = new MetisMenu(this.sidebarMenu.nativeElement);
+    }, 0);
   }
 
   get isSidebarOpen(): boolean {

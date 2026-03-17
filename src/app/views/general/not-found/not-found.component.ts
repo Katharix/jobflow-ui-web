@@ -13,7 +13,7 @@ export class NotFoundComponent implements OnInit {
 
       type: string | null;
   title: string;
-  desc: string;
+  descLines: string[] = [];
 
   constructor(private route: ActivatedRoute) {}
 
@@ -23,16 +23,16 @@ export class NotFoundComponent implements OnInit {
     switch(this.type) {
       case '404':
         this.title = 'Page Not Found';
-        this.desc = 'Oopps!! The page you were looking for doesn\'t exist.'
+        this.descLines = ['Oopps!! The page you were looking for doesn\'t exist.'];
         break;
       case '500':
         this.title = 'Internal Server Error';
-        this.desc = 'Oopps!! There was an error. Please try again later.'
+        this.descLines = ['Oopps!! There was an error. Please try again later.'];
         break;
       default:
         this.type = 'Ooops..';
         this.title = 'Something went wrong';
-        this.desc = 'Looks like something went wrong.<br>' + 'We\'re working on it';
+        this.descLines = ['Looks like something went wrong.', 'We\'re working on it'];
     }
   }
 }

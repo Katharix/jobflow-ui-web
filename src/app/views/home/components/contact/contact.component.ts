@@ -30,7 +30,7 @@ export class ContactComponent {
   success = false;
   error = false;
   captchaToken: string | null = null;
-  reCAPTCHAKey = environment.reCAPTCHASiteKey ?? environment.reCAPTCHASecretKey;
+  reCAPTCHAKey = environment.reCAPTCHASiteKey;
 
   constructor(private emailService: EmailService)
   {}
@@ -49,7 +49,7 @@ export class ContactComponent {
   }
 
   onSubmit() {
-    if (!this.captchaToken) return;
+    if (!this.reCAPTCHAKey || !this.captchaToken) return;
     this.model.captchaToken = this.captchaToken;
     this.isSubmitting = true;
     this.emailService.sendContactForm(this.model).subscribe({
