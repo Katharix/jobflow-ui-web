@@ -17,13 +17,6 @@ export class BaseApiService {
    private getHeaders(includeAuth = true): HttpHeaders {
       let headers = new HttpHeaders({'Content-Type': 'application/json'});
 
-      if (includeAuth) {
-         const token = localStorage.getItem('accessToken');
-         if (token) {
-            headers = headers.set('Authorization', `Bearer ${token}`);
-         }
-      }
-
       return headers;
    }
 
