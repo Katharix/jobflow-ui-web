@@ -39,6 +39,12 @@ export class CustomerComponent {
    error: string | null = null;
    isDrawerOpen = false;
    editingClient: any | null = null;
+   isSendLinkDrawerOpen = false;
+   clientToSendLink: Client | null = null;
+   sendLinkEmail = '';
+   sendLinkMessage = '';
+   sendingLink = false;
+   sendLinkError: string | null = null;
    private onboardingActionHandled = false;
    private returnToCommandCenter = false;
    private suppressNextDrawerClosedHandler = false;
@@ -77,6 +83,14 @@ export class CustomerComponent {
             cssClass: 'e-flat e-primary',
             iconCss: 'e-icons e-edit',
             content: 'Edit'
+         }
+      },
+      {
+         type: 'SendLink',
+         buttonOption: {
+            cssClass: 'e-flat e-info',
+            iconCss: 'e-icons e-send',
+            content: 'Send Link'
          }
       },
       {
@@ -129,16 +143,61 @@ export class CustomerComponent {
    }
 
    onCommandClick(args: JobflowGridCommandClickEventArgs) {
-      const row = args.rowData as PriceBookItemDto;
+      const client = args.rowData as Client;
 
       switch (args.commandColumn?.type) {
          case 'Edit':
-
+            this.editingClient = client;
+            this.isDrawerOpen = true;
+            break;
+         case 'SendLink':
+            this.openSendLink(client);
             break;
          case 'Delete':
-
+            this.deleteClient(client);
             break;
       }
+   }
+
+   openSendLink(client: Client): void {
+      this.clientToSendLink = client;
+      this.sendLinkEmail = client.email ?? '';
+      this.sendLinkMessage = '';
+      this.sendLinkError = null;
+      this.isSendLinkDrawerOpen = true;
+   }
+
+   confirmSendLink(): void {
+      if (!this.clientToSendLink || !this.sendLinkEmail.trim()) return;
+      if (!this.clientToSendLink.id) return;
+      this.sendingLink = true;
+      this.sendLinkError = null;
+
+      this.customers.sendClientHubLink(this.clientToSendLink.id, {
+         recipientEmail: this.sendLinkEmail.trim(),
+         message: this.sendLinkMessage.trim() || undefined
+      }).subscribe({
+         next: () => {
+            this.sendingLink = false;
+            this.isSendLinkDrawerOpen = false;
+            this.toast.success('Client Hub link sent successfully.');
+         },
+         error: () => {
+            this.sendingLink = false;
+            this.sendLinkError = 'Failed to send link. Please try again.';
+         }
+      });
+   }
+
+   closeSendLinkDrawer(): void {
+      this.isSendLinkDrawerOpen = false;
+      this.clientToSendLink = null;
+   }
+
+   deleteClient(client: Client): void {
+      if (!confirm(`Delete ${client.firstName} ${client.lastName}? This cannot be undone.`)) return;
+      // TODO: Add delete endpoint if needed
+      this.toast.show('Delete functionality coming soon.', undefined, 'info');
    }
 
    buildColumns(): void {

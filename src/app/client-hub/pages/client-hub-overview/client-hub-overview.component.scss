@@ -1,0 +1,38 @@
+.client-page {
+  .stat-card {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 150px;
+  }
+
+  .stat-label {
+    margin: 0;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #5f7a90;
+    font-weight: 760;
+  }
+
+  .stat-value {
+    margin: 0.65rem 0 0;
+    color: #0e4067;
+    font-size: clamp(1.45rem, 2vw, 1.95rem);
+    font-weight: 780;
+    line-height: 1.2;
+  }
+
+  .quick-links {
+    padding: 1rem;
+    display: flex;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+  }
+
+  .quick-links .btn {
+    border-radius: 0.7rem;
+    font-weight: 650;
+  }
+}

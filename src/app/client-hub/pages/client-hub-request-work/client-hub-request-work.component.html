@@ -1,0 +1,122 @@
+<section class="client-page">
+  <header class="client-page-head">
+    <div>
+      <h1>Request Work</h1>
+      <p class="client-page-subtitle">
+        Share clear details and timing so your team can respond quickly and accurately.
+      </p>
+    </div>
+  </header>
+
+  @if (successMessage) {
+    <div class="alert alert-success">{{ successMessage }}</div>
+  }
+
+  @if (error) {
+    <div class="alert alert-warning">{{ error }}</div>
+  }
+
+  <form #workRequestForm="ngForm" (ngSubmit)="submit(workRequestForm)" novalidate>
+    <div class="client-surface form-surface">
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label" for="subject">What do you need help with?</label>
+          <input
+            #subjectModel="ngModel"
+            id="subject"
+            name="subject"
+            class="form-control"
+            [class.is-invalid]="subjectModel.invalid && (subjectModel.touched || workRequestForm.submitted)"
+            [(ngModel)]="model.subject"
+            required
+            minlength="3"
+            maxlength="120"
+            autocomplete="off"
+          />
+          @if (subjectModel.invalid && (subjectModel.touched || workRequestForm.submitted)) {
+            <div class="invalid-feedback d-block">
+              @if (subjectModel.errors?.['required']) {
+                <span>Subject is required.</span>
+              }
+              @if (subjectModel.errors?.['minlength']) {
+                <span>Subject must be at least 3 characters.</span>
+              }
+              @if (subjectModel.errors?.['maxlength']) {
+                <span>Subject must be 120 characters or fewer.</span>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="col-12">
+          <label class="form-label" for="details">Details</label>
+          <textarea
+            #detailsModel="ngModel"
+            id="details"
+            name="details"
+            rows="6"
+            class="form-control"
+            [class.is-invalid]="detailsModel.invalid && (detailsModel.touched || workRequestForm.submitted)"
+            [(ngModel)]="model.details"
+            required
+            minlength="10"
+            maxlength="1200"
+          ></textarea>
+          @if (detailsModel.invalid && (detailsModel.touched || workRequestForm.submitted)) {
+            <div class="invalid-feedback d-block">
+              @if (detailsModel.errors?.['required']) {
+                <span>Details are required.</span>
+              }
+              @if (detailsModel.errors?.['minlength']) {
+                <span>Provide at least 10 characters of detail.</span>
+              }
+              @if (detailsModel.errors?.['maxlength']) {
+                <span>Details must be 1200 characters or fewer.</span>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="preferredDate">Preferred date</label>
+          <input
+            #preferredDateModel="ngModel"
+            id="preferredDate"
+            name="preferredDate"
+            type="date"
+            class="form-control"
+            [(ngModel)]="model.preferredDate"
+          />
+          @if (preferredDateModel.invalid && (preferredDateModel.touched || workRequestForm.submitted)) {
+            <div class="invalid-feedback d-block">Please select a valid date.</div>
+          }
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="budget">Target budget (optional)</label>
+          <input
+            #budgetModel="ngModel"
+            id="budget"
+            name="budget"
+            type="number"
+            min="0"
+            max="1000000"
+            step="0.01"
+            class="form-control"
+            [class.is-invalid]="budgetModel.invalid && (budgetModel.touched || workRequestForm.submitted)"
+            [(ngModel)]="model.budget"
+          />
+          @if (budgetModel.invalid && (budgetModel.touched || workRequestForm.submitted)) {
+            <div class="invalid-feedback d-block">Budget must be between 0 and 1,000,000.</div>
+          }
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || workRequestForm.invalid">
+          {{ isSubmitting ? 'Submitting...' : 'Submit Request' }}
+        </button>
+      </div>
+    </div>
+  </form>
+</section>

@@ -1,0 +1,191 @@
+<section class="client-page">
+  <header class="client-page-head">
+    <div>
+      <h1>My Information</h1>
+      <p class="client-page-subtitle">Keep your contact profile current so scheduling and billing stay accurate.</p>
+    </div>
+  </header>
+
+  @if (isLoading) {
+    <div class="alert alert-info">Loading your profile...</div>
+  }
+
+  @if (error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+
+  @if (!isLoading) {
+    <form #profileForm="ngForm" (ngSubmit)="save(profileForm)" novalidate>
+      <div class="client-surface form-surface">
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="firstName">First name</label>
+            <input
+              #firstNameModel="ngModel"
+              id="firstName"
+              name="firstName"
+              class="form-control"
+              [(ngModel)]="model.firstName"
+              maxlength="80"
+              pattern="^[A-Za-z .'-]{0,80}$"
+              autocomplete="given-name"
+            />
+            @if (firstNameModel.invalid && (firstNameModel.touched || profileForm.submitted)) {
+              <div class="invalid-feedback d-block">Use letters, spaces, apostrophes, or hyphens only.</div>
+            }
+          </div>
+
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="lastName">Last name</label>
+            <input
+              #lastNameModel="ngModel"
+              id="lastName"
+              name="lastName"
+              class="form-control"
+              [(ngModel)]="model.lastName"
+              maxlength="80"
+              pattern="^[A-Za-z .'-]{0,80}$"
+              autocomplete="family-name"
+            />
+            @if (lastNameModel.invalid && (lastNameModel.touched || profileForm.submitted)) {
+              <div class="invalid-feedback d-block">Use letters, spaces, apostrophes, or hyphens only.</div>
+            }
+          </div>
+
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="emailAddress">Email</label>
+            <input
+              #emailModel="ngModel"
+              id="emailAddress"
+              name="emailAddress"
+              type="email"
+              class="form-control"
+              [class.is-invalid]="emailModel.invalid && (emailModel.touched || profileForm.submitted)"
+              [(ngModel)]="model.emailAddress"
+              required
+              email
+              maxlength="120"
+              autocomplete="email"
+            />
+            @if (emailModel.invalid && (emailModel.touched || profileForm.submitted)) {
+              <div class="invalid-feedback d-block">
+                @if (emailModel.errors?.['required']) {
+                  <span>Email is required.</span>
+                }
+                @if (emailModel.errors?.['email']) {
+                  <span>Enter a valid email address.</span>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="col-12 col-md-6">
+            <label class="form-label" for="phoneNumber">Phone</label>
+            <input
+              #phoneModel="ngModel"
+              id="phoneNumber"
+              name="phoneNumber"
+              class="form-control"
+              [(ngModel)]="model.phoneNumber"
+              maxlength="20"
+              pattern="^[0-9()+.\- ]{0,20}$"
+              autocomplete="tel"
+            />
+            @if (phoneModel.invalid && (phoneModel.touched || profileForm.submitted)) {
+              <div class="invalid-feedback d-block">Use numbers and phone symbols only.</div>
+            }
+          </div>
+
+          <div class="col-12">
+            <label class="form-label" for="address1">Address line 1</label>
+            <input
+              #address1Model="ngModel"
+              id="address1"
+              name="address1"
+              class="form-control"
+              [(ngModel)]="model.address1"
+              maxlength="120"
+              autocomplete="address-line1"
+            />
+            @if (address1Model.invalid && (address1Model.touched || profileForm.submitted)) {
+              <div class="invalid-feedback d-block">Address line 1 must be 120 characters or fewer.</div>
+            }
+          </div>
+
+          <div class="col-12">
+            <label class="form-label" for="address2">Address line 2</label>
+            <input
+              #address2Model="ngModel"
+              id="address2"
+              name="address2"
+              class="form-control"
+              [(ngModel)]="model.address2"
+              maxlength="120"
+              autocomplete="address-line2"
+            />
+            @if (address2Model.invalid && (address2Model.touched || profileForm.submitted)) {
+              <div class="invalid-feedback d-block">Address line 2 must be 120 characters or fewer.</div>
+            }
+          </div>
+
+          <div class="col-12 col-md-5">
+            <label class="form-label" for="city">City</label>
+            <input
+              #cityModel="ngModel"
+              id="city"
+              name="city"
+              class="form-control"
+              [(ngModel)]="model.city"
+              maxlength="80"
+              pattern="^[A-Za-z .'-]{0,80}$"
+              autocomplete="address-level2"
+            />
+            @if (cityModel.invalid && (cityModel.touched || profileForm.submitted)) {
+              <div class="invalid-feedback d-block">Use letters and basic punctuation only.</div>
+            }
+          </div>
+
+          <div class="col-6 col-md-3">
+            <label class="form-label" for="state">State</label>
+            <input
+              #stateModel="ngModel"
+              id="state"
+              name="state"
+              class="form-control text-uppercase"
+              [(ngModel)]="model.state"
+              maxlength="2"
+              pattern="^[A-Za-z]{0,2}$"
+              autocomplete="address-level1"
+            />
+            @if (stateModel.invalid && (stateModel.touched || profileForm.submitted)) {
+              <div class="invalid-feedback d-block">Use a 2-letter state code.</div>
+            }
+          </div>
+
+          <div class="col-6 col-md-4">
+            <label class="form-label" for="zipCode">Zip code</label>
+            <input
+              #zipCodeModel="ngModel"
+              id="zipCode"
+              name="zipCode"
+              class="form-control"
+              [(ngModel)]="model.zipCode"
+              maxlength="10"
+              pattern="^[0-9]{0,5}(-[0-9]{0,4})?$"
+              autocomplete="postal-code"
+            />
+            @if (zipCodeModel.invalid && (zipCodeModel.touched || profileForm.submitted)) {
+              <div class="invalid-feedback d-block">Use ZIP format 12345 or 12345-6789.</div>
+            }
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="isSaving || profileForm.invalid">
+            {{ isSaving ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  }
+</section>

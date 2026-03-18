@@ -12,6 +12,7 @@ import {lucideProviders} from './core/providers/lucide.providers';
 import {OverlayModule} from '@angular/cdk/overlay';
 import {PortalModule} from '@angular/cdk/portal';
 import {authInterceptor} from "./interceptors/auth.interceptor";
+import {clientHubAuthInterceptor} from './interceptors/client-hub-auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
    providers: [
@@ -24,6 +25,7 @@ export const appConfig: ApplicationConfig = {
          ripple: true
       }),
       provideHttpClient(withInterceptors([
+         clientHubAuthInterceptor,
          authInterceptor,
          loadingInterceptor])),
       ...firebaseProviders,

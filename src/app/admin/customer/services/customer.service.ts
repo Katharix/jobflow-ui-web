@@ -9,6 +9,11 @@ export interface CreateCustomerRequest {
    phoneNumber?: string;
 }
 
+export interface SendClientHubLinkRequest {
+   recipientEmail: string;
+   message?: string;
+}
+
 @Injectable({providedIn: 'root'})
 export class CustomersService {
    private apiUrl = 'organization/clients/';
@@ -29,5 +34,9 @@ export class CustomersService {
       return this.api.get(
          `${this.apiUrl}orgall`
       );
+   }
+
+   sendClientHubLink(clientId: string, request: SendClientHubLinkRequest): Observable<void> {
+      return this.api.post<void>(`${this.apiUrl}${clientId}/send-client-hub-link`, request);
    }
 }

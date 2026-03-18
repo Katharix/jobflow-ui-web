@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { forkJoin, of, Subject } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
 
@@ -9,16 +10,30 @@ import { OnboardingChecklistComponent } from '../../views/general/onboarding-che
 import { JobsService } from '../jobs/services/jobs.service';
 import { Job, JobLifecycleStatus } from '../jobs/models/job';
 import { CustomersService } from '../customer/services/customer.service';
+import { EstimateService } from '../estimates/services/estimate.service';
+import { Estimate, EstimateStatus, EstimateStatusLabels } from '../estimates/models/estimate';
+import { Invoice, InvoiceStatus } from '../../models/invoice';
 import {
    CommandCenterAction,
    CommandCenterFlowStep,
    JobflowCommandCenterComponent
 } from './jobflow-command-center/jobflow-command-center.component';
 
+type DashboardClientActivityType = 'estimate-accepted' | 'estimate-declined' | 'invoice-paid';
+
+interface DashboardClientActivity {
+   id: string;
+   type: DashboardClientActivityType;
+   title: string;
+   detail: string;
+   occurredAt?: string;
+   route: string;
+}
+
 @Component({
    selector: 'app-dashboard',
    standalone: true,
-   imports: [CommonModule, OnboardingChecklistComponent, JobflowCommandCenterComponent],
+   imports: [CommonModule, RouterModule, OnboardingChecklistComponent, JobflowCommandCenterComponent],
    templateUrl: './dashboard.component.html',
    styleUrl: './dashboard.component.scss'
 })
@@ -51,6 +66,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    ];
 
    flowSteps: CommandCenterFlowStep[] = [];
+   clientActivity: DashboardClientActivity[] = [];
 
    private readonly destroy$ = new Subject<void>();
    private clockIntervalId: ReturnType<typeof setInterval> | null = null;
@@ -59,7 +75,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       private readonly orgContext: OrganizationContextService,
       private readonly jobsService: JobsService,
       private readonly invoiceService: InvoiceService,
-      private readonly customersService: CustomersService
+      private readonly customersService: CustomersService,
+      private readonly estimateService: EstimateService
    ) {}
 
    ngOnInit(): void {
@@ -116,16 +133,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
    private loadDashboard(): void {
       forkJoin({
          jobs: this.jobsService.getAllJobs().pipe(catchError(() => of([] as Job[]))),
-         invoices: this.invoiceService.getByOrganization().pipe(catchError(() => of([] as any[]))),
+         invoices: this.invoiceService.getByOrganization().pipe(catchError(() => of([] as Invoice[]))),
+         estimates: this.estimateService.getByOrganization().pipe(catchError(() => of([] as Estimate[]))),
          customers: this.customersService.getAllByOrganization().pipe(catchError(() => of([] as any[])))
       })
          .pipe(takeUntil(this.destroy$))
-         .subscribe(({ jobs, invoices, customers }) => {
-            this.buildDashboardState(jobs, invoices, customers);
+         .subscribe(({ jobs, invoices, estimates, customers }) => {
+            this.buildDashboardState(jobs, invoices, estimates, customers);
          });
    }
 
-   private buildDashboardState(jobs: Job[], invoices: any[], customers: any[]): void {
+   private buildDashboardState(jobs: Job[], invoices: Invoice[], estimates: Estimate[], customers: any[]): void {
       const openJobs = jobs.filter(job => !this.isJobDone(job));
       const jobsWithoutSchedule = openJobs
          .filter(job => !job.hasAssignments)
@@ -136,6 +154,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
          .slice(0, 6);
 
       const draftJobs = jobs.filter(job => job.lifecycleStatus === JobLifecycleStatus.Draft);
+
+      this.clientActivity = this.buildClientActivity(estimates, invoices);
 
       this.flowSteps = [
          {
@@ -190,11 +210,141 @@ export class DashboardComponent implements OnInit, OnDestroy {
       ];
    }
 
+   getActivityLabel(type: DashboardClientActivityType): string {
+      switch (type) {
+         case 'estimate-accepted':
+            return 'Estimate accepted';
+         case 'estimate-declined':
+            return 'Estimate declined';
+         default:
+            return 'Invoice paid';
+      }
+   }
+
+   getActivityClass(type: DashboardClientActivityType): string {
+      switch (type) {
+         case 'estimate-accepted':
+            return 'is-success';
+         case 'estimate-declined':
+            return 'is-danger';
+         default:
+            return 'is-primary';
+      }
+   }
+
+   formatActivityDate(value?: string): string {
+      if (!value) return 'Recently';
+
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return 'Recently';
+
+      return new Intl.DateTimeFormat('en-US', {
+         month: 'short',
+         day: 'numeric',
+         year: 'numeric',
+         hour: 'numeric',
+         minute: '2-digit'
+      }).format(date);
+   }
+
    private isJobDone(job: Job): boolean {
       return [JobLifecycleStatus.Completed, JobLifecycleStatus.Cancelled, JobLifecycleStatus.Failed].includes(job.lifecycleStatus);
    }
 
    private toCount(value: number): string {
       return new Intl.NumberFormat('en-US').format(value || 0);
+   }
+
+   private buildClientActivity(estimates: Estimate[], invoices: Invoice[]): DashboardClientActivity[] {
+      const estimateActivity = estimates
+         .map(estimate => {
+            const status = this.resolveEstimateStatus(estimate.status);
+            if (status !== EstimateStatus.Accepted && status !== EstimateStatus.Declined) {
+               return null;
+            }
+
+            const clientName = this.estimateClientName(estimate);
+            const action = status === EstimateStatus.Accepted ? 'accepted' : 'declined';
+
+            return {
+               id: `estimate-${estimate.id}-${action}`,
+               type: status === EstimateStatus.Accepted ? 'estimate-accepted' : 'estimate-declined',
+               title: `Estimate ${estimate.estimateNumber} ${action}`,
+               detail: `${clientName} responded in Client Hub.`,
+               occurredAt: estimate.updatedAt ?? estimate.sentAt ?? estimate.estimateDate ?? estimate.createdAt,
+               route: '/admin/estimates'
+            } as DashboardClientActivity;
+         })
+         .filter((item): item is DashboardClientActivity => item !== null);
+
+      const invoiceActivity = invoices
+         .filter(invoice => this.resolveInvoiceStatus(invoice.status) === InvoiceStatus.Paid)
+         .map(invoice => {
+            const clientName = this.invoiceClientName(invoice);
+            const occurredAt = (invoice as any)?.updatedAt ?? (invoice as any)?.paidAt ?? invoice.invoiceDate ?? invoice.dueDate;
+
+            return {
+               id: `invoice-${invoice.id}-paid`,
+               type: 'invoice-paid',
+               title: `Invoice ${invoice.invoiceNumber} paid`,
+               detail: `${clientName} completed payment.`,
+               occurredAt,
+               route: '/admin/invoices'
+            } as DashboardClientActivity;
+         });
+
+      return [...estimateActivity, ...invoiceActivity]
+         .sort((left, right) => this.dateScore(right.occurredAt) - this.dateScore(left.occurredAt))
+         .slice(0, 8);
+   }
+
+   private resolveEstimateStatus(raw: Estimate['status']): EstimateStatus | null {
+      if (typeof raw === 'number') return raw as EstimateStatus;
+
+      const numeric = Number(raw);
+      if (!Number.isNaN(numeric)) return numeric as EstimateStatus;
+
+      const normalized = String(raw ?? '').trim().toLowerCase();
+      const entry = Object.entries(EstimateStatusLabels).find(([, label]) => label.toLowerCase() === normalized);
+      return entry ? (Number(entry[0]) as EstimateStatus) : null;
+   }
+
+   private resolveInvoiceStatus(raw: Invoice['status'] | number | string): InvoiceStatus {
+      if (typeof raw === 'number') return raw as InvoiceStatus;
+
+      const numeric = Number(raw);
+      if (!Number.isNaN(numeric)) return numeric as InvoiceStatus;
+
+      const normalized = String(raw ?? '').trim().toLowerCase();
+      switch (normalized) {
+         case 'sent':
+            return InvoiceStatus.Sent;
+         case 'paid':
+            return InvoiceStatus.Paid;
+         case 'overdue':
+            return InvoiceStatus.Overdue;
+         case 'unpaid':
+            return InvoiceStatus.Unpaid;
+         default:
+            return InvoiceStatus.Draft;
+      }
+   }
+
+   private estimateClientName(estimate: Estimate): string {
+      const firstName = estimate.organizationClient?.firstName?.trim() ?? '';
+      const lastName = estimate.organizationClient?.lastName?.trim() ?? '';
+      return `${firstName} ${lastName}`.trim() || 'A client';
+   }
+
+   private invoiceClientName(invoice: Invoice): string {
+      const firstName = invoice.organizationClient?.firstName?.trim() ?? '';
+      const lastName = invoice.organizationClient?.lastName?.trim() ?? '';
+      return `${firstName} ${lastName}`.trim() || 'A client';
+   }
+
+   private dateScore(value?: string): number {
+      if (!value) return 0;
+      const parsed = new Date(value).getTime();
+      return Number.isNaN(parsed) ? 0 : parsed;
    }
 }
