@@ -166,6 +166,18 @@ export class EstimatesComponent implements OnInit {
 
   resolveStatus(raw: any): EstimateStatus {
     if (typeof raw === 'number') return raw as EstimateStatus;
+    if (typeof raw === 'string') {
+      const normalized = raw.trim().toLowerCase();
+      if (normalized === 'draft') return EstimateStatus.Draft;
+      if (normalized === 'sent') return EstimateStatus.Sent;
+      if (normalized === 'accepted') return EstimateStatus.Accepted;
+      if (normalized === 'declined') return EstimateStatus.Declined;
+      if (normalized === 'expired') return EstimateStatus.Expired;
+
+      const parsed = Number(normalized);
+      return isNaN(parsed) ? EstimateStatus.Draft : (parsed as EstimateStatus);
+    }
+
     const n = Number(raw);
     return isNaN(n) ? EstimateStatus.Draft : (n as EstimateStatus);
   }
