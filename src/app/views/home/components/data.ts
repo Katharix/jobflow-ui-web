@@ -115,6 +115,7 @@ export const plans: PricingPlan[] = [
       'Estimates, invoices, and payments',
       'Customer records and job history',
       'Email notifications',
+      'Client Hub access for customers',
     ]
   },
   {
@@ -142,7 +143,7 @@ export const plans: PricingPlan[] = [
     savings: 'Save $204',
     description: 'Best for scaling operations that need automation and control.',
     badge: 'bg-success-subtle text-success',
-    buttonClass: 'btn-info',
+    buttonClass: 'btn-primary',
     features: [
       'Everything in Flow',
       'Custom branding (logo, colors)',

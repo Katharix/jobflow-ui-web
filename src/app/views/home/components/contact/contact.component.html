@@ -102,12 +102,13 @@
 
             <div class="row">
               <div class="col-12">
-                <re-captcha
-                  [siteKey]="reCAPTCHAKey"
+                <jobflow-turnstile
+                  [siteKey]="turnstileSiteKey"
+                  action="contact-sales"
                   (resolved)="onCaptchaResolved($event)"
                   (expired)="onCaptchaExpired()"
                   (errored)="onCaptchaError()">
-                </re-captcha>
+                </jobflow-turnstile>
 
                 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mt-3">
                   <small class="text-muted">By submitting, you agree to be contacted by the Job Flow team.</small>
