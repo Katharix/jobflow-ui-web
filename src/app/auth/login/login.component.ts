@@ -67,7 +67,6 @@ export class LoginComponent implements OnInit {
             next: (res) => {
 
                this.orgContext.setOrganization(res.organization);
-               this.toast.success('Welcome back!', 'Signed in');
                this.router.navigate(['/admin']);
             },
             error: (err) => {

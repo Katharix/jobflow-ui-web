@@ -7,7 +7,7 @@ describe('CustomersService', () => {
    let apiSpy: jasmine.SpyObj<BaseApiService>;
 
    beforeEach(() => {
-      apiSpy = jasmine.createSpyObj<BaseApiService>('BaseApiService', ['get', 'post']);
+      apiSpy = jasmine.createSpyObj<BaseApiService>('BaseApiService', ['get', 'post', 'delete']);
       service = new CustomersService(apiSpy);
    });
 
@@ -31,5 +31,13 @@ describe('CustomersService', () => {
       service.getAllByOrganization().subscribe();
 
       expect(apiSpy.get).toHaveBeenCalledWith('organization/clients/orgall');
+   });
+
+   it('deletes customer by client id', () => {
+      apiSpy.delete.and.returnValue(of(void 0));
+
+      service.deleteClient('client-1').subscribe();
+
+      expect(apiSpy.delete).toHaveBeenCalledWith('organization/clients/delete?clientId=client-1');
    });
 });

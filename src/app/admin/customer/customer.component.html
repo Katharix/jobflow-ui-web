@@ -9,10 +9,13 @@
 
 <jobflow-drawer
    [open]="isDrawerOpen"
-   title="Add Client"
+   [title]="editingClient ? 'Edit Client' : 'Add Client'"
    (closed)="onDrawerClosed()"
 >
-   <customer-create (saved)="onCreateSaved()" (cancelled)="onCreateCancelled()"/>
+   <customer-create
+      [client]="editingClient"
+      (saved)="onCreateSaved()"
+      (cancelled)="onCreateCancelled()"/>
 </jobflow-drawer>
 
 <jobflow-drawer
@@ -66,6 +69,22 @@
       </div>
    </ng-container>
 </jobflow-drawer>
+
+<jobflow-modal
+   *ngIf="showDeleteModal"
+   [title]="'Delete Client'"
+   [confirmText]="'Delete'"
+   [cancelText]="'Cancel'"
+   (cancel)="closeDeleteModal()"
+   (confirm)="confirmDelete()"
+   [confirmButtonClass]="'btn btn-danger px-4'"
+   [cancelButtonClass]="'btn btn-outline-secondary'"
+>
+   <app-delete-confirm
+      [title]="'Delete Client'"
+      [message]="'Are you sure you want to delete ' + (selectedClientName || 'this client') + '?'"
+   ></app-delete-confirm>
+</jobflow-modal>
 
 <ng-template #clientNameTemplate let-client>
    <div class="client-cell">

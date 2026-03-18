@@ -13,10 +13,11 @@ import {
    JobflowGridComponent,
    JobflowGridPageSettings
 } from "../../common/jobflow-grid/jobflow-grid.component";
-import {PriceBookItemDto} from "../pricebook/services/price-book-item.service";
 import {ToastService} from "../../common/toast/toast.service";
 import {Client} from "./models/customer";
 import {JobflowDrawerComponent} from "../../common/jobflow-drawer/jobflow-drawer.component";
+import {ModalComponent} from "../../views/shared/modal/modal.component";
+import {DeleteConfirmComponent} from "../../views/shared/delete-confirm/delete-confirm-component";
 import {CustomerCreateComponent} from "./customer-create/customer-create.component";
 import {formatPhone} from "../../common/utils/app-formaters";
 
@@ -24,7 +25,7 @@ import {formatPhone} from "../../common/utils/app-formaters";
 @Component({
    selector: 'jobflow-create-customer',
    standalone: true,
-   imports: [CommonModule, FormsModule, PageHeaderComponent, ReactiveFormsModule, JobflowGridComponent, JobflowDrawerComponent, CustomerCreateComponent],
+   imports: [CommonModule, FormsModule, PageHeaderComponent, ReactiveFormsModule, JobflowGridComponent, JobflowDrawerComponent, CustomerCreateComponent, ModalComponent, DeleteConfirmComponent],
    templateUrl: './customer.component.html',
    styleUrls: ['./customer.component.scss'],
 })
@@ -38,13 +39,16 @@ export class CustomerComponent {
 
    error: string | null = null;
    isDrawerOpen = false;
-   editingClient: any | null = null;
+   editingClient: Client | null = null;
    isSendLinkDrawerOpen = false;
    clientToSendLink: Client | null = null;
    sendLinkEmail = '';
    sendLinkMessage = '';
    sendingLink = false;
    sendLinkError: string | null = null;
+   showDeleteModal = false;
+   selectedClient: Client | null = null;
+   selectedClientName = '';
    private onboardingActionHandled = false;
    private returnToCommandCenter = false;
    private suppressNextDrawerClosedHandler = false;
@@ -161,7 +165,7 @@ export class CustomerComponent {
 
    openSendLink(client: Client): void {
       this.clientToSendLink = client;
-      this.sendLinkEmail = client.email ?? '';
+      this.sendLinkEmail = client.emailAddress ?? '';
       this.sendLinkMessage = '';
       this.sendLinkError = null;
       this.isSendLinkDrawerOpen = true;
@@ -195,9 +199,33 @@ export class CustomerComponent {
    }
 
    deleteClient(client: Client): void {
-      if (!confirm(`Delete ${client.firstName} ${client.lastName}? This cannot be undone.`)) return;
-      // TODO: Add delete endpoint if needed
-      this.toast.show('Delete functionality coming soon.', undefined, 'info');
+      this.selectedClient = client;
+      this.selectedClientName = `${client.firstName ?? ''} ${client.lastName ?? ''}`.trim();
+      this.showDeleteModal = true;
+   }
+
+   closeDeleteModal(): void {
+      this.showDeleteModal = false;
+      this.selectedClient = null;
+      this.selectedClientName = '';
+   }
+
+   confirmDelete(): void {
+      if (!this.selectedClient?.id) {
+         this.toast.show('Unable to delete client without an ID.', undefined, 'warning');
+         return;
+      }
+
+      this.customers.deleteClient(this.selectedClient.id).subscribe({
+         next: () => {
+            this.toast.success('Client deleted successfully.');
+            this.load();
+            this.closeDeleteModal();
+         },
+         error: () => {
+            this.toast.show('Failed to delete client. Please try again.', undefined, 'error');
+         }
+      });
    }
 
    buildColumns(): void {
@@ -239,6 +267,7 @@ export class CustomerComponent {
 
       this.load();
       this.closeDrawer();
+      this.toast.success('Client saved successfully.');
    }
 
    onCreateCancelled(): void {

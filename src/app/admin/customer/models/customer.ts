@@ -3,11 +3,11 @@
    organizationId?: string;
    firstName: string;
    lastName: string;
-   email: string;
-   phoneNumber: string;
-   address?: string;
-   addressLine2?: string;
+   emailAddress?: string;
+   phoneNumber?: string;
+   address1?: string;
+   address2?: string;
    city?: string;
    state?: string;
-   zip?: string;
+   zipCode?: string;
 }

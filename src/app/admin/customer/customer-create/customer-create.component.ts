@@ -1,8 +1,10 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {CustomersService} from "../services/customer.service";
+import {ToastService} from "../../../common/toast/toast.service";
 import {OrganizationContextService} from "../../../services/shared/organization-context.service";
 import {FormsModule} from "@angular/forms";
 import {InputTextModule} from 'primeng/inputtext';
+import {Client} from "../models/customer";
 
 @Component({
    selector: 'customer-create',
@@ -14,7 +16,8 @@ import {InputTextModule} from 'primeng/inputtext';
    templateUrl: './customer-create.component.html',
    styleUrl: './customer-create.component.scss'
 })
-export class CustomerCreateComponent {
+export class CustomerCreateComponent implements OnChanges {
+   @Input() client: Client | null = null;
    @Output() saved = new EventEmitter<void>();
    @Output() cancelled = new EventEmitter<void>();
 
@@ -23,17 +26,55 @@ export class CustomerCreateComponent {
    lastName = '';
    email = '';
    phone = '';
+   address1 = '';
+   address2 = '';
+   city = '';
+   state = '';
+   zipCode = '';
 
    saving = false;
    error: string | null = null;
 
    constructor(
       private customers: CustomersService,
-      private orgContext: OrganizationContextService
+      private orgContext: OrganizationContextService,
+      private toast: ToastService
    ) {
       this.orgContext.org$.subscribe(org => {
          this.organizationId = org?.id ?? null;
       });
+   }
+
+   ngOnChanges(changes: SimpleChanges): void {
+      if (!changes['client']) return;
+
+      if (this.client) {
+         this.firstName = this.client.firstName ?? '';
+         this.lastName = this.client.lastName ?? '';
+         this.email = this.client.emailAddress ?? '';
+         this.phone = this.client.phoneNumber ?? '';
+         this.address1 = this.client.address1 ?? '';
+         this.address2 = this.client.address2 ?? '';
+         this.city = this.client.city ?? '';
+         this.state = this.client.state ?? '';
+         this.zipCode = this.client.zipCode ?? '';
+      } else {
+         this.resetForm();
+      }
+   }
+
+   private resetForm(): void {
+      this.firstName = '';
+      this.lastName = '';
+      this.email = '';
+      this.phone = '';
+      this.address1 = '';
+      this.address2 = '';
+      this.city = '';
+      this.state = '';
+      this.zipCode = '';
+      this.error = null;
+      this.saving = false;
    }
 
    save(): void {
@@ -45,15 +86,25 @@ export class CustomerCreateComponent {
       this.error = null;
 
       this.customers.createCustomer({
+         id: this.client?.id,
          firstName: this.firstName,
          lastName: this.lastName,
          emailAddress: this.email || undefined,
-         phoneNumber: this.phone || undefined
+         phoneNumber: this.phone || undefined,
+         address1: this.address1 || undefined,
+         address2: this.address2 || undefined,
+         city: this.city || undefined,
+         state: this.state || undefined,
+         zipCode: this.zipCode || undefined
       }).subscribe({
-         next: () => this.saved.emit(),
+         next: () => {
+            this.saving = false;
+            this.saved.emit();
+         },
          error: () => {
             this.saving = false;
-            this.error = 'Failed to create customer.';
+            this.error = 'Failed to save customer.';
+            this.toast.error('Failed to save client. Please try again.');
          }
       });
    }

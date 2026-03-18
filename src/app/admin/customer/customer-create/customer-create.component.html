@@ -10,13 +10,38 @@
    </div>
 
    <div class="col-12 col-md-6">
-      <label class="form-label">Email <span class="text-danger">*</span></label>
+      <label class="form-label">Email</label>
       <input pInputText pSize="small" type="email" class="w-100" [(ngModel)]="email" />
    </div>
 
    <div class="col-12 col-md-6">
-      <label class="form-label">Phone <span class="text-danger">*</span></label>
+      <label class="form-label">Phone</label>
       <input pInputText pSize="small" type="tel" class="w-100" [(ngModel)]="phone" />
+   </div>
+
+   <div class="col-12">
+      <label class="form-label">Address</label>
+      <input pInputText pSize="small" class="w-100" [(ngModel)]="address1" />
+   </div>
+
+   <div class="col-12">
+      <label class="form-label">Address Line 2</label>
+      <input pInputText pSize="small" class="w-100" [(ngModel)]="address2" />
+   </div>
+
+   <div class="col-12 col-md-4">
+      <label class="form-label">City</label>
+      <input pInputText pSize="small" class="w-100" [(ngModel)]="city" />
+   </div>
+
+   <div class="col-12 col-md-4">
+      <label class="form-label">State</label>
+      <input pInputText pSize="small" class="w-100" [(ngModel)]="state" />
+   </div>
+
+   <div class="col-12 col-md-4">
+      <label class="form-label">Zip</label>
+      <input pInputText pSize="small" class="w-100" [(ngModel)]="zipCode" />
    </div>
 
    <div class="col-12 d-flex justify-content-end gap-2 pt-2">

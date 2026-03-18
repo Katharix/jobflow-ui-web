@@ -3,10 +3,16 @@ import {Observable} from 'rxjs';
 import {BaseApiService} from "../../../services/shared/base-api.service";
 
 export interface CreateCustomerRequest {
+   id?: string;
    firstName: string;
    lastName: string;
    emailAddress?: string;
    phoneNumber?: string;
+   address1?: string;
+   address2?: string;
+   city?: string;
+   state?: string;
+   zipCode?: string;
 }
 
 export interface SendClientHubLinkRequest {
@@ -28,6 +34,10 @@ export class CustomersService {
          `${this.apiUrl}upsert`,
          payload
       );
+   }
+
+   deleteClient(clientId: string): Observable<void> {
+      return this.api.delete<void>(`${this.apiUrl}delete?clientId=${clientId}`);
    }
 
    getAllByOrganization(): Observable<any[]> {
