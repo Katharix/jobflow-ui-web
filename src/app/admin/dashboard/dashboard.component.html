@@ -20,6 +20,35 @@
          <jobflow-onboarding-checklist [organizationId]="organizationId"></jobflow-onboarding-checklist>
       </article>
 
+      <article class="dashboard-panel dashboard-panel--activity">
+         <div class="dashboard-panel__header">
+            <h2>Client Activity</h2>
+            <span>Estimate decisions and invoice payments</span>
+         </div>
+
+         <ng-container *ngIf="clientActivity.length; else noClientActivity">
+            <ul class="dashboard-activity-list">
+               <li *ngFor="let activity of clientActivity" class="dashboard-activity-item">
+                  <div class="dashboard-activity-item__top">
+                     <span class="dashboard-activity-badge" [ngClass]="getActivityClass(activity.type)">
+                        {{ getActivityLabel(activity.type) }}
+                     </span>
+                     <time>{{ formatActivityDate(activity.occurredAt) }}</time>
+                  </div>
+
+                  <p>{{ activity.title }}</p>
+                  <small>{{ activity.detail }}</small>
+
+                  <a [routerLink]="activity.route">Open</a>
+               </li>
+            </ul>
+         </ng-container>
+
+         <ng-template #noClientActivity>
+            <p class="dashboard-empty-state mb-0">No recent client activity yet.</p>
+         </ng-template>
+      </article>
+
       <section id="dashboard-command-center" class="dashboard-command-center">
          <app-jobflow-command-center
             [primaryActions]="primaryActions"

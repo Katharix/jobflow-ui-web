@@ -1,0 +1,51 @@
+.client-page {
+  .client-record-link {
+    color: #1f4f86;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  .client-record-link:hover {
+    color: #133b66;
+    border-bottom-color: #c6dbf5;
+  }
+
+  .client-view-btn {
+    border-radius: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.32rem 0.58rem;
+  }
+
+  .invoice-status {
+    border: 1px solid #d6dee7;
+    background-color: #f6f8fb;
+    color: #2f4457;
+    font-weight: 600;
+    padding: 0.45rem 0.7rem;
+  }
+
+  .invoice-status.is-sent {
+    background-color: #e8f1fd;
+    border-color: #c5ddfb;
+    color: #1f4f86;
+  }
+
+  .invoice-status.is-paid {
+    background-color: #e8f8ef;
+    border-color: #c9ebd7;
+    color: #1f6a3d;
+  }
+
+  .invoice-status.is-overdue {
+    background-color: #fdeeee;
+    border-color: #f7d2d2;
+    color: #8f2b2b;
+  }
+
+  .invoice-status.is-unpaid {
+    background-color: #fff4e8;
+    border-color: #f5ddc2;
+    color: #8b5320;
+  }
+}

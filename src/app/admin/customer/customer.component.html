@@ -15,6 +15,58 @@
    <customer-create (saved)="onCreateSaved()" (cancelled)="onCreateCancelled()"/>
 </jobflow-drawer>
 
+<jobflow-drawer
+   [open]="isSendLinkDrawerOpen"
+   title="Send Client Hub Link"
+   (closed)="closeSendLinkDrawer()"
+>
+   <ng-container *ngIf="clientToSendLink">
+      @if (sendLinkError) {
+         <div class="alert alert-danger mb-3">{{ sendLinkError }}</div>
+      }
+
+      <div class="mb-4">
+         <label class="form-label fw-semibold">Email Address</label>
+         <input
+            type="email"
+            class="form-control"
+            [(ngModel)]="sendLinkEmail"
+            placeholder="client@example.com"
+            [disabled]="sendingLink" />
+      </div>
+
+      <div class="mb-4">
+         <label class="form-label fw-semibold">
+            Message <span class="text-muted fw-normal">(optional)</span>
+         </label>
+         <textarea
+            class="form-control"
+            rows="4"
+            [(ngModel)]="sendLinkMessage"
+            placeholder="Add a personal note with the Client Hub link…"
+            [disabled]="sendingLink">
+         </textarea>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2">
+         <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="closeSendLinkDrawer()"
+            [disabled]="sendingLink">
+            Cancel
+         </button>
+         <button
+            type="button"
+            class="btn btn-primary"
+            (click)="confirmSendLink()"
+            [disabled]="sendingLink || !sendLinkEmail.trim()">
+            {{ sendingLink ? 'Sending…' : 'Send Link' }}
+         </button>
+      </div>
+   </ng-container>
+</jobflow-drawer>
+
 <ng-template #clientNameTemplate let-client>
    <div class="client-cell">
       <div class="client-title">{{ client.firstName }} {{ client.lastName }}</div>

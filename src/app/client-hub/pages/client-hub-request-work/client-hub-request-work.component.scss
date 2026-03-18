@@ -1,0 +1,38 @@
+.client-page {
+  .form-surface {
+    padding: 1rem;
+  }
+
+  .form-label {
+    font-weight: 650;
+    color: #1a4a71;
+    margin-bottom: 0.38rem;
+  }
+
+  .form-control {
+    border-radius: 0.72rem;
+    border-color: #cadeef;
+    min-height: 2.72rem;
+  }
+
+  textarea.form-control {
+    min-height: 7.9rem;
+  }
+
+  .form-control:focus {
+    border-color: #1f83cf;
+    box-shadow: 0 0 0 0.2rem rgba(31, 131, 207, 0.16);
+  }
+
+  .form-actions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .form-actions .btn {
+    border-radius: 0.74rem;
+    font-weight: 700;
+    min-width: 150px;
+  }
+}
