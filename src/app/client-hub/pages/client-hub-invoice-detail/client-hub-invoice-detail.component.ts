@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Invoice, InvoiceStatus } from '../../../models/invoice';
-import { PaymentService } from '../../../services/shared/payment.service';
 import { ClientHubAuthService } from '../../services/client-hub-auth.service';
 import { ClientHubService } from '../../services/client-hub.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-client-hub-invoice-detail',
@@ -19,7 +19,7 @@ export class ClientHubInvoiceDetailComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly clientHubService = inject(ClientHubService);
   private readonly clientHubAuth = inject(ClientHubAuthService);
-  private readonly paymentService = inject(PaymentService);
+  private readonly http = inject(HttpClient);
 
   isLoading = true;
   isPaying = false;
@@ -101,7 +101,23 @@ export class ClientHubInvoiceDetailComponent implements OnInit {
     this.isPaying = true;
     this.paymentError = null;
 
-    this.paymentService.createInvoiceCheckoutSession(this.invoice.id).subscribe({
+    const token = this.clientHubAuth.getToken();
+    if (!token) {
+      this.clientHubAuth.handleUnauthorized(this.router, this.router.url);
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    this.http
+      .post<{ url?: string }>(
+        `${environment.apiUrl.replace(/\/$/, '')}/payments/checkout`,
+        { invoiceId: this.invoice.id },
+        { headers },
+      )
+      .subscribe({
       next: (result) => {
         this.isPaying = false;
 

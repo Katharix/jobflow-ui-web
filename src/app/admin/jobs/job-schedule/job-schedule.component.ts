@@ -6,6 +6,10 @@ import { JobflowCalendarComponent } from '../../../common/jobflow-calendar/jobfl
 import { CalendarEvent } from '../../../common/jobflow-calendar/models/calendar-event';
 import { AssignmentsService } from '../services/assignments.service';
 import { JobsService } from '../services/jobs.service';
+import { WeatherService } from '../../../services/shared/weather.service';
+import { WeatherDashboardDto, WeatherForecastDay } from '../../../models/weather';
+import { of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { mapAssignmentsToCalendarEvents } from '../../../common/jobflow-calendar/utils/assignment-calendar-mapper';
 import { ScheduleType } from '../models/assignment';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -37,13 +41,24 @@ export class JobScheduleComponent implements OnInit {
   showAssignmentModal = false;
   draftEvent: CalendarEvent | null = null;
   private returnToCommandCenter = false;
+  weatherLocation = 'Local area';
+  weatherIsApproximate = false;
+  weatherIconClass = 'pi pi-cloud';
+  weatherConditionText = 'Forecast unavailable';
+  weatherForecast: WeatherForecastDay[] = [];
+  selectedDayForecast: WeatherForecastDay | null = null;
+  jobAddress = '';
+  addressMissing = false;
+  locationUnavailable = false;
+  isWeatherLoading = false;
 
   constructor(
     private assignments: AssignmentsService,
     private recurrenceRules: RecurrenceRulesService,
     private jobs: JobsService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private weatherService: WeatherService
   ) {}
 
   ngOnInit(): void {
@@ -55,12 +70,16 @@ export class JobScheduleComponent implements OnInit {
       this.clientName = [job.organizationClient?.firstName, job.organizationClient?.lastName]
         .filter(Boolean)
         .join(' ');
+      this.jobAddress = this.buildJobAddress(job);
+      this.addressMissing = !this.jobAddress;
+      this.loadWeatherForecast();
     });
     this.loadAssignments();
   }
 
   onCalendarDateChange(date: Date): void {
     this.selectedDate = date;
+    this.updateSelectedDayForecast();
     this.loadAssignments();
   }
 
@@ -88,6 +107,8 @@ export class JobScheduleComponent implements OnInit {
 
   onCalendarEventCreate(e: CalendarEvent): void {
     this.draftEvent = e;
+    this.selectedDate = e.StartTime;
+    this.updateSelectedDayForecast();
     this.showAssignmentModal = true;
   }
 
@@ -100,7 +121,12 @@ export class JobScheduleComponent implements OnInit {
     recurrence?: RecurrenceRuleUpsertRequest;
   }) {
     if (payload.recurrence) {
-      this.recurrenceRules.upsertJobRecurrence(payload.jobId, payload.recurrence).subscribe(() => {
+      this.recurrenceRules.upsertJobRecurrence(payload.jobId, {
+        scheduledStart: payload.scheduledStart,
+        scheduledEnd: payload.scheduledEnd,
+        scheduleType: payload.scheduleType,
+        recurrence: payload.recurrence,
+      }).subscribe(() => {
         this.showAssignmentModal = false;
         this.draftEvent = null;
         if (this.returnToCommandCenter) {
@@ -154,6 +180,85 @@ export class JobScheduleComponent implements OnInit {
         scheduleType: ScheduleType.Exact,
       })
       .subscribe(() => this.loadAssignments());
+  }
+
+  private loadWeatherForecast(): void {
+    this.isWeatherLoading = true;
+
+    if (this.addressMissing) {
+      this.locationUnavailable = true;
+      this.isWeatherLoading = false;
+      return;
+    }
+
+    this.fetchWeatherByAddress(this.jobAddress);
+  }
+
+  private fetchWeatherByAddress(address: string): void {
+    this.weatherService
+      .getWeatherDashboardByAddress(address)
+      .pipe(
+        catchError(() => of(this.unavailableWeather()))
+      )
+      .subscribe((weather) => {
+        this.applyWeather(weather);
+        this.isWeatherLoading = false;
+      });
+  }
+
+  private applyWeather(weather: WeatherDashboardDto): void {
+    if (weather.currentCondition === 'unavailable') {
+      this.locationUnavailable = true;
+      this.weatherConditionText = 'Forecast unavailable';
+      this.weatherIconClass = 'pi pi-map-marker';
+      this.selectedDayForecast = null;
+      return;
+    }
+
+    this.locationUnavailable = false;
+    this.weatherLocation = weather.location || 'Local area';
+    this.weatherIsApproximate = weather.isApproximate;
+    this.weatherConditionText = weather.currentCondition || 'Forecast unavailable';
+    this.weatherIconClass = weather.currentIconClass || 'pi pi-cloud';
+    this.weatherForecast = weather.forecast ?? [];
+    this.updateSelectedDayForecast();
+  }
+
+  private updateSelectedDayForecast(forecastOverride?: WeatherForecastDay[]): void {
+    const forecast = forecastOverride ?? this.weatherForecast;
+    if (!forecast.length) {
+      this.selectedDayForecast = null;
+      return;
+    }
+
+    const selectedKey = this.selectedDate.toISOString().slice(0, 10);
+    this.selectedDayForecast = forecast.find(day => day.date === selectedKey) ?? null;
+  }
+
+  private unavailableWeather(): WeatherDashboardDto {
+    return {
+      location: '',
+      isApproximate: false,
+      currentTempF: 0,
+      currentCondition: 'unavailable',
+      currentIconClass: 'pi pi-map-marker',
+      forecast: []
+    };
+  }
+
+  private buildJobAddress(job: { organizationClient?: { address1?: string; address2?: string; city?: string; state?: string; zipCode?: string } }): string {
+    const client = job.organizationClient;
+    const parts = [
+      client?.address1,
+      client?.address2,
+      client?.city,
+      client?.state,
+      client?.zipCode
+    ]
+      .map((part) => (part ?? '').trim())
+      .filter(Boolean);
+
+    return parts.join(', ');
   }
 }
 

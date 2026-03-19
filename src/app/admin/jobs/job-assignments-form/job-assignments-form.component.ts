@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -7,6 +7,7 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { TextareaModule } from 'primeng/textarea';
 import { ScheduleType } from '../models/assignment';
 import { RecurrenceRuleUpsertRequest } from '../models/recurrence-rule';
+import { WeatherForecastDay } from '../../../models/weather';
 
 type ScheduleMode = 'OneTime' | 'Recurring';
 
@@ -37,6 +38,12 @@ export class JobAssignmentFormComponent implements OnInit {
    @Input() jobId!: string;
    @Input() scheduledStart!: Date;
    @Input() scheduledEnd!: Date;
+   @Input() selectedDayForecast: WeatherForecastDay | null = null;
+   @Input() isWeatherLoading = false;
+   @Input() addressMissing = false;
+   @Input() locationUnavailable = false;
+   @Input() weatherLocation = 'Job location';
+   @Input() weatherIsApproximate = false;
 
    @Output() submitted = new EventEmitter<{
       jobId: string;
@@ -59,6 +66,11 @@ export class JobAssignmentFormComponent implements OnInit {
 
    form!: FormGroup;
 
+   private readonly nonEmptyArrayValidator: ValidatorFn = (control: AbstractControl) => {
+      const value = control.value as unknown;
+      return Array.isArray(value) && value.length > 0 ? null : { required: true };
+   };
+
    constructor(private fb: FormBuilder) {}
 
    ngOnInit(): void {
@@ -78,6 +90,11 @@ export class JobAssignmentFormComponent implements OnInit {
          endDate: [null],
          occurrenceCount: [null],
       });
+
+      this.configureRecurrenceValidators();
+      this.form.get('scheduleMode')?.valueChanges.subscribe(() => this.configureRecurrenceValidators());
+      this.form.get('pattern')?.valueChanges.subscribe(() => this.configureRecurrenceValidators());
+      this.form.get('endType')?.valueChanges.subscribe(() => this.configureRecurrenceValidators());
    }
 
    get isRecurring(): boolean {
@@ -97,13 +114,26 @@ export class JobAssignmentFormComponent implements OnInit {
          ? [...current, day].sort((a, b) => a - b)
          : current.filter((d: number) => d !== day);
 
-      this.form.patchValue({ dayOfWeek: updated });
+      const control = this.form.get('dayOfWeek');
+      control?.patchValue(updated);
+      control?.markAsTouched();
+      control?.updateValueAndValidity();
    }
 
    onSubmit(): void {
       if (this.form.invalid) return;
 
       const v = this.form.value;
+      const start = new Date(v.scheduledStart);
+      const end = new Date(v.scheduledEnd);
+
+      if (end <= start) {
+         const endControl = this.form.get('scheduledEnd');
+         endControl?.setErrors({ endBeforeStart: true });
+         endControl?.markAsTouched();
+         return;
+      }
+
       const recurrence: RecurrenceRuleUpsertRequest | undefined = this.isRecurring
          ? {
             pattern: v.pattern,
@@ -122,13 +152,108 @@ export class JobAssignmentFormComponent implements OnInit {
 
       this.submitted.emit({
          jobId: this.jobId,
-         scheduledStart: new Date(v.scheduledStart),
-         scheduledEnd: new Date(v.scheduledEnd),
+         scheduledStart: start,
+         scheduledEnd: end,
          scheduleType: ScheduleType.Exact,
          notes: v.notes ?? '',
          recurrence,
       });
    }
 
+   private configureRecurrenceValidators(): void {
+      const scheduleMode = this.form.get('scheduleMode')?.value as ScheduleMode;
+      const pattern = this.form.get('pattern')?.value as RecurrenceRuleUpsertRequest['pattern'];
+      const endType = this.form.get('endType')?.value as RecurrenceRuleUpsertRequest['endType'];
+
+      const interval = this.form.get('interval');
+      const dayOfWeek = this.form.get('dayOfWeek');
+      const dayOfMonth = this.form.get('dayOfMonth');
+      const endDate = this.form.get('endDate');
+      const occurrenceCount = this.form.get('occurrenceCount');
+
+      if (scheduleMode !== 'Recurring') {
+         interval?.clearValidators();
+         dayOfWeek?.clearValidators();
+         dayOfMonth?.clearValidators();
+         endDate?.clearValidators();
+         occurrenceCount?.clearValidators();
+
+         interval?.updateValueAndValidity({ emitEvent: false });
+         dayOfWeek?.updateValueAndValidity({ emitEvent: false });
+         dayOfMonth?.updateValueAndValidity({ emitEvent: false });
+         endDate?.updateValueAndValidity({ emitEvent: false });
+         occurrenceCount?.updateValueAndValidity({ emitEvent: false });
+         return;
+      }
+
+      interval?.setValidators([Validators.required, Validators.min(1)]);
+
+      if (pattern === 'Weekly') {
+         dayOfWeek?.setValidators([this.nonEmptyArrayValidator]);
+         dayOfMonth?.clearValidators();
+      } else {
+         dayOfMonth?.setValidators([Validators.required, Validators.min(1), Validators.max(31)]);
+         dayOfWeek?.clearValidators();
+      }
+
+      if (endType === 'OnDate') {
+         endDate?.setValidators([Validators.required]);
+         occurrenceCount?.clearValidators();
+      } else if (endType === 'AfterCount') {
+         occurrenceCount?.setValidators([Validators.required, Validators.min(1)]);
+         endDate?.clearValidators();
+      } else {
+         endDate?.clearValidators();
+         occurrenceCount?.clearValidators();
+      }
+
+      interval?.updateValueAndValidity({ emitEvent: false });
+      dayOfWeek?.updateValueAndValidity({ emitEvent: false });
+      dayOfMonth?.updateValueAndValidity({ emitEvent: false });
+      endDate?.updateValueAndValidity({ emitEvent: false });
+      occurrenceCount?.updateValueAndValidity({ emitEvent: false });
+   }
+
    protected readonly ScheduleType = ScheduleType;
+
+   get weatherMessage(): string {
+      if (this.isWeatherLoading) {
+         return 'Loading forecast for the job location...';
+      }
+
+      if (this.addressMissing) {
+         return 'Add a job address to view the forecast for this date.';
+      }
+
+      if (this.locationUnavailable) {
+         return 'Forecast unavailable for the job address.';
+      }
+
+      if (!this.selectedDayForecast) {
+         return 'Forecast not available for the selected date yet.';
+      }
+
+      const temps = `${this.selectedDayForecast.highTempF}° / ${this.selectedDayForecast.lowTempF}°`;
+      const precip = this.selectedDayForecast.precipitationChance >= 20
+         ? ` · ${this.selectedDayForecast.precipitationChance}% rain`
+         : '';
+
+      return `${this.selectedDayForecast.condition} — ${temps}${precip}.`;
+   }
+
+   get weatherSeverity(): 'clear' | 'warning' {
+      if (!this.selectedDayForecast) {
+         return 'clear';
+      }
+
+      return this.selectedDayForecast.precipitationChance >= 50 ? 'warning' : 'clear';
+   }
+
+   get weatherStatusIcon(): string {
+      return this.weatherSeverity === 'warning' ? 'pi pi-exclamation-triangle' : 'pi pi-check-circle';
+   }
+
+   get weatherStatusClass(): string {
+      return this.weatherSeverity === 'warning' ? 'text-warning' : 'text-success';
+   }
 }

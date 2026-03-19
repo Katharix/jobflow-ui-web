@@ -1,19 +1,29 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { RecurrenceRuleUpsertRequest } from '../models/recurrence-rule';
-import { environment } from '../../../../environments/environment.prod';
+import { BaseApiService } from '../../../services/shared/base-api.service';
+import { ScheduleType } from '../models/assignment';
 
 @Injectable({ providedIn: 'root' })
 export class RecurrenceRulesService {
-  private readonly baseUrl = `${environment.baseUrl}/job`;
+  private readonly baseUrl = 'job';
 
-  constructor(private http: HttpClient) {}
+  constructor(private api: BaseApiService) {}
 
   upsertJobRecurrence(
     jobId: string,
-    body: RecurrenceRuleUpsertRequest
+    payload: {
+      scheduledStart: Date;
+      scheduledEnd: Date;
+      scheduleType: ScheduleType;
+      recurrence: RecurrenceRuleUpsertRequest;
+    }
   ): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/${jobId}/recurrence`, body);
+    return this.api.put<void>(`${this.baseUrl}/${jobId}/recurrence`, {
+      scheduledStart: payload.scheduledStart?.toISOString(),
+      scheduledEnd: payload.scheduledEnd?.toISOString(),
+      scheduleType: payload.scheduleType,
+      ...payload.recurrence,
+    });
   }
 }

@@ -1,61 +1,63 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { BaseApiService } from '../../services/shared/base-api.service';
 import { ClientHubAuthService } from './client-hub-auth.service';
+import { BaseApiService } from '../../services/shared/base-api.service';
 
 describe('ClientHubAuthService', () => {
   let service: ClientHubAuthService;
-  let apiSpy: jasmine.SpyObj<BaseApiService>;
-
-  const jwtToken = 'header.payload.signature';
+  let api: jasmine.SpyObj<BaseApiService>;
 
   beforeEach(() => {
-    apiSpy = jasmine.createSpyObj('BaseApiService', ['get', 'post', 'put', 'delete', 'getBlob']);
-
+    api = jasmine.createSpyObj<BaseApiService>('BaseApiService', ['post']);
     TestBed.configureTestingModule({
       providers: [
         ClientHubAuthService,
-        { provide: BaseApiService, useValue: apiSpy },
-      ],
+        { provide: BaseApiService, useValue: api }
+      ]
     });
-
     service = TestBed.inject(ClientHubAuthService);
+    localStorage.clear();
   });
 
-  it('should redeem magic link and read a root accessToken', (done) => {
-    apiSpy.post.and.returnValue(of({ accessToken: jwtToken }));
+  it('requests magic link without auth', () => {
+    api.post.and.returnValue(of({}));
+    service.requestMagicLink('test@example.com').subscribe();
+    expect(api.post).toHaveBeenCalledWith(
+      'client-hub-auth/magic-link/request',
+      { emailAddress: 'test@example.com', organizationClientId: null },
+      false
+    );
+  });
 
-    service.redeemMagicLink('magic-token').subscribe({
-      next: (token) => {
-        expect(token).toBe(jwtToken);
-        expect(apiSpy.post).toHaveBeenCalledWith('client-portal/redeem', { token: 'magic-token' }, false);
-        done();
-      },
-      error: done.fail,
+  it('redeems magic link and returns access token', () => {
+    const token = buildJwtToken(Math.floor(Date.now() / 1000) + 3600);
+    api.post.and.returnValue(of({ accessToken: token }));
+
+    service.redeemMagicLink('token-1').subscribe((result) => {
+      expect(result).toBe(token);
     });
   });
 
-  it('should redeem magic link and read a nested jwt token', (done) => {
-    apiSpy.post.and.returnValue(of({ result: { jwt: jwtToken } }));
-
-    service.redeemMagicLink('magic-token').subscribe({
-      next: (token) => {
-        expect(token).toBe(jwtToken);
-        done();
-      },
-      error: done.fail,
-    });
+  it('detects valid JWT shape', () => {
+    expect(service.isLikelyJwt('a.b.c')).toBeTrue();
+    expect(service.isLikelyJwt('a.b')).toBeFalse();
   });
 
-  it('should error when redeem response has no JWT token', (done) => {
-    apiSpy.post.and.returnValue(of({ value: { id: 'client-1' } }));
-
-    service.redeemMagicLink('magic-token').subscribe({
-      next: () => done.fail('Expected redeemMagicLink to fail when no JWT token is returned.'),
-      error: (error: Error) => {
-        expect(error.message).toContain('No access token was returned after redeeming the magic link.');
-        done();
-      },
-    });
+  it('clears expired token on getToken', () => {
+    const expired = buildJwtToken(Math.floor(Date.now() / 1000) - 10);
+    service.setToken(expired);
+    expect(service.getToken()).toBeNull();
   });
 });
+
+function buildJwtToken(exp: number): string {
+  const header = btoa(JSON.stringify({ alg: 'none', typ: 'JWT' }))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+  const payload = btoa(JSON.stringify({ exp }))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+  return `${header}.${payload}.signature`;
+}

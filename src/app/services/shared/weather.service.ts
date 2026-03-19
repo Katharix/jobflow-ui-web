@@ -24,17 +24,35 @@ export class WeatherService {
         if (!coords) {
           return of(this.locationUnavailableDto());
         }
-        return this.api
-          .get<any>('weather/forecast', {
-            lat: coords.latitude,
-            lon: coords.longitude,
-            days: WeatherService.FORECAST_DAYS
-          })
-          .pipe(
-            map(apiPayload => this.mapToDashboardDto(apiPayload, coords)),
-            catchError(() => this.loadOpenMeteoWeather(coords))
-          );
+        return this.getWeatherDashboardWithCoords(coords);
       })
+    );
+  }
+
+  getWeatherDashboardByAddress(address: string): Observable<WeatherDashboardDto> {
+    const trimmed = address?.trim();
+    if (!trimmed) {
+      return of(this.locationUnavailableDto());
+    }
+
+    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(trimmed)}&count=1&language=en&format=json`;
+
+    return this.fetchJson(url).pipe(
+      map((response: any) => {
+        const result = response?.results?.[0];
+        if (!result) {
+          return null;
+        }
+
+        return {
+          latitude: Number(result.latitude ?? 0),
+          longitude: Number(result.longitude ?? 0),
+          location: this.formatGeocodeLocation(result),
+          isApproximate: false
+        } as Coordinates;
+      }),
+      switchMap(coords => coords ? this.getWeatherDashboardWithCoords(coords) : of(this.locationUnavailableDto())),
+      catchError(() => of(this.locationUnavailableDto()))
     );
   }
 
@@ -103,6 +121,19 @@ export class WeatherService {
         })
       )
     );
+  }
+
+  private getWeatherDashboardWithCoords(coords: Coordinates): Observable<WeatherDashboardDto> {
+    return this.api
+      .get<any>('weather/forecast', {
+        lat: coords.latitude,
+        lon: coords.longitude,
+        days: WeatherService.FORECAST_DAYS
+      })
+      .pipe(
+        map(apiPayload => this.mapToDashboardDto(apiPayload, coords)),
+        catchError(() => this.loadOpenMeteoWeather(coords))
+      );
   }
 
   private mapToDashboardDto(payload: any, coords: Coordinates): WeatherDashboardDto {
@@ -177,6 +208,13 @@ export class WeatherService {
         })
         .catch(error => observer.error(error));
     });
+  }
+
+  private formatGeocodeLocation(result: any): string {
+    const parts = [result?.name, result?.admin1, result?.country]
+      .map((part: string | undefined) => (part ?? '').trim())
+      .filter(Boolean);
+    return parts.join(', ') || 'Job location';
   }
 
   private celsiusToFahrenheit(value: number): number {

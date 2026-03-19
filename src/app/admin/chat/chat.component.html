@@ -236,6 +236,11 @@
 
               <div class="chat-body">
                 <ng-scrollbar>
+                  <div class="text-center my-2" *ngIf="selectedConversation && hasMoreMessages">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="loadMoreMessages()" [disabled]="isLoadingMessages">
+                      {{ isLoadingMessages ? 'Loading...' : 'Load earlier messages' }}
+                    </button>
+                  </div>
                   <ul class="messages" *ngIf="messages.length; else emptyThreadState">
                     <li class="message-item" *ngFor="let msg of messages; trackBy: trackByMessage" [ngClass]="{ 'me': msg.isMine, 'friend': !msg.isMine }">
                       <ng-container *ngIf="msg.isMine; else friendMessageAvatar">
@@ -250,7 +255,10 @@
                       <div class="content">
                         <div class="message">
                           <div class="bubble">
-                            <p class="mb-0">{{ msg.content }}</p>
+                            <p class="mb-1" *ngIf="msg.content">{{ msg.content }}</p>
+                            <a *ngIf="msg.attachmentUrl" class="d-inline-block" [href]="msg.attachmentUrl" target="_blank" rel="noopener">
+                              <img [src]="msg.attachmentUrl" class="img-fluid rounded" alt="attachment">
+                            </a>
                           </div>
                           <span>{{ msg.timestamp | date:'shortTime' }}</span>
                         </div>
@@ -274,9 +282,10 @@
                   </button>
                 </div>
                 <div class="d-none d-md-block">
-                  <button type="button" class="btn border btn-icon rounded-circle me-2" ngbTooltip="Attachments coming soon" aria-label="Attachments coming soon">
+                  <label class="btn border btn-icon rounded-circle me-2" ngbTooltip="Add image" aria-label="Add image">
+                    <input type="file" class="d-none" accept="image/*" (change)="onAttachmentSelected($event)">
                     <i class="feather icon-paperclip text-secondary"></i>
-                  </button>
+                  </label>
                 </div>
                 <div class="d-none d-md-block">
                   <button type="button" class="btn border btn-icon rounded-circle me-2" ngbTooltip="Voice notes coming soon" aria-label="Voice notes coming soon">
@@ -293,9 +302,19 @@
                       placeholder="Type a message"
                     >
                   </div>
+                  <div *ngIf="attachmentPreviewUrl" class="d-flex align-items-center mt-2 gap-2">
+                    <img [src]="attachmentPreviewUrl" class="img-sm rounded" alt="attachment preview">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="clearAttachment()">Remove</button>
+                  </div>
+                  <div *ngIf="attachmentUploadError" class="text-danger fs-13px mt-1">{{ attachmentUploadError }}</div>
                 </form>
                 <div>
-                  <button type="button" class="btn btn-primary btn-icon rounded-circle" (click)="sendMessage()" [disabled]="!messageText.trim()">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-icon rounded-circle"
+                    (click)="sendMessage()"
+                    [disabled]="isSending || (!messageText.trim() && !attachmentPreviewUrl)"
+                  >
                     <i class="feather icon-send"></i>
                   </button>
                 </div>

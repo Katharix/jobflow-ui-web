@@ -29,7 +29,7 @@ export class AdminNavbarComponent implements OnInit {
    showNavbar = true;
 
    private hideNavbarRoutes: string[] = [
-      '/admin/scheduling-jobs'
+      
    ];
 
 
