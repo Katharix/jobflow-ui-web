@@ -91,3 +91,25 @@ export type ClientHubInvoice = Invoice;
 export interface ClientHubInvoiceCheckoutResponse {
   url: string;
 }
+
+export interface EstimateRevisionAttachmentDto {
+  id: string;
+  fileName: string;
+  contentType: string;
+  fileSizeBytes: number;
+}
+
+export interface EstimateRevisionRequestDto {
+  id: string;
+  estimateId: string;
+  organizationId: string;
+  organizationClientId: string;
+  revisionNumber: number;
+  status: string;
+  requestMessage: string;
+  organizationResponseMessage?: string | null;
+  requestedAt: string;
+  reviewedAt?: string | null;
+  resolvedAt?: string | null;
+  attachments?: EstimateRevisionAttachmentDto[];
+}

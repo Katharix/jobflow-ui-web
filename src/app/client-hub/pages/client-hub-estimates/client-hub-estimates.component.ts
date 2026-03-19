@@ -43,8 +43,12 @@ export class ClientHubEstimatesComponent implements OnInit {
         return 'is-accepted';
       case EstimateStatus.Declined:
         return 'is-declined';
+      case EstimateStatus.Cancelled:
+        return 'is-cancelled';
       case EstimateStatus.Sent:
         return 'is-sent';
+      case EstimateStatus.RevisionRequested:
+        return 'is-revision-requested';
       case EstimateStatus.Expired:
         return 'is-expired';
       default:

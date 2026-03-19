@@ -31,7 +31,9 @@ export enum EstimateStatus {
   Sent = 1,
   Accepted = 2,
   Declined = 3,
-  Expired = 4,
+  Cancelled = 4,
+  Expired = 5,
+  RevisionRequested = 6,
 }
 
 export const EstimateStatusLabels: Record<EstimateStatus, string> = {
@@ -39,7 +41,9 @@ export const EstimateStatusLabels: Record<EstimateStatus, string> = {
   [EstimateStatus.Sent]: 'Sent',
   [EstimateStatus.Accepted]: 'Accepted',
   [EstimateStatus.Declined]: 'Declined',
+  [EstimateStatus.Cancelled]: 'Cancelled',
   [EstimateStatus.Expired]: 'Expired',
+  [EstimateStatus.RevisionRequested]: 'Revision Requested',
 };
 
 export interface EstimateLineItem {

@@ -194,6 +194,11 @@
    background: rgba(var(--bs-primary-rgb), 0.12);
 }
 
+.dashboard-activity-badge.is-info {
+   color: var(--bs-info-text-emphasis, var(--bs-info));
+   background: rgba(var(--bs-info-rgb), 0.15);
+}
+
 .dashboard-empty-state {
    color: var(--bs-secondary-color);
    font-size: 0.82rem;

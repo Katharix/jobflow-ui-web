@@ -99,6 +99,14 @@
         >
           {{ isSubmitting ? 'Saving...' : 'Decline Estimate' }}
         </button>
+        <button
+          type="button"
+          class="btn btn-outline-primary"
+          [disabled]="!canRespond"
+          (click)="openRevisionModal()"
+        >
+          Request Revision
+        </button>
       </div>
 
       @if (!canRespond) {
@@ -107,5 +115,10 @@
         </p>
       }
     </div>
+
+    <app-estimate-revision-history
+      [estimateId]="estimate.id"
+      [refreshToken]="revisionRefreshToken"
+    ></app-estimate-revision-history>
   }
 </section>
