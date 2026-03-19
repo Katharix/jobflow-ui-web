@@ -6,6 +6,9 @@ import {
   EstimateStatus,
   EstimateStatusLabels,
 } from '../../../admin/estimates/models/estimate';
+import { ModalService } from '../../../common/modal/modal.service';
+import { EstimateRevisionFormComponent } from '../../components/estimate-revision-form/estimate-revision-form.component';
+import { EstimateRevisionHistoryComponent } from '../../components/estimate-revision-history/estimate-revision-history.component';
 import { ClientHubEstimate } from '../../models/client-hub.models';
 import { ClientHubAuthService } from '../../services/client-hub-auth.service';
 import { ClientHubService } from '../../services/client-hub.service';
@@ -13,7 +16,7 @@ import { ClientHubService } from '../../services/client-hub.service';
 @Component({
   selector: 'app-client-hub-estimate-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, EstimateRevisionHistoryComponent],
   templateUrl: './client-hub-estimate-detail.component.html',
   styleUrl: './client-hub-estimate-detail.component.scss',
 })
@@ -22,6 +25,7 @@ export class ClientHubEstimateDetailComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly clientHubService = inject(ClientHubService);
   private readonly clientHubAuth = inject(ClientHubAuthService);
+  private readonly modal = inject(ModalService);
 
   isLoading = true;
   isSubmitting = false;
@@ -29,6 +33,7 @@ export class ClientHubEstimateDetailComponent implements OnInit {
   actionError: string | null = null;
   actionSuccess: string | null = null;
   estimate: ClientHubEstimate | null = null;
+  revisionRefreshToken = 0;
 
   ngOnInit(): void {
     this.loadEstimate();
@@ -100,6 +105,25 @@ export class ClientHubEstimateDetailComponent implements OnInit {
     });
   }
 
+  openRevisionModal(): void {
+    const estimateId = this.estimate?.id;
+    if (!estimateId) return;
+
+    const ref = this.modal.open(EstimateRevisionFormComponent, {
+      data: {
+        estimateId,
+        estimateNumber: this.estimate?.estimateNumber ?? null,
+      },
+      panelClass: 'modal-md',
+    });
+
+    ref.afterClosed().subscribe((result) => {
+      if (!result) return;
+      this.revisionRefreshToken += 1;
+      this.loadEstimate();
+    });
+  }
+
   formatDate(value?: string): string {
     if (!value) return '—';
 
@@ -133,8 +157,12 @@ export class ClientHubEstimateDetailComponent implements OnInit {
         return 'is-accepted';
       case EstimateStatus.Declined:
         return 'is-declined';
+      case EstimateStatus.Cancelled:
+        return 'is-cancelled';
       case EstimateStatus.Sent:
         return 'is-sent';
+      case EstimateStatus.RevisionRequested:
+        return 'is-revision-requested';
       case EstimateStatus.Expired:
         return 'is-expired';
       default:

@@ -41,9 +41,19 @@
   color: var(--bs-danger);
 }
 
+.status-cancelled {
+  background: rgba(var(--bs-dark-rgb), 0.1);
+  color: var(--bs-dark);
+}
+
 .status-expired {
   background: rgba(var(--bs-warning-rgb), 0.15);
   color: var(--bs-warning);
+}
+
+.status-revision-requested {
+  background: rgba(var(--bs-primary-rgb), 0.18);
+  color: var(--bs-primary);
 }
 
 .status-unknown {

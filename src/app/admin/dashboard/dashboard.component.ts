@@ -1,8 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { forkJoin, of, Subject } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
+import { Auth } from '@angular/fire/auth';
 
 import { OrganizationContextService } from '../../services/shared/organization-context.service';
 import { InvoiceService } from '../invoices/services/invoice.service';
@@ -13,13 +14,18 @@ import { CustomersService } from '../customer/services/customer.service';
 import { EstimateService } from '../estimates/services/estimate.service';
 import { Estimate, EstimateStatus, EstimateStatusLabels } from '../estimates/models/estimate';
 import { Invoice, InvoiceStatus } from '../../models/invoice';
+import { useNotifierHub } from '../services/useNotifierHub';
 import {
    CommandCenterAction,
    CommandCenterFlowStep,
    JobflowCommandCenterComponent
 } from './jobflow-command-center/jobflow-command-center.component';
 
-type DashboardClientActivityType = 'estimate-accepted' | 'estimate-declined' | 'invoice-paid';
+type DashboardClientActivityType =
+   | 'estimate-accepted'
+   | 'estimate-declined'
+   | 'estimate-revision-requested'
+   | 'invoice-paid';
 
 interface DashboardClientActivity {
    id: string;
@@ -38,6 +44,7 @@ interface DashboardClientActivity {
    styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit, OnDestroy {
+   private readonly auth = inject(Auth);
    organizationId: string | null = null;
    organizationName = 'your organization';
    currentDateTime = '';
@@ -67,9 +74,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
    flowSteps: CommandCenterFlowStep[] = [];
    clientActivity: DashboardClientActivity[] = [];
+   private revisionActivity: DashboardClientActivity[] = [];
+   private latestEstimates: Estimate[] = [];
+   private latestInvoices: Invoice[] = [];
 
    private readonly destroy$ = new Subject<void>();
    private clockIntervalId: ReturnType<typeof setInterval> | null = null;
+   private readonly notifierHub = useNotifierHub(this.auth, {
+      onEstimateRevisionRequested: (payload) => {
+         this.addRevisionActivity(payload);
+      }
+   });
 
    constructor(
       private readonly orgContext: OrganizationContextService,
@@ -81,6 +96,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
    ngOnInit(): void {
       this.startClock();
+      void this.notifierHub.connect();
 
       this.orgContext.org$
          .pipe(takeUntil(this.destroy$))
@@ -101,6 +117,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       if (this.clockIntervalId) {
          clearInterval(this.clockIntervalId);
       }
+
+      void this.notifierHub.disconnect();
 
       this.destroy$.next();
       this.destroy$.complete();
@@ -155,7 +173,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
       const draftJobs = jobs.filter(job => job.lifecycleStatus === JobLifecycleStatus.Draft);
 
-      this.clientActivity = this.buildClientActivity(estimates, invoices);
+      this.latestEstimates = estimates;
+      this.latestInvoices = invoices;
+      this.clientActivity = this.mergeClientActivity();
 
       this.flowSteps = [
          {
@@ -216,6 +236,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
             return 'Estimate accepted';
          case 'estimate-declined':
             return 'Estimate declined';
+         case 'estimate-revision-requested':
+            return 'Estimate revision requested';
          default:
             return 'Invoice paid';
       }
@@ -227,6 +249,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
             return 'is-success';
          case 'estimate-declined':
             return 'is-danger';
+         case 'estimate-revision-requested':
+            return 'is-info';
          default:
             return 'is-primary';
       }
@@ -296,6 +320,42 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return [...estimateActivity, ...invoiceActivity]
          .sort((left, right) => this.dateScore(right.occurredAt) - this.dateScore(left.occurredAt))
          .slice(0, 8);
+   }
+
+   private mergeClientActivity(): DashboardClientActivity[] {
+      const base = this.buildClientActivity(this.latestEstimates, this.latestInvoices);
+      return [...this.revisionActivity, ...base]
+         .sort((left, right) => this.dateScore(right.occurredAt) - this.dateScore(left.occurredAt))
+         .slice(0, 8);
+   }
+
+   private addRevisionActivity(payload: { estimateId: string; revisionRequestId: string; revisionNumber: number; requestedAt: string; message: string }): void {
+      if (!payload?.revisionRequestId) {
+         return;
+      }
+
+      const existing = this.revisionActivity.find(item => item.id === `revision-${payload.revisionRequestId}`);
+      if (existing) {
+         return;
+      }
+
+      const title = `Estimate revision #${payload.revisionNumber} requested`;
+      const detail = payload.message?.trim()
+         ? payload.message.trim()
+         : 'A client requested an estimate revision.';
+
+      const activity: DashboardClientActivity = {
+         id: `revision-${payload.revisionRequestId}`,
+         type: 'estimate-revision-requested',
+         title,
+         detail,
+         occurredAt: payload.requestedAt,
+         route: '/admin/estimates'
+      };
+
+      this.revisionActivity = [activity, ...this.revisionActivity].slice(0, 8);
+
+      this.clientActivity = this.mergeClientActivity();
    }
 
    private resolveEstimateStatus(raw: Estimate['status']): EstimateStatus | null {

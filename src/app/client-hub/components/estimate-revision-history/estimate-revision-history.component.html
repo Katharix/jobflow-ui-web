@@ -1,0 +1,68 @@
+<section class="revision-history">
+  <div class="revision-head">
+    <h3>Revision history</h3>
+    <span class="text-muted">Track requests and responses from your organization.</span>
+  </div>
+
+  @if (isLoading) {
+    <div class="alert alert-info">Loading revision history...</div>
+  }
+
+  @if (error) {
+    <div class="alert alert-warning">{{ error }}</div>
+  }
+
+  @if (!isLoading && !error && !items.length) {
+    <div class="empty-state">No revision requests yet.</div>
+  }
+
+  @if (!isLoading && !error && items.length) {
+    <div class="revision-list">
+      @for (revision of items; track revision.id) {
+        <article class="revision-card">
+          <div class="revision-card__head">
+            <div>
+              <span class="badge rounded-pill revision-status" [class]="'badge rounded-pill revision-status ' + statusClass(revision.status)">
+                {{ statusLabel(revision.status) }}
+              </span>
+              <div class="revision-title">Revision #{{ revision.revisionNumber }}</div>
+            </div>
+            <time>{{ formatDate(revision.requestedAt) }}</time>
+          </div>
+
+          <div class="revision-message">
+            <strong>Request</strong>
+            <p>{{ revision.requestMessage }}</p>
+          </div>
+
+          @if (revision.organizationResponseMessage) {
+            <div class="revision-response">
+              <strong>Response</strong>
+              <p>{{ revision.organizationResponseMessage }}</p>
+            </div>
+          }
+
+          @if (revision.attachments?.length) {
+            <div class="revision-attachments">
+              <strong>Attachments</strong>
+              <ul>
+                @for (attachment of revision.attachments; track attachment.id) {
+                  <li>
+                    <span>{{ attachment.fileName }}</span>
+                    <button
+                      type="button"
+                      class="btn btn-link btn-sm"
+                      (click)="downloadAttachment(revision, attachment.id, attachment.fileName)"
+                    >
+                      Download
+                    </button>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        </article>
+      }
+    </div>
+  }
+</section>

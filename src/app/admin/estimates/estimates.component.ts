@@ -83,11 +83,39 @@ export class EstimatesComponent implements OnInit {
     this.isFormDrawerOpen = true;
   }
 
-  onFormSaved(_result: Estimate): void {
+  onFormSaved(result: Estimate): void {
+    const isCreate = !this.editingEstimate;
+
     this.isFormDrawerOpen = false;
     this.editingEstimate = null;
-    this.load();
-    this.toast.success('Estimate saved successfully.');
+
+    if (!isCreate) {
+      this.load();
+      this.toast.success('Estimate updated successfully.');
+      return;
+    }
+
+    const recipientEmail = result.organizationClient?.emailAddress ?? '';
+    if (!recipientEmail.trim()) {
+      this.load();
+      this.toast.warning('Estimate created, but client email is missing so it was not sent.');
+      return;
+    }
+
+    this.estimateService
+      .send(result.id, {
+        recipientEmail: recipientEmail.trim(),
+      })
+      .subscribe({
+        next: () => {
+          this.load();
+          this.toast.success('Estimate created and sent.');
+        },
+        error: () => {
+          this.load();
+          this.toast.error('Estimate created but failed to send.');
+        },
+      });
   }
 
   onFormCancelled(): void {
@@ -159,7 +187,9 @@ export class EstimatesComponent implements OnInit {
       [EstimateStatus.Sent]: 'status-sent',
       [EstimateStatus.Accepted]: 'status-accepted',
       [EstimateStatus.Declined]: 'status-declined',
+      [EstimateStatus.Cancelled]: 'status-cancelled',
       [EstimateStatus.Expired]: 'status-expired',
+      [EstimateStatus.RevisionRequested]: 'status-revision-requested',
     };
     return map[this.resolveStatus(estimate.status)] ?? 'status-unknown';
   }
@@ -172,7 +202,11 @@ export class EstimatesComponent implements OnInit {
       if (normalized === 'sent') return EstimateStatus.Sent;
       if (normalized === 'accepted') return EstimateStatus.Accepted;
       if (normalized === 'declined') return EstimateStatus.Declined;
+      if (normalized === 'cancelled') return EstimateStatus.Cancelled;
       if (normalized === 'expired') return EstimateStatus.Expired;
+      if (normalized === 'revisionrequested' || normalized === 'revision requested') {
+        return EstimateStatus.RevisionRequested;
+      }
 
       const parsed = Number(normalized);
       return isNaN(parsed) ? EstimateStatus.Draft : (parsed as EstimateStatus);

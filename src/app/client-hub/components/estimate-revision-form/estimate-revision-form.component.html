@@ -1,0 +1,86 @@
+<div class="modal-header">
+  <h5 class="modal-title">Request estimate revision</h5>
+  <button type="button" class="btn-close" (click)="close()"></button>
+</div>
+
+<form #revisionForm="ngForm" (ngSubmit)="submit(revisionForm)" novalidate>
+  <div class="modal-body">
+    <p class="text-muted mb-3">
+      Share the changes you need so the team can update your estimate quickly.
+    </p>
+
+    @if (submitError) {
+      <div class="alert alert-danger">{{ submitError }}</div>
+    }
+
+    @if (validationErrors.length) {
+      <div class="alert alert-warning">
+        <ul class="mb-0">
+          @for (error of validationErrors; track $index) {
+            <li>{{ error }}</li>
+          }
+        </ul>
+      </div>
+    }
+
+    <div class="mb-3">
+      <label class="form-label" for="revisionMessage">Message</label>
+      <textarea
+        #messageModel="ngModel"
+        id="revisionMessage"
+        name="message"
+        rows="5"
+        class="form-control"
+        [class.is-invalid]="messageModel.invalid && (messageModel.touched || revisionForm.submitted)"
+        [(ngModel)]="message"
+        required
+        maxlength="1200"
+      ></textarea>
+      @if (messageModel.invalid && (messageModel.touched || revisionForm.submitted)) {
+        <div class="invalid-feedback d-block">
+          Message is required and must be 1200 characters or fewer.
+        </div>
+      }
+      <small class="form-text text-muted">Be specific about pricing, scope, or timeline changes.</small>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="revisionAttachments">Attachments (optional)</label>
+      <input
+        id="revisionAttachments"
+        name="revisionAttachments"
+        type="file"
+        class="form-control"
+        (change)="onFileSelected($event)"
+        multiple
+        accept=".jpg,.jpeg,.png,.webp,.pdf,.doc,.docx,.txt"
+      />
+      <small class="form-text text-muted">
+        Up to 5 files. 10MB max each. JPG, PNG, WEBP, PDF, DOC, DOCX, TXT.
+      </small>
+    </div>
+
+    @if (attachments.length) {
+      <div class="attachment-list">
+        @for (file of attachments; track file.name + file.size) {
+          <div class="attachment-item">
+            <div>
+              <div class="attachment-name">{{ file.name }}</div>
+              <div class="attachment-meta">{{ formatFileSize(file.size) }}</div>
+            </div>
+            <button type="button" class="btn btn-link btn-sm" (click)="removeAttachment($index)">
+              Remove
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="close()">Cancel</button>
+    <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || revisionForm.invalid">
+      {{ isSubmitting ? 'Submitting...' : 'Submit request' }}
+    </button>
+  </div>
+</form>
