@@ -86,7 +86,7 @@ export class ConnectPaymentComponent implements OnInit {
     this.callbackStatus = 'processing';
     this.callbackMessage = 'Finalizing Square connection...';
 
-    this.paymentService.linkConnectedAccount(this.orgId, {
+    this.paymentService.linkConnectedAccount({
       accountId: merchantId,
       provider: PaymentProvider.Square
     }).subscribe({

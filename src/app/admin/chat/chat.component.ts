@@ -1,10 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Auth } from '@angular/fire/auth';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ChatService } from './services/chat.service';
+import { FileUploadService } from '../branding/services/file-upload.service';
 
 interface ChatMessage {
   id?: string;
@@ -13,6 +15,7 @@ interface ChatMessage {
   senderId?: string;
   senderName?: string;
   senderAvatarUrl?: string | null;
+  attachmentUrl?: string | null;
   conversationId?: string;
   isMine: boolean;
   [key: string]: any;
@@ -44,6 +47,7 @@ interface ChatConversation {
   styleUrl: './chat.component.scss'
 })
 export class ChatComponent implements OnInit, OnDestroy {
+  private auth = inject(Auth);
   conversations: ChatConversation[] = [];
   selectedConversation: ChatConversation | null = null;
   messages: ChatMessage[] = [];
@@ -51,11 +55,22 @@ export class ChatComponent implements OnInit, OnDestroy {
   searchQuery = '';
   defaultNavActiveId = 1;
   chatPanelVisible = false;
-  readonly currentUserId = 'currentUserId';
+  currentUserId = '';
+  readonly pageSize = 50;
+  private messagesPage = 1;
+  hasMoreMessages = false;
+  isLoadingMessages = false;
+  isSending = false;
+  attachmentFile: File | null = null;
+  attachmentPreviewUrl: string | null = null;
+  attachmentUploadError: string | null = null;
+  private readonly uploadPreset = 'company_logos_unsigned';
+  private readonly uploadFolder = 'jobflow/chat';
 
-  constructor(private chatService: ChatService, private http: HttpClient) { }
+  constructor(private chatService: ChatService, private http: HttpClient, private uploadService: FileUploadService) { }
 
   ngOnInit(): void {
+    this.currentUserId = this.auth.currentUser?.uid ?? '';
     this.chatService.startConnection();
     this.loadConversations();
 
@@ -67,6 +82,7 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.messages = [...this.messages, normalizedMessage];
         if (normalizedMessage.conversationId) {
           this.resetUnreadCount(normalizedMessage.conversationId);
+          this.markConversationRead(normalizedMessage.conversationId);
         }
       }
     });
@@ -104,28 +120,47 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.chatPanelVisible = true;
     this.resetUnreadCount(convo.id);
     this.chatService.joinConversation(convo.id);
-
-    this.http.get<any[]>(`/api/chat/messages/${convo.id}`).subscribe((msgs) => {
-      this.messages = msgs.map((msg) => this.normalizeMessage(msg));
-    });
+    this.messagesPage = 1;
+    this.hasMoreMessages = true;
+    this.messages = [];
+    this.loadMessages(true);
+    this.markConversationRead(convo.id);
   }
 
   sendMessage(): void {
-    if (!this.messageText.trim() || !this.selectedConversation) return;
+    if (!this.selectedConversation) return;
 
-    const msg: ChatMessage = {
-      content: this.messageText.trim(),
-      timestamp: new Date().toISOString(),
-      senderId: this.currentUserId,
-      senderName: 'You',
-      conversationId: this.selectedConversation.id,
-      isMine: true
+    const trimmed = this.messageText.trim();
+    if (!trimmed && !this.attachmentFile) return;
+
+    if (this.isSending) return;
+    this.isSending = true;
+    this.attachmentUploadError = null;
+
+    const finalizeSend = (attachmentUrl?: string | null) => {
+      this.chatService.sendMessage(this.selectedConversation!.id, {
+        content: trimmed,
+        attachmentUrl: attachmentUrl ?? null
+      });
+      this.messageText = '';
+      this.clearAttachment();
+      this.isSending = false;
     };
 
-    this.chatService.sendMessage(this.selectedConversation.id, msg);
-    this.messages = [...this.messages, msg];
-    this.updateConversationPreview(this.selectedConversation.id, msg, true);
-    this.messageText = '';
+    if (!this.attachmentFile) {
+      finalizeSend(null);
+      return;
+    }
+
+    this.uploadService
+      .uploadImage(this.attachmentFile, this.uploadPreset, this.uploadFolder)
+      .subscribe({
+        next: (url) => finalizeSend(url),
+        error: () => {
+          this.attachmentUploadError = 'Unable to upload attachment. Sending message without it.';
+          finalizeSend(null);
+        }
+      });
   }
 
   startNewChat(): void {
@@ -140,6 +175,12 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.conversations = [normalizedConversation, ...this.conversations];
       this.selectConversation(normalizedConversation);
     });
+  }
+
+  loadMoreMessages(): void {
+    if (!this.selectedConversation || this.isLoadingMessages || !this.hasMoreMessages) return;
+    this.messagesPage += 1;
+    this.loadMessages(false);
   }
 
   backToChatList(): void {
@@ -219,15 +260,19 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   private normalizeMessage(message: any): ChatMessage {
+    const attachmentUrl = message.attachmentUrl ?? message.attachmentURL ?? message.attachment?.url ?? null;
     return {
       ...message,
-      content: message.content ?? message.text ?? '',
+      content: message.content ?? message.text ?? (attachmentUrl ? 'Attachment' : ''),
       timestamp: message.timestamp ?? message.createdAt ?? new Date().toISOString(),
       senderId: message.senderId ?? message.sender?.id,
       senderName: message.senderName ?? message.sender?.name,
       senderAvatarUrl: message.senderAvatarUrl ?? message.sender?.avatarUrl ?? null,
+      attachmentUrl,
       conversationId: message.conversationId,
-      isMine: Boolean(message.isMine ?? message.senderId === this.currentUserId)
+      isMine: typeof message.isMine === 'boolean'
+        ? message.isMine
+        : Boolean(message.senderId === this.currentUserId)
     };
   }
 
@@ -268,6 +313,63 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (this.selectedConversation?.id === conversationId) {
       this.selectedConversation = this.conversations.find((convo) => convo.id === conversationId) ?? this.selectedConversation;
     }
+  }
+
+  onAttachmentSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      this.attachmentUploadError = 'Only image attachments are supported right now.';
+      this.clearAttachment();
+      return;
+    }
+
+    this.attachmentFile = file;
+    this.attachmentPreviewUrl = URL.createObjectURL(file);
+    this.attachmentUploadError = null;
+  }
+
+  clearAttachment(): void {
+    if (this.attachmentPreviewUrl) {
+      URL.revokeObjectURL(this.attachmentPreviewUrl);
+    }
+    this.attachmentFile = null;
+    this.attachmentPreviewUrl = null;
+    this.attachmentUploadError = null;
+  }
+
+  private loadMessages(reset: boolean): void {
+    if (!this.selectedConversation) return;
+
+    this.isLoadingMessages = true;
+    const params = new HttpParams()
+      .set('page', this.messagesPage.toString())
+      .set('pageSize', this.pageSize.toString());
+
+    this.http.get<any[]>(`/api/chat/messages/${this.selectedConversation.id}`, { params })
+      .subscribe({
+        next: (msgs) => {
+          const normalized = msgs.map((msg) => this.normalizeMessage(msg));
+          if (reset) {
+            this.messages = normalized;
+          } else {
+            this.messages = [...normalized, ...this.messages];
+          }
+          this.hasMoreMessages = normalized.length === this.pageSize;
+          this.isLoadingMessages = false;
+        },
+        error: () => {
+          this.isLoadingMessages = false;
+        }
+      });
+  }
+
+  private markConversationRead(conversationId: string): void {
+    this.http.post(`/api/chat/conversations/${conversationId}/read`, {}).subscribe({
+      next: () => {},
+      error: () => {}
+    });
   }
 
 }

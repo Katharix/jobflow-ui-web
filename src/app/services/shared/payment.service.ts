@@ -32,7 +32,12 @@ export class PaymentService {
    createInvoiceCheckoutSession(
       invoiceId: string
    ): Observable<{ url: string }> {
-      return this.api.post(`${this.paymentUrl}invoice/${invoiceId}/checkout`, null);
+      return this.api.post<{ url: string }>(
+         `${this.paymentUrl}checkout`,
+         {
+            invoiceId
+         }
+      );
    }
 
    createConnectedAccount(provider?: PaymentProvider): Observable<any> {
@@ -43,8 +48,8 @@ export class PaymentService {
       return this.api.post(endpoint, null);
    }
 
-   linkConnectedAccount(orgId: string, request: LinkConnectedAccountRequest): Observable<{ linked: boolean }> {
-      return this.api.post<{ linked: boolean }>(`${this.paymentUrl}${orgId}/link-connected-account`, request);
+   linkConnectedAccount(request: LinkConnectedAccountRequest): Observable<{ linked: boolean }> {
+      return this.api.post<{ linked: boolean }>(`${this.paymentUrl}link-connected-account`, request);
    }
 
    createInvoicePaymentIntent(paymentSessionRequest: PaymentSessionRequest) {

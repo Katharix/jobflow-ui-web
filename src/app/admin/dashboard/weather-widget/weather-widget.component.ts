@@ -1,12 +1,11 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { of, Subject } from 'rxjs';
-import { catchError, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { WeatherService } from '../../../services/shared/weather.service';
 import { WeatherDashboardDto, WeatherForecastDay } from '../../../models/weather';
 import { Job, JobLifecycleStatus } from '../../jobs/models/job';
-import { JobsService } from '../../jobs/services/jobs.service';
 
 @Component({
    selector: 'app-weather-widget',
@@ -28,7 +27,6 @@ export class WeatherWidgetComponent implements OnInit, OnChanges, OnDestroy {
    weatherRiskAlerts: string[] = [];
    locationBlocked = false;
    locationUnavailable = false;
-   loadedJobs: Job[] = [];
 
    private readonly destroy$ = new Subject<void>();
    private refreshIntervalId: ReturnType<typeof setInterval> | null = null;
@@ -36,12 +34,10 @@ export class WeatherWidgetComponent implements OnInit, OnChanges, OnDestroy {
    private static readonly REFRESH_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
 
    constructor(
-      private readonly weatherService: WeatherService,
-      private readonly jobsService: JobsService
+      private readonly weatherService: WeatherService
    ) {}
 
    ngOnInit(): void {
-      this.loadJobs();
       this.loadCurrentWeather();
       this.refreshIntervalId = setInterval(
          () => this.loadCurrentWeather(),
@@ -99,19 +95,6 @@ export class WeatherWidgetComponent implements OnInit, OnChanges, OnDestroy {
          .subscribe(weather => this.applyWeather(weather));
    }
 
-   private loadJobs(): void {
-      this.jobsService
-         .getAllJobs()
-         .pipe(
-            catchError(() => of([] as Job[])),
-            takeUntil(this.destroy$)
-         )
-         .subscribe(jobs => {
-            this.loadedJobs = jobs;
-            this.computeWeatherRiskAlerts();
-         });
-   }
-
    private applyWeather(weather: WeatherDashboardDto): void {
       if (weather.currentCondition === 'unavailable') {
          this.locationUnavailable = true;
@@ -129,9 +112,9 @@ export class WeatherWidgetComponent implements OnInit, OnChanges, OnDestroy {
    }
 
    private computeWeatherRiskAlerts(): void {
-      const jobs = this.jobs.length ? this.jobs : this.loadedJobs;
+      const jobs = this.jobs ?? [];
 
-      if (!this.weatherForecast.length || !jobs.length) {
+      if (!this.weatherForecast.length || jobs.length === 0) {
          this.weatherRiskAlerts = [];
          return;
       }
