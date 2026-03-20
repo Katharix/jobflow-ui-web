@@ -62,6 +62,13 @@ export default [
           ),
       },
       {
+        path: 'chat',
+        loadComponent: () =>
+          import('./pages/client-hub-chat/client-hub-chat.component').then(
+            (c) => c.ClientHubChatComponent,
+          ),
+      },
+      {
         path: 'request-work',
         loadComponent: () =>
           import('./pages/client-hub-request-work/client-hub-request-work.component').then(

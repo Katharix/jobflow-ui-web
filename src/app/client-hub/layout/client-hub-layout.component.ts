@@ -25,6 +25,7 @@ export class ClientHubLayoutComponent {
 
   readonly navItems: ClientHubNavItem[] = [
     { label: 'Overview', route: '/client-hub/overview' },
+    { label: 'Messages', route: '/client-hub/chat' },
     { label: 'My Info', route: '/client-hub/profile' },
     { label: 'Estimates', route: '/client-hub/estimates' },
     { label: 'Invoices', route: '/client-hub/invoices' },

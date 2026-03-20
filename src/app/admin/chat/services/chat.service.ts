@@ -1,16 +1,23 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
+import { Auth } from '@angular/fire/auth';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
   private hubConnection!: signalR.HubConnection;
+  private auth = inject(Auth);
 
   constructor() {}
 
   startConnection(): void {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${environment.baseUrl.replace(/\/$/, '')}/hubs/chat`)
+      .withUrl(`${environment.baseUrl.replace(/\/$/, '')}/hubs/chat`, {
+        accessTokenFactory: async () => {
+          const token = await this.auth.currentUser?.getIdToken();
+          return token ?? '';
+        }
+      })
       .withAutomaticReconnect()
       .build();
 
@@ -29,7 +36,23 @@ export class ChatService {
     this.hubConnection.invoke('SendMessage', conversationId, message);
   }
 
+  sendTyping(conversationId: string, isTyping: boolean): void {
+    this.hubConnection.invoke('Typing', conversationId, isTyping);
+  }
+
   onMessageReceived(callback: (message: any) => void): void {
     this.hubConnection.on('ReceiveMessage', callback);
+  }
+
+  onSmsStatus(callback: (status: any) => void): void {
+    this.hubConnection.on('SmsStatus', callback);
+  }
+
+  onTyping(callback: (payload: any) => void): void {
+    this.hubConnection.on('Typing', callback);
+  }
+
+  onReadReceipt(callback: (payload: any) => void): void {
+    this.hubConnection.on('ReadReceipt', callback);
   }
 }
