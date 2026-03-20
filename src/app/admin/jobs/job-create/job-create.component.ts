@@ -3,9 +3,10 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {OrganizationContextService} from "../../../services/shared/organization-context.service";
 import {CustomersService} from "../../customer/services/customer.service";
-import {CreateJobRequest, JobsService} from "../services/jobs.service";
+import {JobUpsertRequest, JobsService} from "../services/jobs.service";
 import {InputTextModule} from 'primeng/inputtext';
 import {SelectModule} from 'primeng/select';
+import {RouterLink} from '@angular/router';
 
 @Component({
    selector: 'job-create',
@@ -13,8 +14,9 @@ import {SelectModule} from 'primeng/select';
    imports: [
       CommonModule,
       FormsModule,
-        InputTextModule,
-        SelectModule
+      InputTextModule,
+      SelectModule,
+      RouterLink
    ],
    templateUrl: './job-create.component.html'
 })
@@ -27,6 +29,7 @@ export class CreateJobComponent {
    customers: any[] = [];
    selectedCustomerId: string | null = null;
    title = '';
+   comments = '';
 
    saving = false;
    error: string | null = null;
@@ -67,12 +70,13 @@ export class CreateJobComponent {
       this.saving = true;
       this.error = null;
 
-      const payload: CreateJobRequest = {
+      const request: JobUpsertRequest = {
          organizationClientId: this.selectedCustomerId,
-         title: this.title.trim()
+         title: this.title.trim(),
+         comments: this.comments.trim() || undefined
       };
 
-      this.jobsService.upsertJob(payload).subscribe({
+      this.jobsService.upsertJob(request).subscribe({
          next: () => this.saved.emit(),
          error: () => {
             this.saving = false;

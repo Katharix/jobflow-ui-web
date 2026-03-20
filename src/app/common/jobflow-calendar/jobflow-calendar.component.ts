@@ -21,6 +21,7 @@ import {
   EventContentArg,
   EventDropArg,
   EventApi,
+  EventClickArg,
 } from '@fullcalendar/core';
 import { CalendarEvent } from './models/calendar-event';
 import { ScheduleType } from '../../admin/jobs/models/assignment';
@@ -52,6 +53,9 @@ export class JobflowCalendarComponent {
   @Input() mode: CalendarMode = 'dispatch';
   @Output() eventCreate = new EventEmitter<CalendarEvent>();
   @Output() eventChange = new EventEmitter<CalendarEvent>();
+  @Output() eventSelect = new EventEmitter<CalendarEvent>();
+  @Output() externalEventCreate = new EventEmitter<CalendarEvent>();
+  @Input() allowExternalDrop = false;
 
   @ViewChild('fullCalendar')
   private fullCalendar?: FullCalendarComponent;
@@ -332,7 +336,9 @@ export class JobflowCalendarComponent {
       IsReadonly: this.isReadOnly,
       EntityType: entityType,
       EntityId: event.extendedProps['EntityId'] ?? event.id,
-      CssClass: (Array.isArray(event.classNames) && event.classNames[0]) || this.getEventCssClass(entityType),
+      JobId: event.extendedProps['JobId'],
+      StatusLabel: event.extendedProps['StatusLabel'],
+      CssClass: (Array.isArray(event.classNames) && event.classNames.join(' ')) || this.getEventCssClass(entityType),
     };
   }
 
@@ -365,19 +371,22 @@ export class JobflowCalendarComponent {
   private mapEventsForFullCalendar(events: CalendarEvent[]) {
     return events.map((event) => {
       const cssClass = event.CssClass ?? this.getEventCssClass(event.EntityType);
+      const classNames = cssClass.split(' ').filter(Boolean);
 
       return {
         id: event.Id?.toString(),
         title: event.Subject,
         start: event.StartTime,
         end: event.EndTime,
-        classNames: [cssClass],
+        classNames,
         editable: this.allowInteraction,
         extendedProps: {
           Id: event.Id,
           EntityType: event.EntityType,
           EntityId: event.EntityId,
           CssClass: cssClass,
+          JobId: event.JobId,
+          StatusLabel: event.StatusLabel,
         },
       };
     });
@@ -390,6 +399,10 @@ export class JobflowCalendarComponent {
     const timeText = this.escapeHtml(arg.timeText || '');
     const badgeLabel = variant === 'window' ? 'Window' : variant === 'exact' ? 'Exact' : 'Scheduled';
     const compactClass = arg.view.type.includes('dayGridMonth') ? ' is-compact' : '';
+    const statusLabel = this.escapeHtml(arg.event.extendedProps['StatusLabel'] || '');
+    const statusMarkup = statusLabel
+      ? `<div class="jobflow-event-card__status">${statusLabel}</div>`
+      : '';
 
     return {
       html: `
@@ -397,6 +410,7 @@ export class JobflowCalendarComponent {
           <div class="jobflow-event-card__time">${timeText}</div>
           <div class="jobflow-event-card__title">${title}</div>
           <div class="jobflow-event-card__meta">${badgeLabel}</div>
+          ${statusMarkup}
         </div>
       `,
     };
@@ -436,6 +450,9 @@ export class JobflowCalendarComponent {
       select: (arg) => this.onDateSelect(arg),
       eventDrop: (arg) => this.onEventDrop(arg),
       eventResize: (arg) => this.onEventResize(arg),
+      eventClick: (arg: EventClickArg) => this.onEventClick(arg),
+      droppable: this.allowExternalDrop,
+      eventReceive: (arg: any) => this.onExternalEventReceive(arg),
       datesSet: (arg: DatesSetArg) => {
         const currentStart = (arg.view as { currentStart?: Date }).currentStart;
         const visibleDate = this.normalizeSelectedDate(currentStart ?? arg.start, this.fromFullCalendarView(arg.view.type));
@@ -451,6 +468,20 @@ export class JobflowCalendarComponent {
         }
       },
     };
+  }
+
+  private onEventClick(args: EventClickArg): void {
+    const event = this.mapEventApiToCalendarEvent(args.event);
+    if (event) {
+      this.eventSelect.emit(event);
+    }
+  }
+
+  private onExternalEventReceive(args: any): void {
+    const event = this.mapEventApiToCalendarEvent(args.event);
+    if (event) {
+      this.externalEventCreate.emit(event);
+    }
   }
 
   private refreshCalendarOptions() {
