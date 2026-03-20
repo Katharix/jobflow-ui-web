@@ -1,11 +1,19 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {BaseApiService} from '../../../services/shared/base-api.service';
-import {Job} from "../models/job";
+import {Job, JobLifecycleStatus} from "../models/job";
 
 export interface CreateJobRequest {
    organizationClientId: string;
    title: string;
+}
+
+export interface JobUpsertRequest {
+   id?: string;
+   organizationClientId: string;
+   title: string;
+   comments?: string;
+   lifecycleStatus?: JobLifecycleStatus;
 }
 
 @Injectable({providedIn: 'root'})
@@ -16,11 +24,18 @@ export class JobsService {
    }
 
    upsertJob(
-      payload: CreateJobRequest
+      payload: CreateJobRequest | JobUpsertRequest
    ): Observable<Job> {
       return this.api.post(
          `${this.apiUrl}upsert`,
          payload
+      );
+   }
+
+   updateJobStatus(jobId: string, status: JobLifecycleStatus): Observable<Job> {
+      return this.api.put(
+         `${this.apiUrl}${jobId}/status`,
+         { status }
       );
    }
 

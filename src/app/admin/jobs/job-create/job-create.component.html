@@ -1,31 +1,61 @@
-<div class="row g-3">
-   <div *ngIf="error">
+<div class="jobflow-create">
+   <div class="jobflow-create__header">
+      <div>
+         <span class="jobflow-create__eyebrow">New job intake</span>
+         <h5>Start a job with clear context.</h5>
+         <p>Capture the essentials so dispatch has everything it needs.</p>
+      </div>
+      <a class="btn btn-link jobflow-create__link" routerLink="/admin/clients/create">Create client</a>
+   </div>
+
+   <div *ngIf="error" class="alert alert-danger">
       {{ error }}
    </div>
-   <div class="col-12 col-md-6">
-      <label class="form-label">Customer <span class="text-danger">*</span></label>
-      <p-select
-         [(ngModel)]="selectedCustomerId"
-         [options]="customers"
-         optionLabel="displayName"
-         optionValue="id"
-         [filter]="true"
-         size="small"
-         [fluid]="true"
-         placeholder="Select a customer" />
-   </div>
-   <div class="col-12 col-md-6">
-      <label class="form-label">Job Title <span class="text-danger">*</span></label>
-      <input pInputText [fluid]="true" pSize="small" [(ngModel)]="title" />
-   </div>
-</div>
-<br>
-<div class="d-flex justify-content-end gap-2">
-   <button type="button" class="btn btn-light" (click)="cancel()" [disabled]="saving">
-      Cancel
-   </button>
 
-   <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saving">
-      {{ saving ? 'Saving…' : 'Save Job' }}
-   </button>
+   <div class="jobflow-create__grid">
+      <div class="jobflow-create__form">
+         <div class="jobflow-create__section">
+            <label class="form-label">Customer <span class="text-danger">*</span></label>
+            <p-select
+               [(ngModel)]="selectedCustomerId"
+               [options]="customers"
+               optionLabel="displayName"
+               optionValue="id"
+               [filter]="true"
+               size="small"
+               [fluid]="true"
+               placeholder="Select a customer" />
+         </div>
+
+         <div class="jobflow-create__section">
+            <label class="form-label">Job Title <span class="text-danger">*</span></label>
+            <input pInputText [fluid]="true" pSize="small" [(ngModel)]="title" placeholder="Exterior repaint, spring service, etc." />
+         </div>
+
+         <div class="jobflow-create__section">
+            <label class="form-label">Job Summary</label>
+            <textarea
+               class="form-control"
+               rows="4"
+               [(ngModel)]="comments"
+               placeholder="Add key notes, access instructions, or goals for the crew."
+            ></textarea>
+         </div>
+
+         <div class="jobflow-create__next-step">
+            <span>Next step</span>
+            <p>Schedule in Dispatch to assign a crew.</p>
+         </div>
+      </div>
+   </div>
+
+   <div class="jobflow-create__actions">
+      <button type="button" class="btn btn-light" (click)="cancel()" [disabled]="saving">
+         Cancel
+      </button>
+
+      <button type="button" class="btn btn-primary jobflow-create__primary" style="margin-left: 1rem;" (click)="save()" [disabled]="saving">
+         {{ saving ? 'Saving…' : 'Create Job' }}
+      </button>
+   </div>
 </div>

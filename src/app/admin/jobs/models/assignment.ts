@@ -20,6 +20,15 @@
    zipCode?: string;
 
    notes?: string;
+
+   jobLifecycleStatus?: number;
+   assignees?: AssignmentAssigneeDto[];
+}
+
+export interface AssignmentAssigneeDto {
+   employeeId: string;
+   employeeName?: string;
+   isLead: boolean;
 }
 
 export enum ScheduleType {

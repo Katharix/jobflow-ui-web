@@ -1,4 +1,415 @@
-﻿.job-cell {
+﻿.jobflow-hero {
+   display: grid;
+   grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+   gap: 1.5rem;
+   padding: 1.5rem;
+   border-radius: 1.25rem;
+   border: 1px solid #e2e8f0;
+   background:
+      radial-gradient(circle at 0 0, rgba(63, 103, 218, 0.18), transparent 40%),
+      radial-gradient(circle at 80% 0, rgba(49, 91, 216, 0.16), transparent 45%),
+      #f8fafc;
+   margin-bottom: 1.8rem;
+   font-family: "Sora", "DM Sans", "Segoe UI", sans-serif;
+
+   @media (max-width: 992px) {
+      grid-template-columns: 1fr;
+   }
+}
+
+.jobflow-filters {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+   gap: 1rem;
+   align-items: end;
+   margin-bottom: 1.8rem;
+}
+
+.jobflow-filters__group {
+   display: grid;
+   gap: 0.35rem;
+}
+
+.jobflow-filters__group label {
+   font-size: 0.75rem;
+   font-weight: 700;
+   letter-spacing: 0.08em;
+   text-transform: uppercase;
+   color: #64748b;
+}
+
+.jobflow-filters__clear {
+   justify-self: flex-start;
+   padding-left: 0;
+   font-weight: 600;
+   color: var(--bs-primary);
+}
+
+.jobflow-hero__intro h2 {
+   font-size: 1.6rem;
+   margin-bottom: 0.35rem;
+   color: #0f172a;
+}
+
+.jobflow-hero__intro p {
+   color: #475569;
+   margin-bottom: 0;
+}
+
+.jobflow-hero__eyebrow {
+   text-transform: uppercase;
+   letter-spacing: 0.18em;
+   font-size: 0.7rem;
+   font-weight: 700;
+   color: var(--bs-primary);
+}
+
+.jobflow-hero__metrics {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+   gap: 0.9rem;
+}
+
+.jobflow-metric {
+   padding: 0.9rem 1rem;
+   border-radius: 0.9rem;
+   background: #ffffff;
+   border: 1px solid #e2e8f0;
+   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+}
+
+.jobflow-metric__label {
+   font-size: 0.7rem;
+   text-transform: uppercase;
+   letter-spacing: 0.08em;
+   color: #64748b;
+}
+
+.jobflow-metric__value {
+   display: block;
+   font-size: 1.4rem;
+   font-weight: 700;
+   color: #0f172a;
+}
+
+.jobflow-lanes {
+   display: grid;
+   grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr);
+   gap: 1.5rem;
+   margin-bottom: 2rem;
+
+   @media (max-width: 1200px) {
+      grid-template-columns: 1fr;
+   }
+}
+
+.jobflow-lanes__main {
+   display: grid;
+   gap: 1.5rem;
+}
+
+.jobflow-lane {
+   background: #ffffff;
+   border: 1px solid #e2e8f0;
+   border-radius: 1.1rem;
+   padding: 1.25rem;
+   box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
+}
+
+.jobflow-lane__header {
+   display: flex;
+   justify-content: space-between;
+   align-items: flex-start;
+   gap: 1rem;
+   margin-bottom: 1rem;
+}
+
+.jobflow-lane__header h5 {
+   margin-bottom: 0.2rem;
+}
+
+.jobflow-lane__header p {
+   margin-bottom: 0;
+   color: #64748b;
+}
+
+.jobflow-lane__count {
+   font-size: 0.75rem;
+   font-weight: 700;
+   color: #0f172a;
+   padding: 0.3rem 0.7rem;
+   border-radius: 999px;
+   background: #e2e8f0;
+}
+
+.jobflow-lane__body {
+   display: grid;
+   gap: 0.8rem;
+}
+
+.jobflow-card {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   gap: 1rem;
+   padding: 0.9rem 1rem;
+   border-radius: 0.9rem;
+   border: 1px solid #e2e8f0;
+   background: #f8fafc;
+   cursor: pointer;
+   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.jobflow-card:hover {
+   transform: translateY(-1px);
+   border-color: #94a3b8;
+   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+
+.jobflow-card.is-active {
+   border-color: var(--bs-primary);
+   box-shadow: 0 16px 32px rgba(63, 103, 218, 0.2);
+   background: rgba(63, 103, 218, 0.08);
+}
+
+.jobflow-card h6 {
+   margin-bottom: 0.2rem;
+   font-weight: 600;
+}
+
+.jobflow-card p {
+   margin-bottom: 0;
+   font-size: 0.85rem;
+   color: #64748b;
+}
+
+.jobflow-timeline {
+   position: relative;
+   display: flex;
+   gap: 0.6rem;
+   margin-top: 0.5rem;
+   padding-top: 0.4rem;
+}
+
+.jobflow-timeline__rail {
+   position: absolute;
+   top: 0.35rem;
+   left: 0;
+   right: 0;
+   height: 2px;
+   background: rgba(63, 103, 218, 0.35);
+}
+
+.jobflow-timeline__dot {
+   position: relative;
+   z-index: 1;
+   display: inline-flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 0.2rem;
+}
+
+.jobflow-timeline__dot::before {
+   content: '';
+   width: 0.55rem;
+   height: 0.55rem;
+   border-radius: 999px;
+   background: var(--bs-primary);
+   box-shadow: 0 0 0 4px rgba(63, 103, 218, 0.18);
+}
+
+.jobflow-timeline__dot span {
+   font-size: 0.65rem;
+   font-weight: 600;
+   color: #0f172a;
+}
+
+.jobflow-card__meta {
+   display: flex;
+   align-items: center;
+   gap: 0.6rem;
+}
+
+.jobflow-assignee-stack {
+   display: inline-flex;
+   align-items: center;
+   gap: 0.25rem;
+}
+
+.jobflow-assignee-dot {
+   width: 1.65rem;
+   height: 1.65rem;
+   border-radius: 999px;
+   background: var(--bs-primary);
+   color: #ffffff;
+   font-size: 0.7rem;
+   font-weight: 700;
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   box-shadow: 0 6px 14px rgba(63, 103, 218, 0.3);
+}
+
+.jobflow-assignee-dot--more {
+   background: #ffffff;
+   color: var(--bs-primary);
+   border: 1px solid rgba(63, 103, 218, 0.4);
+   box-shadow: none;
+}
+
+.jobflow-card__time {
+   font-size: 0.75rem;
+   font-weight: 600;
+   color: #0f172a;
+}
+
+.jobflow-card--scheduled {
+   background: rgba(63, 103, 218, 0.06);
+}
+
+.jobflow-empty {
+   padding: 1.2rem;
+   border-radius: 0.9rem;
+   border: 1px dashed #cbd5f5;
+   background: #f8fafc;
+   text-align: center;
+   color: #64748b;
+}
+
+.jobflow-empty span {
+   font-size: 0.8rem;
+}
+
+.jobflow-preview {
+   border-radius: 1.1rem;
+   border: 1px solid #e2e8f0;
+   background: #ffffff;
+   padding: 1.3rem;
+   box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+}
+
+.jobflow-preview__eyebrow {
+   text-transform: uppercase;
+   letter-spacing: 0.12em;
+   font-size: 0.7rem;
+   font-weight: 700;
+   color: var(--bs-primary);
+}
+
+.jobflow-preview__header h5 {
+   margin-top: 0.2rem;
+   margin-bottom: 0.2rem;
+}
+
+.jobflow-preview__header p {
+   color: #64748b;
+}
+
+.jobflow-preview__body {
+   display: grid;
+   gap: 0.9rem;
+   margin-top: 1rem;
+}
+
+.jobflow-preview__row {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   font-size: 0.85rem;
+   color: #475569;
+}
+
+.jobflow-status-toggle {
+   display: inline-flex;
+   flex-wrap: wrap;
+   gap: 0.4rem;
+}
+
+.jobflow-status-toggle__btn {
+   border: 1px solid #e2e8f0;
+   border-radius: 999px;
+   padding: 0.3rem 0.75rem;
+   font-size: 0.72rem;
+   font-weight: 700;
+   background: #f8fafc;
+   color: #475569;
+}
+
+.jobflow-status-toggle__btn.is-active {
+   background: var(--bs-primary);
+   border-color: var(--bs-primary);
+   color: #ffffff;
+}
+
+.jobflow-preview__assignees {
+   display: grid;
+   gap: 0.6rem;
+   margin-top: 0.4rem;
+}
+
+.jobflow-preview__assignees span {
+   font-size: 0.75rem;
+   text-transform: uppercase;
+   letter-spacing: 0.08em;
+   color: #64748b;
+}
+
+.jobflow-assignee-list {
+   display: grid;
+   gap: 0.4rem;
+   max-height: 180px;
+   overflow: auto;
+   padding-right: 0.2rem;
+}
+
+.jobflow-assignee-chip {
+   display: flex;
+   align-items: center;
+   gap: 0.4rem;
+   padding: 0.35rem 0.5rem;
+   border-radius: 0.6rem;
+   border: 1px solid #e2e8f0;
+   background: #f8fafc;
+   font-size: 0.8rem;
+}
+
+.jobflow-preview__notes span {
+   display: block;
+   font-size: 0.75rem;
+   text-transform: uppercase;
+   letter-spacing: 0.08em;
+   color: #64748b;
+   margin-bottom: 0.4rem;
+}
+
+.jobflow-preview__notes p {
+   margin-bottom: 0;
+   color: #0f172a;
+}
+
+.jobflow-preview__actions {
+   display: grid;
+   gap: 0.6rem;
+}
+
+.jobflow-table {
+   background: #ffffff;
+   border-radius: 1.1rem;
+   border: 1px solid #e2e8f0;
+   padding: 1.25rem;
+   box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+}
+
+.jobflow-table__header {
+   margin-bottom: 1rem;
+}
+
+.jobflow-table__header p {
+   color: #64748b;
+   margin-bottom: 0;
+}
+
+.job-cell {
    display: flex;
    flex-direction: column;
    line-height: 1.2;

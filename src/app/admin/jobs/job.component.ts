@@ -17,12 +17,16 @@ import {
 import {JobflowDrawerComponent} from "../../common/jobflow-drawer/jobflow-drawer.component";
 import {ToastService} from "../../common/toast/toast.service";
 import {OrganizationContextService} from "../../services/shared/organization-context.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {JobsService} from "./services/jobs.service";
 import {getClickHandler} from "../../common/utils/page-action-dispatcher";
 import {CreateJobComponent} from "./job-create/job-create.component";
 import {formatDateTime, formatPhone} from "../../common/utils/app-formaters";
 import {Job, JobLifecycleStatus, JobLifecycleStatusLabels} from "./models/job";
+import {EmployeeService} from "../employees/services/employee.service";
+import {Employee} from "../employees/models/employee";
+import {AssignmentsService} from "./services/assignments.service";
+import {AssignmentDto} from "./models/assignment";
 
 
 @Component({
@@ -35,7 +39,8 @@ import {Job, JobLifecycleStatus, JobLifecycleStatusLabels} from "./models/job";
       ReactiveFormsModule,
       JobflowGridComponent,
       JobflowDrawerComponent,
-      CreateJobComponent
+      CreateJobComponent,
+      RouterLink
    ],
    styleUrls: ['./job.component.scss'],
    templateUrl: './job.component.html'
@@ -61,6 +66,18 @@ export class JobComponent implements OnInit {
    items: Job[] = [];
    columns: JobflowGridColumn[] = [];
    error: string | null = null;
+   selectedJob: Job | null = null;
+
+   employees: Employee[] = [];
+   selectedStatusFilter = '';
+   selectedClientFilter = '';
+   selectedAssigneeFilter = '';
+
+   previewAssignees = new Set<string>();
+   previewAssignment: AssignmentDto | null = null;
+   updatingStatus = false;
+   updatingAssignees = false;
+
 
    pageSettings: JobflowGridPageSettings = {
       pageSize: 20,
@@ -83,6 +100,8 @@ export class JobComponent implements OnInit {
 
    constructor(
       private jobs: JobsService,
+      private employeesService: EmployeeService,
+      private assignmentsService: AssignmentsService,
       private orgContext: OrganizationContextService,
       private router: Router,
       private route: ActivatedRoute
@@ -94,6 +113,8 @@ export class JobComponent implements OnInit {
 
    ngOnInit(): void {
       this.buildColumns();
+
+      this.loadEmployees();
 
       if (this.organizationId) {
          this.load();
@@ -152,6 +173,8 @@ export class JobComponent implements OnInit {
       this.jobs.getAllJobs().subscribe({
          next: list => {
             this.items = list ?? [];
+            this.selectDefaultJob();
+            this.syncPreviewAssignment();
          },
          error: e => {
             this.toast.error('Failed to load jobs');
@@ -160,8 +183,97 @@ export class JobComponent implements OnInit {
       });
    }
 
+   private loadEmployees(): void {
+      this.employeesService.getByOrganization().subscribe({
+         next: employees => {
+            this.employees = employees ?? [];
+         },
+         error: () => {
+            this.employees = [];
+         }
+      });
+   }
+
+   get totalJobs(): number {
+      return this.items.length;
+   }
+
+   get unscheduledJobs(): Job[] {
+      return this.applyFlowFilters(this.items.filter(job => !job.hasAssignments));
+   }
+
+   get scheduledJobs(): Job[] {
+      return this.applyFlowFilters(this.items.filter(job => job.hasAssignments));
+   }
+
+   get upcomingScheduledJobs(): Job[] {
+      const now = new Date();
+      const horizon = new Date();
+      horizon.setDate(horizon.getDate() + 7);
+
+      return this.scheduledJobs
+         .map(job => ({
+            job,
+            nextDate: this.getNextAssignmentStart(job)
+         }))
+         .filter(item => item.nextDate && item.nextDate >= now && item.nextDate <= horizon)
+         .sort((a, b) => (a.nextDate?.getTime() ?? 0) - (b.nextDate?.getTime() ?? 0))
+         .map(item => item.job);
+   }
+
+   get inProgressCount(): number {
+      return this.items.filter(job => this.resolveLifecycleStatus(job) === JobLifecycleStatus.InProgress).length;
+   }
+
+   get completedCount(): number {
+      return this.items.filter(job => this.resolveLifecycleStatus(job) === JobLifecycleStatus.Completed).length;
+   }
+
    isUnscheduled(job: any): boolean {
       return !job.hasAssignments;
+   }
+
+   selectJob(job: Job): void {
+      this.selectedJob = job;
+      this.syncPreviewAssignment();
+   }
+
+   clearFilters(): void {
+      this.selectedStatusFilter = '';
+      this.selectedClientFilter = '';
+      this.selectedAssigneeFilter = '';
+      this.selectDefaultJob();
+      this.syncPreviewAssignment();
+   }
+
+   onFiltersChanged(): void {
+      this.selectDefaultJob();
+      this.syncPreviewAssignment();
+   }
+
+   get clientOptions(): { label: string; value: string }[] {
+      const map = new Map<string, string>();
+      this.items.forEach(job => {
+         const clientId = job.organizationClient?.id ?? job.organizationClientId;
+         const name = this.getClientName(job);
+         if (clientId && name) {
+            map.set(clientId, name);
+         }
+      });
+
+      return Array.from(map.entries())
+         .map(([value, label]) => ({ value, label }))
+         .sort((a, b) => a.label.localeCompare(b.label));
+   }
+
+   get assigneeOptions(): { label: string; value: string }[] {
+      return this.employees
+         .filter(employee => employee.isActive)
+         .map(employee => ({
+            value: employee.id,
+            label: `${employee.firstName} ${employee.lastName}`.trim()
+         }))
+         .sort((a, b) => a.label.localeCompare(b.label));
    }
 
    onCommandClick(args: JobflowGridCommandClickEventArgs) {
@@ -234,7 +346,143 @@ export class JobComponent implements OnInit {
       );
    }
 
-   private resolveLifecycleStatus(job: any): JobLifecycleStatus | null {
+   updateJobStatus(status: JobLifecycleStatus): void {
+      if (!this.selectedJob || this.updatingStatus) {
+         return;
+      }
+
+      this.updatingStatus = true;
+      this.jobs.updateJobStatus(this.selectedJob.id, status).subscribe({
+         next: updated => {
+            const index = this.items.findIndex(job => job.id === updated.id);
+            if (index >= 0) {
+               this.items[index] = {
+                  ...this.items[index],
+                  lifecycleStatus: updated.lifecycleStatus
+               };
+               this.selectedJob = this.items[index];
+            }
+            this.updatingStatus = false;
+         },
+         error: () => {
+            this.toast.error('Failed to update job status');
+            this.updatingStatus = false;
+         }
+      });
+   }
+
+   togglePreviewAssignee(employeeId: string): void {
+      if (this.previewAssignees.has(employeeId)) {
+         this.previewAssignees.delete(employeeId);
+         return;
+      }
+
+      this.previewAssignees.add(employeeId);
+   }
+
+   savePreviewAssignees(): void {
+      if (!this.previewAssignment || this.updatingAssignees) {
+         return;
+      }
+
+      this.updatingAssignees = true;
+      const assignmentId = this.previewAssignment.id;
+
+      this.assignmentsService.updateAssignmentAssignees(assignmentId, {
+         employeeIds: Array.from(this.previewAssignees)
+      }).subscribe({
+         next: () => {
+            this.load();
+            this.updatingAssignees = false;
+         },
+         error: () => {
+            this.toast.error('Failed to update assignees');
+            this.updatingAssignees = false;
+         }
+      });
+   }
+
+   getClientName(job: Job | null): string {
+      if (!job?.organizationClient) return 'Client TBD';
+
+      return [job.organizationClient.firstName, job.organizationClient.lastName]
+         .filter(Boolean)
+         .join(' ');
+   }
+
+   getNextScheduledLabel(job: Job): string {
+      const nextDate = this.getNextAssignmentStart(job) ?? job.scheduledStart;
+      return formatDateTime(nextDate ?? null);
+   }
+
+   getNextAssignmentStart(job: Job): Date | null {
+      const assignments = job.assignments ?? [];
+      if (!assignments.length) return null;
+
+      const next = assignments
+         .map(assignment => new Date(assignment.scheduledStart))
+         .filter(date => !Number.isNaN(date.getTime()))
+         .sort((a, b) => a.getTime() - b.getTime())[0];
+
+      return next ?? null;
+   }
+
+   getNextAssignment(job: Job): AssignmentDto | null {
+      const assignments = job.assignments ?? [];
+      if (!assignments.length) return null;
+
+      return assignments
+         .slice()
+         .sort((a, b) => new Date(a.scheduledStart).getTime() - new Date(b.scheduledStart).getTime())[0] ?? null;
+   }
+
+   getTimelineMarkers(job: Job): { label: string; date: Date }[] {
+      const assignments = job.assignments ?? [];
+      return assignments
+         .map(assignment => ({
+            date: new Date(assignment.scheduledStart),
+            label: new Date(assignment.scheduledStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+         }))
+         .filter(marker => !Number.isNaN(marker.date.getTime()))
+         .sort((a, b) => a.date.getTime() - b.date.getTime())
+         .slice(0, 4);
+   }
+
+   getTimelineTooltip(date: Date): string {
+      if (Number.isNaN(date.getTime())) return '';
+
+      const datePart = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const timePart = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      return `${datePart} at ${timePart}`;
+   }
+
+   getAssigneeStack(job: Job): string[] {
+      const assignment = this.getNextAssignment(job);
+      if (!assignment?.assignees?.length) return [];
+
+      return assignment.assignees
+         .map(assignee => assignee.employeeName)
+         .filter(Boolean)
+         .map(name => this.getInitials(name!))
+         .slice(0, 3);
+   }
+
+   getAssigneeOverflow(job: Job): number {
+      const assignment = this.getNextAssignment(job);
+      if (!assignment?.assignees?.length) return 0;
+
+      return Math.max(assignment.assignees.length - 3, 0);
+   }
+
+   private getInitials(fullName: string): string {
+      const parts = fullName.trim().split(' ').filter(Boolean);
+      if (!parts.length) return '';
+      const first = parts[0][0] ?? '';
+      const last = parts.length > 1 ? parts[parts.length - 1][0] ?? '' : '';
+      return `${first}${last}`.toUpperCase();
+   }
+
+   resolveLifecycleStatus(job: any): JobLifecycleStatus | null {
       const rawStatus = job?.lifecycleStatus;
 
       if (typeof rawStatus === 'number' && JobLifecycleStatusLabels[rawStatus as JobLifecycleStatus]) {
@@ -297,4 +545,51 @@ export class JobComponent implements OnInit {
    }
 
    protected readonly Date = Date;
+   protected readonly JobLifecycleStatus = JobLifecycleStatus;
+
+   private selectDefaultJob(): void {
+      const filtered = this.applyFlowFilters(this.items);
+      if (this.selectedJob && filtered.some(job => job.id === this.selectedJob?.id)) {
+         return;
+      }
+
+      this.selectedJob = this.unscheduledJobs[0] ?? this.upcomingScheduledJobs[0] ?? filtered[0] ?? null;
+   }
+
+   private applyFlowFilters(jobs: Job[]): Job[] {
+      return jobs.filter(job => {
+         if (this.selectedStatusFilter) {
+            const status = this.resolveLifecycleStatus(job);
+            if (status === null) return false;
+            if (JobLifecycleStatusLabels[status] !== this.selectedStatusFilter) return false;
+         }
+
+         if (this.selectedClientFilter) {
+            const clientId = job.organizationClient?.id ?? job.organizationClientId;
+            if (clientId !== this.selectedClientFilter) return false;
+         }
+
+         if (this.selectedAssigneeFilter) {
+            const assignments = job.assignments ?? [];
+            const hasAssignee = assignments.some(assignment =>
+               (assignment.assignees ?? []).some(assignee => assignee.employeeId === this.selectedAssigneeFilter)
+            );
+            if (!hasAssignee) return false;
+         }
+
+         return true;
+      });
+   }
+
+   private syncPreviewAssignment(): void {
+      if (!this.selectedJob) {
+         this.previewAssignment = null;
+         this.previewAssignees = new Set();
+         return;
+      }
+
+      const next = this.getNextAssignment(this.selectedJob);
+      this.previewAssignment = next;
+      this.previewAssignees = new Set((next?.assignees ?? []).map(assignee => assignee.employeeId));
+   }
 }

@@ -1,14 +1,17 @@
 ﻿import {OrganizationClient} from "../../../models/invoice";
+import {AssignmentDto} from "./assignment";
 
 export interface Job {
    id: string;
    title: string;
-   scheduledStart: Date;
-   scheduledEnd: Date
+   organizationClientId?: string;
+   scheduledStart?: Date;
+   scheduledEnd?: Date;
    comments?: string;
    organizationClient: OrganizationClient
    lifecycleStatus: JobLifecycleStatus;
    hasAssignments: boolean;
+   assignments?: AssignmentDto[];
 }
 
 export enum JobLifecycleStatus {

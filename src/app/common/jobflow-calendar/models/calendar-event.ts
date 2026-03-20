@@ -11,4 +11,6 @@ export interface CalendarEvent {
    // JobFlow extensions
    EntityType?: ScheduleType;
    EntityId?: string;
+   JobId?: string;
+   StatusLabel?: string;
 }

@@ -62,4 +62,24 @@ export class AssignmentsService {
          dto
       );
    }
+
+   updateAssignmentAssignees(
+      assignmentId: string,
+      dto: { employeeIds: string[]; leadEmployeeId?: string | null }
+   ) {
+      return this.api.put<AssignmentDto>(
+         `assignment/${assignmentId}/assignees`,
+         dto
+      );
+   }
+
+   updateAssignmentNotes(
+      assignmentId: string,
+      dto: { notes?: string | null }
+   ) {
+      return this.api.put<AssignmentDto>(
+         `assignment/${assignmentId}/notes`,
+         dto
+      );
+   }
 }
