@@ -1,174 +1,176 @@
 <nav class="sidebar">
-   <div class="sidebar-header">
-      <!-- Logo -->
-      <a routerLink="/" class="sidebar-brand">
-         <img src="/assets/public/images/Asset 2.png" alt="" class="logo-light" style="height: 30px;"/>
-      </a>
+  <div class="sidebar-header">
+    <!-- Logo -->
+    <a routerLink="/" class="sidebar-brand">
+      <img src="/assets/public/images/Asset 2.png" alt="" class="logo-light" style="height: 30px;"/>
+    </a>
 
-      <!-- Toggler -->
-      <div class="sidebar-toggler" #sidebarToggler (click)="toggleSidebar($event)">
-         <span></span><span></span><span></span>
-      </div>
-   </div>
+    <!-- Toggler -->
+    <button type="button" class="sidebar-toggler" #sidebarToggler (click)="toggleSidebar($event)" aria-label="Toggle sidebar">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
 
-   <div class="sidebar-body" (mouseenter)="operSidebarFolded()" (mouseleave)="closeSidebarFolded()">
-      <ng-scrollbar orientation="vertical" appearance="compact">
-         <ul class="sidebar-nav metismenu" id="sidebar-menu" #sidebarMenu>
+  <div class="sidebar-body" (mouseenter)="operSidebarFolded()" (mouseleave)="closeSidebarFolded()">
+    <ng-scrollbar orientation="vertical" appearance="compact">
+      <ul class="sidebar-nav metismenu" id="sidebar-menu" #sidebarMenu>
 
-            @for (item of menuItems; track item.label) {
-               @if (item.isTitle) {
-                  <li class="nav-item nav-category">{{ item.label }}</li>
-               } @else {
-                  <li class="nav-item"
+        @for (item of menuItems; track item.label) {
+          @if (item.isTitle) {
+            <li class="nav-item nav-category">{{ item.label }}</li>
+          } @else {
+            <li class="nav-item"
+              routerLinkActive="mm-active"
+              [routerLinkActiveOptions]="{ exact: item.label === 'Home' }">
+
+              <!-- nav item with submenu -->
+              @if (hasItems(item)) {
+                <a class="nav-link" href="javascript:void(0);">
+                  <lucide-icon class="link-icon" [name]="item.icon"></lucide-icon>
+                  <span class="link-title">{{ item.label }}</span>
+                  <lucide-icon class="link-arrow" name="chevron-down"></lucide-icon>
+                </a>
+
+                <ul class="sidebar-nav sub-menu nav-second-level"
+                  routerLinkActive="mm-show"
+                  [routerLinkActiveOptions]="{ exact: false }">
+                  @for (subitem of item.subItems; track subitem.label) {
+                    <li class="nav-item"
+                      [ngClass]="{'side-nav-item': hasItems(subitem)}"
                       routerLinkActive="mm-active"
-                      [routerLinkActiveOptions]="{ exact: item.label === 'Home' }">
+                      [routerLinkActiveOptions]="{ exact: false }">
 
-                     <!-- nav item with submenu -->
-                     @if (hasItems(item)) {
-                        <a class="nav-link" href="javascript:void(0);">
-                           <lucide-icon class="link-icon" [name]="item.icon"></lucide-icon>
-                           <span class="link-title">{{ item.label }}</span>
-                           <lucide-icon class="link-arrow" name="chevron-down"></lucide-icon>
+                      @if (hasItems(subitem)) {
+                        <a class="nav-link side-nav-link-a-ref" href="javascript:void(0);">
+                          <span class="link-title">{{ subitem.label }}</span>
+                          <lucide-icon class="link-arrow" name="chevron-down"></lucide-icon>
                         </a>
 
-                        <ul class="sidebar-nav sub-menu nav-second-level"
-                            routerLinkActive="mm-show"
-                            [routerLinkActiveOptions]="{ exact: false }">
-                           @for (subitem of item.subItems; track subitem.label) {
-                              <li class="nav-item"
-                                  [ngClass]="{'side-nav-item': hasItems(subitem)}"
-                                  routerLinkActive="mm-active"
-                                  [routerLinkActiveOptions]="{ exact: false }">
-
-                                 @if (hasItems(subitem)) {
-                                    <a class="nav-link side-nav-link-a-ref" href="javascript:void(0);">
-                                       <span class="link-title">{{ subitem.label }}</span>
-                                       <lucide-icon class="link-arrow" name="chevron-down"></lucide-icon>
-                                    </a>
-
-                                    <ul class="sidebar-nav sub-menu nav-third-level"
-                                        routerLinkActive="mm-show"
-                                        [routerLinkActiveOptions]="{ exact: false }">
-                                       @for (subSubitem of subitem.subItems; track subSubitem.label) {
-                                          <li class="nav-item" routerLinkActive="mm-active">
-                                             <a class="nav-link nav-link-ref"
-                                                [routerLink]="subSubitem.link"
-                                                routerLinkActive="mm-active">
-                                                {{ subSubitem.label }}
-                                             </a>
-                                          </li>
-                                       }
-                                    </ul>
-                                 } @else {
-                                    <a class="nav-link nav-link-ref"
-                                       [routerLink]="subitem.link"
-                                       routerLinkActive="mm-active">
-                                       {{ subitem.label }}
-                                    </a>
-                                 }
-                              </li>
-                           }
+                        <ul class="sidebar-nav sub-menu nav-third-level"
+                          routerLinkActive="mm-show"
+                          [routerLinkActiveOptions]="{ exact: false }">
+                          @for (subSubitem of subitem.subItems; track subSubitem.label) {
+                            <li class="nav-item" routerLinkActive="mm-active">
+                              <a class="nav-link nav-link-ref"
+                                [routerLink]="subSubitem.link"
+                                routerLinkActive="mm-active">
+                                {{ subSubitem.label }}
+                              </a>
+                            </li>
+                          }
                         </ul>
-                     }
-
-                     <!-- nav item without submenu -->
-                     @else {
+                      } @else {
                         <a class="nav-link nav-link-ref"
-                           [routerLink]="item.link"
-                           routerLinkActive="mm-active"
-                           [routerLinkActiveOptions]="{ exact: item.label === 'Home' }">
-                           <lucide-icon class="link-icon" [name]="item.icon"></lucide-icon>
-                           <span class="link-title">{{ item.label }}</span>
-                           @if (item.badge) {
-                              <span class="badge bg-{{item.badge.variant}}">{{ item.badge.text }}</span>
-                           }
+                          [routerLink]="subitem.link"
+                          routerLinkActive="mm-active">
+                          {{ subitem.label }}
                         </a>
-                     }
-                  </li>
-               }
+                      }
+                    </li>
+                  }
+                </ul>
+              }
+
+              <!-- nav item without submenu -->
+              @else {
+              <a class="nav-link nav-link-ref"
+                [routerLink]="item.link"
+                routerLinkActive="mm-active"
+                [routerLinkActiveOptions]="{ exact: item.label === 'Home' }">
+                <lucide-icon class="link-icon" [name]="item.icon"></lucide-icon>
+                <span class="link-title">{{ item.label }}</span>
+                @if (item.badge) {
+                  <span class="badge bg-{{item.badge.variant}}">{{ item.badge.text }}</span>
+                }
+              </a>
             }
-         </ul>
-      </ng-scrollbar>
-   </div>
+          </li>
+        }
+      }
+    </ul>
+  </ng-scrollbar>
+</div>
 
-   <div class="sidebar-footer">
-      <ul class="sidebar-footer-nav">
-         <li class="sidebar-nav-item nav-category">
-            <a class="nav-link nav-link-ref"
-               routerLink="/admin/help"
-               routerLinkActive="mm-active"
-               [routerLinkActiveOptions]="{ exact: true }">
-               <ng-container *ngIf="isSidebarOpen; else collapsedHelp">
-                  <lucide-icon class="sidebar-link-icon me-1" name="life-buoy"></lucide-icon>
-                  <span class="sidebar-link-title">Help</span>
-               </ng-container>
-               <ng-template #collapsedHelp>
-                  <lucide-icon class="sidebar-link-icon me-1" name="life-buoy"></lucide-icon>
-               </ng-template>
+<div class="sidebar-footer">
+  <ul class="sidebar-footer-nav">
+    <li class="sidebar-nav-item nav-category">
+      <a class="nav-link nav-link-ref"
+        routerLink="/admin/help"
+        routerLinkActive="mm-active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        @if (isSidebarOpen) {
+          <lucide-icon class="sidebar-link-icon me-1" name="life-buoy"></lucide-icon>
+          <span class="sidebar-link-title">Help</span>
+        } @else {
+          <lucide-icon class="sidebar-link-icon me-1" name="life-buoy"></lucide-icon>
+        }
+      </a>
+    </li>
+
+    <li class="sidebar-nav-item">
+      <div class="dropup-center dropend">
+        <button class="btn btn-primary sidebar-footer-btn"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false">
+          @if (isSidebarOpen) {
+            <lucide-icon class="sidebar-link-icon me-2" name="network"></lucide-icon>
+            <span>{{ org?.organizationName || 'Organization' }}</span>
+          } @else {
+            <lucide-icon class="sidebar-link-icon pl-8"
+              name="building-2"
+            [attr.title]="org?.organizationName || 'Organization'"></lucide-icon>
+          }
+        </button>
+
+        <ul class="dropdown-menu sidebar-drop-menu shadow-sm border-0 rounded-3 p-0 overflow-hidden">
+          <li class="drop-menu-header">
+            <lucide-icon class="me-1" name="network"></lucide-icon>
+            {{ org?.organizationName || 'Organization' }}
+          </li>
+          <li>
+            <hr class="dropdown-divider my-0">
+          </li>
+          <li class="drop-menu-item">
+            <a class="dropdown-item px-3" href="javascript:void(0);" (click)="openLogoutModal()">Logout</a>
+          </li>
+          <li>
+            <hr class="dropdown-divider my-0">
+          </li>
+          <li class="drop-menu-item">
+            <a routerLink="/user-profile"
+              class="dropdown-item d-flex align-items-center justify-content-start px-3 py-2"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }">
+              <span>User Profile</span>
             </a>
-         </li>
-
-         <li class="sidebar-nav-item">
-            <div class="dropup-center dropend">
-               <button class="btn btn-primary sidebar-footer-btn"
-                       type="button"
-                       data-bs-toggle="dropdown"
-                       aria-expanded="false">
-                  <ng-container *ngIf="isSidebarOpen; else collapsedOrg">
-                     <lucide-icon class="sidebar-link-icon me-2" name="network"></lucide-icon>
-                     <span>{{ org?.organizationName || 'Organization' }}</span>
-                  </ng-container>
-                  <ng-template #collapsedOrg>
-                     <lucide-icon class="sidebar-link-icon pl-8"
-                                  name="building-2"
-                                  [attr.title]="org?.organizationName || 'Organization'"></lucide-icon>
-                  </ng-template>
-               </button>
-
-               <ul class="dropdown-menu sidebar-drop-menu shadow-sm border-0 rounded-3 p-0 overflow-hidden">
-                  <li class="drop-menu-header">
-                     <lucide-icon class="me-1" name="network"></lucide-icon>
-                     {{ org?.organizationName || 'Organization' }}
-                  </li>
-                  <li>
-                     <hr class="dropdown-divider my-0">
-                  </li>
-                  <li class="drop-menu-item">
-                     <a class="dropdown-item px-3" href="javascript:void(0);" (click)="openLogoutModal()">Logout</a>
-                  </li>
-                  <li>
-                     <hr class="dropdown-divider my-0">
-                  </li>
-                  <li class="drop-menu-item">
-                     <a routerLink="/user-profile"
-                        class="dropdown-item d-flex align-items-center justify-content-start px-3 py-2"
-                        routerLinkActive="active"
-                        [routerLinkActiveOptions]="{ exact: true }">
-                        <span>User Profile</span>
-                     </a>
-                  </li>
-               </ul>
-            </div>
-         </li>
-      </ul>
-   </div>
+          </li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</div>
 </nav>
 
-<div *ngIf="showLogoutModal" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
-   <div class="modal-dialog modal-dialog-centered" role="document">
+@if (showLogoutModal) {
+  <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content shadow">
-         <div class="modal-header">
-            <h5 class="modal-title">Confirm Logout</h5>
-            <button type="button" class="btn-close" aria-label="Close" (click)="closeLogoutModal()"></button>
-         </div>
-         <div class="modal-body">
-            <p class="mb-0">Are you sure you want to log out?</p>
-         </div>
-         <div class="modal-footer">
-            <button type="button" class="btn btn-outline-secondary" (click)="closeLogoutModal()">Cancel</button>
-            <button type="button" class="btn btn-danger" (click)="logout()">Logout</button>
-         </div>
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Logout</h5>
+          <button type="button" class="btn-close" aria-label="Close" (click)="closeLogoutModal()"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-0">Are you sure you want to log out?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="closeLogoutModal()">Cancel</button>
+          <button type="button" class="btn btn-danger" (click)="logout()">Logout</button>
+        </div>
       </div>
-   </div>
-</div>
-<div *ngIf="showLogoutModal" class="modal-backdrop fade show"></div>
+    </div>
+  </div>
+}
+@if (showLogoutModal) {
+  <div class="modal-backdrop fade show"></div>
+}

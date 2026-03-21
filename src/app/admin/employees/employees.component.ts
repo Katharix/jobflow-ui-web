@@ -1,5 +1,5 @@
 import {Component, OnInit, TemplateRef, ViewChild, inject} from '@angular/core';
-import {CommonModule} from '@angular/common';
+
 import {ActivatedRoute, Router} from '@angular/router';
 import {LucideAngularModule} from 'lucide-angular';
 
@@ -28,18 +28,17 @@ import {
    templateUrl: './employees.component.html',
    styleUrls: ['./employees.component.scss'],
    imports: [
-      CommonModule,
-      LucideAngularModule,
-      JobflowGridComponent,
-      PageHeaderComponent,
-      ModalComponent,
-      EmployeeFormComponent,
-      EmployeeInviteFormComponent,
-      DeleteConfirmComponent
-   ]
+    LucideAngularModule,
+    JobflowGridComponent,
+    PageHeaderComponent,
+    ModalComponent,
+    EmployeeFormComponent,
+    EmployeeInviteFormComponent,
+    DeleteConfirmComponent
+]
 })
 export class EmployeesComponent implements OnInit {
-   @ViewChild('actionsTemplate', {static: true}) actionsTemplate!: TemplateRef<any>;
+   @ViewChild('actionsTemplate', {static: true}) actionsTemplate!: TemplateRef<unknown>;
    @ViewChild('inviteForm') inviteForm!: EmployeeInviteFormComponent;
    @ViewChild(EmployeeFormComponent) employeeFormComponent!: EmployeeFormComponent;
 
@@ -227,9 +226,10 @@ export class EmployeesComponent implements OnInit {
       this.inviteForm.submit();
    }
 
-   onInviteSuccess(invite: any): void {
+   onInviteSuccess(invite: unknown): void {
       this.closeInviteModal();
-      const name = `${invite.firstName ?? ''} ${invite.lastName ?? ''}`.trim() || 'Employee';
+      const inviteData = invite as { firstName?: string; lastName?: string } | null;
+      const name = `${inviteData?.firstName ?? ''} ${inviteData?.lastName ?? ''}`.trim() || 'Employee';
       this.toast.success(`Invite sent to ${name}`, 'Success');
    }
 

@@ -23,13 +23,31 @@
     <div class="client-surface invoice-detail p-3 p-md-4">
       <div class="detail-head">
         <div>
-          <h2 class="mb-1">Invoice #{{ invoice.invoiceNumber }}</h2>
-          <p class="text-muted mb-0">Invoice date: {{ formatDate(invoice.invoiceDate) }}</p>
-          <p class="text-muted mb-0">Due date: {{ formatDate(invoice.dueDate) }}</p>
+          <p class="eyebrow">Invoice</p>
+          <h2>Invoice #{{ invoice.invoiceNumber }}</h2>
+          <div class="meta-row">
+            <span>Invoice date: {{ formatDate(invoice.invoiceDate) }}</span>
+            <span>Due date: {{ formatDate(invoice.dueDate) }}</span>
+          </div>
         </div>
         <span class="badge rounded-pill invoice-status" [class]="'badge rounded-pill invoice-status ' + statusClass(invoice.status)">
           {{ statusLabel }}
         </span>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <span>Balance due</span>
+          <strong [class]="balanceDueClass">{{ formatCurrency(invoice.balanceDue) }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Amount paid</span>
+          <strong class="amount-positive">{{ formatCurrency(invoice.amountPaid) }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Total amount</span>
+          <strong>{{ formatCurrency(invoice.totalAmount) }}</strong>
+        </div>
       </div>
 
       <div class="table-responsive mt-3">
@@ -68,11 +86,11 @@
         </div>
         <div>
           <span>Amount paid</span>
-          <strong>{{ formatCurrency(invoice.amountPaid) }}</strong>
+          <strong class="amount-positive">{{ formatCurrency(invoice.amountPaid) }}</strong>
         </div>
         <div>
           <span>Balance due</span>
-          <strong class="text-danger">{{ formatCurrency(invoice.balanceDue) }}</strong>
+          <strong [class]="balanceDueClass">{{ formatCurrency(invoice.balanceDue) }}</strong>
         </div>
       </div>
 
@@ -84,12 +102,12 @@
             [disabled]="!canPay"
             (click)="payInvoice()"
           >
-            {{ isPaying ? 'Opening Checkout...' : 'Pay Invoice' }}
+            {{ isPaying ? 'Opening Checkout...' : payButtonLabel }}
           </button>
         </div>
 
         <p class="text-muted small mt-2 mb-0">
-          Payment opens a secure checkout session.
+          Payment opens a secure {{ paymentProviderLabel }} checkout session.
         </p>
       }
 

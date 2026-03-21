@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 
 export interface CommandCenterAction {
@@ -24,30 +24,31 @@ export interface CommandCenterFlowStep {
 @Component({
    selector: 'app-dashboard-comprehensive-workflow',
    standalone: true,
-   imports: [CommonModule, RouterModule],
+   imports: [RouterModule],
    template: `
-      <section class="workflow" *ngIf="flowSteps.length">
-         <header class="workflow__header">
+      @if (flowSteps.length) {
+        <section class="workflow">
+          <header class="workflow__header">
             <h2>Workflow radar</h2>
             <p>See what is waiting, in motion, and ready to complete.</p>
-         </header>
-
-         <div class="workflow__grid">
-            <article *ngFor="let step of flowSteps" [class]="getFlowStepStatusClass(step)">
-               <div class="workflow-step__meta">
+          </header>
+          <div class="workflow__grid">
+            @for (step of flowSteps; track step) {
+              <article [class]="getFlowStepStatusClass(step)">
+                <div class="workflow-step__meta">
                   <span>{{ step.step }}</span>
                   <strong>{{ getFlowStepStatusLabel(step) }}</strong>
-               </div>
-
-               <h3>{{ step.title }}</h3>
-               <p>{{ step.description }}</p>
-               <small>{{ step.metric }}</small>
-
-               <a [routerLink]="step.route" [queryParams]="step.queryParams || null">{{ step.ctaLabel }}</a>
-            </article>
-         </div>
-      </section>
-   `,
+                </div>
+                <h3>{{ step.title }}</h3>
+                <p>{{ step.description }}</p>
+                <small>{{ step.metric }}</small>
+                <a [routerLink]="step.route" [queryParams]="step.queryParams || null">{{ step.ctaLabel }}</a>
+              </article>
+            }
+          </div>
+        </section>
+      }
+      `,
    styles: [`
       .workflow {
          display: grid;
@@ -187,7 +188,7 @@ export class DashboardComprehensiveWorkflowComponent {
 @Component({
    selector: 'app-jobflow-command-center',
    standalone: true,
-   imports: [CommonModule, RouterModule, DashboardComprehensiveWorkflowComponent],
+   imports: [RouterModule, DashboardComprehensiveWorkflowComponent],
    templateUrl: './jobflow-command-center.component.html',
    styleUrl: './jobflow-command-center.component.scss'
 })

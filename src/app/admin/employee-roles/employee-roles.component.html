@@ -12,32 +12,35 @@
     </div>
   </ng-template>
 
-  <jobflow-grid
+  <app-jobflow-grid
     [data]="roles"
     [columns]="columns"
     [pageSettings]="pageSettings"
     [allowFiltering]="false"
     [showSearchBar]="false"
-  ></jobflow-grid>
+  ></app-jobflow-grid>
 </div>
 
-<jobflow-modal
-  *ngIf="showRoleModal"
-  [title]="editingRoleId ? 'Edit Role' : 'Add Role'"
-  [confirmText]="editingRoleId ? 'Save Changes' : 'Create Role'"
-  [cancelText]="'Cancel'"
-  [formGroup]="roleForm"
-  (cancel)="closeRoleModal()"
-  (confirm)="saveRole()"
->
-  <div [formGroup]="roleForm">
-    <label class="form-label fw-semibold" for="roleName">Role Name</label>
-    <input pInputText pSize="small" id="roleName" type="text" formControlName="name" placeholder="Enter role name" class="w-100" />
-    <div
-      class="text-danger small mt-2"
-      *ngIf="roleForm.controls.name.touched && roleForm.controls.name.invalid"
+@if (showRoleModal) {
+  <app-jobflow-modal
+    [title]="editingRoleId ? 'Edit Role' : 'Add Role'"
+    [confirmText]="editingRoleId ? 'Save Changes' : 'Create Role'"
+    [cancelText]="'Cancel'"
+    [formGroup]="roleForm"
+    (cancelled)="closeRoleModal()"
+    (confirmed)="saveRole()"
     >
-      Role name is required.
+    <div [formGroup]="roleForm">
+      <label class="form-label fw-semibold" for="roleName">Role Name</label>
+      <input pInputText pSize="small" id="roleName" type="text" formControlName="name" placeholder="Enter role name" class="w-100" />
+      @if (roleForm.controls.name.touched && roleForm.controls.name.invalid) {
+        <div
+          class="text-danger small mt-2"
+          >
+          Role name is required.
+        </div>
+      }
     </div>
-  </div>
-</jobflow-modal>
+  </app-jobflow-modal>
+}
+

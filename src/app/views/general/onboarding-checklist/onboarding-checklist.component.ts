@@ -1,17 +1,20 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TimelineModule } from 'primeng/timeline';
 import { OnboardingService, OnboardingStepDto } from './services/onboarding.service';
 
 @Component({
-   selector: 'jobflow-onboarding-checklist',
+   selector: 'app-jobflow-onboarding-checklist',
    standalone: true,
    imports: [CommonModule, TimelineModule],
    templateUrl: './onboarding-checklist.component.html',
    styleUrls: ['./onboarding-checklist.component.scss']
 })
 export class OnboardingChecklistComponent implements OnChanges {
+   private onboardingService = inject(OnboardingService);
+   private router = inject(Router);
+
    @Input() organizationId: string | null = null;
    @Output() allCompleted = new EventEmitter<void>();
 
@@ -19,11 +22,6 @@ export class OnboardingChecklistComponent implements OnChanges {
    steps: OnboardingStepDto[] = [];
    nextStep: OnboardingStepDto | null = null;
    private completionSynced = false;
-
-   constructor(
-      private onboardingService: OnboardingService,
-      private router: Router
-   ) {}
 
    ngOnChanges(changes: SimpleChanges): void {
       if (changes['organizationId'] && this.organizationId) {

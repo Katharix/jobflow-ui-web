@@ -7,5 +7,5 @@ export interface WizardStep {
   description?: string;
   canEnter?: boolean | ((direction: MovingDirection) => boolean | Promise<boolean>);
   canExit?: boolean | ((direction: MovingDirection) => boolean | Promise<boolean>);
-  contentTemplate: TemplateRef<any>;
+  contentTemplate: TemplateRef<unknown>;
 }

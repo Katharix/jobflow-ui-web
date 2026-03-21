@@ -9,12 +9,18 @@
         <p class="text-muted mb-0">Update logo, colors, and invoice text. Changes apply to your outgoing documents.</p>
       </div>
       <button pButton type="button" label="Save Branding" icon="pi pi-save" (click)="onSave()" [loading]="isSaving"
-              [disabled]="isSaving"></button>
+      [disabled]="isSaving">
+        <span class="visually-hidden">Save Branding</span>
+      </button>
     </div>
   </div>
 
-  <div class="alert alert-success mb-3" *ngIf="saveStatus === 'success'">{{ saveMessage }}</div>
-  <div class="alert alert-danger mb-3" *ngIf="saveStatus === 'error'">{{ saveMessage }}</div>
+  @if (saveStatus === 'success') {
+    <div class="alert alert-success mb-3">{{ saveMessage }}</div>
+  }
+  @if (saveStatus === 'error') {
+    <div class="alert alert-danger mb-3">{{ saveMessage }}</div>
+  }
 
   <div class="row g-3 align-items-start">
     <div class="col-lg-7">
@@ -27,9 +33,11 @@
               <input type="file" id="logoUpload" hidden (change)="onLogoSelected($event)" accept="image/*" />
               <span class="text-muted small">PNG or JPG works best</span>
             </div>
-            <div class="logo-preview mt-3" *ngIf="logoPreview">
-              <img [src]="logoPreview" alt="Logo preview" class="img-fluid" />
-            </div>
+            @if (logoPreview) {
+              <div class="logo-preview mt-3">
+                <img [src]="logoPreview" alt="Logo preview" class="img-fluid" />
+              </div>
+            }
           </div>
         </div>
 
@@ -38,14 +46,14 @@
             <h6 class="mb-3">2. Colors</h6>
             <div class="row g-3">
               <div class="col-md-6">
-                <label class="form-label fw-semibold">Primary</label>
-                <color-block formControlName="primaryColor" triangle="hide" [color]="brandingForm.value.primaryColor"
-                             (onChangeComplete)="onPrimaryColorChange($event)"></color-block>
+                <label class="form-label fw-semibold" for="primaryColorPicker">Primary</label>
+                <color-block id="primaryColorPicker" formControlName="primaryColor" triangle="hide" [color]="brandingForm.value.primaryColor"
+                (onChangeComplete)="onPrimaryColorChange($event)"></color-block>
               </div>
               <div class="col-md-6">
-                <label class="form-label fw-semibold">Secondary</label>
-                <color-block formControlName="secondaryColor" triangle="hide" [color]="brandingForm.value.secondaryColor"
-                             (onChangeComplete)="onSecondaryColorChange($event)"></color-block>
+                <label class="form-label fw-semibold" for="secondaryColorPicker">Secondary</label>
+                <color-block id="secondaryColorPicker" formControlName="secondaryColor" triangle="hide" [color]="brandingForm.value.secondaryColor"
+                (onChangeComplete)="onSecondaryColorChange($event)"></color-block>
               </div>
             </div>
           </div>
@@ -74,7 +82,9 @@
 
         <div class="text-end">
           <button pButton type="button" label="Save Branding" icon="pi pi-save" (click)="onSave()" [loading]="isSaving"
-                  [disabled]="isSaving"></button>
+          [disabled]="isSaving">
+            <span class="visually-hidden">Save Branding</span>
+          </button>
         </div>
       </form>
     </div>
@@ -88,12 +98,13 @@
           </div>
 
           <div class="d-flex align-items-center gap-3 mb-4">
-            <div class="preview-logo" *ngIf="logoPreview; else logoPlaceholder">
-              <img [src]="logoPreview" alt="Brand logo" />
-            </div>
-            <ng-template #logoPlaceholder>
+            @if (logoPreview) {
+              <div class="preview-logo">
+                <img [src]="logoPreview" alt="Brand logo" />
+              </div>
+            } @else {
               <div class="preview-logo placeholder-logo">Logo</div>
-            </ng-template>
+            }
             <div>
               <div class="fw-semibold">{{ brandingForm.value.businessName || 'Your Business Name' }}</div>
               <small class="text-muted">{{ brandingForm.value.tagline || 'Your tagline here' }}</small>

@@ -1,16 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  NgZone,
-  OnChanges,
-  OnDestroy,
-  Output,
-  SimpleChanges,
-  ViewChild
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
 
 type TurnstileWidgetId = string | number;
 
@@ -75,11 +63,13 @@ function ensureTurnstileScriptLoaded(): Promise<void> {
 }
 
 @Component({
-  selector: 'jobflow-turnstile',
+  selector: 'app-jobflow-turnstile',
   standalone: true,
   template: '<div #container></div>'
 })
 export class TurnstileWidgetComponent implements AfterViewInit, OnChanges, OnDestroy {
+  private zone = inject(NgZone);
+
   @Input({ required: true }) siteKey = '';
   @Input() action = 'submit';
 
@@ -92,8 +82,6 @@ export class TurnstileWidgetComponent implements AfterViewInit, OnChanges, OnDes
 
   private widgetId: TurnstileWidgetId | null = null;
   private viewReady = false;
-
-  constructor(private zone: NgZone) {}
 
   ngAfterViewInit(): void {
     this.viewReady = true;

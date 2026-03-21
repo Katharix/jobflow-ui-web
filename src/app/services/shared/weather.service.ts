@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseApiService } from './base-api.service';
 import { WeatherDashboardDto, WeatherForecastDay } from '../../models/weather';
 import { catchError, map, Observable, of, switchMap } from 'rxjs';
@@ -10,13 +10,54 @@ interface Coordinates {
   isApproximate: boolean;
 }
 
+interface GeocodeResult {
+  latitude?: number;
+  longitude?: number;
+  name?: string;
+  admin1?: string;
+  country?: string;
+}
+
+interface GeocodeResponse {
+  results?: GeocodeResult[];
+}
+
+interface OpenMeteoCurrentWeather {
+  temperature?: number;
+  weathercode?: number;
+}
+
+interface OpenMeteoDailyForecast {
+  time?: string[];
+  weathercode?: number[];
+  temperature_2m_max?: number[];
+  temperature_2m_min?: number[];
+  precipitation_probability_max?: number[];
+}
+
+interface OpenMeteoResponse {
+  current_weather?: OpenMeteoCurrentWeather;
+  daily?: OpenMeteoDailyForecast;
+}
+
+interface WeatherApiResponse {
+  location?: string;
+  isApproximate?: boolean;
+  currentTempF?: number;
+  currentCondition?: string;
+  currentIconClass?: string;
+  forecast?: WeatherForecastDay[];
+  current_weather?: OpenMeteoCurrentWeather;
+  daily?: OpenMeteoDailyForecast;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class WeatherService {
-  private static readonly FORECAST_DAYS = 7;
+  private api = inject(BaseApiService);
 
-  constructor(private api: BaseApiService) {}
+  private static readonly FORECAST_DAYS = 7;
 
   getWeatherDashboard(latitude?: number, longitude?: number): Observable<WeatherDashboardDto> {
     return this.resolveCoordinates(latitude, longitude).pipe(
@@ -38,8 +79,9 @@ export class WeatherService {
     const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(trimmed)}&count=1&language=en&format=json`;
 
     return this.fetchJson(url).pipe(
-      map((response: any) => {
-        const result = response?.results?.[0];
+      map((response: unknown) => {
+        const data = response as GeocodeResponse | null;
+        const result = data?.results?.[0];
         if (!result) {
           return null;
         }
@@ -73,9 +115,10 @@ export class WeatherService {
       '&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto';
 
     return this.fetchJson(url).pipe(
-      map((response: any) => {
-        const currentWeather = response?.current_weather;
-        const daily = response?.daily;
+      map((response: unknown) => {
+        const data = response as OpenMeteoResponse | null;
+        const currentWeather = data?.current_weather;
+        const daily = data?.daily;
 
         if (!currentWeather || !daily) {
           throw new Error('Invalid weather payload');
@@ -125,7 +168,7 @@ export class WeatherService {
 
   private getWeatherDashboardWithCoords(coords: Coordinates): Observable<WeatherDashboardDto> {
     return this.api
-      .get<any>('weather/forecast', {
+      .get<unknown>('weather/forecast', {
         lat: coords.latitude,
         lon: coords.longitude,
         days: WeatherService.FORECAST_DAYS
@@ -136,20 +179,21 @@ export class WeatherService {
       );
   }
 
-  private mapToDashboardDto(payload: any, coords: Coordinates): WeatherDashboardDto {
-    if (payload?.forecast && payload?.currentTempF !== undefined) {
+  private mapToDashboardDto(payload: unknown, coords: Coordinates): WeatherDashboardDto {
+    const data = payload as WeatherApiResponse | null;
+    if (data?.forecast && data?.currentTempF !== undefined) {
       return {
-        location: payload.location || coords.location,
-        isApproximate: payload.isApproximate ?? coords.isApproximate,
-        currentTempF: Number(payload.currentTempF ?? 0),
-        currentCondition: payload.currentCondition || 'Weather update',
-        currentIconClass: payload.currentIconClass || 'pi pi-cloud',
-        forecast: payload.forecast ?? []
+        location: data.location || coords.location,
+        isApproximate: data.isApproximate ?? coords.isApproximate,
+        currentTempF: Number(data.currentTempF ?? 0),
+        currentCondition: data.currentCondition || 'Weather update',
+        currentIconClass: data.currentIconClass || 'pi pi-cloud',
+        forecast: data.forecast ?? []
       };
     }
 
-    const current = payload?.current_weather;
-    const daily = payload?.daily;
+    const current = data?.current_weather;
+    const daily = data?.daily;
 
     if (!current || !daily || !Array.isArray(daily?.time)) {
       throw new Error('Unsupported weather response shape');
@@ -198,7 +242,7 @@ export class WeatherService {
     return of(null);
   }
 
-  private fetchJson(url: string): Observable<any> {
+  private fetchJson(url: string): Observable<unknown> {
     return new Observable(observer => {
       fetch(url)
         .then(response => response.json())
@@ -210,7 +254,7 @@ export class WeatherService {
     });
   }
 
-  private formatGeocodeLocation(result: any): string {
+  private formatGeocodeLocation(result: GeocodeResult | null | undefined): string {
     const parts = [result?.name, result?.admin1, result?.country]
       .map((part: string | undefined) => (part ?? '').trim())
       .filter(Boolean);

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PageHeaderComponent } from '../dashboard/page-header/page-header.component';
 import { Invoice, InvoiceStatus } from '../../models/invoice';
@@ -14,14 +14,12 @@ import { ToastService } from '../../common/toast/toast.service';
   styleUrl: './billing-payments.component.scss'
 })
 export class BillingPaymentsComponent implements OnInit {
+  private readonly invoiceService = inject(InvoiceService);
+  private readonly toast = inject(ToastService);
+
   invoices: Invoice[] = [];
   loading = true;
   error: string | null = null;
-
-  constructor(
-    private readonly invoiceService: InvoiceService,
-    private readonly toast: ToastService
-  ) {}
 
   ngOnInit(): void {
     this.loadInvoices();

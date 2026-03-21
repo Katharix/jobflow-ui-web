@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
@@ -11,7 +11,7 @@ import { ClientHubNotifierService, ClientHubInvoicePaidEvent } from '../../servi
 @Component({
   selector: 'app-client-hub-invoices',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './client-hub-invoices.component.html',
   styleUrl: './client-hub-invoices.component.scss',
 })
@@ -123,7 +123,7 @@ export class ClientHubInvoicesComponent implements OnInit, OnDestroy {
     target.amountPaid = payload.amountPaid ?? target.amountPaid;
     target.balanceDue = payload.balanceDue ?? target.balanceDue;
     if (payload.paidAt) {
-      (target as any).paidAt = payload.paidAt;
+      target.paidAt = payload.paidAt;
     }
   }
 }

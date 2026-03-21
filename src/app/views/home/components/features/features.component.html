@@ -13,20 +13,24 @@
     </div>
 
     <div class="row g-4">
-      <div *ngFor="let feature of featuresRow1" class="col-12 col-md-6 col-lg-3">
-        <div class="jf-feature-card">
-          <div class="jf-feature-card__icon">{{ feature.title | slice:0:1 }}</div>
-          <h5>{{ feature.title }}</h5>
-          <p>Track work, communicate with crews, and keep every job visible.</p>
+      @for (feature of featuresRow1; track feature) {
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="jf-feature-card">
+            <div class="jf-feature-card__icon">{{ feature.title | slice:0:1 }}</div>
+            <h5>{{ feature.title }}</h5>
+            <p>Track work, communicate with crews, and keep every job visible.</p>
+          </div>
         </div>
-      </div>
-      <div *ngFor="let feature of featuresRow2" class="col-12 col-md-6 col-lg-3">
-        <div class="jf-feature-card">
-          <div class="jf-feature-card__icon">{{ feature.title | slice:0:1 }}</div>
-          <h5>{{ feature.title }}</h5>
-          <p>Standardize the workflow so nothing slips between teams.</p>
+      }
+      @for (feature of featuresRow2; track feature) {
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="jf-feature-card">
+            <div class="jf-feature-card__icon">{{ feature.title | slice:0:1 }}</div>
+            <h5>{{ feature.title }}</h5>
+            <p>Standardize the workflow so nothing slips between teams.</p>
+          </div>
         </div>
-      </div>
+      }
     </div>
   </div>
 </section>

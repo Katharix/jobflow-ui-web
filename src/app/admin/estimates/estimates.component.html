@@ -4,7 +4,9 @@
   [actions]="[{ label: 'New Estimate', icon: 'plus', class: 'btn-primary', click: openNew.bind(this) }]">
 </app-page-header>
 
-<div *ngIf="error" class="alert alert-danger mb-3">{{ error }}</div>
+@if (error) {
+  <div class="alert alert-danger mb-3">{{ error }}</div>
+}
 
 <!-- Client cell template -->
 <ng-template #clientTemplate let-estimate>
@@ -41,81 +43,83 @@
 </ng-template>
 
 <!-- Grid -->
-<jobflow-grid
+<app-jobflow-grid
   [data]="items"
   [columns]="columns"
   [pageSettings]="pageSettings"
   [showSearchBar]="true">
-</jobflow-grid>
+</app-jobflow-grid>
 
 <!-- Create / Edit Drawer -->
-<jobflow-drawer
+<app-jobflow-drawer
   [open]="isFormDrawerOpen"
   [title]="editingEstimate ? 'Edit Estimate' : 'New Estimate'"
   [width]="660"
   (closed)="onFormCancelled()">
-  <estimate-form
-    *ngIf="isFormDrawerOpen"
-    [estimate]="editingEstimate"
-    (saved)="onFormSaved($event)"
-    (cancelled)="onFormCancelled()">
-  </estimate-form>
-</jobflow-drawer>
+  @if (isFormDrawerOpen) {
+    <app-estimate-form
+      [estimate]="editingEstimate"
+      (saved)="onFormSaved($event)"
+      (cancelled)="onFormCancelled()">
+    </app-estimate-form>
+  }
+</app-jobflow-drawer>
 
 <!-- Send Drawer -->
-<jobflow-drawer
+<app-jobflow-drawer
   [open]="isSendDrawerOpen"
   title="Send Estimate"
   [width]="440"
   (closed)="isSendDrawerOpen = false">
-  <ng-container *ngIf="isSendDrawerOpen && estimateToSend">
+  @if (isSendDrawerOpen && estimateToSend) {
     <div class="send-form">
       <p class="text-muted mb-4">
         Sending estimate <strong>{{ estimateToSend.estimateNumber }}</strong>.
         Confirm the recipient's email and include an optional personal message.
       </p>
-
-      <div *ngIf="sendError" class="alert alert-danger mb-3">{{ sendError }}</div>
-
+      @if (sendError) {
+        <div class="alert alert-danger mb-3">{{ sendError }}</div>
+      }
       <div class="mb-3">
-        <label class="form-label fw-semibold">
+        <label class="form-label fw-semibold" for="estimateSendEmail">
           Recipient Email <span class="text-danger">*</span>
         </label>
         <input
+          id="estimateSendEmail"
           type="email"
           class="form-control"
           [(ngModel)]="sendEmail"
           placeholder="client@example.com" />
+        </div>
+        <div class="mb-4">
+          <label class="form-label fw-semibold" for="estimateSendMessage">
+            Message <span class="text-muted fw-normal">(optional)</span>
+          </label>
+          <textarea
+            id="estimateSendMessage"
+            class="form-control"
+            rows="4"
+            [(ngModel)]="sendMessage"
+            placeholder="Include a personal note with this estimate…">
+          </textarea>
+        </div>
+        <div class="d-flex justify-content-end gap-2">
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="isSendDrawerOpen = false"
+            [disabled]="sending">
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="confirmSend()"
+            [disabled]="sending || !sendEmail.trim()">
+            {{ sending ? 'Sending…' : 'Send Estimate' }}
+          </button>
+        </div>
       </div>
+    }
+  </app-jobflow-drawer>
 
-      <div class="mb-4">
-        <label class="form-label fw-semibold">
-          Message <span class="text-muted fw-normal">(optional)</span>
-        </label>
-        <textarea
-          class="form-control"
-          rows="4"
-          [(ngModel)]="sendMessage"
-          placeholder="Include a personal note with this estimate…">
-        </textarea>
-      </div>
-
-      <div class="d-flex justify-content-end gap-2">
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          (click)="isSendDrawerOpen = false"
-          [disabled]="sending">
-          Cancel
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="confirmSend()"
-          [disabled]="sending || !sendEmail.trim()">
-          {{ sending ? 'Sending…' : 'Send Estimate' }}
-        </button>
-      </div>
-    </div>
-  </ng-container>
-</jobflow-drawer>

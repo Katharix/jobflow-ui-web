@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {BaseApiService} from '../../../services/shared/base-api.service';
 import {Job, JobLifecycleStatus, InvoicingWorkflow} from "../models/job";
@@ -20,10 +20,9 @@ export interface JobUpsertRequest {
 
 @Injectable({providedIn: 'root'})
 export class JobsService {
-   private apiUrl = 'job/';
+   private api = inject(BaseApiService);
 
-   constructor(private api: BaseApiService) {
-   }
+   private apiUrl = 'job/';
 
    upsertJob(
       payload: CreateJobRequest | JobUpsertRequest
@@ -59,13 +58,13 @@ export class JobsService {
    }
 
    getAllJobs(): Observable<Job[]> {
-      return this.api.get<any>(
+      return this.api.get<Job[]>(
          `${this.apiUrl}all`
       )
    }
 
-   getScheduledJobs(start: Date, end: Date) {
-      return this.api.get<any[]>(
+   getScheduledJobs(start: Date, end: Date): Observable<Job[]> {
+      return this.api.get<Job[]>(
          `${this.apiUrl}scheduled`,
          {start, end}
       );

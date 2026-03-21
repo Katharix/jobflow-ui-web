@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {NavigationEnd, Router, RouterLink, RouterModule} from '@angular/router';
 import {NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
 import {OrganizationContextService} from '../../../services/shared/organization-context.service';
 import {OrganizationDto} from '../../../models/organization';
-import {CommonModule} from '@angular/common';
+
 import {NavItem} from '../../../models/nav-item';
 import {filter} from 'rxjs/operators';
 import {NavService} from "../services/nav.service";
@@ -14,16 +14,19 @@ import { WeatherWidgetComponent } from '../../../admin/dashboard/weather-widget/
    selector: 'app-admin-navbar',
    standalone: true,
    imports: [
-      NgbDropdownModule,
-      RouterLink,
-      CommonModule,
-      RouterModule,
-      WeatherWidgetComponent
-   ],
+    NgbDropdownModule,
+    RouterLink,
+    RouterModule,
+    WeatherWidgetComponent
+],
    templateUrl: './admin-navbar.component.html',
    styleUrl: './admin-navbar.component.scss'
 })
 export class AdminNavbarComponent implements OnInit {
+   private router = inject(Router);
+   private orgContext = inject(OrganizationContextService);
+   private navService = inject(NavService);
+
    // currentTheme: string;
    navItems: NavItem[] = [];
    showNavbar = true;
@@ -34,13 +37,6 @@ export class AdminNavbarComponent implements OnInit {
 
 
    org: OrganizationDto
-
-   constructor(
-      private router: Router,
-      private orgContext: OrganizationContextService,
-      private navService: NavService
-   ) {
-   }
 
    ngOnInit(): void {
       const initialUrl = this.router.url;

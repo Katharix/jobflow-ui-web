@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 import { Router, NavigationEnd } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class LoadingService {
+  private router = inject(Router);
+
 
   private _loading = new BehaviorSubject<boolean>(false);
   private _forceLoading = new BehaviorSubject<boolean>(false);
@@ -24,7 +26,7 @@ export class LoadingService {
     distinctUntilChanged()
   );
 
-  constructor(private router: Router) {
+  constructor() {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.reset();

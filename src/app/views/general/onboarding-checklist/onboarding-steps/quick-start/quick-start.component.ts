@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PageHeaderComponent } from '../../../../../admin/dashboard/page-header/page-header.component';
 import {
@@ -18,17 +18,15 @@ import { ToastService } from '../../../../../common/toast/toast.service';
   styleUrl: './quick-start.component.scss'
 })
 export class OnboardingQuickStartComponent implements OnInit {
+  private readonly onboardingService = inject(OnboardingService);
+  private readonly toast = inject(ToastService);
+
   state: OnboardingQuickStartStateDto | null = null;
   selectedTrackKey = '';
   selectedPresetKey = '';
   loading = true;
   applying = false;
   error: string | null = null;
-
-  constructor(
-    private readonly onboardingService: OnboardingService,
-    private readonly toast: ToastService
-  ) {}
 
   ngOnInit(): void {
     this.load();

@@ -13,6 +13,7 @@ import { OnboardingChecklistComponent } from '../../views/general/onboarding-che
 import { JobsService } from '../jobs/services/jobs.service';
 import { Job, JobLifecycleStatus } from '../jobs/models/job';
 import { CustomersService } from '../customer/services/customer.service';
+import { Client } from '../customer/models/customer';
 import { EstimateService } from '../estimates/services/estimate.service';
 import { Estimate, EstimateStatus, EstimateStatusLabels } from '../estimates/models/estimate';
 import { Invoice, InvoiceStatus } from '../../models/invoice';
@@ -47,6 +48,30 @@ interface DashboardClientActivity {
    route: string;
 }
 
+interface DashboardKpiMetrics {
+   revenue30: number;
+   outstandingBalance: number;
+   overdueBalance: number;
+   overdueCount: number;
+   paidInvoices: number;
+   sentInvoices: number;
+   openJobs: number;
+   draftJobs: number;
+   jobsWithoutSchedule: number;
+   jobsInProgress: number;
+   assignmentsToday: number;
+   assignmentsInProgress: number;
+   assignmentsCompleted: number;
+   acceptedEstimateValue: number;
+   revisionRequests: number;
+   totalCustomers: number;
+}
+
+type InvoiceWithDates = Invoice & {
+   updatedAt?: string;
+   paidAt?: string;
+};
+
 @Component({
    selector: 'app-dashboard',
    standalone: true,
@@ -55,16 +80,25 @@ interface DashboardClientActivity {
    styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit, OnDestroy {
+   private readonly orgContext = inject(OrganizationContextService);
+   private readonly organizationService = inject(OrganizationService);
+   private readonly onboardingService = inject(OnboardingService);
+   private readonly jobsService = inject(JobsService);
+   private readonly invoiceService = inject(InvoiceService);
+   private readonly customersService = inject(CustomersService);
+   private readonly estimateService = inject(EstimateService);
+
    private readonly auth = inject(Auth);
    organizationId: string | null = null;
    organizationName = 'your organization';
    currentDateTime = '';
    showOnboardingChecklist = true;
    private checklistCompleted = false;
+   readonly welcomeSubtext = 'Here\'s your command center for today-start with what matters most.';
 
    miniTiles: DashboardKpi[] = [];
 
-   primaryActions: CommandCenterAction[] = [
+   readonly primaryActions: CommandCenterAction[] = [
       {
          label: 'Create a job',
          description: 'Launch the job intake drawer instantly',
@@ -93,24 +127,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    private latestEstimates: Estimate[] = [];
    private latestInvoices: Invoice[] = [];
 
-   private kpiMetrics = {
-      revenue30: 0,
-      outstandingBalance: 0,
-      overdueBalance: 0,
-      overdueCount: 0,
-      paidInvoices: 0,
-      sentInvoices: 0,
-      openJobs: 0,
-      draftJobs: 0,
-      jobsWithoutSchedule: 0,
-      jobsInProgress: 0,
-      assignmentsToday: 0,
-      assignmentsInProgress: 0,
-      assignmentsCompleted: 0,
-      acceptedEstimateValue: 0,
-      revisionRequests: 0,
-      totalCustomers: 0
-   };
+   private kpiMetrics: DashboardKpiMetrics = this.buildEmptyKpiMetrics();
 
    private readonly destroy$ = new Subject<void>();
    private clockIntervalId: ReturnType<typeof setInterval> | null = null;
@@ -123,16 +140,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
          this.refreshDashboardAfterPayment();
       }
    });
-
-   constructor(
-      private readonly orgContext: OrganizationContextService,
-      private readonly organizationService: OrganizationService,
-      private readonly onboardingService: OnboardingService,
-      private readonly jobsService: JobsService,
-      private readonly invoiceService: InvoiceService,
-      private readonly customersService: CustomersService,
-      private readonly estimateService: EstimateService
-   ) {}
 
    ngOnInit(): void {
       this.startClock();
@@ -173,9 +180,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return `Welcome, ${this.organizationName}`;
    }
 
-   get welcomeSubtext(): string {
-      return 'Here’s your command center for today—start with what matters most.';
-   }
 
    private startClock(): void {
       this.updateCurrentDateTime();
@@ -198,7 +202,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
          jobs: this.jobsService.getAllJobs().pipe(catchError(() => of([] as Job[]))),
          invoices: this.invoiceService.getByOrganization().pipe(catchError(() => of([] as Invoice[]))),
          estimates: this.estimateService.getByOrganization().pipe(catchError(() => of([] as Estimate[]))),
-         customers: this.customersService.getAllByOrganization().pipe(catchError(() => of([] as any[])))
+         customers: this.customersService.getAllByOrganization().pipe(catchError(() => of([] as Client[])))
       })
          .pipe(takeUntil(this.destroy$))
          .subscribe(({ jobs, invoices, estimates, customers }) => {
@@ -206,7 +210,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
          });
    }
 
-   private buildDashboardState(jobs: Job[], invoices: Invoice[], estimates: Estimate[], customers: any[]): void {
+   private buildDashboardState(jobs: Job[], invoices: Invoice[], estimates: Estimate[], customers: Client[]): void {
       const openJobs = jobs.filter(job => !this.isJobDone(job));
       const jobsWithoutSchedule = openJobs
          .filter(job => !job.hasAssignments)
@@ -335,7 +339,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }).format(value || 0);
    }
 
-   private computeKpiMetrics(jobs: Job[], invoices: Invoice[], estimates: Estimate[], customers: any[]) {
+   private computeKpiMetrics(jobs: Job[], invoices: Invoice[], estimates: Estimate[], customers: Client[]): DashboardKpiMetrics {
       const openJobs = jobs.filter(job => !this.isJobDone(job));
       const draftJobs = jobs.filter(job => job.lifecycleStatus === JobLifecycleStatus.Draft);
       const jobsInProgress = jobs.filter(job => job.lifecycleStatus === JobLifecycleStatus.InProgress);
@@ -356,7 +360,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       const overdueInvoices = resolvedInvoices.filter(item => item.status === InvoiceStatus.Overdue);
 
       const revenue30 = paidInvoices
-         .filter(item => this.isWithinDays((item.invoice as any)?.paidAt ?? item.invoice.invoiceDate, 30))
+         .filter(item => this.isWithinDays(this.resolveInvoicePaidAt(item.invoice) ?? item.invoice.invoiceDate, 30))
          .reduce((sum, item) => sum + this.resolvePaidAmount(item.invoice), 0);
 
       const outstandingBalance = resolvedInvoices
@@ -480,7 +484,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
          .filter(invoice => this.resolveInvoiceStatus(invoice.status) === InvoiceStatus.Paid)
          .map(invoice => {
             const clientName = this.invoiceClientName(invoice);
-            const occurredAt = (invoice as any)?.updatedAt ?? (invoice as any)?.paidAt ?? invoice.invoiceDate ?? invoice.dueDate;
+            const occurredAt = this.resolveInvoiceActivityDate(invoice);
 
             return {
                id: `invoice-${invoice.id}-paid`,
@@ -502,6 +506,37 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return [...this.revisionActivity, ...base]
          .sort((left, right) => this.dateScore(right.occurredAt) - this.dateScore(left.occurredAt))
          .slice(0, 8);
+   }
+
+   private buildEmptyKpiMetrics(): DashboardKpiMetrics {
+      return {
+         revenue30: 0,
+         outstandingBalance: 0,
+         overdueBalance: 0,
+         overdueCount: 0,
+         paidInvoices: 0,
+         sentInvoices: 0,
+         openJobs: 0,
+         draftJobs: 0,
+         jobsWithoutSchedule: 0,
+         jobsInProgress: 0,
+         assignmentsToday: 0,
+         assignmentsInProgress: 0,
+         assignmentsCompleted: 0,
+         acceptedEstimateValue: 0,
+         revisionRequests: 0,
+         totalCustomers: 0
+      };
+   }
+
+   private resolveInvoicePaidAt(invoice: Invoice): string | undefined {
+      const withDates: InvoiceWithDates = invoice;
+      return withDates.paidAt ?? withDates.updatedAt;
+   }
+
+   private resolveInvoiceActivityDate(invoice: Invoice): string | undefined {
+      const withDates: InvoiceWithDates = invoice;
+      return withDates.updatedAt ?? withDates.paidAt ?? invoice.invoiceDate ?? invoice.dueDate;
    }
 
    private addRevisionActivity(payload: { estimateId: string; revisionRequestId: string; revisionNumber: number; requestedAt: string; message: string }): void {

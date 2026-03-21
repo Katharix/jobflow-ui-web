@@ -1,11 +1,15 @@
-import {Component, OnDestroy, OnInit, ViewChild, inject} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {Component, OnDestroy, OnInit, inject} from '@angular/core';
+
 import {ActivatedRoute, Router} from '@angular/router';
 
 import {Subscription, combineLatest} from 'rxjs';
 
 import {
-   PriceBookItemService, PriceBookItemDto, PriceBookItemType
+   CreatePriceBookItemRequest,
+   PriceBookItemDto,
+   PriceBookItemService,
+   PriceBookItemType,
+   UpdatePriceBookItemRequest
 } from '../services/price-book-item.service';
 import {OrganizationContextService} from '../../../services/shared/organization-context.service';
 import {ToastService} from '../../../common/toast/toast.service';
@@ -29,7 +33,7 @@ import {
 @Component({
    selector: 'app-price-book-item',
    standalone: true,
-   imports: [CommonModule, PageHeaderComponent, JobflowGridComponent],
+   imports: [PageHeaderComponent, JobflowGridComponent],
    templateUrl: './price-book-item.component.html',
    styleUrl: './price-book-item.component.scss'
 })
@@ -49,7 +53,7 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
    categoryName: string | null = null; // optional if you pass name along (query param) or load it
 
    items: PriceBookItemDto[] = [];
-   typeAccessor = (_: string, data: any) => this.typeLabel(data?.itemType);
+   typeAccessor = (_: string, data: Record<string, unknown>) => this.typeLabel((data as PriceBookItemDto)?.itemType);
 
 
    commandButtons: JobflowGridCommandModel[] = [
@@ -166,7 +170,7 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
    }
 
    onToolbarClick(e: JobflowGridToolbarClickEventArgs) {
-      const id = (e.item as any)?.id;
+      const id = e.item?.id ?? e.item?.text;
       if (id === 'AddItem') this.add();
    }
 
@@ -194,8 +198,18 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
          if (!result) return;
          // force-associate with current category if present
          result.type = 1;
-         const body = {...result, categoryId: this.categoryId ?? result.categoryId};
-         this.itemService.create(body as any).subscribe({
+         const body: CreatePriceBookItemRequest = {
+            name: result.name,
+            description: result.description ?? null,
+            partNumber: result.partNumber ?? null,
+            unit: result.unit ?? null,
+            cost: result.cost,
+            price: result.price,
+            itemType: result.type,
+            inventoryUnitsPerSale: result.inventoryUnitsPerSale,
+            categoryId: this.categoryId ?? result.categoryId ?? null
+         };
+         this.itemService.create(body).subscribe({
             next: created => {
                // show only if it belongs to this category
                if (!this.categoryId || (created.categoryId ?? '').toLowerCase() === this.categoryId.toLowerCase()) {
@@ -225,8 +239,20 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
       ref.afterClosed().subscribe(result => {
          if (!result) return;
 
-         const body = {...row, ...result, id: row.id, organizationId: this.orgId};
-         this.itemService.update(body as any).subscribe({
+         const body: UpdatePriceBookItemRequest = {
+            ...row,
+            id: row.id,
+            name: result.name,
+            description: result.description ?? null,
+            partNumber: result.partNumber ?? null,
+            unit: result.unit ?? null,
+            cost: result.cost,
+            price: result.price,
+            itemType: result.type ?? row.itemType,
+            inventoryUnitsPerSale: result.inventoryUnitsPerSale,
+            categoryId: result.categoryId ?? row.categoryId ?? null
+         };
+         this.itemService.update(body).subscribe({
             next: updated => {
                const stillMatches =
                   !this.categoryId || (updated.categoryId ?? '').toLowerCase() === this.categoryId!.toLowerCase();

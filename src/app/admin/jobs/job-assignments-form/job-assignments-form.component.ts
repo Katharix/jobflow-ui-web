@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
@@ -13,12 +13,14 @@ import { ScheduleSettingsDto } from '../../settings/models/schedule-settings';
 type ScheduleMode = 'OneTime' | 'Recurring';
 
 @Component({
-   selector: 'job-assignment-form',
+   selector: 'app-job-assignment-form',
    standalone: true,
    imports: [CommonModule, ReactiveFormsModule, SelectModule, InputNumberModule, DatePickerModule, TextareaModule],
    templateUrl: './job-assignments-form.component.html',
 })
 export class JobAssignmentFormComponent implements OnInit, OnChanges {
+   private fb = inject(FormBuilder);
+
 
    scheduleModeOptions = [
       { label: 'One Time', value: 'OneTime' },
@@ -77,8 +79,6 @@ export class JobAssignmentFormComponent implements OnInit, OnChanges {
       const value = control.value as unknown;
       return Array.isArray(value) && value.length > 0 ? null : { required: true };
    };
-
-   constructor(private fb: FormBuilder) {}
 
    ngOnInit(): void {
       const defaultWindowMinutes = this.scheduleSettings?.defaultWindowMinutes ?? 120;

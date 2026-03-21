@@ -40,56 +40,72 @@
                 email
                 #emailModel="ngModel"
                 [ngClass]="{ 'is-invalid': emailModel.invalid && (emailModel.touched || submitted) }"
-              />
-              <div *ngIf="emailModel.invalid && (emailModel.touched || submitted)" class="text-danger mt-1">
-                <div *ngIf="emailModel.errors?.['required']">Email is required.</div>
-                <div *ngIf="emailModel.errors?.['email']">Enter a valid email address.</div>
+                />
+                @if (emailModel.invalid && (emailModel.touched || submitted)) {
+                  <div class="text-danger mt-1">
+                    @if (emailModel.errors?.['required']) {
+                      <div>Email is required.</div>
+                    }
+                    @if (emailModel.errors?.['email']) {
+                      <div>Enter a valid email address.</div>
+                    }
+                  </div>
+                }
               </div>
-            </div>
 
-            <div class="form-group mb-3">
-              <label class="form-label" for="password">Password</label>
-              <input
-                type="password"
-                class="form-control"
-                id="password"
-                name="password"
-                placeholder="Your password"
-                [(ngModel)]="password"
-                required
-                minlength="6"
-                #passwordModel="ngModel"
-                [ngClass]="{ 'is-invalid': passwordModel.invalid && (passwordModel.touched || submitted) }"
-              />
-              <div *ngIf="passwordModel.invalid && (passwordModel.touched || submitted)" class="text-danger mt-1">
-                <div *ngIf="passwordModel.errors?.['required']">Password is required.</div>
-                <div *ngIf="passwordModel.errors?.['minlength']">Password must be at least 6 characters.</div>
-              </div>
-            </div>
+              <div class="form-group mb-3">
+                <label class="form-label" for="password">Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  name="password"
+                  placeholder="Your password"
+                  [(ngModel)]="password"
+                  required
+                  minlength="6"
+                  #passwordModel="ngModel"
+                  [ngClass]="{ 'is-invalid': passwordModel.invalid && (passwordModel.touched || submitted) }"
+                  />
+                  @if (passwordModel.invalid && (passwordModel.touched || submitted)) {
+                    <div class="text-danger mt-1">
+                      @if (passwordModel.errors?.['required']) {
+                        <div>Password is required.</div>
+                      }
+                      @if (passwordModel.errors?.['minlength']) {
+                        <div>Password must be at least 6 characters.</div>
+                      }
+                    </div>
+                  }
+                </div>
 
-            <div *ngIf="submitted && form.invalid" class="alert alert-danger">
-              Please fix the highlighted fields and try again.
-            </div>
+                @if (submitted && form.invalid) {
+                  <div class="alert alert-danger">
+                    Please fix the highlighted fields and try again.
+                  </div>
+                }
 
-            <div *ngIf="error" class="alert alert-danger">
-              {{ error }}
-            </div>
+                @if (error) {
+                  <div class="alert alert-danger">
+                    {{ error }}
+                  </div>
+                }
 
-            <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
-                Login
-              </button>
-            </div>
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+                    Login
+                  </button>
+                </div>
 
-            <div class="login-card__footer">
-              <span>By continuing, you agree to our</span>
-              <a routerLink="/terms">Terms</a>
-              <span>and</span>
-              <a routerLink="/privacy">Privacy Policy</a>.
+                <div class="login-card__footer">
+                  <span>By continuing, you agree to our</span>
+                  <a routerLink="/terms">Terms</a>
+                  <span>and</span>
+                  <a routerLink="/privacy">Privacy Policy</a>.
+                </div>
+              </form>
             </div>
-          </form>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>

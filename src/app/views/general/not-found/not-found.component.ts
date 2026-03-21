@@ -1,21 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-not-found',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './not-found.component.html',
   styleUrl: './not-found.component.scss',
 })
 export class NotFoundComponent implements OnInit {
+      private route = inject(ActivatedRoute);
+
 
       type: string | null;
   title: string;
   descLines: string[] = [];
-
-  constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.type = this.route.snapshot.paramMap.get('type');

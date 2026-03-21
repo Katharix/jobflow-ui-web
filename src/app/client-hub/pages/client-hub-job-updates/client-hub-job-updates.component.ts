@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -18,7 +18,7 @@ import { JobLifecycleStatus, JobLifecycleStatusLabels } from '../../../admin/job
 @Component({
   selector: 'app-client-hub-job-updates',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './client-hub-job-updates.component.html',
   styleUrl: './client-hub-job-updates.component.scss',
 })

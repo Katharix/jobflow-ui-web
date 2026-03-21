@@ -28,10 +28,14 @@
     <a class="btn btn-outline-primary" routerLink="/admin/invoices">Open invoices</a>
   </div>
 
-  <p *ngIf="loading" class="billing-state">Loading billing details...</p>
-  <p *ngIf="error" class="billing-state billing-state--error">{{ error }}</p>
+  @if (loading) {
+    <p class="billing-state">Loading billing details...</p>
+  }
+  @if (error) {
+    <p class="billing-state billing-state--error">{{ error }}</p>
+  }
 
-  <ng-container *ngIf="!loading && !error">
+  @if (!loading && !error) {
     <section class="billing-section">
       <div class="billing-section__header">
         <div>
@@ -40,40 +44,43 @@
         </div>
         <span>{{ totalDrafts }} total</span>
       </div>
-
-      <div *ngIf="!draftInvoices.length" class="billing-empty">No draft invoices right now.</div>
-
-      <div *ngIf="draftInvoices.length" class="table-responsive">
-        <table class="table align-middle mb-0">
-          <thead>
-            <tr>
-              <th>Invoice</th>
-              <th>Client</th>
-              <th>Due</th>
-              <th class="text-end">Total</th>
-              <th class="text-end">Balance</th>
-              <th>Status</th>
-              <th class="text-end">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let invoice of draftInvoices">
-              <td>{{ invoice.invoiceNumber }}</td>
-              <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
-              <td>{{ invoice.dueDate | date: 'mediumDate' }}</td>
-              <td class="text-end">{{ invoice.totalAmount | currency }}</td>
-              <td class="text-end">{{ invoice.balanceDue | currency }}</td>
-              <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">Preview</button>
-                <button class="btn btn-sm btn-primary" (click)="sendInvoice(invoice)">Send invoice</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      @if (!draftInvoices.length) {
+        <div class="billing-empty">No draft invoices right now.</div>
+      }
+      @if (draftInvoices.length) {
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Invoice</th>
+                <th>Client</th>
+                <th>Due</th>
+                <th class="text-end">Total</th>
+                <th class="text-end">Balance</th>
+                <th>Status</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (invoice of draftInvoices; track invoice) {
+                <tr>
+                  <td>{{ invoice.invoiceNumber }}</td>
+                  <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
+                  <td>{{ invoice.dueDate | date: 'mediumDate' }}</td>
+                  <td class="text-end">{{ invoice.totalAmount | currency }}</td>
+                  <td class="text-end">{{ invoice.balanceDue | currency }}</td>
+                  <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">Preview</button>
+                    <button class="btn btn-sm btn-primary" (click)="sendInvoice(invoice)">Send invoice</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
     </section>
-
     <section class="billing-section">
       <div class="billing-section__header">
         <div>
@@ -82,40 +89,43 @@
         </div>
         <span>{{ totalSent }} total</span>
       </div>
-
-      <div *ngIf="!sentInvoices.length" class="billing-empty">No sent invoices right now.</div>
-
-      <div *ngIf="sentInvoices.length" class="table-responsive">
-        <table class="table align-middle mb-0">
-          <thead>
-            <tr>
-              <th>Invoice</th>
-              <th>Client</th>
-              <th>Due</th>
-              <th class="text-end">Total</th>
-              <th class="text-end">Balance</th>
-              <th>Status</th>
-              <th class="text-end">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let invoice of sentInvoices">
-              <td>{{ invoice.invoiceNumber }}</td>
-              <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
-              <td>{{ invoice.dueDate | date: 'mediumDate' }}</td>
-              <td class="text-end">{{ invoice.totalAmount | currency }}</td>
-              <td class="text-end">{{ invoice.balanceDue | currency }}</td>
-              <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">Collect now</button>
-                <button class="btn btn-sm btn-outline-primary" (click)="sendReminder(invoice)">Send reminder</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      @if (!sentInvoices.length) {
+        <div class="billing-empty">No sent invoices right now.</div>
+      }
+      @if (sentInvoices.length) {
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Invoice</th>
+                <th>Client</th>
+                <th>Due</th>
+                <th class="text-end">Total</th>
+                <th class="text-end">Balance</th>
+                <th>Status</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (invoice of sentInvoices; track invoice) {
+                <tr>
+                  <td>{{ invoice.invoiceNumber }}</td>
+                  <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
+                  <td>{{ invoice.dueDate | date: 'mediumDate' }}</td>
+                  <td class="text-end">{{ invoice.totalAmount | currency }}</td>
+                  <td class="text-end">{{ invoice.balanceDue | currency }}</td>
+                  <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">Collect now</button>
+                    <button class="btn btn-sm btn-outline-primary" (click)="sendReminder(invoice)">Send reminder</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
     </section>
-
     <section class="billing-section">
       <div class="billing-section__header">
         <div>
@@ -124,75 +134,81 @@
         </div>
         <span>{{ totalOverdue }} total</span>
       </div>
-
-      <div *ngIf="!overdueInvoices.length" class="billing-empty">No overdue invoices right now.</div>
-
-      <div *ngIf="overdueInvoices.length" class="table-responsive">
-        <table class="table align-middle mb-0">
-          <thead>
-            <tr>
-              <th>Invoice</th>
-              <th>Client</th>
-              <th>Due</th>
-              <th class="text-end">Total</th>
-              <th class="text-end">Balance</th>
-              <th>Status</th>
-              <th class="text-end">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let invoice of overdueInvoices">
-              <td>{{ invoice.invoiceNumber }}</td>
-              <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
-              <td>{{ invoice.dueDate | date: 'mediumDate' }}</td>
-              <td class="text-end">{{ invoice.totalAmount | currency }}</td>
-              <td class="text-end">{{ invoice.balanceDue | currency }}</td>
-              <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">Collect now</button>
-                <button class="btn btn-sm btn-outline-primary" (click)="sendReminder(invoice)">Send reminder</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="billing-section" *ngIf="paidInvoices.length">
-      <div class="billing-section__header">
-        <div>
-          <h3>Recently paid</h3>
-          <p>Closed invoices for reference.</p>
+      @if (!overdueInvoices.length) {
+        <div class="billing-empty">No overdue invoices right now.</div>
+      }
+      @if (overdueInvoices.length) {
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Invoice</th>
+                <th>Client</th>
+                <th>Due</th>
+                <th class="text-end">Total</th>
+                <th class="text-end">Balance</th>
+                <th>Status</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (invoice of overdueInvoices; track invoice) {
+                <tr>
+                  <td>{{ invoice.invoiceNumber }}</td>
+                  <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
+                  <td>{{ invoice.dueDate | date: 'mediumDate' }}</td>
+                  <td class="text-end">{{ invoice.totalAmount | currency }}</td>
+                  <td class="text-end">{{ invoice.balanceDue | currency }}</td>
+                  <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">Collect now</button>
+                    <button class="btn btn-sm btn-outline-primary" (click)="sendReminder(invoice)">Send reminder</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
         </div>
-        <span>{{ paidInvoices.length }} total</span>
-      </div>
-
-      <div class="table-responsive">
-        <table class="table align-middle mb-0">
-          <thead>
-            <tr>
-              <th>Invoice</th>
-              <th>Client</th>
-              <th>Paid</th>
-              <th class="text-end">Total</th>
-              <th>Status</th>
-              <th class="text-end">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let invoice of paidInvoices | slice:0:8">
-              <td>{{ invoice.invoiceNumber }}</td>
-              <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
-              <td>{{ invoice.invoiceDate | date: 'mediumDate' }}</td>
-              <td class="text-end">{{ invoice.totalAmount | currency }}</td>
-              <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-outline-secondary" (click)="openInvoice(invoice)">View</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      }
     </section>
-  </ng-container>
+    @if (paidInvoices.length) {
+      <section class="billing-section">
+        <div class="billing-section__header">
+          <div>
+            <h3>Recently paid</h3>
+            <p>Closed invoices for reference.</p>
+          </div>
+          <span>{{ paidInvoices.length }} total</span>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Invoice</th>
+                <th>Client</th>
+                <th>Paid</th>
+                <th class="text-end">Total</th>
+                <th>Status</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (invoice of paidInvoices | slice:0:8; track invoice) {
+                <tr>
+                  <td>{{ invoice.invoiceNumber }}</td>
+                  <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
+                  <td>{{ invoice.invoiceDate | date: 'mediumDate' }}</td>
+                  <td class="text-end">{{ invoice.totalAmount | currency }}</td>
+                  <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary" (click)="openInvoice(invoice)">View</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  }
 </section>

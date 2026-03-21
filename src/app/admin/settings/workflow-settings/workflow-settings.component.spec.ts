@@ -1,5 +1,6 @@
+import { TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
 import { of } from 'rxjs';
-import { FormBuilder } from '@angular/forms';
 import { WorkflowSettingsComponent } from './workflow-settings.component';
 import { WorkflowSettingsService } from '../services/workflow-settings.service';
 import { ScheduleSettingsService } from '../services/schedule-settings.service';
@@ -56,13 +57,17 @@ describe('WorkflowSettingsComponent', () => {
       defaultWorkflow: InvoicingWorkflow.InPerson
     }));
 
-    component = new WorkflowSettingsComponent(
-      new FormBuilder(),
-      workflowService,
-      scheduleService,
-      invoicingService,
-      toast
-    );
+    TestBed.configureTestingModule({
+      imports: [ReactiveFormsModule],
+      providers: [
+        { provide: WorkflowSettingsService, useValue: workflowService },
+        { provide: ScheduleSettingsService, useValue: scheduleService },
+        { provide: InvoicingSettingsService, useValue: invoicingService },
+        { provide: ToastService, useValue: toast }
+      ]
+    });
+
+    component = TestBed.runInInjectionContext(() => new WorkflowSettingsComponent());
     component.ngOnInit();
   });
 

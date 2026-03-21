@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
@@ -10,7 +10,7 @@ import { ClientHubService } from '../../services/client-hub.service';
 @Component({
   selector: 'app-client-hub-overview',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './client-hub-overview.component.html',
   styleUrl: './client-hub-overview.component.scss',
 })

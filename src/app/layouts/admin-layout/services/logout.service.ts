@@ -1,18 +1,15 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Router} from '@angular/router';
 import {Auth, signOut} from '@angular/fire/auth';
 import {OrganizationContextService} from '../../../services/shared/organization-context.service';
 
 @Injectable({providedIn: 'root'})
 export class LogoutService {
-   private isLoggingOut = false;
+   private router = inject(Router);
+   private auth = inject(Auth);
+   private orgContext = inject(OrganizationContextService);
 
-   constructor(
-      private router: Router,
-      private auth: Auth,
-      private orgContext: OrganizationContextService
-   ) {
-   }
+   private isLoggingOut = false;
 
    async logout(): Promise<void> {
       if (this.isLoggingOut) return;

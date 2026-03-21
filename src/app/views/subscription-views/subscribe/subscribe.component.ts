@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef, inject } from '@angular/core';
 import { OrganizationType } from '../../../models/organization-type';
 import { OrganizationTypeService } from '../../../services/shared/organization-type.service';
 import { CommonModule } from '@angular/common';
@@ -13,7 +13,37 @@ import { US_STATES } from '../../../common/constants';
 import { LoadingService } from '../../../services/shared/loading-service.service';
 import { Observable } from 'rxjs';
 
-declare const google: any;
+interface GoogleAddressComponent {
+   long_name: string;
+   short_name: string;
+   types: string[];
+}
+
+interface GooglePlace {
+   address_components?: GoogleAddressComponent[];
+}
+
+interface GoogleAutocomplete {
+   addListener(event: string, handler: () => void): void;
+   getPlace(): GooglePlace;
+}
+
+type GoogleAutocompleteConstructor = new (
+   input: HTMLInputElement,
+   options: { types: string[]; componentRestrictions: { country: string } }
+) => GoogleAutocomplete;
+
+interface CheckoutResponse {
+   url: string;
+}
+
+declare const google: {
+   maps?: {
+      places?: {
+         Autocomplete?: GoogleAutocompleteConstructor;
+      };
+   };
+};
 
 @Component({
    selector: 'app-subscribe',
@@ -24,37 +54,35 @@ declare const google: any;
    styleUrl: './subscribe.component.scss'
 })
 export class SubscribeComponent implements AfterViewInit, OnInit {
+   private router = inject(Router);
+   private route = inject(ActivatedRoute);
+   private organizationService = inject(OrganizationService);
+   private organizationTypeService = inject(OrganizationTypeService);
+   private cdRef = inject(ChangeDetectorRef);
+   private paymentService = inject(PaymentService);
+   private loadingService = inject(LoadingService);
+
 
    @ViewChild('addressInput') addressInput?: ElementRef<HTMLInputElement>;
    @ViewChild('form') form?: NgForm;
 
-   email: string = '';
-   organizationName: string = '';
-   phoneNumber: string = '';
-   companyAddress: string = '';
-   companyAddress2: string = '';
-   city: string = '';
-   state: string = '';
-   zipCode: string = '';
-   error: string = '';
+   email = '';
+   organizationName = '';
+   phoneNumber = '';
+   companyAddress = '';
+   companyAddress2 = '';
+   city = '';
+   state = '';
+   zipCode = '';
+   error = '';
    organizationTypes: OrganizationType[] = [];
-   selectedOrganizationTypeId: string = '';
-   planId: string = '';
+   selectedOrganizationTypeId = '';
+   planId = '';
    usStates = US_STATES;
-   twilioConsent: boolean = false;
+   twilioConsent = false;
    submitted = false;
 
    isLoading$!: Observable<boolean>;
-
-   constructor(
-      private router: Router,
-      private route: ActivatedRoute,
-      private organizationService: OrganizationService,
-      private organizationTypeService: OrganizationTypeService,
-      private cdRef: ChangeDetectorRef,
-      private paymentService: PaymentService,
-      private loadingService: LoadingService
-   ) {}
 
    ngOnInit(): void {
        this.isLoading$ = this.loadingService.isLoading$;
@@ -101,11 +129,10 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
       });
    }
 
-   private getComponent(place: any, type: string, format: 'short_name' | 'long_name' = 'long_name'): string {
-
+   private getComponent(place: GooglePlace, type: string, format: 'short_name' | 'long_name' = 'long_name'): string {
       if (!place.address_components) return '';
 
-      const component = place.address_components.find((comp: any) =>
+      const component = place.address_components.find((comp) =>
          comp.types.includes(type)
       );
 
@@ -127,7 +154,7 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
                   return a.typeName.localeCompare(b.typeName);
                });
          },
-         error: (err) => console.error('Failed to load org types:', err)
+         error: (err: unknown) => console.error('Failed to load org types:', err)
       });
    }
 
@@ -179,14 +206,11 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
 
         this.paymentService.createSubscriptionCheckout(paymentSessionRequest).subscribe({
 
-           next: (checkoutResponse: any) => {
-
-              // Redirect to Stripe
+           next: (checkoutResponse: CheckoutResponse) => {
               window.location.href = checkoutResponse.url;
            },
 
-           error: (paymentError: any) => {
-
+           error: (paymentError: unknown) => {
               console.error('Failed to create subscription:', paymentError);
               this.error = 'Failed to create subscription. Please try again.';
               this.loadingService.hide();
@@ -197,8 +221,7 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
         this.loadingService.hide();
      },
 
-     error: (err) => {
-
+     error: (err: unknown) => {
         console.error('Failed to create organization:', err);
         this.error = 'Failed to create organization. Please try again.';
         this.loadingService.hide();

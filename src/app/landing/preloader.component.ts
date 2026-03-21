@@ -1,10 +1,10 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, Input, type OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-preloader',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
       <div id="preloader">
         <div id="status">

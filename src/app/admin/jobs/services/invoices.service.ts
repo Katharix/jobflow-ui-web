@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CreateInvoiceRequest, Invoice } from '../../../models/invoice';
 import { InvoiceService } from '../../invoices/services/invoice.service';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class InvoicesService {
-   constructor(private invoiceService: InvoiceService) {}
+   private invoiceService = inject(InvoiceService);
+
 
    createInvoice(organizationId: string, request: CreateInvoiceRequest): Observable<Invoice> {
       return this.invoiceService.create(organizationId, request);

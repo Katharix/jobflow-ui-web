@@ -7,7 +7,7 @@ import {
 } from '@angular/router';
 import {PreloaderComponent} from "../../landing/preloader.component";
 import {LoadingService} from '../../services/shared/loading-service.service';
-import {CommonModule, DOCUMENT} from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 
 @Component({
    selector: 'app-auth-layout',

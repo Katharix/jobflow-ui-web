@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { EstimateRevisionRequestDto } from '../../models/client-hub.models';
 @Component({
   selector: 'app-estimate-revision-history',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './estimate-revision-history.component.html',
   styleUrl: './estimate-revision-history.component.scss',
 })

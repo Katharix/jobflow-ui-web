@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
@@ -10,7 +10,7 @@ import { ClientHubAuthService } from '../../services/client-hub-auth.service';
 @Component({
   selector: 'app-client-hub-auth',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './client-hub-auth.component.html',
   styleUrl: './client-hub-auth.component.scss',
 })

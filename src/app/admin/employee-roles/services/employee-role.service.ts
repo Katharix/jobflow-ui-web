@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {BaseApiService} from '../../../services/shared/base-api.service';
 import {EmployeeRole} from '../models/employee-role';
@@ -8,10 +8,9 @@ import {EmployeeRole} from '../models/employee-role';
    providedIn: 'root'
 })
 export class EmployeeRoleService {
-   private apiUrl = 'employeeroles';
+   private api = inject(BaseApiService);
 
-   constructor(private api: BaseApiService) {
-   }
+   private apiUrl = 'employeeroles';
 
    getByOrganization(): Observable<EmployeeRole[]> {
       return this.api.get<EmployeeRole[]>(`${this.apiUrl}/organization`);

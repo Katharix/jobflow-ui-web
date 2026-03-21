@@ -3,7 +3,7 @@ import { HttpParams } from '@angular/common/http';
 import { of } from 'rxjs';
 import { AssignmentsService } from './assignments.service';
 import { BaseApiService } from '../../../services/shared/base-api.service';
-import { ScheduleType } from '../models/assignment';
+import { AssignmentDto, ScheduleType } from '../models/assignment';
 
 describe('AssignmentsService', () => {
   let service: AssignmentsService;
@@ -37,7 +37,7 @@ describe('AssignmentsService', () => {
   it('serializes dates when creating assignment', () => {
     const scheduledStart = new Date('2026-03-19T10:00:00.000Z');
     const scheduledEnd = new Date('2026-03-19T12:00:00.000Z');
-    api.post.and.returnValue(of({} as any));
+    api.post.and.returnValue(of({} as AssignmentDto));
 
     service.createAssignment('job-1', {
       scheduledStart,
@@ -46,14 +46,15 @@ describe('AssignmentsService', () => {
     }).subscribe();
 
     const [, body] = api.post.calls.mostRecent().args;
-    expect(body.scheduledStart).toBe(scheduledStart.toISOString());
-    expect(body.scheduledEnd).toBe(scheduledEnd.toISOString());
+    const request = body as { scheduledStart?: string; scheduledEnd?: string };
+    expect(request.scheduledStart).toBe(scheduledStart.toISOString());
+    expect(request.scheduledEnd).toBe(scheduledEnd.toISOString());
   });
 
   it('serializes dates when updating assignment schedule', () => {
     const scheduledStart = new Date('2026-03-19T10:00:00.000Z');
     const scheduledEnd = new Date('2026-03-19T12:00:00.000Z');
-    api.put.and.returnValue(of({} as any));
+    api.put.and.returnValue(of({} as AssignmentDto));
 
     service.updateAssignmentSchedule('assignment-1', {
       scheduledStart,
@@ -63,7 +64,8 @@ describe('AssignmentsService', () => {
 
     const [endpoint, body] = api.put.calls.mostRecent().args;
     expect(endpoint).toBe('assignment/assignment-1/schedule');
-    expect(body.scheduledStart).toBe(scheduledStart.toISOString());
-    expect(body.scheduledEnd).toBe(scheduledEnd.toISOString());
+    const request = body as { scheduledStart?: string; scheduledEnd?: string };
+    expect(request.scheduledStart).toBe(scheduledStart.toISOString());
+    expect(request.scheduledEnd).toBe(scheduledEnd.toISOString());
   });
 });

@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {CommonModule} from '@angular/common';
+
 import {FormsModule} from '@angular/forms';
 import {AccordionModule} from 'primeng/accordion';
 import {InputTextModule} from 'primeng/inputtext';
@@ -17,7 +17,7 @@ interface HelpFaqItem {
 @Component({
    selector: 'app-help',
    standalone: true,
-   imports: [CommonModule, FormsModule, AccordionModule, InputTextModule, ButtonModule, TagModule, PageHeaderComponent],
+   imports: [FormsModule, AccordionModule, InputTextModule, ButtonModule, TagModule, PageHeaderComponent],
    templateUrl: './help.component.html',
    styleUrl: './help.component.scss'
 })

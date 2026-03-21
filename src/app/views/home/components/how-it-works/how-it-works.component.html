@@ -21,18 +21,20 @@
       </div>
       <div class="col-lg-7">
         <div class="jf-how__grid">
-          <div *ngFor="let step of steps; let i = index" class="jf-how__card">
-            <div class="jf-how__step">0{{ i + 1 }}</div>
-            <h5>{{ step.title }}</h5>
-            <p>{{ step.description }}</p>
-          </div>
+          @for (step of steps; track step; let i = $index) {
+            <div class="jf-how__card">
+              <div class="jf-how__step">0{{ i + 1 }}</div>
+              <h5>{{ step.title }}</h5>
+              <p>{{ step.description }}</p>
+            </div>
+          }
         </div>
         <img
           src="/assets/public/images/placeholder/DashboardHero.png"
           alt="Job Flow dashboard preview"
           class="jf-how__visual jf-how__image"
-        />
+          />
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>

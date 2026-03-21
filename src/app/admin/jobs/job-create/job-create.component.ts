@@ -1,34 +1,38 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+
 import {FormsModule} from '@angular/forms';
 import {OrganizationContextService} from "../../../services/shared/organization-context.service";
 import {CustomersService} from "../../customer/services/customer.service";
 import {JobUpsertRequest, JobsService} from "../services/jobs.service";
 import {InvoicingWorkflow, InvoicingWorkflowLabels, Job} from "../models/job";
+import {Client} from "../../customer/models/customer";
 import {InputTextModule} from 'primeng/inputtext';
 import {SelectModule} from 'primeng/select';
 import {RouterLink} from '@angular/router';
 
 @Component({
-   selector: 'job-create',
+   selector: 'app-job-create',
    standalone: true,
    imports: [
-      CommonModule,
-      FormsModule,
-      InputTextModule,
-      SelectModule,
-      RouterLink
-   ],
+    FormsModule,
+    InputTextModule,
+    SelectModule,
+    RouterLink
+],
    templateUrl: './job-create.component.html'
 })
 export class CreateJobComponent implements OnChanges {
+   private jobsService = inject(JobsService);
+   private customersService = inject(CustomersService);
+   private organizationContext = inject(OrganizationContextService);
+
    @Output() saved = new EventEmitter<void>();
    @Output() cancelled = new EventEmitter<void>();
    @Input() job: Job | null = null;
 
    organizationId: string | null = null;
 
-   customers: any[] = [];
+   customers: (Client & { displayName: string })[] = [];
    selectedCustomerId: string | null = null;
    title = '';
    comments = '';
@@ -43,11 +47,7 @@ export class CreateJobComponent implements OnChanges {
    saving = false;
    error: string | null = null;
 
-   constructor(
-      private jobsService: JobsService,
-      private customersService: CustomersService,
-      private organizationContext: OrganizationContextService
-   ) {
+   constructor() {
       this.organizationContext.org$.subscribe(org => {
          if (!org) return;
 
@@ -80,9 +80,9 @@ export class CreateJobComponent implements OnChanges {
       this.customersService
          .getAllByOrganization()
          .subscribe({
-            next: customers => (this.customers = customers.map((c: any) => ({
-               ...c,
-               displayName: `${c.firstName} ${c.lastName}`
+            next: customers => (this.customers = customers.map((client) => ({
+               ...client,
+               displayName: `${client.firstName ?? ''} ${client.lastName ?? ''}`.trim() || client.organizationName || 'Client'
             }))),
             error: () => (this.error = 'Failed to load customers.')
          });

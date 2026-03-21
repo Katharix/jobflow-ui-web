@@ -24,8 +24,7 @@ describe('ClientHubAuthService', () => {
     service.requestMagicLink('test@example.com').subscribe();
     expect(api.post).toHaveBeenCalledWith(
       'client-hub-auth/magic-link/request',
-      { emailAddress: 'test@example.com', organizationClientId: null },
-      false
+      { emailAddress: 'test@example.com', organizationClientId: null }
     );
   });
 

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {BaseApiService} from './base-api.service';
 import {PaymentSessionRequest} from '../../models/payment-session-request';
 import {Observable} from 'rxjs';
@@ -19,14 +19,16 @@ export interface CheckoutPaymentResponse {
    providedIn: 'root'
 })
 export class PaymentService {
+   private api = inject(BaseApiService);
+
    paymentUrl: string;
 
-   constructor(private api: BaseApiService) {
+   constructor() {
       this.paymentUrl = 'payments/';
    }
 
-   createSubscriptionCheckout(paymentRequest: PaymentSessionRequest): Observable<any> {
-      return this.api.post(`${this.paymentUrl}checkout`, paymentRequest);
+   createSubscriptionCheckout(paymentRequest: PaymentSessionRequest): Observable<CheckoutPaymentResponse> {
+      return this.api.post<CheckoutPaymentResponse>(`${this.paymentUrl}checkout`, paymentRequest);
    }
 
    createInvoiceCheckoutSession(
@@ -40,12 +42,12 @@ export class PaymentService {
       );
    }
 
-   createConnectedAccount(provider?: PaymentProvider): Observable<any> {
+   createConnectedAccount(provider?: PaymentProvider): Observable<CheckoutPaymentResponse> {
       const endpoint = provider
          ? `${this.paymentUrl}create-connected-account?provider=${provider}`
          : `${this.paymentUrl}create-connected-account`;
 
-      return this.api.post(endpoint, null);
+      return this.api.post<CheckoutPaymentResponse>(endpoint, null);
    }
 
    linkConnectedAccount(request: LinkConnectedAccountRequest): Observable<{ linked: boolean }> {

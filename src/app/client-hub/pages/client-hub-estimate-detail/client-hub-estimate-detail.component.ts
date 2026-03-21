@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -16,7 +16,7 @@ import { ClientHubService } from '../../services/client-hub.service';
 @Component({
   selector: 'app-client-hub-estimate-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, EstimateRevisionHistoryComponent],
+  imports: [RouterLink, EstimateRevisionHistoryComponent],
   templateUrl: './client-hub-estimate-detail.component.html',
   styleUrl: './client-hub-estimate-detail.component.scss',
 })

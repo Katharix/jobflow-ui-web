@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -15,6 +15,8 @@ import { Job, JobLifecycleStatus } from '../../jobs/models/job';
    styleUrl: './weather-widget.component.scss'
 })
 export class WeatherWidgetComponent implements OnInit, OnChanges, OnDestroy {
+   private readonly weatherService = inject(WeatherService);
+
    @Input() jobs: Job[] = [];
    @Input() variant: 'card' | 'navbar' = 'card';
 
@@ -31,11 +33,7 @@ export class WeatherWidgetComponent implements OnInit, OnChanges, OnDestroy {
    private readonly destroy$ = new Subject<void>();
    private refreshIntervalId: ReturnType<typeof setInterval> | null = null;
 
-   private static readonly REFRESH_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
-
-   constructor(
-      private readonly weatherService: WeatherService
-   ) {}
+   private static readonly REFRESH_INTERVAL_MS = 30 * 60 * 1000;
 
    ngOnInit(): void {
       this.loadCurrentWeather();

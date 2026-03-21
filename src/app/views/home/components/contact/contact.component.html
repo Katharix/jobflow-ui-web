@@ -49,88 +49,96 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label class="form-label">Full Name</label>
+                  <label class="form-label" for="contactFullName">Full Name</label>
                   <input
+                    id="contactFullName"
                     name="name"
                     [(ngModel)]="model.name"
                     class="form-control border"
                     placeholder="Jane Smith"
                     autocomplete="name"
                     required>
-                </div>
-              </div>
-
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label class="form-label">Work Email</label>
-                  <input
-                    name="email"
-                    [(ngModel)]="model.email"
-                    class="form-control border"
-                    placeholder="you@company.com"
-                    autocomplete="email"
-                    required
-                    type="email">
-                </div>
-              </div>
-
-              <div class="col-12">
-                <div class="mb-3">
-                  <label class="form-label">Subject</label>
-                  <input
-                    name="subject"
-                    [(ngModel)]="model.subject"
-                    class="form-control border"
-                    placeholder="Help me choose the right Job Flow plan"
-                    required>
-                </div>
-              </div>
-
-              <div class="col-12">
-                <div class="mb-3">
-                  <label class="form-label">How can we help?</label>
-                  <textarea
-                    name="message"
-                    [(ngModel)]="model.message"
-                    class="form-control border"
-                    rows="6"
-                    placeholder="Tell us about your current process, team size, and goals."
-                    required></textarea>
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-12">
-                <jobflow-turnstile
-                  [siteKey]="turnstileSiteKey"
-                  action="contact-sales"
-                  (resolved)="onCaptchaResolved($event)"
-                  (expired)="onCaptchaExpired()"
-                  (errored)="onCaptchaError()">
-                </jobflow-turnstile>
-
-                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mt-3">
-                  <small class="text-muted">By submitting, you agree to be contacted by the Job Flow team.</small>
-                  <button [disabled]="!captchaToken || isSubmitting" type="submit" class="btn btn-primary px-4">
-                    {{ isSubmitting ? 'Sending...' : 'Contact Sales' }}
-                  </button>
-                </div>
-
-                <div class="mt-3">
-                  <div *ngIf="success" class="alert alert-success py-2 px-3 mb-0">
-                    ✅ Thanks! We received your message and will follow up shortly.
-                  </div>
-
-                  <div *ngIf="error" class="alert alert-danger py-2 px-3 mb-0">
-                    ❌ We couldn't send your message. Please try again.
                   </div>
                 </div>
+
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label" for="contactEmail">Work Email</label>
+                    <input
+                      id="contactEmail"
+                      name="email"
+                      [(ngModel)]="model.email"
+                      class="form-control border"
+                      placeholder="you@company.com"
+                      autocomplete="email"
+                      required
+                      type="email">
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="mb-3">
+                      <label class="form-label" for="contactSubject">Subject</label>
+                      <input
+                        id="contactSubject"
+                        name="subject"
+                        [(ngModel)]="model.subject"
+                        class="form-control border"
+                        placeholder="Help me choose the right Job Flow plan"
+                        required>
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="contactMessage">How can we help?</label>
+                        <textarea
+                          id="contactMessage"
+                          name="message"
+                          [(ngModel)]="model.message"
+                          class="form-control border"
+                          rows="6"
+                          placeholder="Tell us about your current process, team size, and goals."
+                        required></textarea>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-12">
+                      <app-jobflow-turnstile
+                        [siteKey]="turnstileSiteKey"
+                        action="contact-sales"
+                        (resolved)="onCaptchaResolved($event)"
+                        (expired)="onCaptchaExpired()"
+                        (errored)="onCaptchaError()">
+                      </app-jobflow-turnstile>
+
+                      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mt-3">
+                        <small class="text-muted">By submitting, you agree to be contacted by the Job Flow team.</small>
+                        <button [disabled]="!captchaToken || isSubmitting" type="submit" class="btn btn-primary px-4">
+                          {{ isSubmitting ? 'Sending...' : 'Contact Sales' }}
+                        </button>
+                      </div>
+
+                      <div class="mt-3">
+                        @if (success) {
+                          <div class="alert alert-success py-2 px-3 mb-0">
+                            ✅ Thanks! We received your message and will follow up shortly.
+                          </div>
+                        }
+
+                        @if (error) {
+                          <div class="alert alert-danger py-2 px-3 mb-0">
+                            ❌ We couldn't send your message. Please try again.
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </form>
               </div>
             </div>
-          </form>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>

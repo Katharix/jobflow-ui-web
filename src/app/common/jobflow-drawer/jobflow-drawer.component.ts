@@ -4,13 +4,13 @@ import {
    Output,
    EventEmitter
 } from '@angular/core';
-import {CommonModule} from '@angular/common';
+
 import {Drawer} from 'primeng/drawer';
 
 @Component({
-   selector: 'jobflow-drawer',
+   selector: 'app-jobflow-drawer',
    standalone: true,
-   imports: [CommonModule, Drawer],
+   imports: [Drawer],
    templateUrl: './jobflow-drawer.component.html',
    styleUrls: ['./jobflow-drawer.component.scss']
 })

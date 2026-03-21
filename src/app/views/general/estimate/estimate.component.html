@@ -3,15 +3,19 @@
     <div class="col-lg-10">
       <div class="card">
         <div class="card-body">
-          <div *ngIf="loading" class="text-center py-5">
-            Loading estimate...
-          </div>
+          @if (loading) {
+            <div class="text-center py-5">
+              Loading estimate...
+            </div>
+          }
 
-          <div *ngIf="error" class="alert alert-danger mb-0">
-            {{ error }}
-          </div>
+          @if (error) {
+            <div class="alert alert-danger mb-0">
+              {{ error }}
+            </div>
+          }
 
-          <ng-container *ngIf="!loading && !error && estimate">
+          @if (!loading && !error && estimate) {
             <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3">
               <div>
                 <h3 class="mb-1">Estimate #{{ estimate.estimateNumber }}</h3>
@@ -21,26 +25,36 @@
               </div>
               <div class="text-end">
                 <div class="fw-semibold">Status: {{ statusLabel }}</div>
-                <div class="text-muted" *ngIf="displayDate">Date: {{ displayDate | date: 'longDate' }}</div>
-                <div class="text-muted" *ngIf="estimate.expirationDate">
-                  Expires: {{ estimate.expirationDate | date: 'longDate' }}
-                </div>
+                @if (displayDate) {
+                  <div class="text-muted">Date: {{ displayDate | date: 'longDate' }}</div>
+                }
+                @if (estimate.expirationDate) {
+                  <div class="text-muted">
+                    Expires: {{ estimate.expirationDate | date: 'longDate' }}
+                  </div>
+                }
               </div>
             </div>
-
             <div class="mb-4">
               <h6 class="text-secondary mb-2">Estimate To</h6>
               <div>{{ clientName }}</div>
-              <div *ngIf="estimate.organizationClient?.emailAddress">{{ estimate.organizationClient?.emailAddress }}</div>
-              <div *ngIf="estimate.organizationClient?.address1">
-                {{ estimate.organizationClient?.address1 }}
-                <span *ngIf="estimate.organizationClient?.address2">{{ estimate.organizationClient?.address2 }}</span>
-              </div>
-              <div *ngIf="estimate.organizationClient?.city || estimate.organizationClient?.state || estimate.organizationClient?.zipCode">
-                {{ estimate.organizationClient?.city }}, {{ estimate.organizationClient?.state }} {{ estimate.organizationClient?.zipCode }}
-              </div>
+              @if (estimate.organizationClient?.emailAddress) {
+                <div>{{ estimate.organizationClient?.emailAddress }}</div>
+              }
+              @if (estimate.organizationClient?.address1) {
+                <div>
+                  {{ estimate.organizationClient?.address1 }}
+                  @if (estimate.organizationClient?.address2) {
+                    <span>{{ estimate.organizationClient?.address2 }}</span>
+                  }
+                </div>
+              }
+              @if (estimate.organizationClient?.city || estimate.organizationClient?.state || estimate.organizationClient?.zipCode) {
+                <div>
+                  {{ estimate.organizationClient?.city }}, {{ estimate.organizationClient?.state }} {{ estimate.organizationClient?.zipCode }}
+                </div>
+              }
             </div>
-
             <div class="table-responsive mb-4">
               <table class="table table-bordered align-middle">
                 <thead>
@@ -53,13 +67,15 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let item of lineItems; let i = index">
-                    <td>{{ i + 1 }}</td>
-                    <td>{{ item.description || item.name }}</td>
-                    <td class="text-end">{{ item.quantity }}</td>
-                    <td class="text-end">{{ item.unitPrice | currency }}</td>
-                    <td class="text-end">{{ lineItemAmount(i) | currency }}</td>
-                  </tr>
+                  @for (item of lineItems; track item; let i = $index) {
+                    <tr>
+                      <td>{{ i + 1 }}</td>
+                      <td>{{ item.description || item.name }}</td>
+                      <td class="text-end">{{ item.quantity }}</td>
+                      <td class="text-end">{{ item.unitPrice | currency }}</td>
+                      <td class="text-end">{{ lineItemAmount(i) | currency }}</td>
+                    </tr>
+                  }
                 </tbody>
                 <tfoot>
                   <tr>
@@ -73,13 +89,12 @@
                 </tfoot>
               </table>
             </div>
-
             <div class="d-flex justify-content-end">
               <button type="button" class="btn btn-outline-primary" (click)="downloadPdf()">
                 Download PDF
               </button>
             </div>
-          </ng-container>
+          }
         </div>
       </div>
     </div>

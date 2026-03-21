@@ -1,23 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ContactFormRequest } from '../../../../models/contact-form-request';
 import { FormsModule } from '@angular/forms';
 import { EmailService } from '../../services/email.service';
 import { environment } from '../../../../../environments/environment';
-import { CommonModule } from '@angular/common';
+
 import { TurnstileWidgetComponent } from '../../../../common/turnstile/turnstile-widget.component';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
   imports: [
-    FormsModule, 
-    CommonModule,
+    FormsModule,
     TurnstileWidgetComponent
-  ],
+],
   templateUrl: './contact.component.html',
   styleUrl: './contact.component.scss'
 })
 export class ContactComponent {
+  private emailService = inject(EmailService);
+
   model: ContactFormRequest = {
     name: '',
     email: '',
@@ -31,9 +32,6 @@ export class ContactComponent {
   error = false;
   captchaToken: string | null = null;
   turnstileSiteKey = environment.turnstileSiteKey;
-
-  constructor(private emailService: EmailService)
-  {}
   
 
   onCaptchaResolved(token: string | null) {

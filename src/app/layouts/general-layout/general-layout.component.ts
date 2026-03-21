@@ -12,7 +12,7 @@ import { PreloaderComponent } from '../../landing/preloader.component';
     encapsulation: ViewEncapsulation.None
 })
 export class GeneralLayoutComponent implements OnInit {
-  isLoading: boolean = false;
+  isLoading = false;
   private loadingService = inject(LoadingService);
   private cdr = inject(ChangeDetectorRef);
 

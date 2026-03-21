@@ -1,5 +1,5 @@
-import { Component, Inject, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -32,13 +32,13 @@ export interface EditItemResult {
 @Component({
   selector: 'app-add-edit-pricebook-item-dialog',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputTextModule, SelectModule, InputNumberModule, TextareaModule],
+  imports: [ReactiveFormsModule, InputTextModule, SelectModule, InputNumberModule, TextareaModule],
   templateUrl: './add-edit-pricebook-item-dialog.component.html',
   styleUrl: './add-edit-pricebook-item-dialog.component.scss'
 })
 export class AddEditPricebookItemDialogComponent {
   private fb = inject(FormBuilder);
-  private ref = inject<ModalRef<EditItemResult>>(ModalRef as any);
+  private ref = inject<ModalRef<EditItemResult>>(ModalRef);
   data = inject<EditItemData>(MODAL_DATA);
 
   typeOptions = [

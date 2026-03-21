@@ -1,5 +1,5 @@
 import { CommonModule, TitleCasePipe } from '@angular/common';
-import { Component, HostListener, Input } from '@angular/core';
+import { Component, HostListener, Input, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { filter } from 'rxjs';
@@ -12,6 +12,8 @@ import { filter } from 'rxjs';
   styleUrl: './public-navbar.component.scss'
 })
 export class PublicNavbarComponent {
+  private router = inject(Router);
+
   navLinks = ['home', 'about', 'features', 'pricing', 'contact'];
 
   @Input() navbarLight?: boolean
@@ -21,7 +23,7 @@ export class PublicNavbarComponent {
   currentSection = 'home';
   private pendingSection: string | null = null;
 
-  constructor(private router: Router) {
+  constructor() {
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe(() => {

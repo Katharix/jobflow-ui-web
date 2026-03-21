@@ -1,100 +1,112 @@
-<div *ngIf="variant === 'navbar'; else cardVariant" class="weather-navbar-inline" [class.is-unavailable]="locationUnavailable">
-   <ng-container *ngIf="!locationUnavailable; else unavailableInline">
+@if (variant === 'navbar') {
+  <div class="weather-navbar-inline" [class.is-unavailable]="locationUnavailable">
+    @if (!locationUnavailable) {
       <section class="weather-inline__current">
-         <i [class]="weatherIconClass" aria-hidden="true"></i>
-         <div class="weather-inline__meta">
-            <strong>{{ weatherTemperatureText }}</strong>
-            <span>{{ weatherConditionText }}</span>
-         </div>
-         <small>
-            {{ weatherLocation }}
-            <ng-container *ngIf="weatherIsApproximate || locationBlocked"> · approx</ng-container>
-         </small>
+        <i [class]="weatherIconClass" aria-hidden="true"></i>
+        <div class="weather-inline__meta">
+          <strong>{{ weatherTemperatureText }}</strong>
+          <span>{{ weatherConditionText }}</span>
+        </div>
+        <small>
+          {{ weatherLocation }}
+          @if (weatherIsApproximate || locationBlocked) {
+            · approx
+          }
+        </small>
       </section>
-
-      <section class="weather-inline__forecast" *ngIf="weatherForecast.length; else noInlineForecast">
-         <div class="weather-inline__day" *ngFor="let day of weatherForecast; let i = index" [class.is-today]="i === 0">
-            <span class="weather-inline__label">{{ i === 0 ? 'Today' : (day.date | date: 'EEE') }}</span>
-            <i [class]="day.iconClass" aria-hidden="true"></i>
-            <em>{{ day.highTempF }}°</em>
-         </div>
-      </section>
-
-      <ng-template #noInlineForecast>
-         <section class="weather-inline__empty">Forecast unavailable</section>
-      </ng-template>
-
-      <section class="weather-inline__risk" *ngIf="weatherRiskAlerts.length">
-         <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
-         <span>{{ weatherRiskAlerts.length }} risk{{ weatherRiskAlerts.length === 1 ? '' : 's' }}</span>
-      </section>
-   </ng-container>
-
-   <ng-template #unavailableInline>
+      @if (weatherForecast.length) {
+        <section class="weather-inline__forecast">
+          @for (day of weatherForecast; track day; let i = $index) {
+            <div class="weather-inline__day" [class.is-today]="i === 0">
+              <span class="weather-inline__label">{{ i === 0 ? 'Today' : (day.date | date: 'EEE') }}</span>
+              <i [class]="day.iconClass" aria-hidden="true"></i>
+              <em>{{ day.highTempF }}°</em>
+            </div>
+          }
+        </section>
+      } @else {
+        <section class="weather-inline__empty">Forecast unavailable</section>
+      }
+      @if (weatherRiskAlerts.length) {
+        <section class="weather-inline__risk">
+          <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+          <span>{{ weatherRiskAlerts.length }} risk{{ weatherRiskAlerts.length === 1 ? '' : 's' }}</span>
+        </section>
+      }
+    } @else {
       <section class="weather-inline__unavailable">
-         <i class="pi pi-map-marker" aria-hidden="true"></i>
-         <span>Allow location access to view the 7-day forecast</span>
+        <i class="pi pi-map-marker" aria-hidden="true"></i>
+        <span>Allow location access to view the 7-day forecast</span>
       </section>
-   </ng-template>
-</div>
-
-<ng-template #cardVariant>
-   <article class="weather-widget weather-widget--card">
-      <div class="weather-unavailable" *ngIf="locationUnavailable; else cardAvailable">
-         <i class="pi pi-map-marker"></i>
-         <p>Location unavailable</p>
-         <small>Allow location access in your browser so JobFlow can load the forecast for your area.</small>
+    }
+  </div>
+} @else {
+  <article class="weather-widget weather-widget--card">
+    @if (locationUnavailable) {
+      <div class="weather-unavailable">
+        <i class="pi pi-map-marker"></i>
+        <p>Location unavailable</p>
+        <small>Allow location access in your browser so JobFlow can load the forecast for your area.</small>
       </div>
-
-      <ng-template #cardAvailable>
-         <div class="weather-main">
-            <div class="weather-now">
-               <i [class]="weatherIconClass" aria-hidden="true"></i>
-               <div class="weather-now__temp">{{ weatherTemperatureText }}</div>
-               <div class="weather-now__condition">{{ weatherConditionText }}</div>
-               <div class="weather-now__location">
-                  <i class="pi pi-map-marker"></i>
-                  <span>{{ weatherLocation }}</span>
-                  <span class="weather-now__approx" *ngIf="weatherIsApproximate || locationBlocked">approx</span>
-               </div>
-            </div>
-
-            <div class="weather-forecast-panel">
-               <div class="weather-forecast" *ngIf="weatherForecast.length; else noForecast">
-                  <div
-                     class="weather-forecast__day"
-                     *ngFor="let day of weatherForecast; let i = index"
-                     [class.is-today]="i === 0"
+    } @else {
+      <div class="weather-main">
+        <div class="weather-now">
+          <i [class]="weatherIconClass" aria-hidden="true"></i>
+          <div class="weather-now__temp">{{ weatherTemperatureText }}</div>
+          <div class="weather-now__condition">{{ weatherConditionText }}</div>
+          <div class="weather-now__location">
+            <i class="pi pi-map-marker"></i>
+            <span>{{ weatherLocation }}</span>
+            @if (weatherIsApproximate || locationBlocked) {
+              <span class="weather-now__approx">approx</span>
+            }
+          </div>
+        </div>
+        <div class="weather-forecast-panel">
+          @if (weatherForecast.length) {
+            <div class="weather-forecast">
+              @for (day of weatherForecast; track day; let i = $index) {
+                <div
+                  class="weather-forecast__day"
+                  [class.is-today]="i === 0"
                   >
-                     <span class="weather-forecast__label">{{ i === 0 ? 'Today' : (day.date | date: 'EEE') }}</span>
-                     <i [class]="day.iconClass"></i>
-                     <span class="weather-forecast__temps">
-                        {{ day.highTempF }}°<span class="lo"> / {{ day.lowTempF }}°</span>
-                     </span>
-                     <span class="weather-forecast__precip" *ngIf="day.precipitationChance >= 20">
-                        <i class="pi pi-tint"></i>{{ day.precipitationChance }}%
-                     </span>
-                  </div>
-               </div>
-               <ng-template #noForecast>
-                  <span class="text-muted small">Forecast unavailable.</span>
-               </ng-template>
+                  <span class="weather-forecast__label">{{ i === 0 ? 'Today' : (day.date | date: 'EEE') }}</span>
+                  <i [class]="day.iconClass"></i>
+                  <span class="weather-forecast__temps">
+                    {{ day.highTempF }}°<span class="lo"> / {{ day.lowTempF }}°</span>
+                  </span>
+                  @if (day.precipitationChance >= 20) {
+                    <span class="weather-forecast__precip">
+                      <i class="pi pi-tint"></i>{{ day.precipitationChance }}%
+                    </span>
+                  }
+                </div>
+              }
             </div>
-         </div>
+          } @else {
+            <span class="text-muted small">Forecast unavailable.</span>
+          }
+        </div>
+      </div>
+      <div class="weather-footer">
+        @if (weatherRiskAlerts.length) {
+          <div class="weather-risk">
+            <span class="weather-risk__badge"><i class="pi pi-exclamation-triangle"></i> Job risk</span>
+            <ul class="weather-risk__list">
+              @for (alert of weatherRiskAlerts; track alert) {
+                <li>{{ alert }}</li>
+              }
+            </ul>
+          </div>
+        } @else {
+          @if (weatherForecast.length) {
+            <div class="weather-clear">
+              <i class="pi pi-check-circle"></i> No weather risk for scheduled jobs
+            </div>
+          }
+        }
+      </div>
+    }
+  </article>
+}
 
-         <div class="weather-footer">
-            <div class="weather-risk" *ngIf="weatherRiskAlerts.length; else clearTpl">
-               <span class="weather-risk__badge"><i class="pi pi-exclamation-triangle"></i> Job risk</span>
-               <ul class="weather-risk__list">
-                  <li *ngFor="let alert of weatherRiskAlerts">{{ alert }}</li>
-               </ul>
-            </div>
-            <ng-template #clearTpl>
-               <div class="weather-clear" *ngIf="weatherForecast.length">
-                  <i class="pi pi-check-circle"></i> No weather risk for scheduled jobs
-               </div>
-            </ng-template>
-         </div>
-      </ng-template>
-   </article>
-</ng-template>

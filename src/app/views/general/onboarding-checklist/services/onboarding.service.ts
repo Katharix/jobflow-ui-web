@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import {BaseApiService} from "../../../../services/shared/base-api.service";
 import { OrganizationDto } from '../../../../models/organization';
@@ -47,8 +46,10 @@ export interface OnboardingQuickStartApplyRequest {
 
 @Injectable({ providedIn: 'root' })
 export class OnboardingService {
+  private api = inject(BaseApiService);
+
   invoiceUrl: string;
-  constructor(private api: BaseApiService) {
+  constructor() {
     this.invoiceUrl = 'onboarding/';
   }
 

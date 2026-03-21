@@ -11,36 +11,39 @@ import {
    template: `
       <!-- Wizard Component -->
       <aw-wizard (stepChanged)="stepChanged($event)" class="shadow rounded-lg p-4 bg-white">
-         <aw-wizard-step
-            *ngFor="let step of steps"
+        @for (step of steps; track step) {
+          <aw-wizard-step
             [stepTitle]="step.title"
             [canEnter]="wrapGuard(step.canEnter)"
             [canExit]="wrapGuard(step.canExit)"
-         >
+            >
             <ng-container *ngTemplateOutlet="step.contentTemplate"></ng-container>
-         </aw-wizard-step>
+          </aw-wizard-step>
+        }
       </aw-wizard>
-
+      
       <!-- Navigation Buttons -->
       <div class="d-flex justify-content-between mt-4">
-         <button
+        @if (!isFirstStep()) {
+          <button
             class="btn btn-secondary"
-            *ngIf="!isFirstStep()"
             (click)="goToPrevious()"
-         >
+            >
             ← Previous
-         </button>
-
-         <button
+          </button>
+        }
+      
+        @if (!isLastStep()) {
+          <button
             class="btn btn-primary"
-            *ngIf="!isLastStep()"
             (click)="goToNext()"
-         >
+            >
             Next →
-         </button>
+          </button>
+        }
       </div>
-
-   `
+      
+      `
 })
 export class WizardComponent {
    @Input() steps: WizardStep[] = [];
@@ -50,7 +53,8 @@ export class WizardComponent {
    @ViewChildren(WizardStepComponent)
    wizardSteps!: QueryList<WizardStepComponent>;
 
-   stepChanged(event: any) {
+   stepChanged(event: unknown): void {
+      void event;
    }
 
    isFirstStep(): boolean {

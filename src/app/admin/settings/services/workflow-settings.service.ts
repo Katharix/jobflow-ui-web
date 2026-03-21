@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseApiService } from '../../../services/shared/base-api.service';
 import { WorkflowStatusDto, WorkflowStatusUpsertRequestDto } from '../models/workflow-status';
 
 @Injectable({ providedIn: 'root' })
 export class WorkflowSettingsService {
-  constructor(private api: BaseApiService) {}
+  private api = inject(BaseApiService);
+
 
   getJobStatuses() {
     return this.api.get<WorkflowStatusDto[]>('workflow-settings/job-statuses');

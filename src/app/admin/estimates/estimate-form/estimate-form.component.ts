@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -9,6 +9,7 @@ import { take } from 'rxjs';
 import { EstimateService } from '../services/estimate.service';
 import { CustomersService } from '../../customer/services/customer.service';
 import { OrganizationContextService } from '../../../services/shared/organization-context.service';
+import { Client } from '../../customer/models/customer';
 import {
   CreateEstimateRequest,
   Estimate,
@@ -18,20 +19,24 @@ import {
 } from '../models/estimate';
 
 @Component({
-  selector: 'estimate-form',
+  selector: 'app-estimate-form',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     InputTextModule,
     SelectModule,
     InputNumberModule,
-    TextareaModule,
-  ],
+    TextareaModule
+],
   templateUrl: './estimate-form.component.html',
   styleUrl: './estimate-form.component.scss',
 })
 export class EstimateFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private estimateService = inject(EstimateService);
+  private customersService = inject(CustomersService);
+  private orgContext = inject(OrganizationContextService);
+
   @Input() estimate: Estimate | null = null;
   @Output() saved = new EventEmitter<Estimate>();
   @Output() cancelled = new EventEmitter<void>();
@@ -40,13 +45,6 @@ export class EstimateFormComponent implements OnInit {
   customers: { id: string; displayName: string }[] = [];
   saving = false;
   error: string | null = null;
-
-  constructor(
-    private fb: FormBuilder,
-    private estimateService: EstimateService,
-    private customersService: CustomersService,
-    private orgContext: OrganizationContextService,
-  ) {}
 
   ngOnInit(): void {
     this.buildForm();
@@ -86,7 +84,7 @@ export class EstimateFormComponent implements OnInit {
     this.error = null;
 
     const val = this.form.value;
-    const lineItems: EstimateLineItemRequest[] = val.lineItems.map((li: any) => ({
+    const lineItems: EstimateLineItemRequest[] = val.lineItems.map((li: EstimateLineItemRequest) => ({
       name: li.name,
       description: li.description,
       quantity: Number(li.quantity),
@@ -157,10 +155,10 @@ export class EstimateFormComponent implements OnInit {
 
   private loadCustomers(): void {
     this.customersService.getAllByOrganization().subscribe({
-      next: (cs) => {
-        this.customers = cs.map((c: any) => ({
-          id: c.id,
-          displayName: `${c.firstName ?? ''} ${c.lastName ?? ''}`.trim() || c.emailAddress || 'Unnamed',
+      next: (cs: Client[]) => {
+        this.customers = cs.map((client) => ({
+          id: client.id,
+          displayName: `${client.firstName ?? ''} ${client.lastName ?? ''}`.trim() || client.emailAddress || 'Unnamed',
         }));
       },
     });

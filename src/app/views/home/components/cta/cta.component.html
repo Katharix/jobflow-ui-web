@@ -19,40 +19,44 @@
             src="/assets/public/images/creative.svg"
             alt="Job Flow creative pattern"
             class="jf-cta__image"
-          />
-          <div class="subscribe">
-            <form (ngSubmit)="onSubmit()">
-              <div class="row g-2">
-                <div class="col-md-7">
-                  <input type="text" class="form-control" [(ngModel)]="email" name="email" placeholder="Enter your work email">
+            />
+            <div class="subscribe">
+              <form (ngSubmit)="onSubmit()">
+                <div class="row g-2">
+                  <div class="col-md-7">
+                    <input type="text" class="form-control" [(ngModel)]="email" name="email" placeholder="Enter your work email">
+                  </div>
+                  <div class="col-md-5">
+                    <button type="submit" class="btn btn-primary w-100" [disabled]="!captchaToken || isSubmitting">
+                      {{ isSubmitting ? 'Subscribing...' : 'Subscribe' }}
+                    </button>
+                  </div>
                 </div>
-                <div class="col-md-5">
-                  <button type="submit" class="btn btn-primary w-100" [disabled]="!captchaToken || isSubmitting">
-                    {{ isSubmitting ? 'Subscribing...' : 'Subscribe' }}
-                  </button>
+                <div class="mt-3">
+                  <app-jobflow-turnstile
+                    [siteKey]="turnstileSiteKey"
+                    action="newsletter-subscribe"
+                    (resolved)="onCaptchaResolved($event)"
+                    (expired)="onCaptchaExpired()"
+                    (errored)="onCaptchaError()">
+                  </app-jobflow-turnstile>
                 </div>
-              </div>
-              <div class="mt-3">
-                <jobflow-turnstile
-                  [siteKey]="turnstileSiteKey"
-                  action="newsletter-subscribe"
-                  (resolved)="onCaptchaResolved($event)"
-                  (expired)="onCaptchaExpired()"
-                  (errored)="onCaptchaError()">
-                </jobflow-turnstile>
-              </div>
-              <div class="mt-3">
-                <div *ngIf="success" class="alert alert-success py-2 px-3 mb-0">
-                  ✅ Thanks for subscribing!
+                <div class="mt-3">
+                  @if (success) {
+                    <div class="alert alert-success py-2 px-3 mb-0">
+                      ✅ Thanks for subscribing!
+                    </div>
+                  }
+                  @if (error) {
+                    <div class="alert alert-danger py-2 px-3 mb-0">
+                      ❌ Something went wrong. Please try again.
+                    </div>
+                  }
                 </div>
-                <div *ngIf="error" class="alert alert-danger py-2 px-3 mb-0">
-                  ❌ Something went wrong. Please try again.
-                </div>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>

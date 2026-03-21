@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseApiService } from './base-api.service';
 import { Observable } from 'rxjs';
 import { OrganizationType } from '../../models/organization-type';
@@ -7,9 +7,11 @@ import { OrganizationType } from '../../models/organization-type';
   providedIn: 'root'
 })
 export class OrganizationTypeService {
+  private api = inject(BaseApiService);
+
   organizationTypeUrl: string;
 
-  constructor(private api: BaseApiService) {
+  constructor() {
     this.organizationTypeUrl = 'organization/types/';
   }
 

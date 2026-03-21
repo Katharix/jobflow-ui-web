@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import {CustomersService} from "../services/customer.service";
 import {ToastService} from "../../../common/toast/toast.service";
 import {OrganizationContextService} from "../../../services/shared/organization-context.service";
@@ -7,7 +7,7 @@ import {InputTextModule} from 'primeng/inputtext';
 import {Client} from "../models/customer";
 
 @Component({
-   selector: 'customer-create',
+   selector: 'app-customer-create',
    standalone: true,
    imports: [
         FormsModule,
@@ -17,6 +17,10 @@ import {Client} from "../models/customer";
    styleUrl: './customer-create.component.scss'
 })
 export class CustomerCreateComponent implements OnChanges {
+   private customers = inject(CustomersService);
+   private orgContext = inject(OrganizationContextService);
+   private toast = inject(ToastService);
+
    @Input() client: Client | null = null;
    @Output() saved = new EventEmitter<void>();
    @Output() cancelled = new EventEmitter<void>();
@@ -35,11 +39,7 @@ export class CustomerCreateComponent implements OnChanges {
    saving = false;
    error: string | null = null;
 
-   constructor(
-      private customers: CustomersService,
-      private orgContext: OrganizationContextService,
-      private toast: ToastService
-   ) {
+   constructor() {
       this.orgContext.org$.subscribe(org => {
          this.organizationId = org?.id ?? null;
       });

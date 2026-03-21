@@ -2,7 +2,7 @@
 import {importProvidersFrom} from '@angular/core';
 import {
    BookOpenText, Calendar,
-   CreditCard, Edit, LucideAngularModule, MoreVertical, Network, Plus, Settings, Trash, Trash2, TrashIcon
+   CreditCard, Edit, LucideAngularModule, MoreVertical, Network, Plus, Settings, Trash, Trash2
 } from 'lucide-angular';
 import {
    Home,

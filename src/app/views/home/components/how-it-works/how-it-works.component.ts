@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
 
 const STEP_COPY = [
@@ -23,7 +23,7 @@ const STEP_COPY = [
 @Component({
   selector: 'app-how-it-works',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './how-it-works.component.html',
   styleUrl: './how-it-works.component.scss'
 })

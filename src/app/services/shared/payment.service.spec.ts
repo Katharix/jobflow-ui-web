@@ -2,6 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { PaymentService } from './payment.service';
 import { BaseApiService } from './base-api.service';
+import { PaymentSessionRequest } from '../../models/payment-session-request';
+import { PaymentProvider } from '../../models/customer-payment-profile';
 
 describe('PaymentService', () => {
   let service: PaymentService;
@@ -20,8 +22,9 @@ describe('PaymentService', () => {
 
   it('creates subscription checkout via checkout endpoint', () => {
     api.post.and.returnValue(of({}));
-    service.createSubscriptionCheckout({} as any).subscribe();
-    expect(api.post).toHaveBeenCalledWith('payments/checkout', {} as any);
+    const request: PaymentSessionRequest = { orgId: 'org-1' };
+    service.createSubscriptionCheckout(request).subscribe();
+    expect(api.post).toHaveBeenCalledWith('payments/checkout', request);
   });
 
   it('creates invoice checkout session', () => {
@@ -32,13 +35,14 @@ describe('PaymentService', () => {
 
   it('creates connected account with optional provider', () => {
     api.post.and.returnValue(of({}));
-    service.createConnectedAccount('Stripe' as any).subscribe();
-    expect(api.post.calls.mostRecent().args[0]).toBe('payments/create-connected-account?provider=Stripe');
+    service.createConnectedAccount(PaymentProvider.Stripe).subscribe();
+    expect(api.post.calls.mostRecent().args[0]).toBe(`payments/create-connected-account?provider=${PaymentProvider.Stripe}`);
   });
 
   it('links connected account', () => {
     api.post.and.returnValue(of({ linked: true }));
-    service.linkConnectedAccount({ accountId: 'acct-1', provider: 'Stripe' as any }).subscribe();
-    expect(api.post).toHaveBeenCalledWith('payments/link-connected-account', { accountId: 'acct-1', provider: 'Stripe' as any });
+    const payload = { accountId: 'acct-1', provider: PaymentProvider.Stripe };
+    service.linkConnectedAccount(payload).subscribe();
+    expect(api.post).toHaveBeenCalledWith('payments/link-connected-account', payload);
   });
 });

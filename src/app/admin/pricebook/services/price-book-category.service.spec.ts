@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { PriceBookCategoryService } from './price-book-category.service';
+import { PriceBookCategoryDto, PriceBookCategoryService } from './price-book-category.service';
 import { BaseApiService } from '../../../services/shared/base-api.service';
 
 describe('PriceBookCategoryService', () => {
@@ -25,7 +25,7 @@ describe('PriceBookCategoryService', () => {
   });
 
   it('updates category', () => {
-    api.put.and.returnValue(of({} as any));
+    api.put.and.returnValue(of({} as PriceBookCategoryDto));
     service.update('cat-1', { name: 'Updated' }).subscribe();
     expect(api.put).toHaveBeenCalledWith('pricebook/categories/cat-1', { name: 'Updated' });
   });

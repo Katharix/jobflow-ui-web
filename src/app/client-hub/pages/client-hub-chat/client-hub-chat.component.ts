@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -9,12 +9,21 @@ import {
   ClientHubChatMessage,
   ClientHubChatService,
 } from '../../services/client-hub-chat.service';
-import { ClientHubChatRealtimeService } from '../../services/client-hub-chat-realtime.service';
+import {
+  ClientHubChatReadReceiptPayload,
+  ClientHubChatRealtimeService,
+  ClientHubChatTypingPayload,
+} from '../../services/client-hub-chat-realtime.service';
+
+type ClientHubChatMessageWithDates = ClientHubChatMessage & {
+  timestamp?: string;
+  createdAt?: string;
+};
 
 @Component({
   selector: 'app-client-hub-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './client-hub-chat.component.html',
   styleUrl: './client-hub-chat.component.scss',
 })
@@ -186,10 +195,12 @@ export class ClientHubChatComponent implements OnInit, OnDestroy {
   }
 
   private normalizeMessage(message: ClientHubChatMessage): ClientHubChatMessage {
+    const source: ClientHubChatMessageWithDates = message;
+    const sentAt = source.sentAt ?? source.timestamp ?? source.createdAt ?? new Date().toISOString();
     return {
       ...message,
       content: message.content ?? '',
-      sentAt: (message as any).sentAt ?? (message as any).timestamp ?? (message as any).createdAt ?? new Date().toISOString(),
+      sentAt,
       isMine: Boolean(message.isMine),
       isRead: Boolean(message.isRead),
       deliveryStatus: message.isMine ? (message.deliveryStatus ?? 'sent') : null,
@@ -228,7 +239,7 @@ export class ClientHubChatComponent implements OnInit, OnDestroy {
     }
   }
 
-  private onReadReceipt(payload: any): void {
+  private onReadReceipt(payload: ClientHubChatReadReceiptPayload): void {
     if (!payload?.conversationId || payload.conversationId !== this.conversation?.id) return;
     if (!Array.isArray(payload.messageIds)) return;
 
@@ -238,7 +249,7 @@ export class ClientHubChatComponent implements OnInit, OnDestroy {
     );
   }
 
-  private onTyping(payload: any): void {
+  private onTyping(payload: ClientHubChatTypingPayload): void {
     if (!payload?.conversationId || payload.conversationId !== this.conversation?.id) return;
     if (payload.senderType !== 'org') return;
 
