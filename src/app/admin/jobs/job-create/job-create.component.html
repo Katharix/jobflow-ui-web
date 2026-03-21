@@ -1,74 +1,79 @@
 <div class="jobflow-create">
-   <div class="jobflow-create__header">
-      <div>
-         <span class="jobflow-create__eyebrow">New job intake</span>
-         <h5>{{ isEditing ? 'Edit job details.' : 'Start a job with clear context.' }}</h5>
-         <p>{{ isEditing ? 'Update the essentials so dispatch stays aligned.' : 'Capture the essentials so dispatch has everything it needs.' }}</p>
-      </div>
-      <a class="btn btn-link jobflow-create__link" routerLink="/admin/clients/create">Create client</a>
-   </div>
+  <div class="jobflow-create__header">
+    <div>
+      <span class="jobflow-create__eyebrow">New job intake</span>
+      <h5>{{ isEditing ? 'Edit job details.' : 'Start a job with clear context.' }}</h5>
+      <p>{{ isEditing ? 'Update the essentials so dispatch stays aligned.' : 'Capture the essentials so dispatch has everything it needs.' }}</p>
+    </div>
+    <a class="btn btn-link jobflow-create__link" routerLink="/admin/clients/create">Create client</a>
+  </div>
 
-   <div *ngIf="error" class="alert alert-danger">
+  @if (error) {
+    <div class="alert alert-danger">
       {{ error }}
-   </div>
+    </div>
+  }
 
-   <div class="jobflow-create__grid">
-      <div class="jobflow-create__form">
-         <div class="jobflow-create__section">
-            <label class="form-label">Customer <span class="text-danger">*</span></label>
-            <p-select
-               [(ngModel)]="selectedCustomerId"
-               [options]="customers"
-               optionLabel="displayName"
-               optionValue="id"
-               [filter]="true"
-               size="small"
-               [fluid]="true"
-               placeholder="Select a customer" />
-         </div>
+  <div class="jobflow-create__grid">
+    <div class="jobflow-create__form">
+      <div class="jobflow-create__section">
+        <label class="form-label" for="jobCreateCustomer">Customer <span class="text-danger">*</span></label>
+        <p-select
+          id="jobCreateCustomer"
+          [(ngModel)]="selectedCustomerId"
+          [options]="customers"
+          optionLabel="displayName"
+          optionValue="id"
+          [filter]="true"
+          size="small"
+          [fluid]="true"
+          placeholder="Select a customer" />
+        </div>
 
-         <div class="jobflow-create__section">
-            <label class="form-label">Job Title <span class="text-danger">*</span></label>
-            <input pInputText [fluid]="true" pSize="small" [(ngModel)]="title" placeholder="Exterior repaint, spring service, etc." />
-         </div>
+        <div class="jobflow-create__section">
+          <label class="form-label" for="jobCreateTitle">Job Title <span class="text-danger">*</span></label>
+          <input id="jobCreateTitle" pInputText [fluid]="true" pSize="small" [(ngModel)]="title" placeholder="Exterior repaint, spring service, etc." />
+        </div>
 
-         <div class="jobflow-create__section">
-            <label class="form-label">Job Summary</label>
-            <textarea
-               class="form-control"
-               rows="4"
-               [(ngModel)]="comments"
-               placeholder="Add key notes, access instructions, or goals for the crew."
-            ></textarea>
-         </div>
+        <div class="jobflow-create__section">
+          <label class="form-label" for="jobCreateSummary">Job Summary</label>
+          <textarea
+            class="form-control"
+            rows="4"
+            [(ngModel)]="comments"
+            placeholder="Add key notes, access instructions, or goals for the crew."
+            id="jobCreateSummary"
+          ></textarea>
+        </div>
 
-         <div class="jobflow-create__section">
-            <label class="form-label">Invoicing workflow</label>
-            <p-select
-               [(ngModel)]="invoicingWorkflow"
-               [options]="invoicingOptions"
-               optionLabel="label"
-               optionValue="value"
-               size="small"
-               [fluid]="true"
-               placeholder="Choose a workflow" />
+        <div class="jobflow-create__section">
+          <label class="form-label" for="jobCreateWorkflow">Invoicing workflow</label>
+          <p-select
+            id="jobCreateWorkflow"
+            [(ngModel)]="invoicingWorkflow"
+            [options]="invoicingOptions"
+            optionLabel="label"
+            optionValue="value"
+            size="small"
+            [fluid]="true"
+            placeholder="Choose a workflow" />
             <small class="text-muted">Overrides the org default for this job only.</small>
-         </div>
+          </div>
 
-         <div class="jobflow-create__next-step">
+          <div class="jobflow-create__next-step">
             <span>Next step</span>
             <p>Schedule in Dispatch to assign a crew.</p>
-         </div>
+          </div>
+        </div>
       </div>
-   </div>
 
-   <div class="jobflow-create__actions">
-      <button type="button" class="btn btn-light" (click)="cancel()" [disabled]="saving">
-         Cancel
-      </button>
+      <div class="jobflow-create__actions">
+        <button type="button" class="btn btn-light" (click)="cancel()" [disabled]="saving">
+          Cancel
+        </button>
 
-      <button type="button" class="btn btn-primary jobflow-create__primary" style="margin-left: 1rem;" (click)="save()" [disabled]="saving">
-         {{ saving ? 'Saving…' : (isEditing ? 'Save Changes' : 'Create Job') }}
-      </button>
-   </div>
-</div>
+        <button type="button" class="btn btn-primary jobflow-create__primary" style="margin-left: 1rem;" (click)="save()" [disabled]="saving">
+          {{ saving ? 'Saving…' : (isEditing ? 'Save Changes' : 'Create Job') }}
+        </button>
+      </div>
+    </div>

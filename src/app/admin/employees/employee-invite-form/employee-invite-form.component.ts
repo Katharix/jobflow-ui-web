@@ -1,6 +1,6 @@
 // employee-invite-form.component.ts
 import {Component, EventEmitter, inject, Output} from '@angular/core';
-import {CommonModule} from '@angular/common';
+
 import {FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
 import {InputTextModule} from 'primeng/inputtext';
 import {SelectModule} from 'primeng/select';
@@ -16,11 +16,15 @@ import {EmployeeService} from "../services/employee.service";
 @Component({
    selector: 'app-employee-invite-form',
    standalone: true,
-   imports: [CommonModule, ReactiveFormsModule, InputTextModule, SelectModule],
+   imports: [ReactiveFormsModule, InputTextModule, SelectModule],
    templateUrl: './employee-invite-form.component.html'
 })
 export class EmployeeInviteFormComponent {
-   @Output() submitted = new EventEmitter<any>();
+   private fb = inject(FormBuilder);
+   private inviteService = inject(EmployeeInviteService);
+   private roleService = inject(EmployeeRoleService);
+
+   @Output() submitted = new EventEmitter<unknown>();
    organizationId: string | null = null;
    organization!: OrganizationDto;
    form: FormGroup;
@@ -30,11 +34,7 @@ export class EmployeeInviteFormComponent {
    public toast = inject(ToastService);
    private employeeService = inject(EmployeeService);
 
-   constructor(
-      private fb: FormBuilder,
-      private inviteService: EmployeeInviteService,
-      private roleService: EmployeeRoleService
-   ) {
+   constructor() {
 
       this.organizationContext.org$.subscribe(org => {
          if (org) {
@@ -88,7 +88,8 @@ export class EmployeeInviteFormComponent {
 
          this.submitted.emit(result);
 
-      } catch (err) {
+      } catch (err: unknown) {
+         console.error(err);
          this.toast.error('Failed to send invite', 'Error');
       } finally {
          this.loading = false;

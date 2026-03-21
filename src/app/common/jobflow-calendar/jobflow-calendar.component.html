@@ -1,80 +1,89 @@
 <div class="jobflow-calendar-shell">
-   <div class="calendar-toolbar">
-      <div class="calendar-toolbar__group calendar-toolbar__group--primary">
-         <div class="calendar-title-block">
-            <span class="calendar-title-block__eyebrow">{{ currentViewLabel }}</span>
-            <div class="date-nav">
-               <button type="button" class="calendar-icon-btn" (click)="goPrev()" aria-label="Previous">
-               <lucide-icon name="chevron-left"></lucide-icon>
-               </button>
+  <div class="calendar-toolbar">
+    <div class="calendar-toolbar__group calendar-toolbar__group--primary">
+      <div class="calendar-title-block">
+        <span class="calendar-title-block__eyebrow">{{ currentViewLabel }}</span>
+        <div class="date-nav">
+          <button type="button" class="calendar-icon-btn" (click)="goPrev()" aria-label="Previous">
+            <lucide-icon name="chevron-left"></lucide-icon>
+          </button>
 
-               <span class="date-nav__label">{{ selectedRangeLabel }}</span>
+          <span class="date-nav__label">{{ selectedRangeLabel }}</span>
 
-               <button type="button" class="calendar-icon-btn" (click)="goNext()" aria-label="Next">
-               <lucide-icon name="chevron-right"></lucide-icon>
-               </button>
-            </div>
-         </div>
-
-         <button type="button" class="calendar-today-btn" (click)="goToday()">Today</button>
+          <button type="button" class="calendar-icon-btn" (click)="goNext()" aria-label="Next">
+            <lucide-icon name="chevron-right"></lucide-icon>
+          </button>
+        </div>
       </div>
 
-      <div class="calendar-toolbar__group calendar-toolbar__group--secondary">
-         <div class="calendar-summary" *ngIf="mode === 'dispatch'">
-            <div class="calendar-summary__item">
-               <span class="calendar-summary__value">{{ totalEvents }}</span>
-               <span class="calendar-summary__label">scheduled</span>
-            </div>
-            <div class="calendar-summary__item">
-               <span class="calendar-summary__value">{{ exactEvents }}</span>
-               <span class="calendar-summary__label">exact</span>
-            </div>
-            <div class="calendar-summary__item">
-               <span class="calendar-summary__value">{{ windowEvents }}</span>
-               <span class="calendar-summary__label">window</span>
-            </div>
-         </div>
+      <button type="button" class="calendar-today-btn" (click)="goToday()">Today</button>
+    </div>
 
-         <div class="calendar-view-switch">
-            <button
-               type="button"
-               *ngFor="let view of effectiveViews"
-               class="calendar-view-btn"
-               [ngClass]="{ 'active-view': calendarView === view }"
-               (click)="setView(view)"
+    <div class="calendar-toolbar__group calendar-toolbar__group--secondary">
+      @if (mode === 'dispatch') {
+        <div class="calendar-summary">
+          <div class="calendar-summary__item">
+            <span class="calendar-summary__value">{{ totalEvents }}</span>
+            <span class="calendar-summary__label">scheduled</span>
+          </div>
+          <div class="calendar-summary__item">
+            <span class="calendar-summary__value">{{ exactEvents }}</span>
+            <span class="calendar-summary__label">exact</span>
+          </div>
+          <div class="calendar-summary__item">
+            <span class="calendar-summary__value">{{ windowEvents }}</span>
+            <span class="calendar-summary__label">window</span>
+          </div>
+        </div>
+      }
+
+      <div class="calendar-view-switch">
+        @for (view of effectiveViews; track view) {
+          <button
+            type="button"
+            class="calendar-view-btn"
+            [ngClass]="{ 'active-view': calendarView === view }"
+            (click)="setView(view)"
             >
-               {{ view }}
-            </button>
-         </div>
-
-         <div *ngIf="filters.length" class="calendar-filter">
-            <select [(ngModel)]="selectedFilter" (change)="onFilterChange($event)">
-               <option value="">All Employees</option>
-               <option *ngFor="let filter of filters" [value]="filter.value">
-                  {{ filter.label }}
-               </option>
-            </select>
-         </div>
-
-         <div class="calendar-legend" *ngIf="mode === 'dispatch'">
-            <span class="calendar-legend__item">
-               <span class="calendar-legend__swatch calendar-legend__swatch--exact"></span>
-               Exact time
-            </span>
-            <span class="calendar-legend__item">
-               <span class="calendar-legend__swatch calendar-legend__swatch--window"></span>
-               Arrival window
-            </span>
-         </div>
+            {{ view }}
+          </button>
+        }
       </div>
-   </div>
 
-   <div class="calendar-frame">
-      <full-calendar
-         #fullCalendar
-         class="jobflow-scheduler"
-         [ngClass]="mode"
-         [options]="calendarOptions"
-      ></full-calendar>
-   </div>
+      @if (filters.length) {
+        <div class="calendar-filter">
+          <select [(ngModel)]="selectedFilter" (change)="onFilterChange($event)">
+            <option value="">All Employees</option>
+            @for (filter of filters; track filter) {
+              <option [value]="filter.value">
+                {{ filter.label }}
+              </option>
+            }
+          </select>
+        </div>
+      }
+
+      @if (mode === 'dispatch') {
+        <div class="calendar-legend">
+          <span class="calendar-legend__item">
+            <span class="calendar-legend__swatch calendar-legend__swatch--exact"></span>
+            Exact time
+          </span>
+          <span class="calendar-legend__item">
+            <span class="calendar-legend__swatch calendar-legend__swatch--window"></span>
+            Arrival window
+          </span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="calendar-frame">
+    <full-calendar
+      #fullCalendar
+      class="jobflow-scheduler"
+      [ngClass]="mode"
+      [options]="calendarOptions"
+    ></full-calendar>
+  </div>
 </div>

@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { JobsService } from './jobs.service';
 import { BaseApiService } from '../../../services/shared/base-api.service';
+import { Job } from '../models/job';
 
 describe('JobsService', () => {
   let service: JobsService;
@@ -25,7 +26,7 @@ describe('JobsService', () => {
   });
 
   it('updates schedule via schedule endpoint', () => {
-    api.put.and.returnValue(of({} as any));
+    api.put.and.returnValue(of({} as Job));
     const payload = {
       id: 'job-1',
       scheduledStart: new Date('2026-03-19T10:00:00.000Z'),

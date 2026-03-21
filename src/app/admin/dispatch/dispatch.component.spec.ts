@@ -1,9 +1,12 @@
+import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { DispatchComponent } from './dispatch.component';
 import { DispatchService } from './services/dispatch.service';
 import { AssignmentsService } from '../jobs/services/assignments.service';
 import { ScheduleType } from '../jobs/models/assignment';
 import { CalendarEvent } from '../../common/jobflow-calendar/models/calendar-event';
+import { AssignmentDto } from '../jobs/models/assignment';
+import { DispatchBoardDto, DispatchUnscheduledJob } from './models/dispatch';
 
 describe('DispatchComponent', () => {
   let component: DispatchComponent;
@@ -20,22 +23,29 @@ describe('DispatchComponent', () => {
       'updateAssignmentStatus'
     ]);
 
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: DispatchService, useValue: dispatchService },
+        { provide: AssignmentsService, useValue: assignmentsService }
+      ]
+    });
+
     dispatchService.getBoard.and.returnValue(of({
       rangeStart: new Date().toISOString(),
       rangeEnd: new Date().toISOString(),
       employees: [],
       assignments: [],
       unscheduledJobs: []
-    } as any));
+    } as DispatchBoardDto));
 
-    assignmentsService.createAssignment.and.returnValue(of({} as any));
-    assignmentsService.updateAssignmentSchedule.and.returnValue(of({} as any));
+    assignmentsService.createAssignment.and.returnValue(of({} as AssignmentDto));
+    assignmentsService.updateAssignmentSchedule.and.returnValue(of({} as AssignmentDto));
 
-    component = new DispatchComponent(dispatchService, assignmentsService);
+    component = TestBed.runInInjectionContext(() => new DispatchComponent());
   });
 
   it('opens schedule drawer for unscheduled job', () => {
-    const job = { jobId: 'job-1', jobTitle: 'Repair', clientName: 'Client A', jobLifecycleStatus: 1 } as any;
+    const job: DispatchUnscheduledJob = { jobId: 'job-1', jobTitle: 'Repair', clientName: 'Client A', jobLifecycleStatus: 1 };
 
     component.scheduleUnscheduled(job);
 
@@ -64,7 +74,7 @@ describe('DispatchComponent', () => {
   });
 
   it('opens details drawer when selecting an assignment event', () => {
-    const assignment = {
+    const assignment: AssignmentDto = {
       id: 'assign-1',
       jobId: 'job-3',
       jobTitle: 'Install',
@@ -74,7 +84,7 @@ describe('DispatchComponent', () => {
       scheduleType: ScheduleType.Exact,
       status: 'Scheduled',
       assignees: [{ employeeId: 'emp-1', employeeName: 'Taylor', isLead: true }]
-    } as any;
+    };
 
     component.assignments = [assignment];
 

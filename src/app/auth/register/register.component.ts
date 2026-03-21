@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {Component, OnInit, ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import {FormsModule, NgForm} from '@angular/forms';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {
@@ -25,33 +25,30 @@ import { ToastService } from '../../common/toast/toast.service';
    styleUrl: './register.component.scss'
 })
 export class RegisterComponent implements OnInit {
+   private auth = inject(Auth);
+   private firestore = inject(Firestore);
+   private router = inject(Router);
+   private orgService = inject(OrganizationService);
+   private organizationTypeService = inject(OrganizationTypeService);
+   private route = inject(ActivatedRoute);
+   private orgContext = inject(OrganizationContextService);
+   private paymentService = inject(PaymentService);
+   private toast = inject(ToastService);
+
    @ViewChild('form') form?: NgForm;
 
-   email: string = '';
-   organizationName: string = '';
-   password: string = '';
-   confirmPassword: string = '';
-   error: string = '';
+   email = '';
+   organizationName = '';
+   password = '';
+   confirmPassword = '';
+   error = '';
    organization: Organization;
    organizationTypes: OrganizationType[] = [];
    organizationId: string | null = null;
-   selectedOrganizationTypeId: string = '';
+   selectedOrganizationTypeId = '';
    pattern = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d])\\S+$';
    submitted = false;
    isSubmitting = false;
-
-   constructor(
-      private auth: Auth,
-      private firestore: Firestore,
-      private router: Router,
-      private orgService: OrganizationService,
-      private organizationTypeService: OrganizationTypeService,
-      private route: ActivatedRoute,
-      private orgContext: OrganizationContextService,
-      private paymentService: PaymentService,
-      private toast: ToastService
-   ) {
-   }
 
    ngOnInit(): void {
       this.loadOrganizationTypes();
@@ -63,7 +60,7 @@ export class RegisterComponent implements OnInit {
    }
 
    private getOrganizationData(orgId: string) {
-      let orgRequest: OrganizationRequest = {
+      const orgRequest: OrganizationRequest = {
          organizationId: orgId
       }
       this.orgService.getOrganizationById(orgRequest).subscribe({
@@ -145,7 +142,7 @@ export class RegisterComponent implements OnInit {
          });
 
 
-      } catch (err: any) {
+      } catch (err: unknown) {
          console.error('Registration Error:', err);
          this.error = this.mapFirebaseAuthError(err);
          this.toast.error(this.error || 'Registration failed.');
@@ -154,10 +151,11 @@ export class RegisterComponent implements OnInit {
    }
 
 
-   private mapFirebaseAuthError(error: any): string {
-      const code = error?.code as string | undefined;
+   private mapFirebaseAuthError(error: unknown): string {
+      const maybeError = error as { code?: string; message?: string } | null;
+      const code = maybeError?.code;
       if (!code) {
-         return error?.message || 'Something went wrong. Please try again.';
+         return maybeError?.message || 'Something went wrong. Please try again.';
       }
 
       let message: string;
@@ -184,7 +182,7 @@ export class RegisterComponent implements OnInit {
             message = 'This domain is not authorized for sign-in.';
             break;
          default:
-            message = error?.message || 'Something went wrong. Please try again.';
+            message = maybeError?.message || 'Something went wrong. Please try again.';
             break;
       }
 

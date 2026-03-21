@@ -1,9 +1,9 @@
-export type Feature = {
+export interface Feature {
     title: string;
     imgSrc: string;
   }
   
-  export type Service = {
+  export interface Service {
     title: string;
     description: string;
     icon: string;
@@ -12,14 +12,14 @@ export type Feature = {
     textClass: string;
   }
   
-  export type TeamMember = {
+  export interface TeamMember {
     name: string;
     role: string;
     imageUrl: string;
     profileLink?: string;
   }
   
-  export type Testimonial = {
+  export interface Testimonial {
     rating: number;
     text: string;
     name: string;
@@ -27,7 +27,7 @@ export type Feature = {
     avatar: string;
   }
   
-  export type PricingPlan = {
+  export interface PricingPlan {
     name: string;
     price: number;
     annualPrice: number;

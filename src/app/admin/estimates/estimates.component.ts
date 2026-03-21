@@ -25,9 +25,12 @@ import { Estimate, EstimateStatus, EstimateStatusLabels } from './models/estimat
   styleUrl: './estimates.component.scss',
 })
 export class EstimatesComponent implements OnInit {
-  @ViewChild('clientTemplate', { static: true }) clientTemplate!: TemplateRef<any>;
-  @ViewChild('statusTemplate', { static: true }) statusTemplate!: TemplateRef<any>;
-  @ViewChild('actionsTemplate', { static: true }) actionsTemplate!: TemplateRef<any>;
+  private estimateService = inject(EstimateService);
+  private router = inject(Router);
+
+  @ViewChild('clientTemplate', { static: true }) clientTemplate!: TemplateRef<unknown>;
+  @ViewChild('statusTemplate', { static: true }) statusTemplate!: TemplateRef<unknown>;
+  @ViewChild('actionsTemplate', { static: true }) actionsTemplate!: TemplateRef<unknown>;
 
   columns: JobflowGridColumn[] = [];
   items: Estimate[] = [];
@@ -45,11 +48,6 @@ export class EstimatesComponent implements OnInit {
   sendError: string | null = null;
 
   private toast = inject(ToastService);
-
-  constructor(
-    private estimateService: EstimateService,
-    private router: Router,
-  ) {}
 
   ngOnInit(): void {
     this.buildColumns();
@@ -194,7 +192,7 @@ export class EstimatesComponent implements OnInit {
     return map[this.resolveStatus(estimate.status)] ?? 'status-unknown';
   }
 
-  resolveStatus(raw: any): EstimateStatus {
+  resolveStatus(raw: unknown): EstimateStatus {
     if (typeof raw === 'number') return raw as EstimateStatus;
     if (typeof raw === 'string') {
       const normalized = raw.trim().toLowerCase();
@@ -234,20 +232,20 @@ export class EstimatesComponent implements OnInit {
         field: 'createdAt',
         headerText: 'Date',
         width: 135,
-        valueAccessor: (_: string, d: Estimate) => this.formatDate(d.createdAt),
+        valueAccessor: (_: string, d: unknown) => this.formatDate((d as Estimate)?.createdAt),
       },
       {
         field: 'expirationDate',
         headerText: 'Expires',
         width: 130,
-        valueAccessor: (_: string, d: Estimate) => this.formatDate(d.expirationDate),
+        valueAccessor: (_: string, d: unknown) => this.formatDate((d as Estimate)?.expirationDate),
       },
       {
         field: 'total',
         headerText: 'Total',
         width: 120,
         textAlign: 'Right',
-        valueAccessor: (_: string, d: Estimate) => this.formatCurrency(d.total),
+        valueAccessor: (_: string, d: unknown) => this.formatCurrency((d as Estimate)?.total ?? 0),
       },
       {
         headerText: 'Status',

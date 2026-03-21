@@ -4,13 +4,14 @@
                     [actions]="headerActions">
    </app-page-header>
 
-   <jobflow-grid
+   <app-jobflow-grid
       [data]="items"
       [columns]="columns"
       [pageSettings]="pageSettings"
       [height]="600"
       [showSearchBar]="true"
       (commandClick)="onCommandClick($event)"
-   ></jobflow-grid>
+   ></app-jobflow-grid>
 
 </div>
+

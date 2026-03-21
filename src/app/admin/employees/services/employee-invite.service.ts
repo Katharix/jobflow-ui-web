@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {BaseApiService} from '../../../services/shared/base-api.service';
 import {EmployeeInvite} from '../models/employee-invite';
@@ -7,10 +7,9 @@ import {EmployeeInvite} from '../models/employee-invite';
    providedIn: 'root'
 })
 export class EmployeeInviteService {
-   private apiUrl = 'employeeinvite'; // Matches your backend controller route
+   private api = inject(BaseApiService);
 
-   constructor(private api: BaseApiService) {
-   }
+   private apiUrl = 'employeeinvite';
 
    /**
     * Send an invite to a new employee.

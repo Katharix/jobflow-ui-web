@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {plans} from '../data';
 import {PricingPlan} from '../types';
 import {CommonModule} from '@angular/common';
@@ -13,12 +13,11 @@ import {Router} from '@angular/router';
    styleUrl: './pricing.component.scss'
 })
 export class PricingComponent {
+   private router = inject(Router);
+
    plans = plans
    // Type for the billing toggle (whether it's annual or not)
-   isAnnual: boolean = false;
-
-   constructor(private router: Router) {
-   }
+   isAnnual = false;
 
    // Toggle between monthly and annual billing
    toggleBilling(): void {

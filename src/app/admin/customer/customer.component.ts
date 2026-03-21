@@ -1,4 +1,4 @@
-import {Component, inject, TemplateRef, ViewChild} from '@angular/core';
+import {Component, inject, TemplateRef, ViewChild, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -23,15 +23,20 @@ import {formatPhone} from "../../common/utils/app-formaters";
 
 
 @Component({
-   selector: 'jobflow-create-customer',
+   selector: 'app-jobflow-create-customer',
    standalone: true,
    imports: [CommonModule, FormsModule, PageHeaderComponent, ReactiveFormsModule, JobflowGridComponent, JobflowDrawerComponent, CustomerCreateComponent, ModalComponent, DeleteConfirmComponent],
    templateUrl: './customer.component.html',
    styleUrls: ['./customer.component.scss'],
 })
-export class CustomerComponent {
+export class CustomerComponent implements OnInit {
+   private customers = inject(CustomersService);
+   private orgContext = inject(OrganizationContextService);
+   private router = inject(Router);
+   private route = inject(ActivatedRoute);
+
    @ViewChild('clientNameTemplate', {static: true})
-   clientNameTemplate!: TemplateRef<any>;
+   clientNameTemplate!: TemplateRef<Client>;
 
    organizationId: string | null = null;
    items: Client[] = [];
@@ -53,12 +58,7 @@ export class CustomerComponent {
 
    private toast = inject(ToastService);
 
-   constructor(
-      private customers: CustomersService,
-      private orgContext: OrganizationContextService,
-      private router: Router,
-      private route: ActivatedRoute
-   ) {
+   constructor() {
       this.orgContext.org$.subscribe(org => {
          this.organizationId = org?.id ?? null;
       });
@@ -168,11 +168,11 @@ export class CustomerComponent {
    }
 
    onAddClientClick(): void {
-
+      this.openAddClient();
    }
 
    onCommandClick(args: JobflowGridCommandClickEventArgs) {
-      const client = args.rowData as Client;
+      const client = args.rowData as unknown as Client;
 
       switch (args.commandColumn?.type) {
          case 'Edit':
@@ -262,8 +262,10 @@ export class CustomerComponent {
             field: 'phoneNumber',
             headerText: 'Phone Number',
             width: 100,
-            valueAccessor: (_field: string, data: any) =>
-               formatPhone(data?.phoneNumber)
+            valueAccessor: (_field: string, data: unknown) => {
+               const client = data as Client;
+               return formatPhone(client?.phoneNumber);
+            }
          },
          {headerText: '', width: 140, textAlign: 'Right', commands: this.commandButtons}
       ];

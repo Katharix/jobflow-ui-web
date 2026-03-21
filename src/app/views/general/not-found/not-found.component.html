@@ -8,14 +8,18 @@
           <h1 class="fw-bolder mb-22 mt-2 tx-80 text-secondary">{{type}}</h1>
           <h4 class="mb-2">{{title}}</h4>
           <h6 class="text-secondary mb-3 text-center">
-            <span *ngFor="let line of descLines; let last = last">
-              {{ line }}<br *ngIf="!last" />
+            @for (line of descLines; track line; let last = $last) {
+              <span>
+                {{ line }}@if (!last) {
+                <br />
+              }
             </span>
-          </h6>
-          <a routerLink="">Back to home</a>
-        </div>
+          }
+        </h6>
+        <a routerLink="">Back to home</a>
       </div>
-
     </div>
+
   </div>
+</div>
 </div>

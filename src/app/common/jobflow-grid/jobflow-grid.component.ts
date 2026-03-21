@@ -12,9 +12,9 @@ export interface JobflowGridColumn {
    width?: number;
    textAlign?: 'Left' | 'Right' | 'Center';
    format?: string;
-   valueAccessor?: Function;
-   commands?: any[];
-   template?: TemplateRef<any>;
+   valueAccessor?: JobflowGridValueAccessor;
+   commands?: JobflowGridCommandModel[];
+   template?: TemplateRef<unknown>;
 }
 
 export interface JobflowGridButtonOption {
@@ -29,7 +29,7 @@ export interface JobflowGridCommandModel {
 }
 
 export interface JobflowGridCommandClickEventArgs {
-   rowData: any;
+   rowData: unknown;
    commandColumn?: {
       type?: string;
    };
@@ -45,13 +45,19 @@ export interface JobflowGridToolbarClickEventArgs {
    item: JobflowGridToolbarItem;
 }
 
+export type JobflowGridValueAccessor = (
+   field: string,
+   row: unknown,
+   column: JobflowGridColumn
+) => unknown;
+
 export interface JobflowGridPageSettings {
    pageSize?: number;
    pageSizes?: number[];
 }
 
 @Component({
-   selector: 'jobflow-grid',
+   selector: 'app-jobflow-grid',
    standalone: true,
    imports: [CommonModule, TableModule, ButtonModule, FormsModule],
    templateUrl: './jobflow-grid.component.html'
@@ -64,7 +70,7 @@ export class JobflowGridComponent {
    searchText = '';
 
    /** Data */
-   @Input({required: true}) data: any[] = [];
+   @Input({required: true}) data: unknown[] = [];
 
    /** Column definitions */
    @Input({required: true}) columns: JobflowGridColumn[] = [];
@@ -142,7 +148,7 @@ export class JobflowGridComponent {
       this.toolbarClick.emit({item: normalized});
    }
 
-   onCommandItemClick(type: string | undefined, rowData: any): void {
+   onCommandItemClick(type: string | undefined, rowData: unknown): void {
       this.commandClick.emit({
          rowData,
          commandColumn: {type}
@@ -158,7 +164,7 @@ export class JobflowGridComponent {
       this.table?.clear();
    }
 
-   getCellValue(row: any, col: JobflowGridColumn): any {
+   getCellValue(row: unknown, col: JobflowGridColumn): unknown {
       if (col.valueAccessor && col.field) {
          return col.valueAccessor(col.field, row, col);
       }
@@ -169,11 +175,20 @@ export class JobflowGridComponent {
       return this.formatValue(rawValue, col.format);
    }
 
-   private resolvePathValue(row: any, fieldPath: string): any {
-      return fieldPath.split('.').reduce((acc, key) => acc?.[key], row);
+   private resolvePathValue(row: unknown, fieldPath: string): unknown {
+      if (!row || typeof row !== 'object') {
+         return undefined;
+      }
+
+      return fieldPath.split('.').reduce<unknown>((acc, key) => {
+         if (acc && typeof acc === 'object' && key in acc) {
+            return (acc as Record<string, unknown>)[key];
+         }
+         return undefined;
+      }, row);
    }
 
-   private formatValue(value: any, format?: string): any {
+   private formatValue(value: unknown, format?: string): unknown {
       if (!format || value === null || value === undefined || value === '') {
          return value;
       }

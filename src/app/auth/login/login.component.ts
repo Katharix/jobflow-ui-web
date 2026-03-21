@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {Component, OnInit, ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {FormsModule, NgForm} from '@angular/forms';
 import {Auth} from '@angular/fire/auth';
@@ -20,24 +20,21 @@ import {ToastService} from '../../common/toast/toast.service';
    styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit {
+   private auth = inject(Auth);
+   private router = inject(Router);
+   private route = inject(ActivatedRoute);
+   private authService = inject(AuthService);
+   private orgContext = inject(OrganizationContextService);
+   private toast = inject(ToastService);
+
    @ViewChild('form') form?: NgForm;
 
-   returnUrl: any;
+   returnUrl = '/';
    email = '';
    password = '';
    error: string | null = null;
    rememberMe = true;
    submitted = false;
-
-   constructor(
-      private auth: Auth,
-      private router: Router,
-      private route: ActivatedRoute,
-      private authService: AuthService,
-      private orgContext: OrganizationContextService,
-      private toast: ToastService
-   ) {
-   }
 
    ngOnInit(): void {
       this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
@@ -69,13 +66,13 @@ export class LoginComponent implements OnInit {
                this.orgContext.setOrganization(res.organization);
                this.router.navigate(['/admin']);
             },
-            error: (err) => {
+            error: (err: unknown) => {
                console.error('Backend login failed:', err);
                this.error = 'Login failed on server. Please try again.';
                this.toast.error('Login failed. Please try again.');
             }
          });
-      } catch (err: any) {
+      } catch (err: unknown) {
          this.error = this.mapFirebaseAuthError(err);
          this.toast.error(this.error || 'Login failed.');
       }
@@ -83,10 +80,11 @@ export class LoginComponent implements OnInit {
 
 
 
-   private mapFirebaseAuthError(error: any): string {
-      const code = error?.code as string | undefined;
+   private mapFirebaseAuthError(error: unknown): string {
+      const maybeError = error as { code?: string; message?: string } | null;
+      const code = maybeError?.code;
       if (!code) {
-         return error?.message || 'Something went wrong. Please try again.';
+         return maybeError?.message || 'Something went wrong. Please try again.';
       }
 
       let message: string;
@@ -115,7 +113,7 @@ export class LoginComponent implements OnInit {
             message = 'This domain is not authorized for sign-in.';
             break;
          default:
-            message = error?.message || 'Something went wrong. Please try again.';
+            message = maybeError?.message || 'Something went wrong. Please try again.';
             break;
       }
 

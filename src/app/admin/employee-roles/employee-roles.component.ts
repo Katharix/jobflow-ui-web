@@ -1,6 +1,6 @@
 import {Component, OnInit, TemplateRef, ViewChild, inject} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {CommonModule} from '@angular/common';
+
 import {InputTextModule} from 'primeng/inputtext';
 import {ActivatedRoute} from '@angular/router';
 import {ToastService} from '../../common/toast/toast.service';
@@ -20,7 +20,7 @@ import {
    standalone: true,
    templateUrl: './employee-roles.component.html',
    styleUrls: ['./employee-roles.component.scss'],
-   imports: [CommonModule, ReactiveFormsModule, InputTextModule, JobflowGridComponent, PageHeaderComponent, ModalComponent]
+   imports: [ReactiveFormsModule, InputTextModule, JobflowGridComponent, PageHeaderComponent, ModalComponent]
 })
 export class EmployeeRolesComponent implements OnInit {
    private employeeRoleService = inject(EmployeeRoleService);
@@ -29,7 +29,7 @@ export class EmployeeRolesComponent implements OnInit {
    private formBuilder = inject(FormBuilder);
 
    @ViewChild('actionsTemplate', {static: true})
-   actionsTemplate!: TemplateRef<any>;
+   actionsTemplate!: TemplateRef<unknown>;
 
    public roles: EmployeeRole[] = [];
    columns: JobflowGridColumn[] = [];

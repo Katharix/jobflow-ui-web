@@ -1,7 +1,5 @@
-export type ActionHandlerMap = {
-  [key: string]: () => void;
-};
+export type ActionHandlerMap = Record<string, () => void>;
 
 export function getClickHandler(key: string, map: ActionHandlerMap): () => void {
-  return map[key] || (() => {});
+  return map[key] || (() => undefined);
 }

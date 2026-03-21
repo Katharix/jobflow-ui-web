@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {InvoicesService} from "../services/invoices.service";
@@ -7,12 +7,17 @@ import {OrganizationContextService} from "../../../services/shared/organization-
 import {CreateInvoiceLineItemRequest, CreateInvoiceRequest} from "../../../models/invoice";
 
 @Component({
-   selector: 'jobflow-job-invoice',
+   selector: 'app-jobflow-job-invoice',
    standalone: true,
-   imports: [CommonModule, FormsModule],
+   imports: [FormsModule],
    templateUrl: './job-invoice.component.html'
 })
 export class JobInvoiceComponent {
+   private invoicesService = inject(InvoicesService);
+   private orgContext = inject(OrganizationContextService);
+   private route = inject(ActivatedRoute);
+   private router = inject(Router);
+
    organizationId!: string;
    jobId!: string;
    invoiceId: string | null = null;
@@ -25,12 +30,7 @@ export class JobInvoiceComponent {
    saving = false;
    error: string | null = null;
 
-   constructor(
-      private invoicesService: InvoicesService,
-      private orgContext: OrganizationContextService,
-      private route: ActivatedRoute,
-      private router: Router
-   ) {
+   constructor() {
       this.jobId = this.route.snapshot.paramMap.get('jobId')!;
 
       this.orgContext.org$.subscribe(org => {

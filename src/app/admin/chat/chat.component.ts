@@ -22,11 +22,23 @@ interface ChatMessage {
   senderName?: string;
   senderAvatarUrl?: string | null;
   attachmentUrl?: string | null;
+  attachmentURL?: string | null;
+  attachment?: {
+    url?: string | null;
+  };
+  text?: string;
+  sentAt?: string;
+  createdAt?: string;
+  sender?: {
+    id?: string;
+    name?: string;
+    avatarUrl?: string | null;
+  };
   conversationId?: string;
   isMine: boolean;
   isRead?: boolean;
   smsStatus?: 'sending' | 'sent' | 'failed' | null;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface ChatConversation {
@@ -37,7 +49,14 @@ interface ChatConversation {
   status?: string;
   lastMessage?: ChatMessage | null;
   unreadCount?: number;
-  [key: string]: any;
+  title?: string;
+  participantName?: string;
+  displayName?: string;
+  imageUrl?: string | null;
+  photoUrl?: string | null;
+  subtitle?: string;
+  participantRole?: string;
+  [key: string]: unknown;
 }
 
 interface ChatContact {
@@ -75,6 +94,12 @@ interface SmsStatusEvent {
   styleUrl: './chat.component.scss'
 })
 export class ChatComponent implements OnInit, OnDestroy {
+  private chatService = inject(ChatService);
+  private http = inject(HttpClient);
+  private uploadService = inject(FileUploadService);
+  private employeeService = inject(EmployeeService);
+  private customersService = inject(CustomersService);
+
   @ViewChild('chatBodyScrollbar', { read: NgScrollbar }) chatBodyScrollbar?: NgScrollbar;
   private auth = inject(Auth);
   private readonly apiBaseUrl = environment.apiUrl.replace(/\/$/, '');
@@ -102,14 +127,6 @@ export class ChatComponent implements OnInit, OnDestroy {
   private readonly uploadPreset = 'company_logos_unsigned';
   private readonly uploadFolder = 'jobflow/chat';
 
-  constructor(
-    private chatService: ChatService,
-    private http: HttpClient,
-    private uploadService: FileUploadService,
-    private employeeService: EmployeeService,
-    private customersService: CustomersService
-  ) { }
-
   ngOnInit(): void {
     this.currentUserId = this.auth.currentUser?.uid ?? '';
     this.chatService.startConnection();
@@ -117,7 +134,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.loadContacts();
 
     this.chatService.onMessageReceived((message) => {
-      const normalizedMessage = this.normalizeMessage(message, true);
+      const normalizedMessage = this.normalizeMessage(message as unknown as ChatMessage, true);
       this.updateConversationPreview(normalizedMessage.conversationId, normalizedMessage, normalizedMessage.isMine);
 
       if (normalizedMessage.conversationId === this.selectedConversation?.id) {
@@ -178,7 +195,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   loadConversations() {
-    this.http.get<any[]>(`${this.apiBaseUrl}/chat/conversations`).subscribe((convos) => {
+    this.http.get<ChatConversation[]>(`${this.apiBaseUrl}/chat/conversations`).subscribe((convos) => {
       const selectedConversationId = this.selectedConversation?.id;
       this.conversations = convos.map((convo) => this.normalizeConversation(convo));
 
@@ -417,9 +434,9 @@ export class ChatComponent implements OnInit, OnDestroy {
         return;
       }
 
-      this.http.post(`${this.apiBaseUrl}/chat/conversations`, {
+      this.http.post<ChatConversation>(`${this.apiBaseUrl}/chat/conversations`, {
         participantIds: [contact.userId]
-      }).subscribe((newConvo: any) => {
+      }).subscribe((newConvo) => {
         const normalizedConversation = this.normalizeConversation(newConvo);
         this.conversations = [
           normalizedConversation,
@@ -430,9 +447,9 @@ export class ChatComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.http.post(`${this.apiBaseUrl}/chat/conversations/client`, {
+    this.http.post<ChatConversation>(`${this.apiBaseUrl}/chat/conversations/client`, {
       organizationClientId: contact.id
-    }).subscribe((newConvo: any) => {
+    }).subscribe((newConvo) => {
       const normalizedConversation = this.normalizeConversation(newConvo);
       this.conversations = [
         normalizedConversation,
@@ -466,7 +483,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  private normalizeConversation(convo: any): ChatConversation {
+  private normalizeConversation(convo: ChatConversation): ChatConversation {
     return {
       ...convo,
       id: convo.id,
@@ -479,7 +496,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     };
   }
 
-  private normalizeMessage(message: any, fromRealtime = false): ChatMessage {
+  private normalizeMessage(message: ChatMessage, fromRealtime = false): ChatMessage {
     const attachmentUrl = message.attachmentUrl ?? message.attachmentURL ?? message.attachment?.url ?? null;
     const isMine = typeof message.isMine === 'boolean'
       ? message.isMine
@@ -605,7 +622,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       .set('page', this.messagesPage.toString())
       .set('pageSize', this.pageSize.toString());
 
-    this.http.get<any[]>(`${this.apiBaseUrl}/chat/messages/${this.selectedConversation.id}`, { params })
+    this.http.get<ChatMessage[]>(`${this.apiBaseUrl}/chat/messages/${this.selectedConversation.id}`, { params })
       .subscribe({
         next: (msgs) => {
           const normalized = msgs.map((msg) => this.normalizeMessage(msg));
@@ -628,8 +645,8 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   private markConversationRead(conversationId: string): void {
     this.http.post(`${this.apiBaseUrl}/chat/conversations/${conversationId}/read`, {}).subscribe({
-      next: () => {},
-      error: () => {}
+      next: () => undefined,
+      error: () => undefined
     });
   }
 

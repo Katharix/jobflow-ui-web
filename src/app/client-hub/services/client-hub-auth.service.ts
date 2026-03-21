@@ -24,8 +24,7 @@ export class ClientHubAuthService {
         {
           emailAddress,
           organizationClientId: organizationClientId ?? null,
-        },
-        false,
+        }
       )
       .pipe(map((response) => this.normalizeMagicLinkRequestResponse(response)));
   }
@@ -34,8 +33,7 @@ export class ClientHubAuthService {
     return this.api
       .post<unknown>(
         this.clientPortalRedeemUrl,
-        { token },
-        false,
+        { token }
       )
       .pipe(
         map((response) => {

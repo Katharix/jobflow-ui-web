@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseApiService } from '../../../services/shared/base-api.service';
 import {
@@ -10,9 +10,9 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class EstimateService {
-  private readonly baseUrl = 'estimates';
+  private api = inject(BaseApiService);
 
-  constructor(private api: BaseApiService) {}
+  private readonly baseUrl = 'estimates';
 
   getById(id: string): Observable<Estimate> {
     return this.api.get<Estimate>(`${this.baseUrl}/${id}`);
@@ -39,10 +39,10 @@ export class EstimateService {
   }
 
   getPublic(token: string): Observable<Estimate> {
-    return this.api.get<Estimate>(`${this.baseUrl}/public/${token}`, undefined, false);
+    return this.api.get<Estimate>(`${this.baseUrl}/public/${token}`);
   }
 
   getPublicPdf(token: string): Observable<Blob> {
-    return this.api.getBlob(`${this.baseUrl}/public/${token}/pdf`, false);
+    return this.api.getBlob(`${this.baseUrl}/public/${token}/pdf`);
   }
 }

@@ -1,6 +1,8 @@
 <div class="modal-header">
   <h5 class="modal-title">Request estimate revision</h5>
-  <button type="button" class="btn-close" (click)="close()"></button>
+  <button type="button" class="btn-close" (click)="close()">
+    <span class="visually-hidden">Close</span>
+  </button>
 </div>
 
 <form #revisionForm="ngForm" (ngSubmit)="submit(revisionForm)" novalidate>

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {BaseApiService} from '../../../services/shared/base-api.service';
 
@@ -10,20 +10,20 @@ export interface PriceBookCategoryDto {
    itemCount?: number; // narrow if you want
 }
 
-export type CreatePriceBookCategoryRequest = {
+export interface CreatePriceBookCategoryRequest {
    name: string;
    description?: string | null;
-};
+}
 
-export type UpdatePriceBookCategoryRequest = {
+export interface UpdatePriceBookCategoryRequest {
    name: string;
    description?: string | null;
-};
+}
 
 @Injectable({providedIn: 'root'})
 export class PriceBookCategoryService {
-   constructor(private api: BaseApiService) {
-   }
+   private api = inject(BaseApiService);
+
 
    private base() {
       return `pricebook/categories/`;

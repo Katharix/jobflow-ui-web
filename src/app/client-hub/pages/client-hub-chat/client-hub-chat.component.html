@@ -79,12 +79,14 @@
           placeholder="Type a message"
           [(ngModel)]="messageText"
           (ngModelChange)="notifyTyping()"
-        />
-        <div class="chat-actions">
-          <div *ngIf="isRemoteTyping" class="typing-indicator">Team typing...</div>
-          <button class="btn btn-primary" type="submit" [disabled]="!messageText.trim()">Send</button>
-        </div>
-      </form>
-    </div>
-  }
-</section>
+          />
+          <div class="chat-actions">
+            @if (isRemoteTyping) {
+              <div class="typing-indicator">Team typing...</div>
+            }
+            <button class="btn btn-primary" type="submit" [disabled]="!messageText.trim()">Send</button>
+          </div>
+        </form>
+      </div>
+    }
+  </section>

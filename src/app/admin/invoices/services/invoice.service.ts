@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseApiService } from '../../../services/shared/base-api.service';
 import { CreateInvoiceRequest, Invoice } from '../../../models/invoice';
 import { Observable } from 'rxjs';
@@ -7,9 +7,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class InvoiceService {
-  private readonly invoiceUrl = 'invoice/';
+  private api = inject(BaseApiService);
 
-  constructor(private api: BaseApiService) {}
+  private readonly invoiceUrl = 'invoice/';
 
   getByOrganization(): Observable<Invoice[]> {
     return this.api.get<Invoice[]>(`${this.invoiceUrl}organization`);

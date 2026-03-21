@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { EstimateService } from '../../../admin/estimates/services/estimate.service';
@@ -12,14 +12,12 @@ import { Estimate, EstimateStatus, EstimateStatusLabels } from '../../../admin/e
   styleUrl: './estimate.component.scss',
 })
 export class EstimateComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private estimateService = inject(EstimateService);
+
   estimate?: Estimate;
   loading = false;
   error: string | null = null;
-
-  constructor(
-    private route: ActivatedRoute,
-    private estimateService: EstimateService,
-  ) {}
 
   ngOnInit(): void {
     const token = this.route.snapshot.paramMap.get('id');
@@ -31,8 +29,7 @@ export class EstimateComponent implements OnInit {
     this.loading = true;
     this.estimateService.getPublic(token).subscribe({
       next: (estimate) => {
-        const payload = (estimate as any)?.data ?? estimate;
-        this.estimate = payload as Estimate;
+        this.estimate = this.unwrapEstimate(estimate);
         this.loading = false;
       },
       error: () => {
@@ -40,6 +37,13 @@ export class EstimateComponent implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  private unwrapEstimate(response: Estimate | { data: Estimate }): Estimate {
+    if (response && typeof response === 'object' && 'data' in response) {
+      return (response as { data: Estimate }).data;
+    }
+    return response as Estimate;
   }
 
   get statusLabel(): string {

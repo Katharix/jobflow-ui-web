@@ -10,7 +10,7 @@ export class NavService {
       {label: 'Connected Accounts', icon: '', route: '/admin/connectedpayment', allowDeepMatch: true}
    ];
 
-   private navConfig: { [key: string]: NavItem[] } = {
+   private navConfig: Record<string, NavItem[]> = {
       '/admin': [],
       '/admin/estimates': [
          {label: 'Estimates', icon: '', route: '/admin/estimates', allowDeepMatch: true},

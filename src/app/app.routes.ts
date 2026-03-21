@@ -17,7 +17,6 @@ import {EmployeesComponent} from './admin/employees/employees.component';
 import {PriceBookComponent} from './admin/pricebook/pricebook.component';
 import {EmployeeScheduleComponent} from './admin/scheduling/employee-schedule/employee-schedule.component';
 import {JobScheduleComponent} from './admin/jobs/job-schedule/job-schedule.component';
-import {PriceBookItemComponent} from './admin/pricebook/price-book-item/price-book-item.component';
 import {EmployeeRolesComponent} from './admin/employee-roles/employee-roles.component';
 import {CustomerComponent} from "./admin/customer/customer.component";
 import {JobInvoiceComponent} from "./admin/jobs/job-invoice/job-invoice.component";

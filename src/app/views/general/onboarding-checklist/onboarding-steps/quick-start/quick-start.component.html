@@ -8,10 +8,14 @@
     Quick-start presets are available on the Flow plan and above.
   </div>
 
-  <p *ngIf="loading" class="quick-start__state">Loading quick-start options...</p>
-  <p *ngIf="error" class="quick-start__state quick-start__state--error">{{ error }}</p>
+  @if (loading) {
+    <p class="quick-start__state">Loading quick-start options...</p>
+  }
+  @if (error) {
+    <p class="quick-start__state quick-start__state--error">{{ error }}</p>
+  }
 
-  <ng-container *ngIf="!loading && !error && state">
+  @if (!loading && !error && state) {
     <section class="quick-start__section">
       <div class="quick-start__section-header">
         <div>
@@ -19,22 +23,23 @@
           <p>Decide if you want to prioritize billing or operational setup first.</p>
         </div>
       </div>
-
       <div class="quick-start__grid">
-        <button
-          type="button"
-          class="quick-start__card"
-          *ngFor="let track of tracks"
-          [class.quick-start__card--selected]="isTrackSelected(track)"
-          (click)="selectTrack(track)"
-        >
-          <h4>{{ track.title }}</h4>
-          <p>{{ track.description }}</p>
-          <span *ngIf="isTrackSelected(track)">Selected</span>
-        </button>
+        @for (track of tracks; track track) {
+          <button
+            type="button"
+            class="quick-start__card"
+            [class.quick-start__card--selected]="isTrackSelected(track)"
+            (click)="selectTrack(track)"
+            >
+            <h4>{{ track.title }}</h4>
+            <p>{{ track.description }}</p>
+            @if (isTrackSelected(track)) {
+              <span>Selected</span>
+            }
+          </button>
+        }
       </div>
     </section>
-
     <section class="quick-start__section">
       <div class="quick-start__section-header">
         <div>
@@ -42,44 +47,46 @@
           <p>We will add default services and suggested workflow labels based on your industry.</p>
         </div>
       </div>
-
       <div class="quick-start__grid">
-        <button
-          type="button"
-          class="quick-start__card quick-start__card--preset"
-          *ngFor="let preset of presets"
-          [class.quick-start__card--selected]="isPresetSelected(preset)"
-          (click)="selectPreset(preset)"
-        >
-          <div class="quick-start__card-top">
-            <h4>{{ preset.title }}</h4>
-            <p>{{ preset.description }}</p>
-          </div>
-          <ul class="quick-start__services">
-            <li *ngFor="let service of preset.defaultServices">
-              <strong>{{ service.name }}</strong>
-              <span>{{ service.unit }} · {{ service.price | currency }}</span>
-            </li>
-          </ul>
-          <span *ngIf="isPresetSelected(preset)">Selected</span>
-        </button>
+        @for (preset of presets; track preset) {
+          <button
+            type="button"
+            class="quick-start__card quick-start__card--preset"
+            [class.quick-start__card--selected]="isPresetSelected(preset)"
+            (click)="selectPreset(preset)"
+            >
+            <div class="quick-start__card-top">
+              <h4>{{ preset.title }}</h4>
+              <p>{{ preset.description }}</p>
+            </div>
+            <ul class="quick-start__services">
+              @for (service of preset.defaultServices; track service) {
+                <li>
+                  <strong>{{ service.name }}</strong>
+                  <span>{{ service.unit }} · {{ service.price | currency }}</span>
+                </li>
+              }
+            </ul>
+            @if (isPresetSelected(preset)) {
+              <span>Selected</span>
+            }
+          </button>
+        }
       </div>
     </section>
-
     <div class="quick-start__footer">
       <button
         type="button"
         class="btn btn-primary"
         [disabled]="!canApply"
         (click)="applyQuickStart()"
-      >
+        >
         {{ applying ? 'Applying...' : 'Apply quick-start' }}
       </button>
       <a class="btn btn-outline-secondary" routerLink="/admin">Back to dashboard</a>
     </div>
-
     <p class="quick-start__note">
       Applying quick-start will add services to Pricebook and update workflow labels. You can adjust them later.
     </p>
-  </ng-container>
+  }
 </section>

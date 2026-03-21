@@ -1,6 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {filter, distinctUntilChanged} from 'rxjs/operators';
-import {CommonModule} from '@angular/common';
+
 import {LucideAngularModule} from 'lucide-angular';
 import {Product} from './models/product';
 import {
@@ -23,10 +23,16 @@ import {ActivatedRoute, RouterLink} from '@angular/router';
 @Component({
    selector: 'app-pricebook',
    standalone: true,
-   imports: [CommonModule, LucideAngularModule, RouterLink],
+   imports: [LucideAngularModule, RouterLink],
    templateUrl: './pricebook.component.html'
 })
 export class PriceBookComponent implements OnInit {
+   private priceBookCategoryService = inject(PriceBookCategoryService);
+   private organizationContext = inject(OrganizationContextService);
+   private toast = inject(ToastService);
+   private modal = inject(ModalService);
+   private route = inject(ActivatedRoute);
+
    organizationId: string | null = null;
    private onboardingActionHandled = false;
 
@@ -46,13 +52,7 @@ export class PriceBookComponent implements OnInit {
    error: string | null = null;
    organization: OrganizationDto
 
-   constructor(
-      private priceBookCategoryService: PriceBookCategoryService,
-      private organizationContext: OrganizationContextService,
-      private toast: ToastService,
-      private modal: ModalService,
-      private route: ActivatedRoute,
-   ) {
+   constructor() {
       this.organizationContext.org$.subscribe(org => {
          if (org) {
             this.organization = org;
@@ -149,15 +149,18 @@ export class PriceBookComponent implements OnInit {
       });
    }
 
-   viewCategoryItems(category: PriceBookCategoryDto): void {
+   viewCategoryItems(_category: PriceBookCategoryDto): void {
+      void _category;
       // navigate or open a modal
    }
 
-   editMaterial(material: Product): void {
+   editMaterial(_material: Product): void {
+      void _material;
       // logic to edit
    }
 
-   deleteMaterial(material: Product): void {
+   deleteMaterial(_material: Product): void {
+      void _material;
       // logic to delete
    }
 

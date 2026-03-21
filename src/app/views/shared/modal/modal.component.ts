@@ -4,30 +4,30 @@ import { LucideAngularModule } from 'lucide-angular';
 import {FormGroup} from "@angular/forms";
 
 @Component({
-  selector: 'jobflow-modal',
+  selector: 'app-jobflow-modal',
   templateUrl: './modal.component.html',
   standalone: true,
    imports: [LucideAngularModule, CommonModule]
 })
 export class ModalComponent {
   @Input() formGroup?: FormGroup; // optional form for validation
-  @Input() title: string = 'Modal';
+  @Input() title = 'Modal';
   @Input() cancelButtonClass = 'btn btn-secondary';
   @Input() confirmButtonClass = 'btn btn-primary';
-  @Input() confirmText: string = 'Confirm';
-  @Input() cancelText: string = 'Cancel';
-  @Input() showFooter: boolean = true;
+  @Input() confirmText = 'Confirm';
+  @Input() cancelText = 'Cancel';
+  @Input() showFooter = true;
   @Input() size: 'sm' | 'lg' | 'xl' | '' = '';
 
-  @Output() confirm = new EventEmitter<void>();
-  @Output() cancel = new EventEmitter<void>();
+  @Output() confirmed = new EventEmitter<void>();
+  @Output() cancelled = new EventEmitter<void>();
 
   get modalSizeClass(): string {
     return this.size ? `modal-${this.size}` : '';
   }
 
   close() {
-    this.cancel.emit();
+    this.cancelled.emit();
   }
 
   submit() {
@@ -39,6 +39,6 @@ export class ModalComponent {
       }
     }
 
-    this.confirm.emit();
+    this.confirmed.emit();
   }
 }

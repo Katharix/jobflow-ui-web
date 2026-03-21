@@ -48,19 +48,27 @@ import {AssignmentDto} from "./models/assignment";
    templateUrl: './job.component.html'
 })
 export class JobComponent implements OnInit {
+   private jobs = inject(JobsService);
+   private employeesService = inject(EmployeeService);
+   private assignmentsService = inject(AssignmentsService);
+   private workflowSettings = inject(WorkflowSettingsService);
+   private orgContext = inject(OrganizationContextService);
+   private router = inject(Router);
+   private route = inject(ActivatedRoute);
+
 
    @ViewChild('jobTitleTemplate', {static: true})
-   jobTitleTemplate!: TemplateRef<any>;
+   jobTitleTemplate!: TemplateRef<unknown>;
 
    @ViewChild('actionsTemplate', {static: true})
-   actionsTemplate!: TemplateRef<any>;
+   actionsTemplate!: TemplateRef<unknown>;
 
    @ViewChild('statusTemplate', {static: true})
-   statusTemplate!: TemplateRef<any>;
+   statusTemplate!: TemplateRef<unknown>;
 
    organizationId: string | null = null;
    isDrawerOpen = false;
-   editingJob: any | null = null;
+   editingJob: Job | null = null;
    private onboardingActionHandled = false;
    private returnToCommandCenter = false;
    private suppressNextDrawerClosedHandler = false;
@@ -105,15 +113,7 @@ export class JobComponent implements OnInit {
       click: getClickHandler(action.key, this.getActionMap())
    }));
 
-   constructor(
-      private jobs: JobsService,
-      private employeesService: EmployeeService,
-      private assignmentsService: AssignmentsService,
-      private workflowSettings: WorkflowSettingsService,
-      private orgContext: OrganizationContextService,
-      private router: Router,
-      private route: ActivatedRoute
-   ) {
+   constructor() {
       this.orgContext.org$.subscribe(org => {
          this.organizationId = org?.id ?? null;
       });
@@ -217,8 +217,10 @@ export class JobComponent implements OnInit {
             field: 'organizationClient.phoneNumber',
             headerText: 'Phone Number',
             width: 160,
-            valueAccessor: (_field: string, data: any) =>
-               formatPhone(data?.organizationClient?.phoneNumber)
+            valueAccessor: (_field: string, data: unknown) => {
+               const job = data as Job;
+               return formatPhone(job?.organizationClient?.phoneNumber);
+            }
          },
          {
             headerText: 'Actions',
@@ -295,7 +297,7 @@ export class JobComponent implements OnInit {
       return this.items.filter(job => this.resolveLifecycleStatus(job) === JobLifecycleStatus.Completed).length;
    }
 
-   isUnscheduled(job: any): boolean {
+   isUnscheduled(job: Job): boolean {
       return !job.hasAssignments;
    }
 
@@ -343,11 +345,11 @@ export class JobComponent implements OnInit {
    }
 
    onCommandClick(args: JobflowGridCommandClickEventArgs) {
-      const row = args.rowData;
+      const row = args.rowData as unknown as Job;
 
       switch (args.commandColumn?.type) {
          case 'Edit':
-            this.editingJob = row;
+            this.editingJob = row ?? null;
             this.isDrawerOpen = true;
             break;
 
@@ -401,7 +403,7 @@ export class JobComponent implements OnInit {
       }
    }
 
-   scheduleJob(job: any) {
+   scheduleJob(job: Job): void {
       this.router.navigate(
          ['/admin/jobs', job.id, 'schedule'],
          {
@@ -561,7 +563,7 @@ export class JobComponent implements OnInit {
       return `${first}${last}`.toUpperCase();
    }
 
-   resolveLifecycleStatus(job: any): JobLifecycleStatus | null {
+   resolveLifecycleStatus(job: Job | null | undefined): JobLifecycleStatus | null {
       const rawStatus = job?.lifecycleStatus;
 
       if (typeof rawStatus === 'number' && this.statusLabelMap[rawStatus as JobLifecycleStatus]) {
@@ -583,18 +585,16 @@ export class JobComponent implements OnInit {
       return null;
    }
 
-   getStatusChipLabel(job: any): string {
+   getStatusChipLabel(job: Job | null | undefined): string {
       const status = this.resolveLifecycleStatus(job);
       if (status !== null) {
          return this.statusLabelMap[status] ?? JobLifecycleStatusLabels[status];
       }
 
-      return typeof job?.lifecycleStatus === 'string' && job.lifecycleStatus.trim().length > 0
-         ? job.lifecycleStatus
-         : '—';
+      return '—';
    }
 
-   getStatusChipClass(job: any): string {
+   getStatusChipClass(job: Job | null | undefined): string {
       const status = this.resolveLifecycleStatus(job);
 
       switch (status) {
@@ -615,11 +615,11 @@ export class JobComponent implements OnInit {
       }
    }
 
-   deleteJob(job: any) {
-
+   deleteJob(job: Job): void {
+      this.toast.error(`Delete not available for job ${job?.title ?? ''}`.trim());
    }
 
-   editJob(job: any) {
+   editJob(job: Job): void {
       this.editingJob = job;
       this.isDrawerOpen = true;
    }

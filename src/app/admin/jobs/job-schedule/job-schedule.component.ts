@@ -1,6 +1,6 @@
 // job-schedule.component.ts
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
+
 import { PageHeaderComponent } from '../../dashboard/page-header/page-header.component';
 import { JobflowCalendarComponent } from '../../../common/jobflow-calendar/jobflow-calendar.component';
 import { CalendarEvent } from '../../../common/jobflow-calendar/models/calendar-event';
@@ -24,11 +24,20 @@ import { ToastService } from '../../../common/toast/toast.service';
 @Component({
   selector: 'app-job-schedule',
   standalone: true,
-  imports: [CommonModule, PageHeaderComponent, JobflowCalendarComponent, JobAssignmentFormComponent, JobflowDrawerComponent],
+  imports: [PageHeaderComponent, JobflowCalendarComponent, JobAssignmentFormComponent, JobflowDrawerComponent],
   templateUrl: './job-schedule.component.html',
   styleUrls: ['./job-schedule.component.scss']
 })
 export class JobScheduleComponent implements OnInit {
+  private assignments = inject(AssignmentsService);
+  private recurrenceRules = inject(RecurrenceRulesService);
+  private jobs = inject(JobsService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private weatherService = inject(WeatherService);
+  private scheduleSettingsService = inject(ScheduleSettingsService);
+  private toast = inject(ToastService);
+
   // Removed direct calendar ViewChild usage to avoid timing issues
   // @ViewChild(JobflowCalendarComponent)
   // private calendar!: JobflowCalendarComponent;
@@ -39,8 +48,8 @@ export class JobScheduleComponent implements OnInit {
   calendarEvents = { dataSource: [] as CalendarEvent[] };
   selectedDate = new Date();
   currentJobId!: string;
-  jobTitle: string = '';
-  clientName: string = '';
+  jobTitle = '';
+  clientName = '';
   showAssignmentModal = false;
   draftEvent: CalendarEvent | null = null;
   private returnToCommandCenter = false;
@@ -55,17 +64,6 @@ export class JobScheduleComponent implements OnInit {
   locationUnavailable = false;
   isWeatherLoading = false;
   scheduleSettings: ScheduleSettingsDto | null = null;
-
-  constructor(
-    private assignments: AssignmentsService,
-    private recurrenceRules: RecurrenceRulesService,
-    private jobs: JobsService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private weatherService: WeatherService,
-    private scheduleSettingsService: ScheduleSettingsService,
-    private toast: ToastService
-  ) {}
 
   ngOnInit(): void {
     this.currentJobId = this.route.snapshot.paramMap.get('jobId')!;

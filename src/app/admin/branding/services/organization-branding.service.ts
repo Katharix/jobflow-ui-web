@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BrandingDto } from '../../../models/organization-branding';
 import { BaseApiService } from '../../../services/shared/base-api.service';
@@ -7,9 +7,9 @@ import { BaseApiService } from '../../../services/shared/base-api.service';
   providedIn: 'root'
 })
 export class OrganizationBrandingService {
-  private apiUrl = `organizationbranding`;
+  private api = inject(BaseApiService);
 
-  constructor(private api: BaseApiService) {}
+  private apiUrl = `organizationbranding`;
 
   getBranding(organizationId: string): Observable<BrandingDto> {
     return this.api.get<BrandingDto>(`${this.apiUrl}/${organizationId}`);

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {InputTextModule} from 'primeng/inputtext';
@@ -15,6 +15,11 @@ import {OrganizationContextService} from '../../services/shared/organization-con
 import {PageHeaderComponent} from '../dashboard/page-header/page-header.component';
 import {OrganizationBrandingService} from './services/organization-branding.service';
 
+interface ColorChangeEvent {
+   color: {
+      hex: string;
+   };
+}
 
 @Component({
    selector: 'app-branding',
@@ -24,6 +29,11 @@ import {OrganizationBrandingService} from './services/organization-branding.serv
    styleUrl: './branding.component.scss'
 })
 export class BrandingComponent implements OnInit {
+   private fb = inject(FormBuilder);
+   private orgContext = inject(OrganizationContextService);
+   private brandingService = inject(OrganizationBrandingService);
+   private uploadService = inject(FileUploadService);
+
    organization!: OrganizationDto;
    brandingForm!: FormGroup;
    logoPreview: string | null = null;
@@ -33,12 +43,7 @@ export class BrandingComponent implements OnInit {
    saveStatus: 'success' | 'error' | null = null;
    saveMessage = '';
 
-   constructor(
-      private fb: FormBuilder,
-      private orgContext: OrganizationContextService,
-      private brandingService: OrganizationBrandingService,
-      private uploadService: FileUploadService
-   ) {
+   constructor() {
       this.brandingForm = this.fb.group({
          primaryColor: ['#0d6efd'],
          secondaryColor: ['#6c757d'],
@@ -81,7 +86,8 @@ export class BrandingComponent implements OnInit {
                this.logoPreview = branding.logoUrl;
             }
          },
-         error: () => {
+         error: (err: unknown) => {
+            console.error(err);
          }
       });
    }
@@ -97,20 +103,23 @@ export class BrandingComponent implements OnInit {
       }
    }
 
-   onPrimaryColorChange(event: any) {
+   onPrimaryColorChange(event: ColorChangeEvent): void {
       const hex = event.color.hex;
       this.brandingForm.patchValue({primaryColor: hex});
    }
 
-   onSecondaryColorChange(event: any) {
+   onSecondaryColorChange(event: ColorChangeEvent): void {
       const hex = event.color.hex;
       this.brandingForm.patchValue({secondaryColor: hex});
    }
 
    get previewStyles() {
-      const {primaryColor, secondaryColor} = this.brandingForm.value;
+      const primaryColor = this.brandingForm.value.primaryColor ?? '#0d6efd';
+      const secondaryColor = this.brandingForm.value.secondaryColor ?? '#6c757d';
       return {
-         backgroundColor: '#fff'
+         backgroundColor: '#fff',
+         borderColor: primaryColor,
+         boxShadow: `0 0 0 1px ${secondaryColor}`
       };
    }
 

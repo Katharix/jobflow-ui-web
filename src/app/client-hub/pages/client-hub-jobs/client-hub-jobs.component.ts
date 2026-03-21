@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ClientHubJobSummary } from '../../models/client-hub.models';
@@ -8,7 +8,7 @@ import { JobLifecycleStatus, JobLifecycleStatusLabels } from '../../../admin/job
 @Component({
   selector: 'app-client-hub-jobs',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './client-hub-jobs.component.html',
   styleUrl: './client-hub-jobs.component.scss',
 })

@@ -1,80 +1,84 @@
 <section class="dashboard-page dashboard-page--gentelella">
-   <section class="dashboard-welcome">
-      <div class="dashboard-welcome__message">
-         <h1>{{ welcomeTitle }}</h1>
-         <p>{{ welcomeSubtext }}</p>
+  <section class="dashboard-welcome">
+    <div class="dashboard-welcome__message">
+      <h1>{{ welcomeTitle }}</h1>
+      <p>{{ welcomeSubtext }}</p>
+    </div>
+
+    <div class="dashboard-welcome__meta">
+      <strong>{{ currentDateTime }}</strong>
+    </div>
+  </section>
+
+  <section class="dashboard-mini-tiles">
+    @for (tile of miniTiles; track tile) {
+      <article
+        class="mini-tile"
+        [ngClass]="tile.tone ? 'mini-tile--' + tile.tone : ''"
+        >
+        <p>{{ tile.label }}</p>
+        <strong>{{ tile.value }}</strong>
+        <span>{{ tile.detail }}</span>
+        @if (tile.route) {
+          <a [routerLink]="tile.route">View</a>
+        }
+      </article>
+    }
+  </section>
+
+  <section class="dashboard-grid">
+
+    @if (showOnboardingChecklist) {
+      <article class="dashboard-panel dashboard-panel--onboarding">
+        <div class="dashboard-panel__header">
+          <h2>Onboarding checklist</h2>
+          <span>Complete setup once for a smoother daily flow</span>
+        </div>
+        <app-jobflow-onboarding-checklist
+          [organizationId]="organizationId"
+          (allCompleted)="onChecklistCompleted()"
+        ></app-jobflow-onboarding-checklist>
+      </article>
+    }
+
+    <article
+      class="dashboard-panel dashboard-panel--activity"
+      [ngClass]="{ 'dashboard-panel--activity-full': !showOnboardingChecklist }"
+      >
+      <div class="dashboard-panel__header">
+        <h2>Client Activity</h2>
+        <span>Estimate decisions, revisions, and invoice payments</span>
       </div>
 
-      <div class="dashboard-welcome__meta">
-         <strong>{{ currentDateTime }}</strong>
-      </div>
-   </section>
+      @if (clientActivity.length) {
+        <ul class="dashboard-activity-list">
+          @for (activity of clientActivity; track activity) {
+            <li class="dashboard-activity-item">
+              <div class="dashboard-activity-item__top">
+                <span class="dashboard-activity-badge" [ngClass]="getActivityClass(activity.type)">
+                  {{ getActivityLabel(activity.type) }}
+                </span>
+                <time>{{ formatActivityDate(activity.occurredAt) }}</time>
+              </div>
+              <p>{{ activity.title }}</p>
+              <small>{{ activity.detail }}</small>
+              <a [routerLink]="activity.route">Open</a>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="dashboard-empty-state mb-0">No recent client activity yet.</p>
+      }
 
-   <section class="dashboard-mini-tiles">
-      <article
-         *ngFor="let tile of miniTiles"
-         class="mini-tile"
-         [ngClass]="tile.tone ? 'mini-tile--' + tile.tone : ''"
-      >
-         <p>{{ tile.label }}</p>
-         <strong>{{ tile.value }}</strong>
-         <span>{{ tile.detail }}</span>
-         <a *ngIf="tile.route" [routerLink]="tile.route">View</a>
-      </article>
-   </section>
+    </article>
 
-   <section class="dashboard-grid">
+  </section>
 
-      <article class="dashboard-panel dashboard-panel--onboarding" *ngIf="showOnboardingChecklist">
-         <div class="dashboard-panel__header">
-            <h2>Onboarding checklist</h2>
-            <span>Complete setup once for a smoother daily flow</span>
-         </div>
-
-         <jobflow-onboarding-checklist
-            [organizationId]="organizationId"
-            (allCompleted)="onChecklistCompleted()"
-         ></jobflow-onboarding-checklist>
-      </article>
-
-      <article
-         class="dashboard-panel dashboard-panel--activity"
-         [ngClass]="{ 'dashboard-panel--activity-full': !showOnboardingChecklist }"
-      >
-         <div class="dashboard-panel__header">
-            <h2>Client Activity</h2>
-            <span>Estimate decisions, revisions, and invoice payments</span>
-         </div>
-
-         <ng-container *ngIf="clientActivity.length; else noClientActivity">
-            <ul class="dashboard-activity-list">
-               <li *ngFor="let activity of clientActivity" class="dashboard-activity-item">
-                  <div class="dashboard-activity-item__top">
-                     <span class="dashboard-activity-badge" [ngClass]="getActivityClass(activity.type)">
-                        {{ getActivityLabel(activity.type) }}
-                     </span>
-                     <time>{{ formatActivityDate(activity.occurredAt) }}</time>
-                  </div>
-
-                  <p>{{ activity.title }}</p>
-                  <small>{{ activity.detail }}</small>
-
-                  <a [routerLink]="activity.route">Open</a>
-               </li>
-            </ul>
-         </ng-container>
-
-         <ng-template #noClientActivity>
-            <p class="dashboard-empty-state mb-0">No recent client activity yet.</p>
-         </ng-template>
-      </article>
-
-   </section>
-
-   <section class="dashboard-secondary" id="dashboard-command-center">
-      <app-jobflow-command-center
-         [primaryActions]="primaryActions"
-         [flowSteps]="flowSteps"
-      ></app-jobflow-command-center>
-   </section>
+  <section class="dashboard-secondary" id="dashboard-command-center">
+    <app-jobflow-command-center
+      [primaryActions]="primaryActions"
+      [flowSteps]="flowSteps"
+    ></app-jobflow-command-center>
+  </section>
 </section>
+

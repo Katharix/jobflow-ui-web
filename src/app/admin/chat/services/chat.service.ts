@@ -8,8 +8,6 @@ export class ChatService {
   private hubConnection!: signalR.HubConnection;
   private auth = inject(Auth);
 
-  constructor() {}
-
   startConnection(): void {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(`${environment.baseUrl.replace(/\/$/, '')}/hubs/chat`, {
@@ -32,7 +30,7 @@ export class ChatService {
     this.hubConnection.invoke('LeaveConversation', conversationId);
   }
 
-  sendMessage(conversationId: string, message: any): void {
+  sendMessage(conversationId: string, message: Record<string, unknown>): void {
     this.hubConnection.invoke('SendMessage', conversationId, message);
   }
 
@@ -40,19 +38,19 @@ export class ChatService {
     this.hubConnection.invoke('Typing', conversationId, isTyping);
   }
 
-  onMessageReceived(callback: (message: any) => void): void {
+  onMessageReceived(callback: (message: Record<string, unknown>) => void): void {
     this.hubConnection.on('ReceiveMessage', callback);
   }
 
-  onSmsStatus(callback: (status: any) => void): void {
+  onSmsStatus(callback: (status: Record<string, unknown>) => void): void {
     this.hubConnection.on('SmsStatus', callback);
   }
 
-  onTyping(callback: (payload: any) => void): void {
+  onTyping(callback: (payload: Record<string, unknown>) => void): void {
     this.hubConnection.on('Typing', callback);
   }
 
-  onReadReceipt(callback: (payload: any) => void): void {
+  onReadReceipt(callback: (payload: Record<string, unknown>) => void): void {
     this.hubConnection.on('ReadReceipt', callback);
   }
 }

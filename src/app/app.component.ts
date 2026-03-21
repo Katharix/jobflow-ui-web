@@ -11,8 +11,4 @@ import {ToastModule} from 'primeng/toast';
 })
 export class AppComponent {
    title = 'job-flow-ui-web';
-
-   constructor() {
-   }
-
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { RecurrenceRuleUpsertRequest } from '../models/recurrence-rule';
 import { BaseApiService } from '../../../services/shared/base-api.service';
@@ -6,9 +6,9 @@ import { ScheduleType } from '../models/assignment';
 
 @Injectable({ providedIn: 'root' })
 export class RecurrenceRulesService {
-  private readonly baseUrl = 'job';
+  private api = inject(BaseApiService);
 
-  constructor(private api: BaseApiService) {}
+  private readonly baseUrl = 'job';
 
   upsertJobRecurrence(
     jobId: string,

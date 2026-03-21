@@ -1,6 +1,7 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {BaseApiService} from "../../../services/shared/base-api.service";
+import {Client} from "../models/customer";
 
 export interface CreateCustomerRequest {
    id?: string;
@@ -26,14 +27,13 @@ export interface SendClientHubLinkResponse {
 
 @Injectable({providedIn: 'root'})
 export class CustomersService {
-   private apiUrl = 'organization/clients/';
+   private api = inject(BaseApiService);
 
-   constructor(private api: BaseApiService) {
-   }
+   private apiUrl = 'organization/clients/';
 
    createCustomer(
       payload: CreateCustomerRequest
-   ): Observable<any> {
+   ): Observable<Client> {
       return this.api.post(
          `${this.apiUrl}upsert`,
          payload
@@ -44,7 +44,7 @@ export class CustomersService {
       return this.api.delete<void>(`${this.apiUrl}delete?clientId=${clientId}`);
    }
 
-   getAllByOrganization(): Observable<any[]> {
+   getAllByOrganization(): Observable<Client[]> {
       return this.api.get(
          `${this.apiUrl}orgall`
       );

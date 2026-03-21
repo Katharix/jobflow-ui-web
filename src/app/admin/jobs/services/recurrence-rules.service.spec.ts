@@ -39,8 +39,9 @@ describe('RecurrenceRulesService', () => {
 
     const [endpoint, body] = api.put.calls.mostRecent().args;
     expect(endpoint).toBe('job/job-1/recurrence');
-    expect(body.scheduledStart).toBe(scheduledStart.toISOString());
-    expect(body.scheduledEnd).toBe(scheduledEnd.toISOString());
-    expect(body.pattern).toBe('Weekly');
+    const request = body as { scheduledStart?: string; scheduledEnd?: string; pattern?: string };
+    expect(request.scheduledStart).toBe(scheduledStart.toISOString());
+    expect(request.scheduledEnd).toBe(scheduledEnd.toISOString());
+    expect(request.pattern).toBe('Weekly');
   });
 });

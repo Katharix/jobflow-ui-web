@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Draggable } from '@fullcalendar/interaction';
@@ -28,6 +28,9 @@ interface DispatchOverviewRow {
   styleUrl: './dispatch.component.scss'
 })
 export class DispatchComponent implements AfterViewInit, OnDestroy {
+  private dispatch = inject(DispatchService);
+  private assignmentsService = inject(AssignmentsService);
+
   @ViewChild('unscheduledList')
   unscheduledList?: ElementRef<HTMLElement>;
 
@@ -67,10 +70,7 @@ export class DispatchComponent implements AfterViewInit, OnDestroy {
 
   private draggable?: Draggable;
 
-  constructor(
-    private dispatch: DispatchService,
-    private assignmentsService: AssignmentsService
-  ) {
+  constructor() {
     this.loadBoard();
   }
 

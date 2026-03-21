@@ -1,8 +1,9 @@
-import { CommonModule } from '@angular/common';
+
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Invoice, InvoiceStatus } from '../../../models/invoice';
+import { PaymentProvider } from '../../../models/customer-payment-profile';
 import { ClientHubAuthService } from '../../services/client-hub-auth.service';
 import { ClientHubService } from '../../services/client-hub.service';
 import { environment } from '../../../../environments/environment';
@@ -12,7 +13,7 @@ import { ClientHubNotifierService, ClientHubInvoicePaidEvent } from '../../servi
 @Component({
   selector: 'app-client-hub-invoice-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './client-hub-invoice-detail.component.html',
   styleUrl: './client-hub-invoice-detail.component.scss',
 })
@@ -60,6 +61,18 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
     return status !== InvoiceStatus.Paid && balanceDue > 0;
   }
 
+  get paymentProvider(): PaymentProvider {
+    return this.invoice?.paymentProvider ?? PaymentProvider.Stripe;
+  }
+
+  get paymentProviderLabel(): string {
+    return this.paymentProvider === PaymentProvider.Square ? 'Square' : 'Stripe';
+  }
+
+  get payButtonLabel(): string {
+    return this.paymentProvider === PaymentProvider.Square ? 'Pay with Square' : 'Pay Invoice';
+  }
+
   get statusLabel(): string {
     if (!this.invoice) return 'Unknown';
 
@@ -73,6 +86,15 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
 
     const resolved = this.resolveStatus(this.invoice.status);
     return labels[resolved] ?? 'Unknown';
+  }
+
+  get isPaid(): boolean {
+    if (!this.invoice) return false;
+    return this.resolveStatus(this.invoice.status) === InvoiceStatus.Paid;
+  }
+
+  get balanceDueClass(): string {
+    return this.isPaid ? 'amount-positive' : 'amount-negative';
   }
 
   statusClass(status: InvoiceStatus | number | string): string {
@@ -132,6 +154,8 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
       Authorization: `Bearer ${token}`,
     });
 
+    const provider = this.paymentProvider;
+
     this.http
       .post<{ url?: string; clientSecret?: string }>(
         `${environment.apiUrl.replace(/\/$/, '')}/payments/checkout`,
@@ -147,8 +171,13 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
           return;
         }
 
-        if (result?.clientSecret) {
+        if (result?.clientSecret && provider === PaymentProvider.Stripe) {
           this.initializeStripePayment(result.clientSecret);
+          return;
+        }
+
+        if (provider === PaymentProvider.Square) {
+          this.paymentError = 'Square checkout is unavailable right now. Please try again.';
           return;
         }
 
@@ -232,6 +261,11 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
   }
 
   private async initializeStripePayment(clientSecret: string): Promise<void> {
+    if (this.paymentProvider !== PaymentProvider.Stripe) {
+      this.paymentError = 'Stripe checkout is not available for this invoice.';
+      return;
+    }
+
     try {
       this.stripe = await loadStripe(environment.stripePublicKey);
       if (!this.stripe) {

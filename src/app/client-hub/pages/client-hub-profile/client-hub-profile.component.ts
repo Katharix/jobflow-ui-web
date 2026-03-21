@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
@@ -11,7 +11,7 @@ import { ClientHubService } from '../../services/client-hub.service';
 @Component({
   selector: 'app-client-hub-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './client-hub-profile.component.html',
   styleUrl: './client-hub-profile.component.scss',
 })

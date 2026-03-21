@@ -3,6 +3,7 @@ import { of } from 'rxjs';
 import { ClientHubService } from './client-hub.service';
 import { BaseApiService } from '../../services/shared/base-api.service';
 import { ClientHubAuthService } from './client-hub-auth.service';
+import { ClientHubProfile, ClientHubWorkRequest, ClientHubWorkRequestResponse } from '../models/client-hub.models';
 
 describe('ClientHubService', () => {
   let service: ClientHubService;
@@ -31,14 +32,15 @@ describe('ClientHubService', () => {
   });
 
   it('loads client hub profile', () => {
-    api.getWithHeaders.and.returnValue(of({} as any));
+    api.getWithHeaders.and.returnValue(of({} as ClientHubProfile));
     service.getMe().subscribe();
     expect(api.getWithHeaders).toHaveBeenCalledWith('client-hub/me', jasmine.anything());
   });
 
   it('requests client hub work', () => {
-    api.postWithHeaders.and.returnValue(of({} as any));
-    service.requestWork({} as any).subscribe();
-    expect(api.postWithHeaders).toHaveBeenCalledWith('client-hub/work-requests', {} as any, jasmine.anything());
+    api.postWithHeaders.and.returnValue(of({} as ClientHubWorkRequestResponse));
+    const request: ClientHubWorkRequest = { subject: 'New work request', details: 'Need help' };
+    service.requestWork(request).subscribe();
+    expect(api.postWithHeaders).toHaveBeenCalledWith('client-hub/work-requests', request, jasmine.anything());
   });
 });

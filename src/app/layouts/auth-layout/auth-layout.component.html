@@ -1,9 +1,11 @@
 <div class="main-wrapper">
-   <div class="page-wrapper" style="margin-left:140px !important">
-      <div class="page-content">
-         <router-outlet></router-outlet>
-      </div>
-   </div>
+  <div class="page-wrapper" style="margin-left:140px !important">
+    <div class="page-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
 </div>
 
-<app-preloader *ngIf="isLoading$ | async"></app-preloader>
+@if (isLoading$ | async) {
+  <app-preloader></app-preloader>
+}

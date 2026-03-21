@@ -1,6 +1,6 @@
-import { CommonModule } from '@angular/common';
+
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Inject, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ModalRef } from '../../../common/modal/modal-ref';
@@ -30,11 +30,14 @@ const ALLOWED_MIME_TYPES = [
 @Component({
   selector: 'app-estimate-revision-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './estimate-revision-form.component.html',
   styleUrl: './estimate-revision-form.component.scss',
 })
 export class EstimateRevisionFormComponent {
+  private readonly ref = inject<ModalRef<EstimateRevisionRequestDto>>(ModalRef);
+  data = inject<EstimateRevisionFormData>(MODAL_DATA);
+
   private readonly api = inject(EstimateRevisionApi);
   private readonly auth = inject(ClientHubAuthService);
   private readonly router = inject(Router);
@@ -45,11 +48,6 @@ export class EstimateRevisionFormComponent {
   validationErrors: string[] = [];
   submitError: string | null = null;
   isSubmitting = false;
-
-  constructor(
-    private readonly ref: ModalRef<EstimateRevisionRequestDto>,
-    @Inject(MODAL_DATA) public data: EstimateRevisionFormData,
-  ) {}
 
   close(): void {
     this.ref._close();

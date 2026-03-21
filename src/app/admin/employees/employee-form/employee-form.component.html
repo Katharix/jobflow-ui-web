@@ -1,37 +1,39 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-2">
   <div class="mb-3 d-none">
-  <input pInputText pSize="small" type="text" formControlName="organizationId" class="w-100" />
-</div>
+    <input pInputText pSize="small" type="text" formControlName="organizationId" class="w-100" />
+  </div>
   <div class="mb-3 d-none">
     <input pInputText pSize="small" type="text" formControlName="id" class="w-100" />
   </div>
 
   <div class="mb-3">
-    <label class="form-label fw-semibold text-muted">First Name</label>
-    <input pInputText pSize="small" type="text" formControlName="firstName" class="w-100" />
+    <label class="form-label fw-semibold text-muted" for="employeeFirstName">First Name</label>
+    <input id="employeeFirstName" pInputText pSize="small" type="text" formControlName="firstName" class="w-100" />
   </div>
 
   <div class="mb-3">
-    <label class="form-label fw-semibold text-muted">Last Name</label>
-    <input pInputText pSize="small" type="text" formControlName="lastName" class="w-100" />
+    <label class="form-label fw-semibold text-muted" for="employeeLastName">Last Name</label>
+    <input id="employeeLastName" pInputText pSize="small" type="text" formControlName="lastName" class="w-100" />
   </div>
 
   <div class="mb-3">
-    <label class="form-label fw-semibold text-muted">Email</label>
-    <input pInputText pSize="small" type="email" formControlName="email" class="w-100" />
+    <label class="form-label fw-semibold text-muted" for="employeeEmail">Email</label>
+    <input id="employeeEmail" pInputText pSize="small" type="email" formControlName="email" class="w-100" />
   </div>
 
- <div class="mb-3">
-    <label class="form-label fw-semibold text-muted">Phone Number</label>
-    <input pInputText pSize="small" type="tel" formControlName="phoneNumber" class="w-100" />
+  <div class="mb-3">
+    <label class="form-label fw-semibold text-muted" for="employeePhone">Phone Number</label>
+    <input id="employeePhone" pInputText pSize="small" type="tel" formControlName="phoneNumber" class="w-100" />
   </div>
 
   <div class="mb-3">
     <label for="role" class="form-label fw-semibold">Role</label>
     <p-select id="role" formControlName="roleId" [options]="roles" optionLabel="name" optionValue="id" size="small" placeholder="Select a role" [fluid]="true" />
-    <div *ngIf="form.get('roleId')?.invalid && form.get('roleId')?.touched" class="text-danger small">
-      Role is required.
-    </div>
+    @if (form.get('roleId')?.invalid && form.get('roleId')?.touched) {
+      <div class="text-danger small">
+        Role is required.
+      </div>
+    }
   </div>
 
   <div class="d-flex align-items-center gap-2 mt-2">

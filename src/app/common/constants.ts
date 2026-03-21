@@ -10,7 +10,7 @@ export const credits = {
   buyLink: '',
 }
 
-export const basePath: string = '/'
+export const basePath = '/'
 
 export const US_STATES = [
   { code: 'AL', name: 'Alabama' },

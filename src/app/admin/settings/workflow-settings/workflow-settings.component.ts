@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
@@ -16,11 +16,17 @@ import { InvoicingSettingsDto } from '../models/invoicing-settings';
 @Component({
   selector: 'app-workflow-settings',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, InputNumberModule, InputTextModule, PageHeaderComponent],
+  imports: [ReactiveFormsModule, FormsModule, InputNumberModule, InputTextModule, PageHeaderComponent],
   templateUrl: './workflow-settings.component.html',
   styleUrl: './workflow-settings.component.scss'
 })
 export class WorkflowSettingsComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private workflowSettings = inject(WorkflowSettingsService);
+  private scheduleSettings = inject(ScheduleSettingsService);
+  private invoicingSettings = inject(InvoicingSettingsService);
+  private toast = inject(ToastService);
+
   statusRows: WorkflowStatusUpsertRequestDto[] = [];
   scheduleForm!: FormGroup;
   invoicingForm!: FormGroup;
@@ -32,14 +38,6 @@ export class WorkflowSettingsComponent implements OnInit {
     { label: InvoicingWorkflowLabels[InvoicingWorkflow.SendInvoice], value: InvoicingWorkflow.SendInvoice },
     { label: InvoicingWorkflowLabels[InvoicingWorkflow.InPerson], value: InvoicingWorkflow.InPerson }
   ];
-
-  constructor(
-    private fb: FormBuilder,
-    private workflowSettings: WorkflowSettingsService,
-    private scheduleSettings: ScheduleSettingsService,
-    private invoicingSettings: InvoicingSettingsService,
-    private toast: ToastService
-  ) {}
 
   ngOnInit(): void {
     this.scheduleForm = this.fb.group({

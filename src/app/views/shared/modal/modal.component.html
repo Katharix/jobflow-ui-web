@@ -10,24 +10,25 @@
         <ng-content></ng-content>
       </div>
 
-      <div class="modal-footer" *ngIf="showFooter">
-        <button
-          type="button"
-          [ngClass]="cancelButtonClass"
-          (click)="close()"
-        >
-          {{ cancelText }}
-        </button>
-
-        <button
-          type="button"
-          [ngClass]="confirmButtonClass"
-          [disabled]="formGroup?.invalid"
-          (click)="submit()"
-        >
-          {{ confirmText }}
-        </button>
-      </div>
+      @if (showFooter) {
+        <div class="modal-footer">
+          <button
+            type="button"
+            [ngClass]="cancelButtonClass"
+            (click)="close()"
+            >
+            {{ cancelText }}
+          </button>
+          <button
+            type="button"
+            [ngClass]="confirmButtonClass"
+            [disabled]="formGroup?.invalid"
+            (click)="submit()"
+            >
+            {{ confirmText }}
+          </button>
+        </div>
+      }
 
     </div>
   </div>

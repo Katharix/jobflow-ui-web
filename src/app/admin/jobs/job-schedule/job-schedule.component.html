@@ -4,22 +4,22 @@
 ></app-page-header>
 
 <div class="mt-3">
-  <jobflow-calendar
+  <app-jobflow-calendar
     [(selectedDate)]="selectedDate"
     [eventSettings]="calendarEvents"
     (selectedDateChange)="onCalendarDateChange($event)"
     (eventCreate)="onCalendarEventCreate($event)"
     (eventChange)="onCalendarEventUpdate($event)"
   >
-  </jobflow-calendar>
+  </app-jobflow-calendar>
 </div>
 
-<jobflow-drawer
+<app-jobflow-drawer
   [open]="showAssignmentModal"
   title="Schedule Job"
   (closed)="onAssignmentDrawerClosed()"
 >
-  <job-assignment-form
+  <app-job-assignment-form
     #assignmentForm
     [jobId]="currentJobId"
     [scheduledStart]="draftEvent?.StartTime ?? selectedDate"
@@ -33,5 +33,6 @@
     [weatherIsApproximate]="weatherIsApproximate"
     (submitted)="onAssignmentSave($event)"
   >
-  </job-assignment-form>
-</jobflow-drawer>
+  </app-job-assignment-form>
+</app-jobflow-drawer>
+

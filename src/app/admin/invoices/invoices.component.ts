@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -39,15 +39,25 @@ import { useNotifierHub, InvoicePaidEvent } from '../services/useNotifierHub';
    styleUrl: './invoices.component.scss'
 })
 export class InvoicesComponent implements OnInit, OnDestroy {
+   private fb = inject(FormBuilder);
+   private invoiceService = inject(InvoiceService);
+   private jobsService = inject(JobsService);
+   private estimateService = inject(EstimateService);
+   private router = inject(Router);
+   private route = inject(ActivatedRoute);
+   private toast = inject(ToastService);
+   private workflowSettings = inject(WorkflowSettingsService);
+   private auth = inject(Auth);
+
 
    @ViewChild('clientTemplate', {static: true})
-   clientTemplate!: TemplateRef<any>;
+   clientTemplate!: TemplateRef<unknown>;
 
    @ViewChild('statusTemplate', {static: true})
-   statusTemplate!: TemplateRef<any>;
+   statusTemplate!: TemplateRef<unknown>;
 
    @ViewChild('actionsTemplate', {static: true})
-   actionsTemplate!: TemplateRef<any>;
+   actionsTemplate!: TemplateRef<unknown>;
 
    columns: JobflowGridColumn[] = [];
    items: Invoice[] = [];
@@ -87,19 +97,6 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       pageSize: 20,
       pageSizes: [10, 20, 50, 100]
    };
-
-   constructor(
-      private fb: FormBuilder,
-      private invoiceService: InvoiceService,
-      private jobsService: JobsService,
-      private estimateService: EstimateService,
-      private router: Router,
-      private route: ActivatedRoute,
-      private toast: ToastService,
-      private workflowSettings: WorkflowSettingsService,
-      private auth: Auth
-   ) {
-   }
 
    ngOnInit(): void {
       this.returnToCommandCenter = this.route.snapshot.queryParamMap.get('returnTo') === 'dashboard-command-center';
@@ -209,27 +206,27 @@ export class InvoicesComponent implements OnInit, OnDestroy {
             field: 'invoiceDate',
             headerText: 'Invoice Date',
             width: 140,
-            valueAccessor: (_field: string, data: Invoice) => this.formatDate(data.invoiceDate)
+            valueAccessor: (_field: string, data: unknown) => this.formatDate((data as Invoice)?.invoiceDate)
          },
          {
             field: 'dueDate',
             headerText: 'Due Date',
             width: 140,
-            valueAccessor: (_field: string, data: Invoice) => this.formatDate(data.dueDate)
+            valueAccessor: (_field: string, data: unknown) => this.formatDate((data as Invoice)?.dueDate)
          },
          {
             field: 'totalAmount',
             headerText: 'Total',
             width: 120,
             textAlign: 'Right',
-            valueAccessor: (_field: string, data: Invoice) => this.formatCurrency(data.totalAmount)
+            valueAccessor: (_field: string, data: unknown) => this.formatCurrency((data as Invoice)?.totalAmount)
          },
          {
             field: 'balanceDue',
             headerText: 'Balance',
             width: 120,
             textAlign: 'Right',
-            valueAccessor: (_field: string, data: Invoice) => this.formatCurrency(data.balanceDue)
+            valueAccessor: (_field: string, data: unknown) => this.formatCurrency((data as Invoice)?.balanceDue)
          },
          {
             headerText: 'Status',
@@ -274,7 +271,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       target.amountPaid = payload.amountPaid ?? target.amountPaid;
       target.balanceDue = payload.balanceDue ?? target.balanceDue;
       if (payload.paidAt) {
-         (target as any).paidAt = payload.paidAt;
+         target.paidAt = payload.paidAt;
       }
    }
 
@@ -359,8 +356,16 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       this.creatingInvoice = true;
       this.createInvoiceError = null;
 
-      const value = this.invoiceForm.value;
-      const lineItems: CreateInvoiceLineItemRequest[] = (value.lineItems ?? []).map((line: any) => ({
+      const value = this.invoiceForm.getRawValue() as {
+         invoiceDate: string | null;
+         dueDate: string | null;
+         lineItems: {
+            description: string | null;
+            quantity: number | null;
+            unitPrice: number | null;
+         }[];
+      };
+      const lineItems: CreateInvoiceLineItemRequest[] = (value.lineItems ?? []).map(line => ({
          description: String(line.description ?? '').trim(),
          quantity: Number(line.quantity ?? 0),
          unitPrice: Number(line.unitPrice ?? 0)
@@ -708,7 +713,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
          updatedAt?: string;
       };
 
-      const candidates: Array<string | Date | null | undefined> = [
+      const candidates: (string | Date | null | undefined)[] = [
          job.scheduledStart,
          jobWithMeta.updatedAt,
          jobWithMeta.createdAt,

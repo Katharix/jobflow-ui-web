@@ -12,7 +12,7 @@ import { FullCalendarModule, FullCalendarComponent } from '@fullcalendar/angular
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { DateClickArg, EventResizeDoneArg } from '@fullcalendar/interaction';
+import { DateClickArg, EventResizeDoneArg, EventReceiveArg } from '@fullcalendar/interaction';
 import { LucideAngularModule } from 'lucide-angular';
 import {
   CalendarOptions,
@@ -28,8 +28,13 @@ import { ScheduleType } from '../../admin/jobs/models/assignment';
 
 export type CalendarMode = 'dispatch' | 'context';
 
+interface JobflowCalendarEventSettings {
+  fields?: Record<string, { name: string } | string>;
+  dataSource?: CalendarEvent[];
+}
+
 @Component({
-  selector: 'jobflow-calendar',
+  selector: 'app-jobflow-calendar',
   standalone: true,
   imports: [CommonModule, FormsModule, FullCalendarModule, LucideAngularModule],
   templateUrl: './jobflow-calendar.component.html',
@@ -38,8 +43,8 @@ export type CalendarMode = 'dispatch' | 'context';
 })
 export class JobflowCalendarComponent {
   private _selectedDate: Date = new Date();
-  private _calendarView: string = 'Week';
-  private _eventSettings: any = {
+  private _calendarView = 'Week';
+  private _eventSettings: JobflowCalendarEventSettings = {
     fields: {
       id: 'Id',
       subject: { name: 'Subject' },
@@ -87,6 +92,10 @@ export class JobflowCalendarComponent {
     this._calendarView = value;
     this._selectedDate = this.normalizeSelectedDate(this._selectedDate, value);
     this.changeView(value);
+  }
+
+  get calendarView(): string {
+    return this._calendarView;
   }
 
   get selectedRangeLabel(): string {
@@ -158,31 +167,27 @@ export class JobflowCalendarComponent {
     return end;
   }
 
-  get calendarView(): string {
-    return this._calendarView;
-  }
-
   @Output() calendarViewChange = new EventEmitter<string>();
 
   @Input() views: string[] = ['Day', 'Week', 'Month'];
-  @Input() set eventSettings(value: any) {
+  @Input() set eventSettings(value: JobflowCalendarEventSettings | null | undefined) {
     this._eventSettings = value ?? { dataSource: [] };
     this.refreshCalendarOptions();
   }
 
-  get eventSettings(): any {
+  get eventSettings(): JobflowCalendarEventSettings {
     return this._eventSettings;
   }
 
-  @Input() height: string = '650px';
+  @Input() height = '650px';
 
   // 🔁 Optional filters and grouping
   @Input() filters: { label: string; value: string }[] = [];
-  @Input() selectedFilter: string = '';
+  @Input() selectedFilter = '';
   @Output() selectedFilterChange = new EventEmitter<string>();
 
-  @Input() resources: any[] = []; // array of resource definitions (e.g., employees)
-  @Input() group: any | undefined;
+  @Input() resources: Record<string, unknown>[] = []; // array of resource definitions (e.g., employees)
+  @Input() group: Record<string, unknown> | undefined;
 
   goPrev() {
     const newDate = new Date(this.normalizeSelectedDate(this._selectedDate, this._calendarView));
@@ -327,7 +332,7 @@ export class JobflowCalendarComponent {
   }
 
   private mapEventApiToCalendarEvent(event: EventApi): CalendarEvent {
-    const entityType = event.extendedProps['EntityType'];
+    const entityType = this.toScheduleType(event.extendedProps['EntityType']);
     return {
       Id: event.id || event.extendedProps['Id'],
       Subject: event.title,
@@ -340,6 +345,29 @@ export class JobflowCalendarComponent {
       StatusLabel: event.extendedProps['StatusLabel'],
       CssClass: (Array.isArray(event.classNames) && event.classNames.join(' ')) || this.getEventCssClass(entityType),
     };
+  }
+
+  private toScheduleType(value: unknown): ScheduleType | undefined {
+    if (typeof value === 'number' && Object.values(ScheduleType).includes(value as ScheduleType)) {
+      return value as ScheduleType;
+    }
+
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed) return undefined;
+
+      const numeric = Number(trimmed);
+      if (!Number.isNaN(numeric) && Object.values(ScheduleType).includes(numeric as ScheduleType)) {
+        return numeric as ScheduleType;
+      }
+
+      const enumValue = ScheduleType[trimmed as keyof typeof ScheduleType];
+      if (typeof enumValue === 'number') {
+        return enumValue;
+      }
+    }
+
+    return undefined;
   }
 
   private toFullCalendarView(view: string): string {
@@ -368,7 +396,7 @@ export class JobflowCalendarComponent {
       : new Date(start.getTime() + 30 * 60 * 1000);
   }
 
-  private mapEventsForFullCalendar(events: CalendarEvent[]) {
+  private mapEventsForFullCalendar(events: CalendarEvent[]): Record<string, unknown>[] {
     return events.map((event) => {
       const cssClass = event.CssClass ?? this.getEventCssClass(event.EntityType);
       const classNames = cssClass.split(' ').filter(Boolean);
@@ -392,7 +420,7 @@ export class JobflowCalendarComponent {
     });
   }
 
-  private renderEventContent(arg: EventContentArg) {
+  private renderEventContent(arg: EventContentArg): { html: string } {
     const entityType = arg.event.extendedProps['EntityType'];
     const variant = this.getEventVariant(entityType);
     const title = this.escapeHtml(arg.event.title || 'Open slot');
@@ -452,7 +480,7 @@ export class JobflowCalendarComponent {
       eventResize: (arg) => this.onEventResize(arg),
       eventClick: (arg: EventClickArg) => this.onEventClick(arg),
       droppable: this.allowExternalDrop,
-      eventReceive: (arg: any) => this.onExternalEventReceive(arg),
+      eventReceive: (arg: EventReceiveArg) => this.onExternalEventReceive(arg),
       datesSet: (arg: DatesSetArg) => {
         const currentStart = (arg.view as { currentStart?: Date }).currentStart;
         const visibleDate = this.normalizeSelectedDate(currentStart ?? arg.start, this.fromFullCalendarView(arg.view.type));
@@ -477,7 +505,7 @@ export class JobflowCalendarComponent {
     }
   }
 
-  private onExternalEventReceive(args: any): void {
+  private onExternalEventReceive(args: EventReceiveArg): void {
     const event = this.mapEventApiToCalendarEvent(args.event);
     if (event) {
       this.externalEventCreate.emit(event);

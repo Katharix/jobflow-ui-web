@@ -21,27 +21,30 @@
     </div>
 
     <div class="row g-4">
-      <div class="col-lg-4" *ngFor="let plan of plans">
-        <div class="jf-price-card" [ngClass]="{ 'is-featured': plan.name === 'Flow' }">
-          <div class="jf-price-card__header">
-            <h5>{{ plan.name }}</h5>
-            <span class="badge" [ngClass]="plan.badge">{{ plan.savings }}</span>
+      @for (plan of plans; track plan) {
+        <div class="col-lg-4">
+          <div class="jf-price-card" [ngClass]="{ 'is-featured': plan.name === 'Flow' }">
+            <div class="jf-price-card__header">
+              <h5>{{ plan.name }}</h5>
+              <span class="badge" [ngClass]="plan.badge">{{ plan.savings }}</span>
+            </div>
+            <div class="jf-price-card__price">
+              <span class="jf-price-card__value">{{ getPrice(plan) }}</span>
+              <span class="jf-price-card__desc">{{ plan.description }}</span>
+            </div>
+            <ul class="jf-price-card__list">
+              @for (feature of plan.features; track feature) {
+                <li>
+                  <i class="ti ti-circle-check text-success me-2 align-middle"></i> {{ feature }}
+                </li>
+              }
+            </ul>
+            <button class="btn" [ngClass]="plan.buttonClass + ' w-100'" (click)="subscribeToPlan(plan.name)">
+              Select {{ plan.name }}
+            </button>
           </div>
-          <div class="jf-price-card__price">
-            <span class="jf-price-card__value">{{ getPrice(plan) }}</span>
-            <span class="jf-price-card__desc">{{ plan.description }}</span>
-          </div>
-          <ul class="jf-price-card__list">
-            <li *ngFor="let feature of plan.features">
-              <i class="ti ti-circle-check text-success me-2 align-middle"></i> {{ feature }}
-            </li>
-          </ul>
-          <button class="btn" [ngClass]="plan.buttonClass + ' w-100'" (click)="subscribeToPlan(plan.name)">
-            Select {{ plan.name }}
-          </button>
         </div>
-      </div>
+      }
     </div>
   </div>
 </section>
-  

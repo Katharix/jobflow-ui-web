@@ -1,39 +1,43 @@
 <app-page-header
-   title="Employees"
-   subtitle="Manage your team members and roles"
-   [actions]="headerActions"
+  title="Employees"
+  subtitle="Manage your team members and roles"
+  [actions]="headerActions"
 ></app-page-header>
 
 <!-- Loading or Checking Roles -->
-<div *ngIf="checkingRoles" class="text-center py-5">
-   <div class="spinner-border text-primary" role="status"></div>
-   <p class="mt-3 text-muted">Checking for organization roles...</p>
-</div>
+@if (checkingRoles) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-3 text-muted">Checking for organization roles...</p>
+  </div>
+}
 
 <!-- No Roles Found -->
-<div *ngIf="!checkingRoles && !rolesExist"
-     class="alert alert-warning d-flex justify-content-between align-items-center mt-3 shadow-sm">
-   <div>
+@if (!checkingRoles && !rolesExist) {
+  <div
+    class="alert alert-warning d-flex justify-content-between align-items-center mt-3 shadow-sm">
+    <div>
       <i class="bi bi-exclamation-triangle-fill me-2"></i>
       <strong>No employee roles found.</strong> Please create one before adding employees.
-   </div>
-   <button class="btn btn-outline-primary btn-sm" (click)="router.navigate(['/admin/employees/roles']);">
+    </div>
+    <button class="btn btn-outline-primary btn-sm" (click)="router.navigate(['/admin/employees/roles']);">
       Go to Employee Roles
-   </button>
-</div>
+    </button>
+  </div>
+}
 
 <!-- Employee Grid -->
-<div *ngIf="rolesExist && !checkingRoles" class="card shadow-sm mt-4">
-   <ng-template #actionsTemplate let-employee>
+@if (rolesExist && !checkingRoles) {
+  <div class="card shadow-sm mt-4">
+    <ng-template #actionsTemplate let-employee>
       <button type="button" class="btn btn-sm btn-outline-primary me-2" (click)="onEditEmployee(employee)">
-         Edit
+        Edit
       </button>
       <button type="button" class="btn btn-sm btn-outline-danger" (click)="onDeleteEmployee(employee)">
-         Delete
+        Delete
       </button>
-   </ng-template>
-
-   <jobflow-grid
+    </ng-template>
+    <app-jobflow-grid
       [data]="employees"
       [columns]="columns"
       [allowPaging]="true"
@@ -42,48 +46,53 @@
       [showSearchBar]="false"
       [pageSettings]="pageSettings"
       [height]="500"
-   ></jobflow-grid>
-</div>
+    ></app-jobflow-grid>
+  </div>
+}
 
-<jobflow-modal
-   *ngIf="showAddEmployeeModal"
-   [title]="isEditing ? 'Edit Employee' : 'Add Employee'"
-   [confirmText]="'Save'"
-   [cancelText]="'Cancel'"
-   [formGroup]="employeeFormComponent.formGroup"
-   (cancel)="onModalCancel()"
-   (confirm)="employeeFormComponent.onSubmit()"
->
-   <app-employee-form
+@if (showAddEmployeeModal) {
+  <app-jobflow-modal
+    [title]="isEditing ? 'Edit Employee' : 'Add Employee'"
+    [confirmText]="'Save'"
+    [cancelText]="'Cancel'"
+    [formGroup]="employeeFormComponent.formGroup"
+    (cancelled)="onModalCancel()"
+    (confirmed)="employeeFormComponent.onSubmit()"
+    >
+    <app-employee-form
       [employee]="selectedEmployee"
       (submitted)="onFormSubmit($event)"
-   ></app-employee-form>
-</jobflow-modal>
+    ></app-employee-form>
+  </app-jobflow-modal>
+}
 
-<jobflow-modal
-   *ngIf="showInviteModal"
-   [title]="'Invite Employee'"
-   [confirmText]="'Send Invite'"
-   [cancelText]="'Cancel'"
-   (cancel)="closeInviteModal()"
-   (confirm)="onInviteSubmit()"
->
-   <app-employee-invite-form #inviteForm
-                             (submitted)="onInviteSuccess($event)"></app-employee-invite-form>
-</jobflow-modal>
+@if (showInviteModal) {
+  <app-jobflow-modal
+    [title]="'Invite Employee'"
+    [confirmText]="'Send Invite'"
+    [cancelText]="'Cancel'"
+    (cancelled)="closeInviteModal()"
+    (confirmed)="onInviteSubmit()"
+    >
+    <app-employee-invite-form #inviteForm
+    (submitted)="onInviteSuccess($event)"></app-employee-invite-form>
+  </app-jobflow-modal>
+}
 
-<jobflow-modal
-   *ngIf="showDeleteModal"
-   [title]="'Delete Employee'"
-   [confirmText]="'Delete'"
-   [cancelText]="'Cancel'"
-   (cancel)="closeDeleteModal()"
-   (confirm)="confirmDelete()"
-   [confirmButtonClass]="'btn btn-danger px-4'"
-   [cancelButtonClass]="'btn btn-outline-secondary'"
->
-   <app-delete-confirm
+@if (showDeleteModal) {
+  <app-jobflow-modal
+    [title]="'Delete Employee'"
+    [confirmText]="'Delete'"
+    [cancelText]="'Cancel'"
+    (cancelled)="closeDeleteModal()"
+    (confirmed)="confirmDelete()"
+    [confirmButtonClass]="'btn btn-danger px-4'"
+    [cancelButtonClass]="'btn btn-outline-secondary'"
+    >
+    <app-delete-confirm
       [title]="'Delete Employee'"
       [message]="'Are you sure you want to delete ' + selectedEmployeeName + '?'"
-   ></app-delete-confirm>
-</jobflow-modal>
+    ></app-delete-confirm>
+  </app-jobflow-modal>
+}
+

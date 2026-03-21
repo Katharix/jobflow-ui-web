@@ -2,16 +2,16 @@ import { credits, currentYear } from '../../../common/constants';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-type FooterLink = {
+interface FooterLink {
   label: string;
   href?: string;
   routerLink?: string;
-};
+}
 
-type FooterLinkGroup = {
+interface FooterLinkGroup {
   title: string;
   links: FooterLink[];
-};
+}
 
 @Component({
   selector: 'app-public-footer',

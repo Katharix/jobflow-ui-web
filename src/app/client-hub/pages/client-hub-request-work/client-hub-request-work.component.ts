@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
@@ -17,7 +17,7 @@ interface ClientHubWorkRequestFormModel {
 @Component({
   selector: 'app-client-hub-request-work',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './client-hub-request-work.component.html',
   styleUrl: './client-hub-request-work.component.scss',
 })

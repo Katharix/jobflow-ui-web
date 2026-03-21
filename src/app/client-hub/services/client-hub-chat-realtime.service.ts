@@ -2,6 +2,18 @@ import { Injectable, inject } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { environment } from '../../../environments/environment';
 import { ClientHubAuthService } from './client-hub-auth.service';
+import { ClientHubChatMessage } from './client-hub-chat.service';
+
+export interface ClientHubChatReadReceiptPayload {
+  conversationId: string;
+  messageIds: string[];
+}
+
+export interface ClientHubChatTypingPayload {
+  conversationId: string;
+  senderType?: string;
+  isTyping?: boolean;
+}
 
 @Injectable({ providedIn: 'root' })
 export class ClientHubChatRealtimeService {
@@ -56,15 +68,15 @@ export class ClientHubChatRealtimeService {
     return connection.invoke('LeaveConversation', conversationId);
   }
 
-  onMessageReceived(callback: (message: any) => void): void {
+  onMessageReceived(callback: (message: ClientHubChatMessage) => void): void {
     this.ensureConnection().on('ReceiveMessage', callback);
   }
 
-  onReadReceipt(callback: (payload: any) => void): void {
+  onReadReceipt(callback: (payload: ClientHubChatReadReceiptPayload) => void): void {
     this.ensureConnection().on('ReadReceipt', callback);
   }
 
-  onTyping(callback: (payload: any) => void): void {
+  onTyping(callback: (payload: ClientHubChatTypingPayload) => void): void {
     this.ensureConnection().on('Typing', callback);
   }
 

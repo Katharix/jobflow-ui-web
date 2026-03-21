@@ -67,27 +67,39 @@
                   <h4>{{ item.title }}</h4>
                   <span>{{ formatDateTime(item.occurredAt) }}</span>
                 </div>
-                <p *ngIf="item.detail">{{ item.detail }}</p>
-                <div class="timeline-item__photos" *ngIf="item.attachments?.length">
-                  @for (attachment of item.attachments; track attachment.id) {
-                    <div class="timeline-photo">
-                      <img
-                        *ngIf="getAttachmentUrl(attachment)"
-                        [src]="getAttachmentUrl(attachment)"
-                        [alt]="attachment.fileName"
-                      />
-                      <span *ngIf="!getAttachmentUrl(attachment)">Loading photo...</span>
-                    </div>
-                  }
-                </div>
+                @if (item.detail) {
+                  <p>{{ item.detail }}</p>
+                }
+                @if (item.attachments?.length) {
+                  <div class="timeline-item__photos">
+                    @for (attachment of item.attachments; track attachment.id) {
+                      <div class="timeline-photo">
+                        @if (getAttachmentUrl(attachment)) {
+                          <img
+                            [src]="getAttachmentUrl(attachment)"
+                            [alt]="attachment.fileName"
+                            />
+                        }
+                        @if (!getAttachmentUrl(attachment)) {
+                          <span>Loading photo...</span>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
                 <div class="timeline-item__meta">
-                  <span *ngIf="item.status">Status: {{ item.status }}</span>
-                  <span *ngIf="item.amount">Amount: {{ item.amount | currency }}</span>
-                  <a
-                    *ngIf="item.invoiceId"
-                    class="link-primary"
-                    [routerLink]="['/client-hub/invoices', item.invoiceId]"
-                  >View invoice</a>
+                  @if (item.status) {
+                    <span>Status: {{ item.status }}</span>
+                  }
+                  @if (item.amount) {
+                    <span>Amount: {{ item.amount | currency }}</span>
+                  }
+                  @if (item.invoiceId) {
+                    <a
+                      class="link-primary"
+                      [routerLink]="['/client-hub/invoices', item.invoiceId]"
+                    >View invoice</a>
+                  }
                 </div>
               </div>
             </li>

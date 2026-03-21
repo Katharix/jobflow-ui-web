@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { InviteService, InviteInfo } from './invite.service';
@@ -7,7 +7,7 @@ import { InviteService, InviteInfo } from './invite.service';
 @Component({
   selector: 'app-invite-accept',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './invite-accept.component.html',
   styleUrls: ['./invite-accept.component.scss']
 })

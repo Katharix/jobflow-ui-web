@@ -1,5 +1,5 @@
-import { CommonModule, DOCUMENT, NgClass } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, Inject, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { DOCUMENT, NgClass } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 
@@ -20,13 +20,18 @@ import { OrganizationDto } from '../../../models/organization';
     RouterLinkActive,
     NgScrollbar,
     NgClass,
-    CommonModule,
     LucideAngularModule
-  ],
+],
   templateUrl: './admin-sidebar.component.html',
   styleUrl: './admin-sidebar.component.scss'
 })
 export class AdminSidebarComponent implements OnInit, AfterViewInit {
+  private document = inject<Document>(DOCUMENT);
+  private renderer = inject(Renderer2);
+  private router = inject(Router);
+  private logoutService = inject(LogoutService);
+  private orgContext = inject(OrganizationContextService);
+
   @ViewChild('sidebarToggler') sidebarToggler: ElementRef;
   @ViewChild('sidebarMenu') sidebarMenu: ElementRef;
 
@@ -35,14 +40,6 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
   onboardingComplete = false;
   showLogoutModal = false;
   private menuInstance: MetisMenu | null = null;
-
-  constructor(
-    @Inject(DOCUMENT) private document: Document,
-    private renderer: Renderer2,
-    private router: Router,
-    private logoutService: LogoutService,
-    private orgContext: OrganizationContextService
-  ) {}
 
   ngOnInit(): void {
     this.orgContext.org$.subscribe(org => {

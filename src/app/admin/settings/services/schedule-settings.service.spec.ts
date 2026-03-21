@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { ScheduleSettingsService } from './schedule-settings.service';
 import { BaseApiService } from '../../../services/shared/base-api.service';
+import { ScheduleSettingsDto } from '../models/schedule-settings';
 
 describe('ScheduleSettingsService', () => {
   let service: ScheduleSettingsService;
@@ -19,7 +20,7 @@ describe('ScheduleSettingsService', () => {
   });
 
   it('fetches schedule settings from API', () => {
-    api.get.and.returnValue(of({} as any));
+    api.get.and.returnValue(of({} as ScheduleSettingsDto));
 
     service.getScheduleSettings().subscribe();
 
@@ -27,7 +28,7 @@ describe('ScheduleSettingsService', () => {
   });
 
   it('updates schedule settings using API', () => {
-    api.put.and.returnValue(of({} as any));
+    api.put.and.returnValue(of({} as ScheduleSettingsDto));
 
     const payload = {
       travelBufferMinutes: 15,

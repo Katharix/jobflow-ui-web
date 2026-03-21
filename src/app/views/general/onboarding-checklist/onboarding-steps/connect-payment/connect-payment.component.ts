@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { PaymentService } from '../../../../../services/shared/payment.service';
 import { OrganizationContextService } from '../../../../../services/shared/organization-context.service';
 import { PaymentProviders } from '../data';
@@ -14,19 +14,17 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './connect-payment.component.scss'
 })
 export class ConnectPaymentComponent implements OnInit {
+  private paymentService = inject(PaymentService);
+  private orgContext = inject(OrganizationContextService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+
   orgId: string | undefined;
   paymentProviders = PaymentProviders;
   private callbackHandled = false;
   callbackStatus: 'processing' | 'success' | 'error' | null = null;
   callbackMessage = '';
   callbackProvider: 'Stripe' | 'Square' | null = null;
-
-  constructor(
-    private paymentService: PaymentService,
-    private orgContext: OrganizationContextService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) { }
 
   ngOnInit(): void {
     this.handleProviderCallback();
@@ -116,9 +114,15 @@ export class ConnectPaymentComponent implements OnInit {
 
     this.paymentService.createConnectedAccount(selectedProvider).subscribe({
       next: onboardingUrl => {
-        window.location.href = onboardingUrl.onboarding;
+        if (onboardingUrl?.onboarding) {
+          window.location.href = onboardingUrl.onboarding;
+          return;
+        }
+        this.callbackStatus = 'error';
+        this.callbackMessage = 'No onboarding link was returned. Please try again.';
       },
-      error: err => {
+      error: (err: unknown) => {
+        console.error(err);
       }
     });
   }
