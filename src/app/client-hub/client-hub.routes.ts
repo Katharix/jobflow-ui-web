@@ -55,6 +55,20 @@ export default [
           ),
       },
       {
+        path: 'jobs',
+        loadComponent: () =>
+          import('./pages/client-hub-jobs/client-hub-jobs.component').then(
+            (c) => c.ClientHubJobsComponent,
+          ),
+      },
+      {
+        path: 'jobs/:id/updates',
+        loadComponent: () =>
+          import('./pages/client-hub-job-updates/client-hub-job-updates.component').then(
+            (c) => c.ClientHubJobUpdatesComponent,
+          ),
+      },
+      {
         path: 'invoices/:id',
         loadComponent: () =>
           import('./pages/client-hub-invoice-detail/client-hub-invoice-detail.component').then(

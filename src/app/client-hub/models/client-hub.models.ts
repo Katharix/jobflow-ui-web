@@ -113,3 +113,30 @@ export interface EstimateRevisionRequestDto {
   resolvedAt?: string | null;
   attachments?: EstimateRevisionAttachmentDto[];
 }
+
+export interface ClientHubJobSummary {
+  id: string;
+  title?: string | null;
+  status: number | string;
+  createdAt: string;
+  updatedAt?: string | null;
+}
+
+export interface ClientHubTimelineItem {
+  id: string;
+  type: string;
+  title: string;
+  detail?: string | null;
+  occurredAt: string;
+  status?: string | null;
+  amount?: number | null;
+  invoiceId?: string | null;
+  updateId?: string | null;
+  attachments?: ClientHubTimelineAttachment[] | null;
+}
+
+export interface ClientHubTimelineAttachment {
+  id: string;
+  fileName: string;
+  contentType: string;
+}

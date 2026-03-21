@@ -98,4 +98,11 @@ export class BaseApiService {
          responseType: 'blob'
       });
    }
+
+   getBlobWithHeaders(endpoint: string, headers?: HttpHeaders): Observable<Blob> {
+      return this.http.get(`${this.baseUrl}/${endpoint}`, {
+         headers: this.getHeaders(true, headers),
+         responseType: 'blob'
+      });
+   }
 }

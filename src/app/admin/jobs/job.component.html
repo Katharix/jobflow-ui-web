@@ -221,6 +221,13 @@
          <div class="jobflow-preview__actions">
             <button class="btn btn-primary" (click)="scheduleJob(selectedJob)" *ngIf="isUnscheduled(selectedJob)">Schedule</button>
             <button class="btn btn-outline-primary" (click)="editJob(selectedJob)">Edit job</button>
+            <button
+               class="btn btn-outline-secondary"
+               *ngIf="canShareUpdates"
+               (click)="copyClientUpdatesLink(selectedJob)"
+            >
+               Copy updates link
+            </button>
             <a class="btn btn-outline-secondary" routerLink="/admin/dispatch">Open Dispatch</a>
          </div>
       </div>
