@@ -188,7 +188,6 @@ export class ClientHubAuthComponent implements OnInit {
 
   private completeSignIn(token: string): void {
     this.authService.setToken(token);
-    this.toast.success('Signed in to Client Hub.');
 
     this.router.navigateByUrl(this.returnUrl).finally(() => {
       this.isConsumingToken = false;

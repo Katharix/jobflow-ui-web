@@ -3,14 +3,16 @@ import { FormBuilder } from '@angular/forms';
 import { WorkflowSettingsComponent } from './workflow-settings.component';
 import { WorkflowSettingsService } from '../services/workflow-settings.service';
 import { ScheduleSettingsService } from '../services/schedule-settings.service';
+import { InvoicingSettingsService } from '../services/invoicing-settings.service';
 import { ToastService } from '../../../common/toast/toast.service';
-import { JobLifecycleStatus } from '../../jobs/models/job';
+import { InvoicingWorkflow, JobLifecycleStatus } from '../../jobs/models/job';
 import { WorkflowStatusDto } from '../models/workflow-status';
 
 describe('WorkflowSettingsComponent', () => {
   let component: WorkflowSettingsComponent;
   let workflowService: jasmine.SpyObj<WorkflowSettingsService>;
   let scheduleService: jasmine.SpyObj<ScheduleSettingsService>;
+  let invoicingService: jasmine.SpyObj<InvoicingSettingsService>;
   let toast: jasmine.SpyObj<ToastService>;
 
   beforeEach(() => {
@@ -21,6 +23,10 @@ describe('WorkflowSettingsComponent', () => {
     scheduleService = jasmine.createSpyObj<ScheduleSettingsService>('ScheduleSettingsService', [
       'getScheduleSettings',
       'updateScheduleSettings'
+    ]);
+    invoicingService = jasmine.createSpyObj<InvoicingSettingsService>('InvoicingSettingsService', [
+      'getInvoicingSettings',
+      'updateInvoicingSettings'
     ]);
     toast = jasmine.createSpyObj<ToastService>('ToastService', ['success', 'error']);
 
@@ -43,11 +49,18 @@ describe('WorkflowSettingsComponent', () => {
       enforceTravelBuffer: false,
       autoNotifyReschedule: true
     }));
+    invoicingService.getInvoicingSettings.and.returnValue(of({
+      defaultWorkflow: InvoicingWorkflow.SendInvoice
+    }));
+    invoicingService.updateInvoicingSettings.and.returnValue(of({
+      defaultWorkflow: InvoicingWorkflow.InPerson
+    }));
 
     component = new WorkflowSettingsComponent(
       new FormBuilder(),
       workflowService,
       scheduleService,
+      invoicingService,
       toast
     );
     component.ngOnInit();
@@ -57,6 +70,7 @@ describe('WorkflowSettingsComponent', () => {
     expect(component.statusRows.length).toBe(2);
     expect(component.scheduleForm.get('travelBufferMinutes')?.value).toBe(15);
     expect(component.scheduleForm.get('defaultWindowMinutes')?.value).toBe(90);
+    expect(component.invoicingForm.get('defaultWorkflow')?.value).toBe(InvoicingWorkflow.SendInvoice);
   });
 
   it('saves workflow statuses with sort order', () => {
@@ -88,6 +102,18 @@ describe('WorkflowSettingsComponent', () => {
       defaultWindowMinutes: 60,
       enforceTravelBuffer: false,
       autoNotifyReschedule: true
+    });
+  });
+
+  it('saves invoicing settings from the form', () => {
+    component.invoicingForm.patchValue({
+      defaultWorkflow: InvoicingWorkflow.InPerson
+    });
+
+    component.saveInvoicingSettings();
+
+    expect(invoicingService.updateInvoicingSettings).toHaveBeenCalledWith({
+      defaultWorkflow: InvoicingWorkflow.InPerson
     });
   });
 });

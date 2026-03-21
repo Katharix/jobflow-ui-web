@@ -5,10 +5,6 @@ import { ClientHubAuthService } from '../client-hub/services/client-hub-auth.ser
 export const clientHubAuthInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(ClientHubAuthService);
 
-  if (req.headers.has('Authorization')) {
-    return next(req);
-  }
-
   const isClientHubRequest = req.url.includes('/client-hub');
   const isClientHubAuthRequest = req.url.includes('/client-hub-auth');
 

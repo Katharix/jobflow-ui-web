@@ -61,6 +61,11 @@ export class ClientHubAuthService {
     const token = localStorage.getItem(this.tokenStorageKey);
     if (!token) return null;
 
+    if (!this.isLikelyJwt(token)) {
+      this.clearToken();
+      return null;
+    }
+
     if (this.isTokenExpired(token)) {
       this.clearToken();
       return null;

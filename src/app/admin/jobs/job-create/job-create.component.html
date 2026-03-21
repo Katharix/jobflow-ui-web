@@ -2,8 +2,8 @@
    <div class="jobflow-create__header">
       <div>
          <span class="jobflow-create__eyebrow">New job intake</span>
-         <h5>Start a job with clear context.</h5>
-         <p>Capture the essentials so dispatch has everything it needs.</p>
+         <h5>{{ isEditing ? 'Edit job details.' : 'Start a job with clear context.' }}</h5>
+         <p>{{ isEditing ? 'Update the essentials so dispatch stays aligned.' : 'Capture the essentials so dispatch has everything it needs.' }}</p>
       </div>
       <a class="btn btn-link jobflow-create__link" routerLink="/admin/clients/create">Create client</a>
    </div>
@@ -42,6 +42,19 @@
             ></textarea>
          </div>
 
+         <div class="jobflow-create__section">
+            <label class="form-label">Invoicing workflow</label>
+            <p-select
+               [(ngModel)]="invoicingWorkflow"
+               [options]="invoicingOptions"
+               optionLabel="label"
+               optionValue="value"
+               size="small"
+               [fluid]="true"
+               placeholder="Choose a workflow" />
+            <small class="text-muted">Overrides the org default for this job only.</small>
+         </div>
+
          <div class="jobflow-create__next-step">
             <span>Next step</span>
             <p>Schedule in Dispatch to assign a crew.</p>
@@ -55,7 +68,7 @@
       </button>
 
       <button type="button" class="btn btn-primary jobflow-create__primary" style="margin-left: 1rem;" (click)="save()" [disabled]="saving">
-         {{ saving ? 'Saving…' : 'Create Job' }}
+         {{ saving ? 'Saving…' : (isEditing ? 'Save Changes' : 'Create Job') }}
       </button>
    </div>
 </div>

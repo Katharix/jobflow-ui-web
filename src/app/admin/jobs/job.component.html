@@ -13,7 +13,7 @@
    title="Add Job"
    (closed)="onDrawerClosed()"
 >
-   <job-create (saved)="onCreateSaved()" (cancelled)="onCreateCancelled()"/>
+   <job-create [job]="editingJob" (saved)="onCreateSaved()" (cancelled)="onCreateCancelled()"/>
 </jobflow-drawer>
 
 <section class="jobflow-hero">

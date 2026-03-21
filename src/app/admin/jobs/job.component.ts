@@ -602,7 +602,8 @@ export class JobComponent implements OnInit {
    }
 
    editJob(job: any) {
-
+      this.editingJob = job;
+      this.isDrawerOpen = true;
    }
 
    protected readonly Date = Date;

@@ -1,9 +1,10 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {OrganizationContextService} from "../../../services/shared/organization-context.service";
 import {CustomersService} from "../../customer/services/customer.service";
 import {JobUpsertRequest, JobsService} from "../services/jobs.service";
+import {InvoicingWorkflow, InvoicingWorkflowLabels, Job} from "../models/job";
 import {InputTextModule} from 'primeng/inputtext';
 import {SelectModule} from 'primeng/select';
 import {RouterLink} from '@angular/router';
@@ -20,9 +21,10 @@ import {RouterLink} from '@angular/router';
    ],
    templateUrl: './job-create.component.html'
 })
-export class CreateJobComponent {
+export class CreateJobComponent implements OnChanges {
    @Output() saved = new EventEmitter<void>();
    @Output() cancelled = new EventEmitter<void>();
+   @Input() job: Job | null = null;
 
    organizationId: string | null = null;
 
@@ -30,6 +32,13 @@ export class CreateJobComponent {
    selectedCustomerId: string | null = null;
    title = '';
    comments = '';
+   invoicingWorkflow: InvoicingWorkflow | null = null;
+
+   invoicingOptions = [
+      { label: 'Use org default', value: null },
+      { label: InvoicingWorkflowLabels[InvoicingWorkflow.SendInvoice], value: InvoicingWorkflow.SendInvoice },
+      { label: InvoicingWorkflowLabels[InvoicingWorkflow.InPerson], value: InvoicingWorkflow.InPerson }
+   ];
 
    saving = false;
    error: string | null = null;
@@ -45,6 +54,24 @@ export class CreateJobComponent {
          this.organizationId = org.id ?? null;
          this.loadCustomers();
       });
+   }
+
+   get isEditing(): boolean {
+      return !!this.job?.id;
+   }
+
+   ngOnChanges(changes: SimpleChanges): void {
+      if (!changes['job']) return;
+
+      if (!this.job) {
+         this.resetForm();
+         return;
+      }
+
+      this.selectedCustomerId = this.job.organizationClientId ?? this.job.organizationClient?.id ?? null;
+      this.title = this.job.title ?? '';
+      this.comments = this.job.comments ?? '';
+      this.invoicingWorkflow = this.job.invoicingWorkflow ?? null;
    }
 
    private loadCustomers(): void {
@@ -71,9 +98,11 @@ export class CreateJobComponent {
       this.error = null;
 
       const request: JobUpsertRequest = {
+         id: this.job?.id,
          organizationClientId: this.selectedCustomerId,
          title: this.title.trim(),
-         comments: this.comments.trim() || undefined
+         comments: this.comments.trim() || undefined,
+         invoicingWorkflow: this.invoicingWorkflow
       };
 
       this.jobsService.upsertJob(request).subscribe({
@@ -87,5 +116,14 @@ export class CreateJobComponent {
 
    cancel(): void {
       this.cancelled.emit();
+   }
+
+   private resetForm(): void {
+      this.selectedCustomerId = null;
+      this.title = '';
+      this.comments = '';
+      this.invoicingWorkflow = null;
+      this.error = null;
+      this.saving = false;
    }
 }

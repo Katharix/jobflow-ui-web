@@ -6,10 +6,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PageHeaderComponent } from '../../dashboard/page-header/page-header.component';
 import { WorkflowSettingsService } from '../services/workflow-settings.service';
 import { ScheduleSettingsService } from '../services/schedule-settings.service';
+import { InvoicingSettingsService } from '../services/invoicing-settings.service';
 import { WorkflowStatusUpsertRequestDto } from '../models/workflow-status';
 import { ScheduleSettingsDto } from '../models/schedule-settings';
-import { JobLifecycleStatus, JobLifecycleStatusLabels } from '../../jobs/models/job';
+import { InvoicingWorkflow, InvoicingWorkflowLabels, JobLifecycleStatus, JobLifecycleStatusLabels } from '../../jobs/models/job';
 import { ToastService } from '../../../common/toast/toast.service';
+import { InvoicingSettingsDto } from '../models/invoicing-settings';
 
 @Component({
   selector: 'app-workflow-settings',
@@ -21,13 +23,21 @@ import { ToastService } from '../../../common/toast/toast.service';
 export class WorkflowSettingsComponent implements OnInit {
   statusRows: WorkflowStatusUpsertRequestDto[] = [];
   scheduleForm!: FormGroup;
+  invoicingForm!: FormGroup;
   isSavingStatuses = false;
   isSavingSchedule = false;
+  isSavingInvoicing = false;
+
+  invoicingOptions = [
+    { label: InvoicingWorkflowLabels[InvoicingWorkflow.SendInvoice], value: InvoicingWorkflow.SendInvoice },
+    { label: InvoicingWorkflowLabels[InvoicingWorkflow.InPerson], value: InvoicingWorkflow.InPerson }
+  ];
 
   constructor(
     private fb: FormBuilder,
     private workflowSettings: WorkflowSettingsService,
     private scheduleSettings: ScheduleSettingsService,
+    private invoicingSettings: InvoicingSettingsService,
     private toast: ToastService
   ) {}
 
@@ -39,8 +49,13 @@ export class WorkflowSettingsComponent implements OnInit {
       autoNotifyReschedule: [true]
     });
 
+    this.invoicingForm = this.fb.group({
+      defaultWorkflow: [InvoicingWorkflow.SendInvoice, Validators.required]
+    });
+
     this.loadStatuses();
     this.loadScheduleSettings();
+    this.loadInvoicingSettings();
   }
 
   loadStatuses(): void {
@@ -119,6 +134,40 @@ export class WorkflowSettingsComponent implements OnInit {
     });
   }
 
+  loadInvoicingSettings(): void {
+    this.invoicingSettings.getInvoicingSettings().subscribe({
+      next: (settings) => this.patchInvoicingForm(settings),
+      error: () => {
+        this.patchInvoicingForm({
+          defaultWorkflow: InvoicingWorkflow.SendInvoice
+        });
+      }
+    });
+  }
+
+  saveInvoicingSettings(): void {
+    if (this.invoicingForm.invalid || this.isSavingInvoicing) {
+      return;
+    }
+
+    this.isSavingInvoicing = true;
+    const payload: InvoicingSettingsDto = {
+      ...this.invoicingForm.value
+    };
+
+    this.invoicingSettings.updateInvoicingSettings(payload).subscribe({
+      next: (settings) => {
+        this.patchInvoicingForm(settings);
+        this.isSavingInvoicing = false;
+        this.toast.success('Invoicing workflow saved');
+      },
+      error: (error) => {
+        this.isSavingInvoicing = false;
+        this.toast.error(error?.error?.description ?? 'Unable to save invoicing workflow.');
+      }
+    });
+  }
+
   resetStatuses(): void {
     this.statusRows = this.buildDefaultStatuses();
   }
@@ -144,6 +193,12 @@ export class WorkflowSettingsComponent implements OnInit {
       defaultWindowMinutes: settings.defaultWindowMinutes,
       enforceTravelBuffer: settings.enforceTravelBuffer,
       autoNotifyReschedule: settings.autoNotifyReschedule
+    }, { emitEvent: false });
+  }
+
+  private patchInvoicingForm(settings: InvoicingSettingsDto): void {
+    this.invoicingForm.patchValue({
+      defaultWorkflow: settings.defaultWorkflow
     }, { emitEvent: false });
   }
 

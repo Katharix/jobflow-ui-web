@@ -76,20 +76,46 @@
         </div>
       </div>
 
-      <div class="detail-actions mt-4">
-        <button
-          type="button"
-          class="btn btn-primary"
-          [disabled]="!canPay"
-          (click)="payInvoice()"
-        >
-          {{ isPaying ? 'Opening Checkout...' : 'Pay Invoice' }}
-        </button>
-      </div>
+      @if (!showPaymentForm) {
+        <div class="detail-actions mt-4">
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="!canPay"
+            (click)="payInvoice()"
+          >
+            {{ isPaying ? 'Opening Checkout...' : 'Pay Invoice' }}
+          </button>
+        </div>
 
-      <p class="text-muted small mt-2 mb-0">
-        Payment opens a secure checkout session.
-      </p>
+        <p class="text-muted small mt-2 mb-0">
+          Payment opens a secure checkout session.
+        </p>
+      }
+
+      @if (showPaymentForm) {
+        <div class="payment-surface mt-4">
+          <div #paymentElementContainer class="payment-element"></div>
+          <div class="detail-actions mt-3">
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="isConfirming"
+              (click)="confirmPayment()"
+            >
+              {{ isConfirming ? 'Processing...' : 'Confirm Payment' }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              [disabled]="isConfirming"
+              (click)="cancelPayment()"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      }
     </div>
   }
 </section>

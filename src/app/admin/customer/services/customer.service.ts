@@ -20,6 +20,10 @@ export interface SendClientHubLinkRequest {
    message?: string;
 }
 
+export interface SendClientHubLinkResponse {
+   magicLink?: string;
+}
+
 @Injectable({providedIn: 'root'})
 export class CustomersService {
    private apiUrl = 'organization/clients/';
@@ -46,7 +50,7 @@ export class CustomersService {
       );
    }
 
-   sendClientHubLink(clientId: string, request: SendClientHubLinkRequest): Observable<void> {
-      return this.api.post<void>(`${this.apiUrl}${clientId}/send-client-hub-link`, request);
+   sendClientHubLink(clientId: string, request: SendClientHubLinkRequest): Observable<SendClientHubLinkResponse> {
+      return this.api.post<SendClientHubLinkResponse>(`${this.apiUrl}${clientId}/send-client-hub-link`, request);
    }
 }

@@ -1,29 +1,39 @@
 <section class="command-center">
-   <article class="hero-panel">
-      <div class="hero-panel__content">
-         <p class="hero-panel__eyebrow">Jobflow Command Center</p>
-         <h2>Create and launch jobs with less effort.</h2>
-         <p>
-            We’ve prioritized the path that matters most: customer intake, job creation, scheduling, and invoicing.
-            Every step is designed to be clear, fast, and actionable.
-         </p>
+   <header class="command-center__header">
+      <div>
+         <p class="command-center__eyebrow">Command center</p>
+         <h2>Quick actions with the workflow in view.</h2>
+         <p>Launch the next step and keep the flow moving without digging through menus.</p>
+      </div>
+      <div class="command-center__status">
+         <span class="status-pill">Secondary</span>
+         <span class="status-detail">Live updates enabled</span>
+      </div>
+   </header>
 
-         <div class="hero-actions">
+   <div class="command-center__grid">
+      <section class="command-center__actions">
+         <h3>Launchers</h3>
+         <div class="action-list">
             <a
                *ngFor="let action of primaryActions"
-               class="hero-action"
+               class="action-card"
                [routerLink]="action.route"
                [queryParams]="action.queryParams || null"
             >
-               <i [class]="action.icon"></i>
+               <div class="action-card__icon">
+                  <i [class]="action.icon"></i>
+               </div>
                <div>
-                  <h3>{{ action.label }}</h3>
+                  <strong>{{ action.label }}</strong>
                   <p>{{ action.description }}</p>
                </div>
             </a>
          </div>
+      </section>
 
+      <section class="command-center__workflow">
          <app-dashboard-comprehensive-workflow [flowSteps]="flowSteps"></app-dashboard-comprehensive-workflow>
-      </div>
-   </article>
+      </section>
+   </div>
 </section>
