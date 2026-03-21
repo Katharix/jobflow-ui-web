@@ -14,8 +14,17 @@ export class BaseApiService {
    private http = inject(HttpClient);
    private baseUrl = environment.apiUrl;
 
-   private getHeaders(includeAuth = true): HttpHeaders {
+   private getHeaders(includeAuth = true, extra?: HttpHeaders): HttpHeaders {
       let headers = new HttpHeaders({'Content-Type': 'application/json'});
+
+      if (extra) {
+         extra.keys().forEach(key => {
+            const value = extra.get(key);
+            if (value !== null) {
+               headers = headers.set(key, value);
+            }
+         });
+      }
 
       return headers;
    }
@@ -46,15 +55,34 @@ export class BaseApiService {
       });
    }
 
+   getWithHeaders<T>(endpoint: string, headers?: HttpHeaders, params?: QueryParams): Observable<T> {
+      return this.http.get<T>(`${this.baseUrl}/${endpoint}`, {
+         headers: this.getHeaders(true, headers),
+         params: this.toHttpParams(params)
+      });
+   }
+
    post<T>(endpoint: string, body: any, includeAuth = true): Observable<T> {
       return this.http.post<T>(`${this.baseUrl}/${endpoint}`, body, {
          headers: this.getHeaders(includeAuth)
       });
    }
 
+   postWithHeaders<T>(endpoint: string, body: any, headers?: HttpHeaders): Observable<T> {
+      return this.http.post<T>(`${this.baseUrl}/${endpoint}`, body, {
+         headers: this.getHeaders(true, headers)
+      });
+   }
+
    put<T>(endpoint: string, body: any, includeAuth = true): Observable<T> {
       return this.http.put<T>(`${this.baseUrl}/${endpoint}`, body, {
          headers: this.getHeaders(includeAuth)
+      });
+   }
+
+   putWithHeaders<T>(endpoint: string, body: any, headers?: HttpHeaders): Observable<T> {
+      return this.http.put<T>(`${this.baseUrl}/${endpoint}`, body, {
+         headers: this.getHeaders(true, headers)
       });
    }
 

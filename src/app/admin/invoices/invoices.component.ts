@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -18,6 +18,8 @@ import {Estimate, EstimateLineItem} from '../estimates/models/estimate';
 import {EstimateService} from '../estimates/services/estimate.service';
 import {InputTextModule} from 'primeng/inputtext';
 import {InputNumberModule} from 'primeng/inputnumber';
+import { Auth } from '@angular/fire/auth';
+import { useNotifierHub, InvoicePaidEvent } from '../services/useNotifierHub';
 
 @Component({
    selector: 'app-invoices',
@@ -36,7 +38,7 @@ import {InputNumberModule} from 'primeng/inputnumber';
    templateUrl: './invoices.component.html',
    styleUrl: './invoices.component.scss'
 })
-export class InvoicesComponent implements OnInit {
+export class InvoicesComponent implements OnInit, OnDestroy {
 
    @ViewChild('clientTemplate', {static: true})
    clientTemplate!: TemplateRef<any>;
@@ -79,6 +81,8 @@ export class InvoicesComponent implements OnInit {
 
    private statusLabelMap: Record<number, string> = { ...JobLifecycleStatusLabels };
 
+   private notifierHub: ReturnType<typeof useNotifierHub> | null = null;
+
    pageSettings: JobflowGridPageSettings = {
       pageSize: 20,
       pageSizes: [10, 20, 50, 100]
@@ -92,7 +96,8 @@ export class InvoicesComponent implements OnInit {
       private router: Router,
       private route: ActivatedRoute,
       private toast: ToastService,
-      private workflowSettings: WorkflowSettingsService
+      private workflowSettings: WorkflowSettingsService,
+      private auth: Auth
    ) {
    }
 
@@ -106,9 +111,18 @@ export class InvoicesComponent implements OnInit {
       this.load();
       this.loadRecentJobs();
 
+      this.notifierHub = useNotifierHub(this.auth, {
+         onInvoicePaid: (payload) => this.applyInvoicePaid(payload)
+      });
+      void this.notifierHub.connect();
+
       if (this.isInvoiceOnboardingFlow) {
          this.openCreateInvoiceDrawer();
       }
+   }
+
+   ngOnDestroy(): void {
+      void this.notifierHub?.disconnect();
    }
 
    private loadWorkflowStatuses(): void {
@@ -248,6 +262,20 @@ export class InvoicesComponent implements OnInit {
             console.error(e);
          }
       });
+   }
+
+   private applyInvoicePaid(payload: InvoicePaidEvent): void {
+      const target = this.items.find(item => item.id === payload.invoiceId);
+      if (!target) {
+         return;
+      }
+
+      target.status = payload.status as InvoiceStatus;
+      target.amountPaid = payload.amountPaid ?? target.amountPaid;
+      target.balanceDue = payload.balanceDue ?? target.balanceDue;
+      if (payload.paidAt) {
+         (target as any).paidAt = payload.paidAt;
+      }
    }
 
    loadRecentJobs(): void {

@@ -28,8 +28,8 @@ export interface CommandCenterFlowStep {
    template: `
       <section class="workflow" *ngIf="flowSteps.length">
          <header class="workflow__header">
-            <h2>Comprehensive workflow</h2>
-            <p>Two clear steps per row. Follow left to right.</p>
+            <h2>Workflow radar</h2>
+            <p>See what is waiting, in motion, and ready to complete.</p>
          </header>
 
          <div class="workflow__grid">
@@ -56,15 +56,15 @@ export interface CommandCenterFlowStep {
 
       .workflow__header h2 {
          margin: 0;
-         font-size: 1rem;
+         font-size: 0.95rem;
          font-weight: 700;
-         color: var(--bs-heading-color);
+         color: #2a3f54;
       }
 
       .workflow__header p {
          margin: 0.2rem 0 0;
-         font-size: 0.8rem;
-         color: var(--bs-secondary-color);
+         font-size: 0.76rem;
+         color: #6c7a89;
       }
 
       .workflow__grid {
@@ -74,37 +74,37 @@ export interface CommandCenterFlowStep {
       }
 
       .workflow-step {
-         border: 1px solid var(--bs-border-color);
-         border-radius: 0.75rem;
-         padding: 0.7rem;
-         background: var(--bs-body-bg);
+         border: 1px solid #e8edf5;
+         border-radius: 0.55rem;
+         padding: 0.65rem;
+         background: #fbfcff;
          display: grid;
-         gap: 0.4rem;
+         gap: 0.35rem;
       }
 
       .workflow-step h3 {
          margin: 0;
-         font-size: 0.86rem;
+         font-size: 0.82rem;
          font-weight: 700;
-         color: var(--bs-heading-color);
+         color: #2a3f54;
       }
 
       .workflow-step p {
          margin: 0;
-         font-size: 0.74rem;
-         color: var(--bs-secondary-color);
+         font-size: 0.72rem;
+         color: #6c7a89;
       }
 
       .workflow-step small {
-         font-size: 0.72rem;
-         color: var(--bs-secondary-color);
+         font-size: 0.7rem;
+         color: #6c7a89;
       }
 
       .workflow-step a {
          margin-top: 0.1rem;
-         font-size: 0.75rem;
+         font-size: 0.72rem;
          font-weight: 700;
-         color: var(--bs-primary);
+         color: #1c86ff;
          text-decoration: none;
          justify-self: start;
       }
@@ -120,7 +120,7 @@ export interface CommandCenterFlowStep {
          font-size: 0.7rem;
          text-transform: uppercase;
          letter-spacing: 0.04em;
-         color: var(--bs-secondary-color);
+         color: #6c7a89;
          font-weight: 700;
       }
 
@@ -128,34 +128,34 @@ export interface CommandCenterFlowStep {
          font-size: 0.66rem;
          font-weight: 700;
          padding: 0.14rem 0.36rem;
-         border-radius: 999rem;
+         border-radius: 0.35rem;
       }
 
       .workflow-step--attention {
-         border-left: 4px solid rgba(var(--bs-warning-rgb), 0.9);
+         border-left: 4px solid rgba(240, 173, 78, 0.9);
       }
 
       .workflow-step--attention .workflow-step__meta strong {
-         background: rgba(var(--bs-warning-rgb), 0.16);
-         color: var(--bs-warning-text-emphasis, var(--bs-warning));
+         background: rgba(240, 173, 78, 0.16);
+         color: #b8741d;
       }
 
       .workflow-step--ready {
-         border-left: 4px solid rgba(var(--bs-primary-rgb), 0.9);
+         border-left: 4px solid rgba(28, 134, 255, 0.9);
       }
 
       .workflow-step--ready .workflow-step__meta strong {
-         background: rgba(var(--bs-primary-rgb), 0.12);
-         color: var(--bs-primary);
+         background: rgba(28, 134, 255, 0.12);
+         color: #1c86ff;
       }
 
       .workflow-step--clear {
-         border-left: 4px solid rgba(var(--bs-success-rgb), 0.9);
+         border-left: 4px solid rgba(26, 187, 156, 0.9);
       }
 
       .workflow-step--clear .workflow-step__meta strong {
-         background: rgba(var(--bs-success-rgb), 0.15);
-         color: var(--bs-success);
+         background: rgba(26, 187, 156, 0.15);
+         color: #1abb9c;
       }
 
       @media (max-width: 575px) {

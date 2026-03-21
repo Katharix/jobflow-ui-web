@@ -12,7 +12,18 @@ export interface EstimateRevisionRequestedEvent {
 
 export interface NotifierHubCallbacks {
   onEstimateRevisionRequested?: (payload: EstimateRevisionRequestedEvent) => void;
+  onInvoicePaid?: (payload: InvoicePaidEvent) => void;
   onError?: (error: unknown) => void;
+}
+
+export interface InvoicePaidEvent {
+  invoiceId: string;
+  organizationId: string;
+  organizationClientId: string;
+  status: number | string;
+  balanceDue: number;
+  amountPaid: number;
+  paidAt?: string;
 }
 
 export interface NotifierHubHandle {
@@ -35,6 +46,10 @@ export function useNotifierHub(auth: Auth, callbacks: NotifierHubCallbacks = {})
 
         connection.on('EstimateRevisionRequested', (payload: EstimateRevisionRequestedEvent) => {
           callbacks.onEstimateRevisionRequested?.(payload);
+        });
+
+        connection.on('InvoicePaid', (payload: InvoicePaidEvent) => {
+          callbacks.onInvoicePaid?.(payload);
         });
       }
 

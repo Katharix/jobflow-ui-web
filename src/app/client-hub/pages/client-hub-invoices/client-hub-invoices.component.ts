@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { InvoiceStatus } from '../../../models/invoice';
 import { ClientHubInvoice } from '../../models/client-hub.models';
 import { ClientHubAuthService } from '../../services/client-hub-auth.service';
 import { ClientHubService } from '../../services/client-hub.service';
+import { ClientHubNotifierService, ClientHubInvoicePaidEvent } from '../../services/client-hub-notifier.service';
 
 @Component({
   selector: 'app-client-hub-invoices',
@@ -14,10 +15,14 @@ import { ClientHubService } from '../../services/client-hub.service';
   templateUrl: './client-hub-invoices.component.html',
   styleUrl: './client-hub-invoices.component.scss',
 })
-export class ClientHubInvoicesComponent implements OnInit {
+export class ClientHubInvoicesComponent implements OnInit, OnDestroy {
   private readonly clientHubService = inject(ClientHubService);
   private readonly clientHubAuth = inject(ClientHubAuthService);
   private readonly router = inject(Router);
+  private readonly notifier = inject(ClientHubNotifierService);
+  private readonly invoicePaidHandler = (payload: ClientHubInvoicePaidEvent) => {
+    this.applyInvoicePaid(payload);
+  };
 
   isLoading = true;
   error: string | null = null;
@@ -25,6 +30,13 @@ export class ClientHubInvoicesComponent implements OnInit {
 
   ngOnInit(): void {
     this.load();
+    this.notifier.onInvoicePaid(this.invoicePaidHandler);
+    void this.notifier.startConnection();
+  }
+
+  ngOnDestroy(): void {
+    this.notifier.offInvoicePaid(this.invoicePaidHandler);
+    void this.notifier.stopConnection();
   }
 
   statusLabel(status: InvoiceStatus | number): string {
@@ -99,5 +111,19 @@ export class ClientHubInvoicesComponent implements OnInit {
         this.error = 'Unable to load your invoices at this time.';
       },
     });
+  }
+
+  private applyInvoicePaid(payload: ClientHubInvoicePaidEvent): void {
+    const target = this.items.find(item => item.id === payload.invoiceId);
+    if (!target) {
+      return;
+    }
+
+    target.status = payload.status as InvoiceStatus;
+    target.amountPaid = payload.amountPaid ?? target.amountPaid;
+    target.balanceDue = payload.balanceDue ?? target.balanceDue;
+    if (payload.paidAt) {
+      (target as any).paidAt = payload.paidAt;
+    }
   }
 }

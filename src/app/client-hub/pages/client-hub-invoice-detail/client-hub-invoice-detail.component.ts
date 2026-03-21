@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Invoice, InvoiceStatus } from '../../../models/invoice';
 import { ClientHubAuthService } from '../../services/client-hub-auth.service';
 import { ClientHubService } from '../../services/client-hub.service';
 import { environment } from '../../../../environments/environment';
+import { loadStripe, Stripe, StripeElements } from '@stripe/stripe-js';
+import { ClientHubNotifierService, ClientHubInvoicePaidEvent } from '../../services/client-hub-notifier.service';
 
 @Component({
   selector: 'app-client-hub-invoice-detail',
@@ -14,25 +16,43 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './client-hub-invoice-detail.component.html',
   styleUrl: './client-hub-invoice-detail.component.scss',
 })
-export class ClientHubInvoiceDetailComponent implements OnInit {
+export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly clientHubService = inject(ClientHubService);
   private readonly clientHubAuth = inject(ClientHubAuthService);
   private readonly http = inject(HttpClient);
+  private readonly notifier = inject(ClientHubNotifierService);
+  private readonly invoicePaidHandler = (payload: ClientHubInvoicePaidEvent) => {
+    if (payload.invoiceId === this.invoice?.id) {
+      this.loadInvoice();
+    }
+  };
 
   isLoading = true;
   isPaying = false;
+  isConfirming = false;
   error: string | null = null;
   paymentError: string | null = null;
   invoice: Invoice | null = null;
+  showPaymentForm = false;
+  private stripe?: Stripe | null;
+  private elements?: StripeElements;
+  @ViewChild('paymentElementContainer') paymentElementContainer?: ElementRef<HTMLDivElement>;
 
   ngOnInit(): void {
     this.loadInvoice();
+    this.notifier.onInvoicePaid(this.invoicePaidHandler);
+    void this.notifier.startConnection();
+  }
+
+  ngOnDestroy(): void {
+    this.notifier.offInvoicePaid(this.invoicePaidHandler);
+    void this.notifier.stopConnection();
   }
 
   get canPay(): boolean {
-    if (!this.invoice || this.isPaying) return false;
+    if (!this.invoice || this.isPaying || this.isConfirming) return false;
 
     const status = this.resolveStatus(this.invoice.status);
     const balanceDue = Number(this.invoice.balanceDue ?? 0);
@@ -100,6 +120,7 @@ export class ClientHubInvoiceDetailComponent implements OnInit {
 
     this.isPaying = true;
     this.paymentError = null;
+    this.showPaymentForm = false;
 
     const token = this.clientHubAuth.getToken();
     if (!token) {
@@ -112,7 +133,7 @@ export class ClientHubInvoiceDetailComponent implements OnInit {
     });
 
     this.http
-      .post<{ url?: string }>(
+      .post<{ url?: string; clientSecret?: string }>(
         `${environment.apiUrl.replace(/\/$/, '')}/payments/checkout`,
         { invoiceId: this.invoice.id },
         { headers },
@@ -123,6 +144,11 @@ export class ClientHubInvoiceDetailComponent implements OnInit {
 
         if (result?.url) {
           window.location.href = result.url;
+          return;
+        }
+
+        if (result?.clientSecret) {
+          this.initializeStripePayment(result.clientSecret);
           return;
         }
 
@@ -139,6 +165,41 @@ export class ClientHubInvoiceDetailComponent implements OnInit {
         this.paymentError = 'Unable to start payment. Please try again.';
       },
     });
+  }
+
+  async confirmPayment(): Promise<void> {
+    if (!this.stripe || !this.elements) return;
+
+    this.isConfirming = true;
+    this.paymentError = null;
+
+    try {
+      const result = await this.stripe.confirmPayment({
+        elements: this.elements,
+        redirect: 'if_required',
+        confirmParams: {
+          return_url: window.location.href,
+        },
+      });
+
+      if (result.error) {
+        this.paymentError = result.error.message ?? 'Payment failed.';
+        return;
+      }
+
+      if (result.paymentIntent?.status === 'succeeded') {
+        this.showPaymentForm = false;
+        this.loadInvoice();
+      }
+    } catch {
+      this.paymentError = 'Unable to confirm payment right now.';
+    } finally {
+      this.isConfirming = false;
+    }
+  }
+
+  cancelPayment(): void {
+    this.showPaymentForm = false;
   }
 
   private loadInvoice(): void {
@@ -168,6 +229,27 @@ export class ClientHubInvoiceDetailComponent implements OnInit {
         this.error = 'Unable to load this invoice right now.';
       },
     });
+  }
+
+  private async initializeStripePayment(clientSecret: string): Promise<void> {
+    try {
+      this.stripe = await loadStripe(environment.stripePublicKey);
+      if (!this.stripe) {
+        this.paymentError = 'Unable to initialize Stripe.';
+        return;
+      }
+
+      this.elements = this.stripe.elements({ clientSecret });
+      this.showPaymentForm = true;
+
+      setTimeout(() => {
+        if (!this.elements || !this.paymentElementContainer?.nativeElement) return;
+        const element = this.elements.create('payment');
+        element.mount(this.paymentElementContainer.nativeElement);
+      });
+    } catch {
+      this.paymentError = 'Unable to initialize payment.';
+    }
   }
 
   private resolveStatus(status: InvoiceStatus | number | string): InvoiceStatus {

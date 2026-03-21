@@ -1,20 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PageHeaderComponent } from '../dashboard/page-header/page-header.component';
-
-type TransactionStatus = 'Paid' | 'Pending' | 'Refunded' | 'Failed';
-
-interface PaymentTransaction {
-  date: string;
-  customer: string;
-  reference: string;
-  amount: number;
-  fees: number;
-  net: number;
-  provider: 'Stripe' | 'Square';
-  status: TransactionStatus;
-}
+import { Invoice, InvoiceStatus } from '../../models/invoice';
+import { InvoiceService } from '../invoices/services/invoice.service';
+import { ToastService } from '../../common/toast/toast.service';
 
 @Component({
   selector: 'app-billing-payments',
@@ -23,64 +13,123 @@ interface PaymentTransaction {
   templateUrl: './billing-payments.component.html',
   styleUrl: './billing-payments.component.scss'
 })
-export class BillingPaymentsComponent {
-  readonly transactions: PaymentTransaction[] = [
-    {
-      date: '2026-03-12',
-      customer: 'Acme Construction',
-      reference: 'INV-1042',
-      amount: 1260,
-      fees: 39.12,
-      net: 1220.88,
-      provider: 'Stripe',
-      status: 'Paid'
-    },
-    {
-      date: '2026-03-10',
-      customer: 'Bluebird Realty',
-      reference: 'INV-1039',
-      amount: 540,
-      fees: 16.74,
-      net: 523.26,
-      provider: 'Square',
-      status: 'Pending'
-    },
-    {
-      date: '2026-03-08',
-      customer: 'Glenwood HOA',
-      reference: 'INV-1034',
-      amount: 325,
-      fees: 10.08,
-      net: 314.92,
-      provider: 'Stripe',
-      status: 'Refunded'
-    }
-  ];
+export class BillingPaymentsComponent implements OnInit {
+  invoices: Invoice[] = [];
+  loading = true;
+  error: string | null = null;
+
+  constructor(
+    private readonly invoiceService: InvoiceService,
+    private readonly toast: ToastService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadInvoices();
+  }
+
+  get draftInvoices(): Invoice[] {
+    return this.invoices.filter(invoice => invoice.status === InvoiceStatus.Draft);
+  }
+
+  get sentInvoices(): Invoice[] {
+    return this.invoices.filter(invoice => invoice.status === InvoiceStatus.Sent);
+  }
+
+  get overdueInvoices(): Invoice[] {
+    return this.invoices.filter(invoice => invoice.status === InvoiceStatus.Overdue);
+  }
+
+  get paidInvoices(): Invoice[] {
+    return this.invoices.filter(invoice => invoice.status === InvoiceStatus.Paid);
+  }
 
   get totalOutstanding(): number {
-    return 1430;
+    return this.invoices
+      .filter(invoice => invoice.status !== InvoiceStatus.Paid)
+      .reduce((sum, invoice) => sum + (invoice.balanceDue ?? 0), 0);
   }
 
-  get overdueInvoices(): number {
-    return 3;
+  get totalOverdue(): number {
+    return this.overdueInvoices.length;
   }
 
-  get upcomingPayout(): number {
-    return 1744.14;
+  get totalDrafts(): number {
+    return this.draftInvoices.length;
   }
 
-  getStatusClass(status: TransactionStatus): string {
+  get totalSent(): number {
+    return this.sentInvoices.length;
+  }
+
+  getStatusLabel(status: InvoiceStatus): string {
     switch (status) {
-      case 'Paid':
+      case InvoiceStatus.Draft:
+        return 'Draft';
+      case InvoiceStatus.Sent:
+        return 'Sent';
+      case InvoiceStatus.Paid:
+        return 'Paid';
+      case InvoiceStatus.Overdue:
+        return 'Overdue';
+      default:
+        return 'Unknown';
+    }
+  }
+
+  getStatusClass(status: InvoiceStatus): string {
+    switch (status) {
+      case InvoiceStatus.Paid:
         return 'badge bg-success';
-      case 'Pending':
-        return 'badge bg-warning text-dark';
-      case 'Refunded':
-        return 'badge bg-info text-dark';
-      case 'Failed':
+      case InvoiceStatus.Overdue:
         return 'badge bg-danger';
+      case InvoiceStatus.Sent:
+        return 'badge bg-warning text-dark';
+      case InvoiceStatus.Draft:
+        return 'badge bg-secondary';
       default:
         return 'badge bg-secondary';
     }
+  }
+
+  openInvoice(invoice: Invoice): void {
+    window.open(`/invoice/view/${invoice.id}`, '_blank');
+  }
+
+  sendInvoice(invoice: Invoice): void {
+    this.invoiceService.sendInvoice(invoice.id).subscribe({
+      next: () => {
+        this.toast.success('Your invoice has been sent to the client.', 'Invoice sent');
+        this.loadInvoices();
+      },
+      error: () => {
+        this.toast.error('Unable to send the invoice right now.', 'Send failed');
+      }
+    });
+  }
+
+  sendReminder(invoice: Invoice): void {
+    this.invoiceService.sendReminder(invoice.id).subscribe({
+      next: () => {
+        this.toast.success('A payment reminder was sent to the client.', 'Reminder sent');
+      },
+      error: () => {
+        this.toast.error('Unable to send the reminder right now.', 'Reminder failed');
+      }
+    });
+  }
+
+  private loadInvoices(): void {
+    this.loading = true;
+    this.error = null;
+    this.invoiceService.getByOrganization().subscribe({
+      next: (invoices) => {
+        this.invoices = invoices ?? [];
+        this.loading = false;
+      },
+      error: () => {
+        this.error = 'Unable to load billing details right now.';
+        this.loading = false;
+      }
+    });
   }
 }

@@ -75,4 +75,18 @@
     gap: 0.65rem;
     flex-wrap: wrap;
   }
+
+  .payment-surface {
+    border: 1px solid #e1e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    background: #f8fafc;
+  }
+
+  .payment-element {
+    background: #ffffff;
+    border: 1px solid #e1e8f0;
+    border-radius: 10px;
+    padding: 0.75rem;
+  }
 }

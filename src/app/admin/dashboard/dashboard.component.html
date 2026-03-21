@@ -1,4 +1,4 @@
-<section class="dashboard-page">
+<section class="dashboard-page dashboard-page--gentelella">
    <section class="dashboard-welcome">
       <div class="dashboard-welcome__message">
          <h1>{{ welcomeTitle }}</h1>
@@ -10,17 +10,37 @@
       </div>
    </section>
 
+   <section class="dashboard-mini-tiles">
+      <article
+         *ngFor="let tile of miniTiles"
+         class="mini-tile"
+         [ngClass]="tile.tone ? 'mini-tile--' + tile.tone : ''"
+      >
+         <p>{{ tile.label }}</p>
+         <strong>{{ tile.value }}</strong>
+         <span>{{ tile.detail }}</span>
+         <a *ngIf="tile.route" [routerLink]="tile.route">View</a>
+      </article>
+   </section>
+
    <section class="dashboard-grid">
-      <article class="dashboard-panel dashboard-panel--onboarding">
+
+      <article class="dashboard-panel dashboard-panel--onboarding" *ngIf="showOnboardingChecklist">
          <div class="dashboard-panel__header">
             <h2>Onboarding checklist</h2>
             <span>Complete setup once for a smoother daily flow</span>
          </div>
 
-         <jobflow-onboarding-checklist [organizationId]="organizationId"></jobflow-onboarding-checklist>
+         <jobflow-onboarding-checklist
+            [organizationId]="organizationId"
+            (allCompleted)="onChecklistCompleted()"
+         ></jobflow-onboarding-checklist>
       </article>
 
-      <article class="dashboard-panel dashboard-panel--activity">
+      <article
+         class="dashboard-panel dashboard-panel--activity"
+         [ngClass]="{ 'dashboard-panel--activity-full': !showOnboardingChecklist }"
+      >
          <div class="dashboard-panel__header">
             <h2>Client Activity</h2>
             <span>Estimate decisions, revisions, and invoice payments</span>
@@ -49,11 +69,12 @@
          </ng-template>
       </article>
 
-      <section id="dashboard-command-center" class="dashboard-command-center">
-         <app-jobflow-command-center
-            [primaryActions]="primaryActions"
-            [flowSteps]="flowSteps"
-         ></app-jobflow-command-center>
-      </section>
+   </section>
+
+   <section class="dashboard-secondary" id="dashboard-command-center">
+      <app-jobflow-command-center
+         [primaryActions]="primaryActions"
+         [flowSteps]="flowSteps"
+      ></app-jobflow-command-center>
    </section>
 </section>

@@ -18,6 +18,7 @@ export class OnboardingChecklistComponent implements OnChanges {
 
    steps: OnboardingStepDto[] = [];
    nextStep: OnboardingStepDto | null = null;
+   private completionSynced = false;
 
    constructor(
       private onboardingService: OnboardingService,
@@ -36,7 +37,18 @@ export class OnboardingChecklistComponent implements OnChanges {
          .subscribe(steps => {
             this.steps = steps.sort((a, b) => a.order - b.order);
             this.nextStep = this.steps.find(s => !s.isCompleted) ?? null;
-            if (this.allStepsCompleted) this.allCompleted.emit();
+            if (this.allStepsCompleted) {
+               this.allCompleted.emit();
+
+               if (!this.completionSynced) {
+                  this.completionSynced = true;
+                  this.onboardingService.completeOnboarding().subscribe({
+                     error: () => {
+                        this.completionSynced = false;
+                     }
+                  });
+               }
+            }
          });
    }
 
@@ -80,6 +92,10 @@ export class OnboardingChecklistComponent implements OnChanges {
       const title = (step.title ?? '').toLowerCase();
       const text = `${key} ${title}`;
 
+      if (text.includes('quick-start') || text.includes('onboarding path') || text.includes('industry')) {
+         return '/admin/onboarding/quick-start';
+      }
+
       if (text.includes('payment') || text.includes('stripe') || text.includes('square')) return '/admin/connectedpayment';
       if (text.includes('branding') || text.includes('brand')) return '/admin/settings/branding';
       if (text.includes('company') || text.includes('organization')) return '/admin/company';
@@ -111,6 +127,9 @@ export class OnboardingChecklistComponent implements OnChanges {
       const key = (step.key ?? '').toLowerCase();
       const title = (step.title ?? '').toLowerCase();
       const text = `${key} ${title}`;
+
+      if (text.includes('onboarding path')) return 'Pick the onboarding track that matches your immediate priorities.';
+      if (text.includes('quick-start') || text.includes('industry')) return 'Select an industry preset to load suggested services and workflow labels.';
 
       if (text.includes('payment') || text.includes('stripe') || text.includes('square')) return 'Connect your payment provider so you can collect payments.';
       if (text.includes('branding') || text.includes('brand')) return 'Upload your logo and set your brand details.';

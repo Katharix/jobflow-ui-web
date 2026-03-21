@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {BaseApiService} from '../../../services/shared/base-api.service';
-import {Job, JobLifecycleStatus} from "../models/job";
+import {Job, JobLifecycleStatus, InvoicingWorkflow} from "../models/job";
 
 export interface CreateJobRequest {
    organizationClientId: string;
    title: string;
+   invoicingWorkflow?: InvoicingWorkflow | null;
 }
 
 export interface JobUpsertRequest {
@@ -14,6 +15,7 @@ export interface JobUpsertRequest {
    title: string;
    comments?: string;
    lifecycleStatus?: JobLifecycleStatus;
+   invoicingWorkflow?: InvoicingWorkflow | null;
 }
 
 @Injectable({providedIn: 'root'})

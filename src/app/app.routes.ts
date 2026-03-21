@@ -24,6 +24,7 @@ import {JobInvoiceComponent} from "./admin/jobs/job-invoice/job-invoice.componen
 import {
    ConnectPaymentComponent
 } from "./views/general/onboarding-checklist/onboarding-steps/connect-payment/connect-payment.component";
+import { OnboardingQuickStartComponent } from './views/general/onboarding-checklist/onboarding-steps/quick-start/quick-start.component';
 import {JobComponent} from "./admin/jobs/job.component";
 import {InvoicesComponent} from "./admin/invoices/invoices.component";
 import {HelpComponent} from "./admin/help/help.component";
@@ -110,6 +111,12 @@ export const routes: Routes = [
          {
             path: 'connectedpayment',
             component: ConnectPaymentComponent
+         },
+         {
+            path: 'onboarding/quick-start',
+            component: OnboardingQuickStartComponent,
+            canActivate: [subscriptionGuard],
+            data: { minPlan: 'Flow' }
          },
          {
             path: 'billing-payments',

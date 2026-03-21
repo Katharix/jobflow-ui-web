@@ -1,11 +1,74 @@
 <app-page-header
    title="Clients"
-   subtitle="Manage your clients"
+   subtitle="Keep client data tidy and ready for every workflow."
    [actions]="headerActions"
 ></app-page-header>
 <div *ngIf="error" class="alert alert-danger mb-3">
    {{ error }}
 </div>
+
+<section class="clientflow-hero">
+   <div class="clientflow-hero__intro">
+      <span class="clientflow-hero__eyebrow">Client workspace</span>
+      <h2>Clarity for every relationship.</h2>
+      <p>Capture contact details once and keep every follow-up smooth.</p>
+   </div>
+   <div class="clientflow-hero__metrics">
+      <div class="clientflow-metric">
+         <span class="clientflow-metric__label">Total clients</span>
+         <span class="clientflow-metric__value">{{ totalClients }}</span>
+      </div>
+      <div class="clientflow-metric">
+         <span class="clientflow-metric__label">With email</span>
+         <span class="clientflow-metric__value">{{ clientsWithEmail }}</span>
+      </div>
+      <div class="clientflow-metric">
+         <span class="clientflow-metric__label">With phone</span>
+         <span class="clientflow-metric__value">{{ clientsWithPhone }}</span>
+      </div>
+      <div class="clientflow-metric">
+         <span class="clientflow-metric__label">Missing email</span>
+         <span class="clientflow-metric__value">{{ clientsMissingEmail }}</span>
+      </div>
+   </div>
+</section>
+
+<section class="clientflow-shell">
+   <div class="clientflow-shell__header">
+      <div>
+         <h6 class="mb-1">Client directory</h6>
+         <p class="text-muted mb-0">Search, edit, and email Client Hub access directly from this list.</p>
+      </div>
+      <div class="clientflow-shell__actions">
+         <button
+            type="button"
+            class="btn btn-sm"
+            [ngClass]="showMissingEmailOnly ? 'btn-dark' : 'btn-outline-secondary'"
+            (click)="toggleMissingEmailFilter()"
+         >
+            Missing email ({{ clientsMissingEmail }})
+         </button>
+         <span class="badge bg-light text-dark">Email Client Hub Link in actions menu</span>
+      </div>
+   </div>
+
+   <div class="clientflow-grid">
+      <ng-template #clientNameTemplate let-client>
+         <div class="client-cell">
+            <div class="client-title">{{ client.firstName }} {{ client.lastName }}</div>
+            <div class="client-meta">{{ client.emailAddress || 'Email missing' }}</div>
+         </div>
+      </ng-template>
+
+      <jobflow-grid
+         [data]="filteredItems"
+         [columns]="columns"
+         [pageSettings]="pageSettings"
+         [showSearchBar]="true"
+         (commandClick)="onCommandClick($event)"
+      ></jobflow-grid>
+   </div>
+</section>
 
 <jobflow-drawer
    [open]="isDrawerOpen"
@@ -16,58 +79,6 @@
       [client]="editingClient"
       (saved)="onCreateSaved()"
       (cancelled)="onCreateCancelled()"/>
-</jobflow-drawer>
-
-<jobflow-drawer
-   [open]="isSendLinkDrawerOpen"
-   title="Send Client Hub Link"
-   (closed)="closeSendLinkDrawer()"
->
-   <ng-container *ngIf="clientToSendLink">
-      @if (sendLinkError) {
-         <div class="alert alert-danger mb-3">{{ sendLinkError }}</div>
-      }
-
-      <div class="mb-4">
-         <label class="form-label fw-semibold">Email Address</label>
-         <input
-            type="email"
-            class="form-control"
-            [(ngModel)]="sendLinkEmail"
-            placeholder="client@example.com"
-            [disabled]="sendingLink" />
-      </div>
-
-      <div class="mb-4">
-         <label class="form-label fw-semibold">
-            Message <span class="text-muted fw-normal">(optional)</span>
-         </label>
-         <textarea
-            class="form-control"
-            rows="4"
-            [(ngModel)]="sendLinkMessage"
-            placeholder="Add a personal note with the Client Hub link…"
-            [disabled]="sendingLink">
-         </textarea>
-      </div>
-
-      <div class="d-flex justify-content-end gap-2">
-         <button
-            type="button"
-            class="btn btn-outline-secondary"
-            (click)="closeSendLinkDrawer()"
-            [disabled]="sendingLink">
-            Cancel
-         </button>
-         <button
-            type="button"
-            class="btn btn-primary"
-            (click)="confirmSendLink()"
-            [disabled]="sendingLink || !sendLinkEmail.trim()">
-            {{ sendingLink ? 'Sending…' : 'Send Link' }}
-         </button>
-      </div>
-   </ng-container>
 </jobflow-drawer>
 
 <jobflow-modal
@@ -86,16 +97,3 @@
    ></app-delete-confirm>
 </jobflow-modal>
 
-<ng-template #clientNameTemplate let-client>
-   <div class="client-cell">
-      <div class="client-title">{{ client.firstName }} {{ client.lastName }}</div>
-   </div>
-</ng-template>
-
-<jobflow-grid
-   [data]="items"
-   [columns]="columns"
-   [pageSettings]="pageSettings"
-   [showSearchBar]="true"
-   (commandClick)="onCommandClick($event)"
-></jobflow-grid>

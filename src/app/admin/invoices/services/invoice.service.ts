@@ -35,6 +35,10 @@ export class InvoiceService {
     return this.api.post<void>(`${this.invoiceUrl}${invoiceId}/send`, {});
   }
 
+  sendReminder(invoiceId: string): Observable<void> {
+    return this.api.post<void>(`${this.invoiceUrl}${invoiceId}/remind`, {});
+  }
+
   deleteInvoice(id: string): Observable<void> {
     return this.api.delete<void>(`${this.invoiceUrl}${id}`);
   }

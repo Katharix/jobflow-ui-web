@@ -40,15 +40,12 @@ export class CustomerComponent {
    error: string | null = null;
    isDrawerOpen = false;
    editingClient: Client | null = null;
-   isSendLinkDrawerOpen = false;
-   clientToSendLink: Client | null = null;
-   sendLinkEmail = '';
-   sendLinkMessage = '';
    sendingLink = false;
    sendLinkError: string | null = null;
    showDeleteModal = false;
    selectedClient: Client | null = null;
    selectedClientName = '';
+   showMissingEmailOnly = false;
    private onboardingActionHandled = false;
    private returnToCommandCenter = false;
    private suppressNextDrawerClosedHandler = false;
@@ -94,7 +91,7 @@ export class CustomerComponent {
          buttonOption: {
             cssClass: 'e-flat e-info',
             iconCss: 'e-icons e-send',
-            content: 'Send Link'
+            content: 'Email Client Hub Link'
          }
       },
       {
@@ -142,6 +139,34 @@ export class CustomerComponent {
       });
    }
 
+   get totalClients(): number {
+      return this.items.length;
+   }
+
+   get clientsWithEmail(): number {
+      return this.items.filter(client => !!client.emailAddress?.trim()).length;
+   }
+
+   get clientsWithPhone(): number {
+      return this.items.filter(client => !!client.phoneNumber?.trim()).length;
+   }
+
+   get clientsMissingEmail(): number {
+      return this.totalClients - this.clientsWithEmail;
+   }
+
+   get filteredItems(): Client[] {
+      if (!this.showMissingEmailOnly) {
+         return this.items;
+      }
+
+      return this.items.filter(client => !client.emailAddress?.trim());
+   }
+
+   toggleMissingEmailFilter(): void {
+      this.showMissingEmailOnly = !this.showMissingEmailOnly;
+   }
+
    onAddClientClick(): void {
 
    }
@@ -155,7 +180,7 @@ export class CustomerComponent {
             this.isDrawerOpen = true;
             break;
          case 'SendLink':
-            this.openSendLink(client);
+            this.sendClientHubLink(client);
             break;
          case 'Delete':
             this.deleteClient(client);
@@ -163,39 +188,30 @@ export class CustomerComponent {
       }
    }
 
-   openSendLink(client: Client): void {
-      this.clientToSendLink = client;
-      this.sendLinkEmail = client.emailAddress ?? '';
-      this.sendLinkMessage = '';
-      this.sendLinkError = null;
-      this.isSendLinkDrawerOpen = true;
-   }
+   sendClientHubLink(client: Client): void {
+      if (this.sendingLink) return;
+      if (!client.id) return;
+      if (!client.emailAddress?.trim()) {
+         this.toast.error('Client email address is required to send the link.');
+         return;
+      }
 
-   confirmSendLink(): void {
-      if (!this.clientToSendLink || !this.sendLinkEmail.trim()) return;
-      if (!this.clientToSendLink.id) return;
       this.sendingLink = true;
       this.sendLinkError = null;
 
-      this.customers.sendClientHubLink(this.clientToSendLink.id, {
-         recipientEmail: this.sendLinkEmail.trim(),
-         message: this.sendLinkMessage.trim() || undefined
+      this.customers.sendClientHubLink(client.id, {
+         recipientEmail: client.emailAddress.trim()
       }).subscribe({
          next: () => {
             this.sendingLink = false;
-            this.isSendLinkDrawerOpen = false;
             this.toast.success('Client Hub link sent successfully.');
          },
          error: () => {
             this.sendingLink = false;
             this.sendLinkError = 'Failed to send link. Please try again.';
+            this.toast.error(this.sendLinkError);
          }
       });
-   }
-
-   closeSendLinkDrawer(): void {
-      this.isSendLinkDrawerOpen = false;
-      this.clientToSendLink = null;
    }
 
    deleteClient(client: Client): void {
