@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
@@ -8,6 +8,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { ScheduleType } from '../models/assignment';
 import { RecurrenceRuleUpsertRequest } from '../models/recurrence-rule';
 import { WeatherForecastDay } from '../../../models/weather';
+import { ScheduleSettingsDto } from '../../settings/models/schedule-settings';
 
 type ScheduleMode = 'OneTime' | 'Recurring';
 
@@ -17,11 +18,16 @@ type ScheduleMode = 'OneTime' | 'Recurring';
    imports: [CommonModule, ReactiveFormsModule, SelectModule, InputNumberModule, DatePickerModule, TextareaModule],
    templateUrl: './job-assignments-form.component.html',
 })
-export class JobAssignmentFormComponent implements OnInit {
+export class JobAssignmentFormComponent implements OnInit, OnChanges {
 
    scheduleModeOptions = [
       { label: 'One Time', value: 'OneTime' },
       { label: 'Recurring', value: 'Recurring' }
+   ];
+
+   scheduleTypeOptions = [
+      { label: 'Exact time', value: ScheduleType.Exact },
+      { label: 'Time window', value: ScheduleType.Window }
    ];
 
    patternOptions = [
@@ -38,6 +44,7 @@ export class JobAssignmentFormComponent implements OnInit {
    @Input() jobId!: string;
    @Input() scheduledStart!: Date;
    @Input() scheduledEnd!: Date;
+   @Input() scheduleSettings: ScheduleSettingsDto | null = null;
    @Input() selectedDayForecast: WeatherForecastDay | null = null;
    @Input() isWeatherLoading = false;
    @Input() addressMissing = false;
@@ -74,10 +81,15 @@ export class JobAssignmentFormComponent implements OnInit {
    constructor(private fb: FormBuilder) {}
 
    ngOnInit(): void {
+      const defaultWindowMinutes = this.scheduleSettings?.defaultWindowMinutes ?? 120;
+
       this.form = this.fb.group({
          scheduledStart: [this.scheduledStart, Validators.required],
          scheduledEnd: [this.scheduledEnd, Validators.required],
          notes: [''],
+
+         scheduleType: [ScheduleType.Exact, Validators.required],
+         windowMinutes: [defaultWindowMinutes, [Validators.min(15)]],
 
          scheduleMode: ['OneTime' as ScheduleMode, Validators.required],
 
@@ -95,6 +107,23 @@ export class JobAssignmentFormComponent implements OnInit {
       this.form.get('scheduleMode')?.valueChanges.subscribe(() => this.configureRecurrenceValidators());
       this.form.get('pattern')?.valueChanges.subscribe(() => this.configureRecurrenceValidators());
       this.form.get('endType')?.valueChanges.subscribe(() => this.configureRecurrenceValidators());
+
+      this.form.get('scheduleType')?.valueChanges.subscribe(() => this.syncWindowEnd());
+      this.form.get('scheduledStart')?.valueChanges.subscribe(() => this.syncWindowEnd());
+      this.form.get('windowMinutes')?.valueChanges.subscribe(() => this.syncWindowEnd());
+      this.syncWindowEnd();
+   }
+
+   ngOnChanges(changes: SimpleChanges): void {
+      if (!changes['scheduleSettings'] || !this.form) {
+         return;
+      }
+
+      const nextDefault = this.scheduleSettings?.defaultWindowMinutes;
+      if (typeof nextDefault === 'number' && nextDefault > 0) {
+         this.form.get('windowMinutes')?.setValue(nextDefault, { emitEvent: false });
+         this.syncWindowEnd();
+      }
    }
 
    get isRecurring(): boolean {
@@ -154,7 +183,7 @@ export class JobAssignmentFormComponent implements OnInit {
          jobId: this.jobId,
          scheduledStart: start,
          scheduledEnd: end,
-         scheduleType: ScheduleType.Exact,
+         scheduleType: v.scheduleType,
          notes: v.notes ?? '',
          recurrence,
       });
@@ -215,6 +244,35 @@ export class JobAssignmentFormComponent implements OnInit {
    }
 
    protected readonly ScheduleType = ScheduleType;
+
+   get travelBufferMinutes(): number {
+      return this.scheduleSettings?.travelBufferMinutes ?? 0;
+   }
+
+   private syncWindowEnd(): void {
+      if (!this.form) {
+         return;
+      }
+
+      const scheduleType = this.form.get('scheduleType')?.value as ScheduleType;
+      if (scheduleType !== ScheduleType.Window) {
+         return;
+      }
+
+      const startValue = this.form.get('scheduledStart')?.value;
+      if (!startValue) {
+         return;
+      }
+
+      const start = new Date(startValue);
+      const windowMinutes = Number(this.form.get('windowMinutes')?.value ?? 0);
+      if (!Number.isFinite(windowMinutes) || windowMinutes <= 0) {
+         return;
+      }
+
+      const end = new Date(start.getTime() + windowMinutes * 60000);
+      this.form.get('scheduledEnd')?.setValue(end, { emitEvent: false });
+   }
 
    get weatherMessage(): string {
       if (this.isWeatherLoading) {

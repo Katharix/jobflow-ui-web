@@ -23,6 +23,12 @@ export class NavService {
       ],
       '/admin/settings/branding': [
          {label: 'Branding', icon: '', route: '/admin/settings/branding'},
+         {label: 'Workflow', icon: '', route: '/admin/settings/workflow'},
+         {label: 'Edit Profile', icon: '', route: '/general/edit-profile'}
+      ],
+      '/admin/settings/workflow': [
+         {label: 'Branding', icon: '', route: '/admin/settings/branding'},
+         {label: 'Workflow', icon: '', route: '/admin/settings/workflow'},
          {label: 'Edit Profile', icon: '', route: '/general/edit-profile'}
       ],
       '/admin/jobs': [

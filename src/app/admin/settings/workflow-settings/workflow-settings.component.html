@@ -1,0 +1,85 @@
+<app-page-header
+  [title]="'Workflow Settings'"
+  [subtitle]="'Keep scheduling simple while making statuses your own.'"
+></app-page-header>
+
+<section class="workflow-settings">
+  <div class="card mb-3">
+    <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <h6 class="mb-1">Schedule guardrails</h6>
+        <p class="text-muted mb-0">Protect the day with time windows and travel buffers.</p>
+      </div>
+      <button class="btn btn-primary" (click)="saveScheduleSettings()" [disabled]="isSavingSchedule">
+        {{ isSavingSchedule ? 'Saving...' : 'Save guardrails' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <form [formGroup]="scheduleForm" class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Default window (minutes)</label>
+          <p-inputnumber formControlName="defaultWindowMinutes" [min]="0" [fluid]="true"></p-inputnumber>
+          <small class="text-muted">Used when scheduling a time window so teams don’t overcommit.</small>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Travel buffer (minutes)</label>
+          <p-inputnumber formControlName="travelBufferMinutes" [min]="0" [fluid]="true"></p-inputnumber>
+          <small class="text-muted">Reserves prep + drive time between assignments.</small>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Automation</label>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="enforceBuffer" formControlName="enforceTravelBuffer" />
+            <label class="form-check-label" for="enforceBuffer">Enforce travel buffers</label>
+          </div>
+          <div class="form-check mt-2">
+            <input class="form-check-input" type="checkbox" id="autoNotify" formControlName="autoNotifyReschedule" />
+            <label class="form-check-label" for="autoNotify">Auto-notify clients on reschedule</label>
+            <div class="text-muted small">Sends a quick update any time the schedule moves.</div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <h6 class="mb-1">Job status flow</h6>
+        <p class="text-muted mb-0">Rename and reorder how work moves from draft to done.</p>
+      </div>
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-secondary" type="button" (click)="resetStatuses()">Reset defaults</button>
+        <button class="btn btn-primary" type="button" (click)="saveStatuses()" [disabled]="isSavingStatuses">
+          {{ isSavingStatuses ? 'Saving...' : 'Save statuses' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="workflow-status-row" *ngFor="let status of statusRows; let i = index">
+        <div class="workflow-status-row__badge">{{ i + 1 }}</div>
+        <div class="workflow-status-row__content">
+          <div class="text-muted small">{{ status.statusKey }}</div>
+          <div class="text-muted small">Rename this stage to match how your team talks about work.</div>
+          <input
+            class="form-control"
+            type="text"
+            [(ngModel)]="status.label"
+            name="statusLabel{{ i }}"
+            placeholder="Status label"
+          />
+        </div>
+        <div class="workflow-status-row__actions">
+          <button class="btn btn-light btn-sm" type="button" (click)="moveStatus(i, -1)">Up</button>
+          <button class="btn btn-light btn-sm" type="button" (click)="moveStatus(i, 1)">Down</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -61,6 +61,7 @@
             <div>
               <h6 class="mb-1">Central Dispatch Board</h6>
               <p class="text-muted small mb-0">Click a slot to schedule. Click a job to update status.</p>
+              <div class="text-muted small">Drag cards into open time slots to schedule fast.</div>
             </div>
             <div class="dispatch-board__filters">
               <select class="form-select form-select-sm" [(ngModel)]="selectedStatus" (change)="onStatusFilterChange(selectedStatus)">
@@ -71,6 +72,7 @@
                 <option value="Canceled">Cancelled</option>
                 <option value="Skipped">Skipped</option>
               </select>
+              <div class="text-muted small mt-1">Filter the board without hiding unscheduled work.</div>
             </div>
           </div>
 
@@ -97,6 +99,7 @@
             <div>
               <h6 class="mb-1">Unscheduled Queue</h6>
               <p class="text-muted small mb-0">Drag a job onto the calendar to assign a time.</p>
+              <div class="text-muted small">Keep this list short to reduce same-day surprises.</div>
             </div>
             <span class="dispatch-queue__count">{{ unscheduledJobs.length }} waiting</span>
           </div>
@@ -182,6 +185,7 @@
 >
   <div *ngIf="drawerMode === 'schedule'">
     <p class="text-muted small">Select a job and confirm the time window.</p>
+    <div class="text-muted small mb-3">Use windows for flexible arrivals and exact times for tight commitments.</div>
 
     <label class="form-label">Job</label>
     <select class="form-select mb-3" [(ngModel)]="draftJobId">

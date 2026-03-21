@@ -20,6 +20,7 @@ export function mapAssignmentsToCalendarEvents(
             new Date(a.scheduledStart).getTime() + 60 * 60 * 1000
          ),
       CssClass: getEventCssClass(a.scheduleType),
-      IsReadonly: false
+      IsReadonly: false,
+      StatusLabel: a.statusLabel
    }));
 }

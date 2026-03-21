@@ -47,10 +47,11 @@
       <label>Status</label>
       <select class="form-select" [(ngModel)]="selectedStatusFilter" (change)="onFiltersChanged()">
          <option value="">All statuses</option>
-         <option *ngFor="let status of ['Draft','Approved','In Progress','Completed','Cancelled','Failed']" [value]="status">
-            {{ status }}
+         <option *ngFor="let status of statusOptions" [value]="status.statusKey">
+            {{ status.label }}
          </option>
       </select>
+      <small class="text-muted">Match the board to how your team labels work.</small>
    </div>
    <div class="jobflow-filters__group">
       <label>Client</label>
@@ -60,6 +61,7 @@
             {{ client.label }}
          </option>
       </select>
+      <small class="text-muted">Focus on one customer without losing context.</small>
    </div>
    <div class="jobflow-filters__group">
       <label>Assignee</label>
@@ -69,6 +71,7 @@
             {{ assignee.label }}
          </option>
       </select>
+      <small class="text-muted">Quickly spot who is overloaded.</small>
    </div>
    <button class="btn btn-link jobflow-filters__clear" type="button" (click)="clearFilters()">
       Clear filters
@@ -82,6 +85,7 @@
             <div>
                <h5>Unscheduled queue</h5>
                <p>Drag these into dispatch when the day opens up.</p>
+               <small class="text-muted">Aim to clear this before crews roll out.</small>
             </div>
             <span class="jobflow-lane__count">{{ unscheduledJobs.length }} waiting</span>
          </div>
@@ -117,6 +121,7 @@
             <div>
                <h5>Scheduled next 7 days</h5>
                <p>High-velocity jobs that need a steady hand.</p>
+               <small class="text-muted">Check for gaps and rebalance early.</small>
             </div>
             <span class="jobflow-lane__count">{{ upcomingScheduledJobs.length }} scheduled</span>
          </div>
@@ -173,30 +178,13 @@
          <div class="jobflow-preview__row">
             <span>Status</span>
             <div class="jobflow-status-toggle">
-               <button
-                  class="jobflow-status-toggle__btn"
-                  [class.is-active]="resolveLifecycleStatus(selectedJob) === JobLifecycleStatus.Draft"
-                  (click)="updateJobStatus(JobLifecycleStatus.Draft)"
-                  [disabled]="updatingStatus"
-               >Draft</button>
-               <button
-                  class="jobflow-status-toggle__btn"
-                  [class.is-active]="resolveLifecycleStatus(selectedJob) === JobLifecycleStatus.Approved"
-                  (click)="updateJobStatus(JobLifecycleStatus.Approved)"
-                  [disabled]="updatingStatus"
-               >Approved</button>
-               <button
-                  class="jobflow-status-toggle__btn"
-                  [class.is-active]="resolveLifecycleStatus(selectedJob) === JobLifecycleStatus.InProgress"
-                  (click)="updateJobStatus(JobLifecycleStatus.InProgress)"
-                  [disabled]="updatingStatus"
-               >In Progress</button>
-               <button
-                  class="jobflow-status-toggle__btn"
-                  [class.is-active]="resolveLifecycleStatus(selectedJob) === JobLifecycleStatus.Completed"
-                  (click)="updateJobStatus(JobLifecycleStatus.Completed)"
-                  [disabled]="updatingStatus"
-               >Completed</button>
+                  <button
+                     class="jobflow-status-toggle__btn"
+                     *ngFor="let status of statusOptions"
+                     [class.is-active]="resolveLifecycleStatus(selectedJob) === status.value"
+                     (click)="updateJobStatus(status.value)"
+                     [disabled]="updatingStatus"
+                  >{{ status.label }}</button>
             </div>
          </div>
          <div class="jobflow-preview__row">

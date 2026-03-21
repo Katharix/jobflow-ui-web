@@ -24,6 +24,7 @@
     [jobId]="currentJobId"
     [scheduledStart]="draftEvent?.StartTime ?? selectedDate"
     [scheduledEnd]="draftEvent?.EndTime ?? addThirtyMinutes(selectedDate)"
+    [scheduleSettings]="scheduleSettings"
     [selectedDayForecast]="selectedDayForecast"
     [isWeatherLoading]="isWeatherLoading"
     [addressMissing]="addressMissing"

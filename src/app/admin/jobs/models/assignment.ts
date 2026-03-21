@@ -22,6 +22,7 @@
    notes?: string;
 
    jobLifecycleStatus?: number;
+   statusLabel?: string;
    assignees?: AssignmentAssigneeDto[];
 }
 
@@ -61,7 +62,7 @@ export interface UpdateAssignmentScheduleRequestDto {
    scheduledStart: Date;
    scheduledEnd?: Date;
 
-   scheduleType: 'Exact' | 'Window';
+   scheduleType: ScheduleType;
 }
 
 export interface UpdateAssignmentStatusRequestDto {

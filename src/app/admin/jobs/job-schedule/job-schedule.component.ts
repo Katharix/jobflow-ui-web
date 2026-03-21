@@ -17,6 +17,9 @@ import { JobAssignmentFormComponent } from '../job-assignments-form/job-assignme
 import { JobflowDrawerComponent } from '../../../common/jobflow-drawer/jobflow-drawer.component';
 import { RecurrenceRuleUpsertRequest } from '../models/recurrence-rule';
 import { RecurrenceRulesService } from '../services/recurrence-rules.service';
+import { ScheduleSettingsService } from '../../settings/services/schedule-settings.service';
+import { ScheduleSettingsDto } from '../../settings/models/schedule-settings';
+import { ToastService } from '../../../common/toast/toast.service';
 
 @Component({
   selector: 'app-job-schedule',
@@ -51,6 +54,7 @@ export class JobScheduleComponent implements OnInit {
   addressMissing = false;
   locationUnavailable = false;
   isWeatherLoading = false;
+  scheduleSettings: ScheduleSettingsDto | null = null;
 
   constructor(
     private assignments: AssignmentsService,
@@ -58,7 +62,9 @@ export class JobScheduleComponent implements OnInit {
     private jobs: JobsService,
     private route: ActivatedRoute,
     private router: Router,
-    private weatherService: WeatherService
+    private weatherService: WeatherService,
+    private scheduleSettingsService: ScheduleSettingsService,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -74,6 +80,7 @@ export class JobScheduleComponent implements OnInit {
       this.addressMissing = !this.jobAddress;
       this.loadWeatherForecast();
     });
+    this.loadScheduleSettings();
     this.loadAssignments();
   }
 
@@ -126,15 +133,20 @@ export class JobScheduleComponent implements OnInit {
         scheduledEnd: payload.scheduledEnd,
         scheduleType: payload.scheduleType,
         recurrence: payload.recurrence,
-      }).subscribe(() => {
-        this.showAssignmentModal = false;
-        this.draftEvent = null;
-        if (this.returnToCommandCenter) {
-          this.router.navigate(['/admin'], { fragment: 'dashboard-command-center' });
-          return;
-        }
+      }).subscribe({
+        next: () => {
+          this.showAssignmentModal = false;
+          this.draftEvent = null;
+          if (this.returnToCommandCenter) {
+            this.router.navigate(['/admin'], { fragment: 'dashboard-command-center' });
+            return;
+          }
 
-        this.loadAssignments(); // your GET already auto-generates via AssignmentGenerator
+          this.loadAssignments(); // your GET already auto-generates via AssignmentGenerator
+        },
+        error: (error) => {
+          this.toast.error(error?.error?.description ?? 'Unable to save schedule.');
+        }
       });
     } else {
       this.assignments.createAssignment(payload.jobId, {
@@ -142,16 +154,21 @@ export class JobScheduleComponent implements OnInit {
           scheduledEnd: payload.scheduledEnd,
           scheduleType: payload.scheduleType,
           notes: payload.notes,
-        }).subscribe(() => {
-        this.showAssignmentModal = false;
-        this.draftEvent = null;
-        if (this.returnToCommandCenter) {
-          this.router.navigate(['/admin'], { fragment: 'dashboard-command-center' });
-          return;
-        }
+        }).subscribe({
+          next: () => {
+            this.showAssignmentModal = false;
+            this.draftEvent = null;
+            if (this.returnToCommandCenter) {
+              this.router.navigate(['/admin'], { fragment: 'dashboard-command-center' });
+              return;
+            }
 
-        this.loadAssignments(); // your GET already auto-generates via AssignmentGenerator
-      });
+            this.loadAssignments(); // your GET already auto-generates via AssignmentGenerator
+          },
+          error: (error) => {
+            this.toast.error(error?.error?.description ?? 'Unable to save schedule.');
+          }
+        });
     }
   }
 
@@ -177,9 +194,26 @@ export class JobScheduleComponent implements OnInit {
       .updateAssignmentSchedule(assignmentId, {
         scheduledStart: e.StartTime,
         scheduledEnd: e.EndTime,
-        scheduleType: ScheduleType.Exact,
+        scheduleType: (e.EntityType as ScheduleType) ?? ScheduleType.Exact,
       })
-      .subscribe(() => this.loadAssignments());
+      .subscribe({
+        next: () => this.loadAssignments(),
+        error: (error) => {
+          this.toast.error(error?.error?.description ?? 'Unable to reschedule assignment.');
+          this.loadAssignments();
+        }
+      });
+  }
+
+  private loadScheduleSettings(): void {
+    this.scheduleSettingsService.getScheduleSettings().subscribe({
+      next: (settings) => {
+        this.scheduleSettings = settings;
+      },
+      error: () => {
+        this.scheduleSettings = null;
+      }
+    });
   }
 
   private loadWeatherForecast(): void {

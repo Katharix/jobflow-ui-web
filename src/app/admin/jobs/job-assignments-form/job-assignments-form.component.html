@@ -14,13 +14,31 @@
    </div>
 
    <div class="mb-3">
-      <label class="form-label fw-semibold text-muted">Schedule Type</label>
+      <label class="form-label fw-semibold text-muted">Schedule Mode</label>
       <p-select formControlName="scheduleMode" [options]="scheduleModeOptions" optionLabel="label" optionValue="value" size="small" [fluid]="true" />
+   </div>
+
+   <div class="mb-3">
+      <label class="form-label fw-semibold text-muted">Time style</label>
+      <p-select formControlName="scheduleType" [options]="scheduleTypeOptions" optionLabel="label" optionValue="value" size="small" [fluid]="true" />
+      <small class="text-muted d-block mt-1">Exact locks a time. Window gives crews flexibility.</small>
+   </div>
+
+   <div class="mb-3" *ngIf="form.get('scheduleType')?.value === ScheduleType.Window">
+      <label class="form-label fw-semibold text-muted">Window length (minutes)</label>
+      <p-inputnumber formControlName="windowMinutes" [min]="15" [fluid]="true" />
+      <small class="text-muted d-block mt-1">Sets the latest arrival time for this visit.</small>
+   </div>
+
+   <div class="mb-3" *ngIf="travelBufferMinutes > 0">
+      <label class="form-label fw-semibold text-muted">Travel buffer guardrail</label>
+      <div class="text-muted">{{ travelBufferMinutes }} minutes are reserved between assignments.</div>
    </div>
 
    <div class="mb-3">
       <label class="form-label fw-semibold text-muted">Start</label>
       <p-datepicker formControlName="scheduledStart" [showTime]="true" [fluid]="true" />
+      <small class="text-muted d-block mt-1">Drag on the calendar for faster scheduling.</small>
    </div>
 
    <div class="mb-3">
@@ -29,6 +47,7 @@
       <div class="text-danger small" *ngIf="form.get('scheduledEnd')?.touched && form.get('scheduledEnd')?.errors">
          End time must be after start.
       </div>
+      <small class="text-muted d-block mt-1" *ngIf="form.get('scheduleType')?.value === ScheduleType.Exact">Keep enough time for travel and wrap‑up.</small>
    </div>
 
    <div class="mb-3">

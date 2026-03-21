@@ -34,6 +34,7 @@ import {TermsComponent} from "./views/general/terms/terms.component";
 import {PrivacyComponent} from "./views/general/privacy/privacy.component";
 import {BillingPaymentsComponent} from './admin/billing-payments/billing-payments.component';
 import { DispatchComponent } from './admin/dispatch/dispatch.component';
+import { WorkflowSettingsComponent } from './admin/settings/workflow-settings/workflow-settings.component';
 
 
 export const routes: Routes = [
@@ -55,6 +56,7 @@ export const routes: Routes = [
       children: [
          {path: '', component: DashboardComponent},
          {path: 'settings/branding', component: BrandingComponent},
+         {path: 'settings/workflow', component: WorkflowSettingsComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
          {path: 'messaging', component: ChatComponent},
          {path: 'company', component: CompanyComponent},
 

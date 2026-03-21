@@ -23,6 +23,8 @@ import {getClickHandler} from "../../common/utils/page-action-dispatcher";
 import {CreateJobComponent} from "./job-create/job-create.component";
 import {formatDateTime, formatPhone} from "../../common/utils/app-formaters";
 import {Job, JobLifecycleStatus, JobLifecycleStatusLabels} from "./models/job";
+import { WorkflowSettingsService } from "../settings/services/workflow-settings.service";
+import { WorkflowStatusDto } from "../settings/models/workflow-status";
 import {EmployeeService} from "../employees/services/employee.service";
 import {Employee} from "../employees/models/employee";
 import {AssignmentsService} from "./services/assignments.service";
@@ -73,6 +75,10 @@ export class JobComponent implements OnInit {
    selectedClientFilter = '';
    selectedAssigneeFilter = '';
 
+   statusOptions: { statusKey: string; label: string; value: JobLifecycleStatus }[] = [];
+   private statusLabelMap: Record<number, string> = { ...JobLifecycleStatusLabels };
+   private statusKeyMap: Record<number, string> = {};
+
    previewAssignees = new Set<string>();
    previewAssignment: AssignmentDto | null = null;
    updatingStatus = false;
@@ -102,6 +108,7 @@ export class JobComponent implements OnInit {
       private jobs: JobsService,
       private employeesService: EmployeeService,
       private assignmentsService: AssignmentsService,
+      private workflowSettings: WorkflowSettingsService,
       private orgContext: OrganizationContextService,
       private router: Router,
       private route: ActivatedRoute
@@ -113,6 +120,7 @@ export class JobComponent implements OnInit {
 
    ngOnInit(): void {
       this.buildColumns();
+      this.loadWorkflowStatuses();
 
       this.loadEmployees();
 
@@ -129,6 +137,59 @@ export class JobComponent implements OnInit {
          this.openAddJob();
          this.onboardingActionHandled = true;
       });
+   }
+
+   private loadWorkflowStatuses(): void {
+      this.workflowSettings.getJobStatuses().subscribe({
+         next: (statuses) => this.applyWorkflowStatuses(statuses),
+         error: () => this.applyWorkflowStatuses(this.buildDefaultWorkflowStatuses())
+      });
+   }
+
+   private applyWorkflowStatuses(statuses: WorkflowStatusDto[]): void {
+      const nextOptions: { statusKey: string; label: string; value: JobLifecycleStatus }[] = [];
+      const nextLabelMap: Record<number, string> = {};
+      const nextKeyMap: Record<number, string> = {};
+
+      statuses
+         .slice()
+         .sort((a, b) => a.sortOrder - b.sortOrder)
+         .forEach(status => {
+            const enumValue = JobLifecycleStatus[status.statusKey as keyof typeof JobLifecycleStatus];
+            if (typeof enumValue !== 'number') {
+               return;
+            }
+
+            nextOptions.push({
+               statusKey: status.statusKey,
+               label: status.label,
+               value: enumValue
+            });
+            nextLabelMap[enumValue] = status.label;
+            nextKeyMap[enumValue] = status.statusKey;
+         });
+
+      if (!nextOptions.length) {
+         const fallback = this.buildDefaultWorkflowStatuses();
+         this.applyWorkflowStatuses(fallback);
+         return;
+      }
+
+      this.statusOptions = nextOptions;
+      this.statusLabelMap = nextLabelMap;
+      this.statusKeyMap = nextKeyMap;
+   }
+
+   private buildDefaultWorkflowStatuses(): WorkflowStatusDto[] {
+      return Object.values(JobLifecycleStatus)
+         .filter(value => typeof value === 'number')
+         .map(value => value as number)
+         .sort((a, b) => a - b)
+         .map((value, index) => ({
+            statusKey: JobLifecycleStatus[value as JobLifecycleStatus],
+            label: JobLifecycleStatusLabels[value as JobLifecycleStatus],
+            sortOrder: index
+         }));
    }
 
    private buildColumns(): void {
@@ -485,7 +546,7 @@ export class JobComponent implements OnInit {
    resolveLifecycleStatus(job: any): JobLifecycleStatus | null {
       const rawStatus = job?.lifecycleStatus;
 
-      if (typeof rawStatus === 'number' && JobLifecycleStatusLabels[rawStatus as JobLifecycleStatus]) {
+      if (typeof rawStatus === 'number' && this.statusLabelMap[rawStatus as JobLifecycleStatus]) {
          return rawStatus as JobLifecycleStatus;
       }
 
@@ -496,7 +557,7 @@ export class JobComponent implements OnInit {
          }
 
          const numericStatus = Number(rawStatus);
-         if (!Number.isNaN(numericStatus) && JobLifecycleStatusLabels[numericStatus as JobLifecycleStatus]) {
+         if (!Number.isNaN(numericStatus) && this.statusLabelMap[numericStatus as JobLifecycleStatus]) {
             return numericStatus as JobLifecycleStatus;
          }
       }
@@ -507,7 +568,7 @@ export class JobComponent implements OnInit {
    getStatusChipLabel(job: any): string {
       const status = this.resolveLifecycleStatus(job);
       if (status !== null) {
-         return JobLifecycleStatusLabels[status];
+         return this.statusLabelMap[status] ?? JobLifecycleStatusLabels[status];
       }
 
       return typeof job?.lifecycleStatus === 'string' && job.lifecycleStatus.trim().length > 0
@@ -561,7 +622,7 @@ export class JobComponent implements OnInit {
          if (this.selectedStatusFilter) {
             const status = this.resolveLifecycleStatus(job);
             if (status === null) return false;
-            if (JobLifecycleStatusLabels[status] !== this.selectedStatusFilter) return false;
+            if (this.statusKeyMap[status] !== this.selectedStatusFilter) return false;
          }
 
          if (this.selectedClientFilter) {

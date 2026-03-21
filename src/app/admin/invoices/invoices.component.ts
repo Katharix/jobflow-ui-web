@@ -10,6 +10,8 @@ import {JobflowGridColumn, JobflowGridComponent, JobflowGridPageSettings} from '
 import {JobflowDrawerComponent} from '../../common/jobflow-drawer/jobflow-drawer.component';
 import {ToastService} from '../../common/toast/toast.service';
 import {Job, JobLifecycleStatus, JobLifecycleStatusLabels} from '../jobs/models/job';
+import { WorkflowSettingsService } from '../settings/services/workflow-settings.service';
+import { WorkflowStatusDto } from '../settings/models/workflow-status';
 import {JobsService} from '../jobs/services/jobs.service';
 import {formatDateTime} from '../../common/utils/app-formaters';
 import {Estimate, EstimateLineItem} from '../estimates/models/estimate';
@@ -75,6 +77,8 @@ export class InvoicesComponent implements OnInit {
    private isEstimatePrefillLoaded = false;
    private isLoadingEstimatePrefill = false;
 
+   private statusLabelMap: Record<number, string> = { ...JobLifecycleStatusLabels };
+
    pageSettings: JobflowGridPageSettings = {
       pageSize: 20,
       pageSizes: [10, 20, 50, 100]
@@ -87,7 +91,8 @@ export class InvoicesComponent implements OnInit {
       private estimateService: EstimateService,
       private router: Router,
       private route: ActivatedRoute,
-      private toast: ToastService
+      private toast: ToastService,
+      private workflowSettings: WorkflowSettingsService
    ) {
    }
 
@@ -97,12 +102,52 @@ export class InvoicesComponent implements OnInit {
 
       this.buildColumns();
       this.buildInvoiceForm();
+      this.loadWorkflowStatuses();
       this.load();
       this.loadRecentJobs();
 
       if (this.isInvoiceOnboardingFlow) {
          this.openCreateInvoiceDrawer();
       }
+   }
+
+   private loadWorkflowStatuses(): void {
+      this.workflowSettings.getJobStatuses().subscribe({
+         next: (statuses) => this.applyWorkflowStatuses(statuses),
+         error: () => this.applyWorkflowStatuses(this.buildDefaultWorkflowStatuses())
+      });
+   }
+
+   private applyWorkflowStatuses(statuses: WorkflowStatusDto[]): void {
+      const map: Record<number, string> = {};
+      statuses
+         .slice()
+         .sort((a, b) => a.sortOrder - b.sortOrder)
+         .forEach(status => {
+            const enumValue = JobLifecycleStatus[status.statusKey as keyof typeof JobLifecycleStatus];
+            if (typeof enumValue === 'number') {
+               map[enumValue] = status.label;
+            }
+         });
+
+      if (Object.keys(map).length === 0) {
+         this.applyWorkflowStatuses(this.buildDefaultWorkflowStatuses());
+         return;
+      }
+
+      this.statusLabelMap = map;
+   }
+
+   private buildDefaultWorkflowStatuses(): WorkflowStatusDto[] {
+      return Object.values(JobLifecycleStatus)
+         .filter(value => typeof value === 'number')
+         .map(value => value as number)
+         .sort((a, b) => a - b)
+         .map((value, index) => ({
+            statusKey: JobLifecycleStatus[value as JobLifecycleStatus],
+            label: JobLifecycleStatusLabels[value as JobLifecycleStatus],
+            sortOrder: index
+         }));
    }
 
    get filteredRecentJobs(): Job[] {
@@ -336,7 +381,7 @@ export class InvoicesComponent implements OnInit {
       }
 
       const status = this.resolveJobStatus(job.lifecycleStatus);
-      return status === null ? 'Unknown' : JobLifecycleStatusLabels[status];
+      return status === null ? 'Unknown' : (this.statusLabelMap[status] ?? JobLifecycleStatusLabels[status]);
    }
 
    getJobStatusClass(job: Job | null | undefined): string {
@@ -666,7 +711,7 @@ export class InvoicesComponent implements OnInit {
    }
 
    private resolveJobStatus(rawStatus: JobLifecycleStatus | number | string): JobLifecycleStatus | null {
-      if (typeof rawStatus === 'number' && JobLifecycleStatusLabels[rawStatus as JobLifecycleStatus]) {
+      if (typeof rawStatus === 'number' && this.statusLabelMap[rawStatus as JobLifecycleStatus]) {
          return rawStatus as JobLifecycleStatus;
       }
 
@@ -677,7 +722,7 @@ export class InvoicesComponent implements OnInit {
          }
 
          const numericValue = Number(rawStatus);
-         if (!Number.isNaN(numericValue) && JobLifecycleStatusLabels[numericValue as JobLifecycleStatus]) {
+         if (!Number.isNaN(numericValue) && this.statusLabelMap[numericValue as JobLifecycleStatus]) {
             return numericValue as JobLifecycleStatus;
          }
       }
