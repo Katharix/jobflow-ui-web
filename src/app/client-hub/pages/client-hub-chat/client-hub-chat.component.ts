@@ -1,5 +1,6 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -23,7 +24,7 @@ type ClientHubChatMessageWithDates = ClientHubChatMessage & {
 @Component({
   selector: 'app-client-hub-chat',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './client-hub-chat.component.html',
   styleUrl: './client-hub-chat.component.scss',
 })

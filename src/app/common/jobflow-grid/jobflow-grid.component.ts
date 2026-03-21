@@ -29,7 +29,7 @@ export interface JobflowGridCommandModel {
 }
 
 export interface JobflowGridCommandClickEventArgs {
-   rowData: Record<string, unknown>;
+   rowData: unknown;
    commandColumn?: {
       type?: string;
    };
@@ -47,7 +47,7 @@ export interface JobflowGridToolbarClickEventArgs {
 
 export type JobflowGridValueAccessor = (
    field: string,
-   row: Record<string, unknown>,
+   row: unknown,
    column: JobflowGridColumn
 ) => unknown;
 
@@ -70,7 +70,7 @@ export class JobflowGridComponent {
    searchText = '';
 
    /** Data */
-   @Input({required: true}) data: Record<string, unknown>[] = [];
+   @Input({required: true}) data: unknown[] = [];
 
    /** Column definitions */
    @Input({required: true}) columns: JobflowGridColumn[] = [];
@@ -148,7 +148,7 @@ export class JobflowGridComponent {
       this.toolbarClick.emit({item: normalized});
    }
 
-   onCommandItemClick(type: string | undefined, rowData: Record<string, unknown>): void {
+   onCommandItemClick(type: string | undefined, rowData: unknown): void {
       this.commandClick.emit({
          rowData,
          commandColumn: {type}
@@ -164,7 +164,7 @@ export class JobflowGridComponent {
       this.table?.clear();
    }
 
-   getCellValue(row: Record<string, unknown>, col: JobflowGridColumn): unknown {
+   getCellValue(row: unknown, col: JobflowGridColumn): unknown {
       if (col.valueAccessor && col.field) {
          return col.valueAccessor(col.field, row, col);
       }
@@ -175,7 +175,11 @@ export class JobflowGridComponent {
       return this.formatValue(rawValue, col.format);
    }
 
-   private resolvePathValue(row: Record<string, unknown>, fieldPath: string): unknown {
+   private resolvePathValue(row: unknown, fieldPath: string): unknown {
+      if (!row || typeof row !== 'object') {
+         return undefined;
+      }
+
       return fieldPath.split('.').reduce<unknown>((acc, key) => {
          if (acc && typeof acc === 'object' && key in acc) {
             return (acc as Record<string, unknown>)[key];

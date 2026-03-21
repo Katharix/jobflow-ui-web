@@ -13,6 +13,7 @@ export interface CheckoutPaymentResponse {
    clientSecret?: string;
    url?: string;
    providerPaymentId?: string;
+   onboarding?: string;
 }
 
 @Injectable({

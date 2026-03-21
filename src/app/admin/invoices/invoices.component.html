@@ -121,8 +121,8 @@
               <i class="pi pi-arrow-left me-1"></i>
               Choose different job
             </button>
-            <h4>{{ selectedJob?.title || 'Untitled job' }}</h4>
-            <p>{{ getJobClientName(selectedJob) }} • {{ formatJobDate(selectedJob?.scheduledStart) }}</p>
+            <h4>{{ selectedJob.title || 'Untitled job' }}</h4>
+            <p>{{ getJobClientName(selectedJob) }} • {{ formatJobDate(selectedJob.scheduledStart) }}</p>
             <span class="job-status-chip" [ngClass]="getJobStatusClass(selectedJob)">
               {{ getJobStatusLabel(selectedJob) }}
             </span>

@@ -172,7 +172,7 @@ export class CustomerComponent implements OnInit {
    }
 
    onCommandClick(args: JobflowGridCommandClickEventArgs) {
-      const client = args.rowData as Client;
+      const client = args.rowData as unknown as Client;
 
       switch (args.commandColumn?.type) {
          case 'Edit':
@@ -262,8 +262,10 @@ export class CustomerComponent implements OnInit {
             field: 'phoneNumber',
             headerText: 'Phone Number',
             width: 100,
-            valueAccessor: (_field: string, data: Client) =>
-               formatPhone(data?.phoneNumber)
+            valueAccessor: (_field: string, data: unknown) => {
+               const client = data as Client;
+               return formatPhone(client?.phoneNumber);
+            }
          },
          {headerText: '', width: 140, textAlign: 'Right', commands: this.commandButtons}
       ];

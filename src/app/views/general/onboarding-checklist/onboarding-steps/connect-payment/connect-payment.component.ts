@@ -114,7 +114,12 @@ export class ConnectPaymentComponent implements OnInit {
 
     this.paymentService.createConnectedAccount(selectedProvider).subscribe({
       next: onboardingUrl => {
-        window.location.href = onboardingUrl.onboarding;
+        if (onboardingUrl?.onboarding) {
+          window.location.href = onboardingUrl.onboarding;
+          return;
+        }
+        this.callbackStatus = 'error';
+        this.callbackMessage = 'No onboarding link was returned. Please try again.';
       },
       error: (err: unknown) => {
         console.error(err);

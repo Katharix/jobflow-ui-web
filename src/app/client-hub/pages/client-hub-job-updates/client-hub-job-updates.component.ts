@@ -1,5 +1,6 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -18,7 +19,7 @@ import { JobLifecycleStatus, JobLifecycleStatusLabels } from '../../../admin/job
 @Component({
   selector: 'app-client-hub-job-updates',
   standalone: true,
-  imports: [RouterLink],
+  imports: [CommonModule, RouterLink],
   templateUrl: './client-hub-job-updates.component.html',
   styleUrl: './client-hub-job-updates.component.scss',
 })

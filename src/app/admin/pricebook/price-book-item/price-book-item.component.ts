@@ -53,7 +53,7 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
    categoryName: string | null = null; // optional if you pass name along (query param) or load it
 
    items: PriceBookItemDto[] = [];
-   typeAccessor = (_: string, data: Record<string, unknown>) => this.typeLabel((data as PriceBookItemDto)?.itemType);
+   typeAccessor = (_: string, data: unknown) => this.typeLabel((data as PriceBookItemDto)?.itemType);
 
 
    commandButtons: JobflowGridCommandModel[] = [

@@ -217,7 +217,7 @@ export class JobComponent implements OnInit {
             field: 'organizationClient.phoneNumber',
             headerText: 'Phone Number',
             width: 160,
-            valueAccessor: (_field: string, data: Record<string, unknown>) => {
+            valueAccessor: (_field: string, data: unknown) => {
                const job = data as Job;
                return formatPhone(job?.organizationClient?.phoneNumber);
             }
@@ -345,11 +345,11 @@ export class JobComponent implements OnInit {
    }
 
    onCommandClick(args: JobflowGridCommandClickEventArgs) {
-      const row = args.rowData;
+      const row = args.rowData as unknown as Job;
 
       switch (args.commandColumn?.type) {
          case 'Edit':
-            this.editingJob = row;
+            this.editingJob = row ?? null;
             this.isDrawerOpen = true;
             break;
 
@@ -591,9 +591,7 @@ export class JobComponent implements OnInit {
          return this.statusLabelMap[status] ?? JobLifecycleStatusLabels[status];
       }
 
-      return typeof job?.lifecycleStatus === 'string' && job.lifecycleStatus.trim().length > 0
-         ? job.lifecycleStatus
-         : '—';
+      return '—';
    }
 
    getStatusChipClass(job: Job | null | undefined): string {

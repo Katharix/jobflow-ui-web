@@ -134,7 +134,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.loadContacts();
 
     this.chatService.onMessageReceived((message) => {
-      const normalizedMessage = this.normalizeMessage(message, true);
+      const normalizedMessage = this.normalizeMessage(message as unknown as ChatMessage, true);
       this.updateConversationPreview(normalizedMessage.conversationId, normalizedMessage, normalizedMessage.isMine);
 
       if (normalizedMessage.conversationId === this.selectedConversation?.id) {

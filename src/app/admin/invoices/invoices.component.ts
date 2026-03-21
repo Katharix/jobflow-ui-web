@@ -206,27 +206,27 @@ export class InvoicesComponent implements OnInit, OnDestroy {
             field: 'invoiceDate',
             headerText: 'Invoice Date',
             width: 140,
-            valueAccessor: (_field: string, data: Invoice) => this.formatDate(data.invoiceDate)
+            valueAccessor: (_field: string, data: unknown) => this.formatDate((data as Invoice)?.invoiceDate)
          },
          {
             field: 'dueDate',
             headerText: 'Due Date',
             width: 140,
-            valueAccessor: (_field: string, data: Invoice) => this.formatDate(data.dueDate)
+            valueAccessor: (_field: string, data: unknown) => this.formatDate((data as Invoice)?.dueDate)
          },
          {
             field: 'totalAmount',
             headerText: 'Total',
             width: 120,
             textAlign: 'Right',
-            valueAccessor: (_field: string, data: Invoice) => this.formatCurrency(data.totalAmount)
+            valueAccessor: (_field: string, data: unknown) => this.formatCurrency((data as Invoice)?.totalAmount)
          },
          {
             field: 'balanceDue',
             headerText: 'Balance',
             width: 120,
             textAlign: 'Right',
-            valueAccessor: (_field: string, data: Invoice) => this.formatCurrency(data.balanceDue)
+            valueAccessor: (_field: string, data: unknown) => this.formatCurrency((data as Invoice)?.balanceDue)
          },
          {
             headerText: 'Status',

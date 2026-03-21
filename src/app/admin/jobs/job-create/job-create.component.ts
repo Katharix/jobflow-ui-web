@@ -82,7 +82,7 @@ export class CreateJobComponent implements OnChanges {
          .subscribe({
             next: customers => (this.customers = customers.map((client) => ({
                ...client,
-               displayName: `${client.firstName ?? ''} ${client.lastName ?? ''}`.trim() || client.organizationName || 'Client'
+               displayName: `${client.firstName ?? ''} ${client.lastName ?? ''}`.trim() || client.emailAddress || 'Client'
             }))),
             error: () => (this.error = 'Failed to load customers.')
          });

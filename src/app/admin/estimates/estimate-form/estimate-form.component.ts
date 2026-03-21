@@ -156,10 +156,12 @@ export class EstimateFormComponent implements OnInit {
   private loadCustomers(): void {
     this.customersService.getAllByOrganization().subscribe({
       next: (cs: Client[]) => {
-        this.customers = cs.map((client) => ({
-          id: client.id,
-          displayName: `${client.firstName ?? ''} ${client.lastName ?? ''}`.trim() || client.emailAddress || 'Unnamed',
-        }));
+        this.customers = cs
+          .filter((client) => !!client.id)
+          .map((client) => ({
+            id: client.id as string,
+            displayName: `${client.firstName ?? ''} ${client.lastName ?? ''}`.trim() || client.emailAddress || 'Unnamed',
+          }));
       },
     });
   }

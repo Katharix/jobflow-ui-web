@@ -6,7 +6,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { OrganizationDto } from '../../../models/organization';
 import { OrganizationService } from '../../../services/shared/organization.service';
-import { PaymentService } from '../../../services/shared/payment.service';
+import { CheckoutPaymentResponse, PaymentService } from '../../../services/shared/payment.service';
 import { PaymentSessionRequest } from '../../../models/payment-session-request';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { US_STATES } from '../../../common/constants';
@@ -33,9 +33,6 @@ type GoogleAutocompleteConstructor = new (
    options: { types: string[]; componentRestrictions: { country: string } }
 ) => GoogleAutocomplete;
 
-interface CheckoutResponse {
-   url: string;
-}
 
 declare const google: {
    maps?: {
@@ -206,8 +203,13 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
 
         this.paymentService.createSubscriptionCheckout(paymentSessionRequest).subscribe({
 
-           next: (checkoutResponse: CheckoutResponse) => {
-              window.location.href = checkoutResponse.url;
+           next: (checkoutResponse: CheckoutPaymentResponse) => {
+              if (checkoutResponse?.url) {
+                 window.location.href = checkoutResponse.url;
+                 return;
+              }
+              this.error = 'Payment checkout did not return a redirect URL.';
+              this.loadingService.hide();
            },
 
            error: (paymentError: unknown) => {

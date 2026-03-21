@@ -112,9 +112,10 @@ export class EmployeesComponent implements OnInit {
       });
    }
 
-   fullNameAccessor = (_field: string, data: Employee): string => {
-      const first = data.firstName ?? '';
-      const last = data.lastName ?? '';
+   fullNameAccessor = (_field: string, data: unknown): string => {
+      const employee = data as Employee;
+      const first = employee.firstName ?? '';
+      const last = employee.lastName ?? '';
       return `${first} ${last}`.trim();
    };
 

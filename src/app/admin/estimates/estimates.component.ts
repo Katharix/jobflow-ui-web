@@ -232,20 +232,20 @@ export class EstimatesComponent implements OnInit {
         field: 'createdAt',
         headerText: 'Date',
         width: 135,
-        valueAccessor: (_: string, d: Estimate) => this.formatDate(d.createdAt),
+        valueAccessor: (_: string, d: unknown) => this.formatDate((d as Estimate)?.createdAt),
       },
       {
         field: 'expirationDate',
         headerText: 'Expires',
         width: 130,
-        valueAccessor: (_: string, d: Estimate) => this.formatDate(d.expirationDate),
+        valueAccessor: (_: string, d: unknown) => this.formatDate((d as Estimate)?.expirationDate),
       },
       {
         field: 'total',
         headerText: 'Total',
         width: 120,
         textAlign: 'Right',
-        valueAccessor: (_: string, d: Estimate) => this.formatCurrency(d.total),
+        valueAccessor: (_: string, d: unknown) => this.formatCurrency((d as Estimate)?.total ?? 0),
       },
       {
         headerText: 'Status',
