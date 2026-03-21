@@ -27,6 +27,7 @@ export class ClientHubLayoutComponent {
     { label: 'Overview', route: '/client-hub/overview' },
     { label: 'Messages', route: '/client-hub/chat' },
     { label: 'My Info', route: '/client-hub/profile' },
+    { label: 'Updates', route: '/client-hub/jobs' },
     { label: 'Estimates', route: '/client-hub/estimates' },
     { label: 'Invoices', route: '/client-hub/invoices' },
     { label: 'Request Work', route: '/client-hub/request-work' },

@@ -74,6 +74,7 @@ export class JobComponent implements OnInit {
    selectedStatusFilter = '';
    selectedClientFilter = '';
    selectedAssigneeFilter = '';
+   canShareUpdates = false;
 
    statusOptions: { statusKey: string; label: string; value: JobLifecycleStatus }[] = [];
    private statusLabelMap: Record<number, string> = { ...JobLifecycleStatusLabels };
@@ -121,6 +122,10 @@ export class JobComponent implements OnInit {
    ngOnInit(): void {
       this.buildColumns();
       this.loadWorkflowStatuses();
+
+      this.orgContext.hasMinPlan$('Flow').subscribe(canShare => {
+         this.canShareUpdates = canShare;
+      });
 
       this.loadEmployees();
 
@@ -430,6 +435,19 @@ export class JobComponent implements OnInit {
             this.updatingStatus = false;
          }
       });
+   }
+
+   async copyClientUpdatesLink(job: Job | null): Promise<void> {
+      if (!job?.id) return;
+
+      const link = `${window.location.origin}/client-hub/jobs/${job.id}/updates`;
+
+      try {
+         await navigator.clipboard.writeText(link);
+         this.toast.success('Client updates link copied.');
+      } catch {
+         this.toast.error('Unable to copy the updates link.');
+      }
    }
 
    togglePreviewAssignee(employeeId: string): void {

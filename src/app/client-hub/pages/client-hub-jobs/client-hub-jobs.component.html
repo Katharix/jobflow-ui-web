@@ -1,0 +1,46 @@
+<section class="client-page">
+  <header class="client-page-head">
+    <div>
+      <h1>Job Updates</h1>
+      <p class="client-page-subtitle">Track progress, invoices, and approvals from one shared timeline.</p>
+    </div>
+  </header>
+
+  @if (isLoading) {
+    <div class="alert alert-info">Loading job updates...</div>
+  }
+
+  @if (error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+
+  @if (!isLoading && !error) {
+    <div class="row g-3">
+      @for (job of jobs; track job.id) {
+        <div class="col-12 col-lg-6">
+          <article class="client-surface job-update-card">
+            <div>
+              <p class="job-update-card__eyebrow">Job</p>
+              <h2>{{ job.title || 'Untitled job' }}</h2>
+              <p class="job-update-card__meta">Started {{ formatDate(job.createdAt) }}</p>
+            </div>
+            <div class="job-update-card__status" [class]="'job-update-card__status ' + statusClass(job.status)">
+              {{ statusLabel(job.status) }}
+            </div>
+            <a class="btn btn-outline-primary" [routerLink]="['/client-hub/jobs', job.id, 'updates']">
+              View updates
+            </a>
+          </article>
+        </div>
+      }
+
+      @if (jobs.length === 0) {
+        <div class="col-12">
+          <div class="client-surface empty-state">
+            <p class="mb-0">No active jobs yet. Once a job starts, updates will appear here.</p>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>

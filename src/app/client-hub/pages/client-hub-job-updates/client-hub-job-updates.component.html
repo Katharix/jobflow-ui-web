@@ -1,0 +1,99 @@
+<section class="client-page">
+  <header class="client-page-head">
+    <div>
+      <h1>Job Updates</h1>
+      <p class="client-page-subtitle">A live timeline of what has changed and what needs your attention.</p>
+    </div>
+    <a class="btn btn-outline-primary" routerLink="/client-hub/jobs">Back to Jobs</a>
+  </header>
+
+  @if (isLoading) {
+    <div class="alert alert-info">Loading updates...</div>
+  }
+
+  @if (error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+
+  @if (!isLoading && !error) {
+    <div class="client-surface updates-hero">
+      <div>
+        <p class="updates-hero__eyebrow">Job focus</p>
+        <h2>{{ job?.title || 'Untitled job' }}</h2>
+        <p class="updates-hero__meta">Current status: {{ jobStatusLabel(job?.status) }}</p>
+      </div>
+      <span class="updates-hero__stamp">Updated {{ formatDateTime(job?.updatedAt || job?.createdAt) }}</span>
+    </div>
+
+    @if (pendingEstimates.length) {
+      <div class="client-surface approvals">
+        <div class="approvals__header">
+          <div>
+            <h3>Approvals waiting on you</h3>
+            <p>Approve or request changes to keep work moving.</p>
+          </div>
+        </div>
+        <div class="approvals__list">
+          @for (estimate of pendingEstimates; track estimate.id) {
+            <article class="approval-card">
+              <div>
+                <p class="approval-card__title">Estimate #{{ estimate.estimateNumber }}</p>
+                <span class="approval-card__status">{{ estimateStatusLabel(estimate.status) }}</span>
+              </div>
+              <a class="btn btn-outline-primary" [routerLink]="['/client-hub/estimates', estimate.id]">Review</a>
+            </article>
+          }
+        </div>
+      </div>
+    }
+
+    <div class="client-surface timeline">
+      <div class="timeline__header">
+        <h3>Timeline</h3>
+        <p>Everything your organization has shared about this job.</p>
+      </div>
+
+      @if (!timeline.length) {
+        <p class="text-muted mb-0">No updates have been shared yet.</p>
+      }
+
+      @if (timeline.length) {
+        <ol class="timeline-list">
+          @for (item of timeline; track item.id) {
+            <li class="timeline-item" [class]="'timeline-item ' + timelineClass(item.type)">
+              <div class="timeline-item__marker"></div>
+              <div class="timeline-item__content">
+                <div class="timeline-item__top">
+                  <h4>{{ item.title }}</h4>
+                  <span>{{ formatDateTime(item.occurredAt) }}</span>
+                </div>
+                <p *ngIf="item.detail">{{ item.detail }}</p>
+                <div class="timeline-item__photos" *ngIf="item.attachments?.length">
+                  @for (attachment of item.attachments; track attachment.id) {
+                    <div class="timeline-photo">
+                      <img
+                        *ngIf="getAttachmentUrl(attachment)"
+                        [src]="getAttachmentUrl(attachment)"
+                        [alt]="attachment.fileName"
+                      />
+                      <span *ngIf="!getAttachmentUrl(attachment)">Loading photo...</span>
+                    </div>
+                  }
+                </div>
+                <div class="timeline-item__meta">
+                  <span *ngIf="item.status">Status: {{ item.status }}</span>
+                  <span *ngIf="item.amount">Amount: {{ item.amount | currency }}</span>
+                  <a
+                    *ngIf="item.invoiceId"
+                    class="link-primary"
+                    [routerLink]="['/client-hub/invoices', item.invoiceId]"
+                  >View invoice</a>
+                </div>
+              </div>
+            </li>
+          }
+        </ol>
+      }
+    </div>
+  }
+</section>

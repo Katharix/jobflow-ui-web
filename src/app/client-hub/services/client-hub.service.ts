@@ -9,6 +9,8 @@ import {
   ClientHubProfile,
   ClientHubWorkRequest,
   ClientHubWorkRequestResponse,
+  ClientHubJobSummary,
+  ClientHubTimelineItem,
   UpdateClientHubProfileRequest,
 } from '../models/client-hub.models';
 
@@ -66,6 +68,34 @@ export class ClientHubService {
   getInvoiceById(id: string): Observable<ClientHubInvoice> {
     return this.api.getWithHeaders<ClientHubInvoice>(
       `${this.baseUrl}/invoices/${id}`,
+      this.getAuthHeaders(),
+    );
+  }
+
+  getJobs(): Observable<ClientHubJobSummary[]> {
+    return this.api.getWithHeaders<ClientHubJobSummary[]>(
+      `${this.baseUrl}/jobs`,
+      this.getAuthHeaders(),
+    );
+  }
+
+  getJobById(id: string): Observable<ClientHubJobSummary> {
+    return this.api.getWithHeaders<ClientHubJobSummary>(
+      `${this.baseUrl}/jobs/${id}`,
+      this.getAuthHeaders(),
+    );
+  }
+
+  getJobTimeline(id: string): Observable<ClientHubTimelineItem[]> {
+    return this.api.getWithHeaders<ClientHubTimelineItem[]>(
+      `${this.baseUrl}/jobs/${id}/timeline`,
+      this.getAuthHeaders(),
+    );
+  }
+
+  getJobUpdateAttachment(jobId: string, updateId: string, attachmentId: string): Observable<Blob> {
+    return this.api.getBlobWithHeaders(
+      `${this.baseUrl}/jobs/${jobId}/updates/${updateId}/attachments/${attachmentId}`,
       this.getAuthHeaders(),
     );
   }
