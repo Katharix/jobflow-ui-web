@@ -8,11 +8,10 @@ import {
 import {Drawer} from 'primeng/drawer';
 
 @Component({
-   selector: 'app-jobflow-drawer',
-   standalone: true,
-   imports: [Drawer],
-   templateUrl: './jobflow-drawer.component.html',
-   styleUrls: ['./jobflow-drawer.component.scss']
+    selector: 'app-jobflow-drawer',
+    imports: [Drawer],
+    templateUrl: './jobflow-drawer.component.html',
+    styleUrls: ['./jobflow-drawer.component.scss']
 })
 export class JobflowDrawerComponent {
    @Input() open = false;

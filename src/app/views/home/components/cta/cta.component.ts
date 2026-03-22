@@ -7,11 +7,10 @@ import { environment } from '../../../../../environments/environment';
 import { TurnstileWidgetComponent } from '../../../../common/turnstile/turnstile-widget.component';
 
 @Component({
-  selector: 'app-cta',
-  standalone: true,
-  imports: [FormsModule, TurnstileWidgetComponent],
-  templateUrl: './cta.component.html',
-  styleUrl: './cta.component.scss'
+    selector: 'app-cta',
+    imports: [FormsModule, TurnstileWidgetComponent],
+    templateUrl: './cta.component.html',
+    styleUrl: './cta.component.scss'
 })
 export class CtaComponent {
   private emailService = inject(EmailService);

@@ -1,5 +1,5 @@
-import { DOCUMENT, NgClass } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild, inject } from '@angular/core';
+import { NgClass } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild, inject, DOCUMENT } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 
@@ -13,17 +13,16 @@ import { OrganizationContextService } from '../../../services/shared/organizatio
 import { OrganizationDto } from '../../../models/organization';
 
 @Component({
-  selector: 'app-admin-sidebar',
-  standalone: true,
-  imports: [
-    RouterLink,
-    RouterLinkActive,
-    NgScrollbar,
-    NgClass,
-    LucideAngularModule
-],
-  templateUrl: './admin-sidebar.component.html',
-  styleUrl: './admin-sidebar.component.scss'
+    selector: 'app-admin-sidebar',
+    imports: [
+        RouterLink,
+        RouterLinkActive,
+        NgScrollbar,
+        NgClass,
+        LucideAngularModule
+    ],
+    templateUrl: './admin-sidebar.component.html',
+    styleUrl: './admin-sidebar.component.scss'
 })
 export class AdminSidebarComponent implements OnInit, AfterViewInit {
   private document = inject<Document>(DOCUMENT);

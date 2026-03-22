@@ -5,11 +5,10 @@ import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { filter } from 'rxjs';
 
 @Component({
-  selector: 'app-public-navbar',
-  standalone: true,
-  imports: [CommonModule, NgbCollapseModule,TitleCasePipe,RouterLink],
-  templateUrl: './public-navbar.component.html',
-  styleUrl: './public-navbar.component.scss'
+    selector: 'app-public-navbar',
+    imports: [CommonModule, NgbCollapseModule, TitleCasePipe, RouterLink],
+    templateUrl: './public-navbar.component.html',
+    styleUrl: './public-navbar.component.scss'
 })
 export class PublicNavbarComponent {
   private router = inject(Router);

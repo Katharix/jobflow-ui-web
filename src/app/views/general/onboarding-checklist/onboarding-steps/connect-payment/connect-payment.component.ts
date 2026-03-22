@@ -7,11 +7,10 @@ import { PaymentProvider } from '../../../../../models/customer-payment-profile'
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-connect-payment',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './connect-payment.component.html',
-  styleUrl: './connect-payment.component.scss'
+    selector: 'app-connect-payment',
+    imports: [CommonModule],
+    templateUrl: './connect-payment.component.html',
+    styleUrl: './connect-payment.component.scss'
 })
 export class ConnectPaymentComponent implements OnInit {
   private paymentService = inject(PaymentService);

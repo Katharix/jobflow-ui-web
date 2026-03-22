@@ -22,21 +22,20 @@ import { Auth } from '@angular/fire/auth';
 import { useNotifierHub, InvoicePaidEvent } from '../services/useNotifierHub';
 
 @Component({
-   selector: 'app-invoices',
-   standalone: true,
-   imports: [
-      CommonModule,
-      FormsModule,
-      ReactiveFormsModule,
-      RouterModule,
-      InputTextModule,
-      InputNumberModule,
-      PageHeaderComponent,
-      JobflowGridComponent,
-      JobflowDrawerComponent
-   ],
-   templateUrl: './invoices.component.html',
-   styleUrl: './invoices.component.scss'
+    selector: 'app-invoices',
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        RouterModule,
+        InputTextModule,
+        InputNumberModule,
+        PageHeaderComponent,
+        JobflowGridComponent,
+        JobflowDrawerComponent
+    ],
+    templateUrl: './invoices.component.html',
+    styleUrl: './invoices.component.scss'
 })
 export class InvoicesComponent implements OnInit, OnDestroy {
    private fb = inject(FormBuilder);

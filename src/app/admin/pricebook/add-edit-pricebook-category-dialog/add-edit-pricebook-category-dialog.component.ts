@@ -19,11 +19,10 @@ export interface AddEditCategoryResult {
 }
 
 @Component({
-  selector: 'app-add-edit-pricebook-category-dialog',
-  standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, InputTextModule, TextareaModule],
-  templateUrl: './add-edit-pricebook-category-dialog.component.html',
-  styleUrl: './add-edit-pricebook-category-dialog.component.scss'
+    selector: 'app-add-edit-pricebook-category-dialog',
+    imports: [FormsModule, ReactiveFormsModule, InputTextModule, TextareaModule],
+    templateUrl: './add-edit-pricebook-category-dialog.component.html',
+    styleUrl: './add-edit-pricebook-category-dialog.component.scss'
 })
 export class AddEditPriceBookCategoryDialogComponent {
   private fb = inject(FormBuilder);

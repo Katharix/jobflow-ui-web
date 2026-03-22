@@ -14,11 +14,10 @@ interface FooterLinkGroup {
 }
 
 @Component({
-  selector: 'app-public-footer',
-  standalone: true,
-  imports: [RouterLink],
-  templateUrl: './public-footer.component.html',
-  styleUrl: './public-footer.component.scss'
+    selector: 'app-public-footer',
+    imports: [RouterLink],
+    templateUrl: './public-footer.component.html',
+    styleUrl: './public-footer.component.scss'
 })
 export class PublicFooterComponent {
   currentYear = currentYear;

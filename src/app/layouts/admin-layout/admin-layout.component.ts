@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, inject, OnInit, ViewEncapsulation} from '@angular/core';
-import {DOCUMENT} from '@angular/common';
+import {ChangeDetectorRef, Component, inject, OnInit, ViewEncapsulation, DOCUMENT} from '@angular/core';
+
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import {AdminSidebarComponent} from "./admin-sidebar/admin-sidebar.component";
 import {AdminNavbarComponent} from './admin-navbar/admin-navbar.component';
@@ -9,12 +9,11 @@ import {LoadingService} from '../../services/shared/loading-service.service';
 
 
 @Component({
-   selector: 'app-admin-layout',
-   standalone: true,
-   imports: [RouterOutlet, AdminNavbarComponent, AdminFooterComponent, AdminSidebarComponent, PreloaderComponent, RouterModule],
-   templateUrl: './admin-layout.component.html',
-   styleUrl: './admin-layout.component.scss',
-   encapsulation: ViewEncapsulation.None
+    selector: 'app-admin-layout',
+    imports: [RouterOutlet, AdminNavbarComponent, AdminFooterComponent, AdminSidebarComponent, PreloaderComponent, RouterModule],
+    templateUrl: './admin-layout.component.html',
+    styleUrl: './admin-layout.component.scss',
+    encapsulation: ViewEncapsulation.None
 })
 export class AdminLayoutComponent implements OnInit {
    isLoading = false;

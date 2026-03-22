@@ -18,11 +18,10 @@ import { PaymentProvider } from '../../models/customer-payment-profile';
 import { ToastService } from '../../common/toast/toast.service';
 
 @Component({
-   selector: 'app-register',
-   standalone: true,
-   imports: [RouterLink, FormsModule, CommonModule],
-   templateUrl: './register.component.html',
-   styleUrl: './register.component.scss'
+    selector: 'app-register',
+    imports: [RouterLink, FormsModule, CommonModule],
+    templateUrl: './register.component.html',
+    styleUrl: './register.component.scss'
 })
 export class RegisterComponent implements OnInit {
    private auth = inject(Auth);

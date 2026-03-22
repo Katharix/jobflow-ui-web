@@ -9,12 +9,11 @@ interface ClientHubNavItem {
 }
 
 @Component({
-  selector: 'app-client-hub-layout',
-  standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
-  templateUrl: './client-hub-layout.component.html',
-  styleUrl: './client-hub-layout.component.scss',
-  encapsulation: ViewEncapsulation.None,
+    selector: 'app-client-hub-layout',
+    imports: [RouterLink, RouterLinkActive, RouterOutlet],
+    templateUrl: './client-hub-layout.component.html',
+    styleUrl: './client-hub-layout.component.scss',
+    encapsulation: ViewEncapsulation.None
 })
 export class ClientHubLayoutComponent {
   private readonly authService = inject(ClientHubAuthService);

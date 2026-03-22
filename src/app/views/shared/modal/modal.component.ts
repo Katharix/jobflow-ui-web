@@ -4,10 +4,9 @@ import { LucideAngularModule } from 'lucide-angular';
 import {FormGroup} from "@angular/forms";
 
 @Component({
-  selector: 'app-jobflow-modal',
-  templateUrl: './modal.component.html',
-  standalone: true,
-   imports: [LucideAngularModule, CommonModule]
+    selector: 'app-jobflow-modal',
+    templateUrl: './modal.component.html',
+    imports: [LucideAngularModule, CommonModule]
 })
 export class ModalComponent {
   @Input() formGroup?: FormGroup; // optional form for validation

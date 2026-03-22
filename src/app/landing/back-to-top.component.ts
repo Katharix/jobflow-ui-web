@@ -2,15 +2,14 @@
 import { Component, HostListener } from '@angular/core'
 
 @Component({
-  selector: 'app-back-to-top',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'app-back-to-top',
+    imports: [],
+    template: `
      @if (isVisible) {
        <a href="javascript:void(0);" (click)="scrollToTop()" class="back-to-top-btn btn btn-primary" id="back-to-top"><i class="ti ti-arrow-up"></i></a>
      }
      `,
-  styles: ``,
+    styles: ``
 })
 export class BackToTopComponent {
   isVisible = false

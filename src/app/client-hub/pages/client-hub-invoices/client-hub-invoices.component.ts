@@ -9,11 +9,10 @@ import { ClientHubService } from '../../services/client-hub.service';
 import { ClientHubNotifierService, ClientHubInvoicePaidEvent } from '../../services/client-hub-notifier.service';
 
 @Component({
-  selector: 'app-client-hub-invoices',
-  standalone: true,
-  imports: [RouterLink],
-  templateUrl: './client-hub-invoices.component.html',
-  styleUrl: './client-hub-invoices.component.scss',
+    selector: 'app-client-hub-invoices',
+    imports: [RouterLink],
+    templateUrl: './client-hub-invoices.component.html',
+    styleUrl: './client-hub-invoices.component.scss'
 })
 export class ClientHubInvoicesComponent implements OnInit, OnDestroy {
   private readonly clientHubService = inject(ClientHubService);

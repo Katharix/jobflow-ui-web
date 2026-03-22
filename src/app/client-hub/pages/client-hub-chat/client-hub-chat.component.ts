@@ -22,11 +22,10 @@ type ClientHubChatMessageWithDates = ClientHubChatMessage & {
 };
 
 @Component({
-  selector: 'app-client-hub-chat',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './client-hub-chat.component.html',
-  styleUrl: './client-hub-chat.component.scss',
+    selector: 'app-client-hub-chat',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './client-hub-chat.component.html',
+    styleUrl: './client-hub-chat.component.scss'
 })
 export class ClientHubChatComponent implements OnInit, OnDestroy {
   @ViewChild('chatBody') chatBody?: ElementRef<HTMLDivElement>;

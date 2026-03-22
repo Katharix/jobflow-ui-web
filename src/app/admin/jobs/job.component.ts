@@ -32,20 +32,19 @@ import {AssignmentDto} from "./models/assignment";
 
 
 @Component({
-   selector: 'app-job',
-   standalone: true,
-   imports: [
-      CommonModule,
-      FormsModule,
-      PageHeaderComponent,
-      ReactiveFormsModule,
-      JobflowGridComponent,
-      JobflowDrawerComponent,
-      CreateJobComponent,
-      RouterLink
-   ],
-   styleUrls: ['./job.component.scss'],
-   templateUrl: './job.component.html'
+    selector: 'app-job',
+    imports: [
+        CommonModule,
+        FormsModule,
+        PageHeaderComponent,
+        ReactiveFormsModule,
+        JobflowGridComponent,
+        JobflowDrawerComponent,
+        CreateJobComponent,
+        RouterLink
+    ],
+    styleUrls: ['./job.component.scss'],
+    templateUrl: './job.component.html'
 })
 export class JobComponent implements OnInit {
    private jobs = inject(JobsService);

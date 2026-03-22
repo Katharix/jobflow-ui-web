@@ -8,11 +8,10 @@ import { ClientHubAuthService } from '../../services/client-hub-auth.service';
 import { ClientHubService } from '../../services/client-hub.service';
 
 @Component({
-  selector: 'app-client-hub-overview',
-  standalone: true,
-  imports: [RouterLink],
-  templateUrl: './client-hub-overview.component.html',
-  styleUrl: './client-hub-overview.component.scss',
+    selector: 'app-client-hub-overview',
+    imports: [RouterLink],
+    templateUrl: './client-hub-overview.component.html',
+    styleUrl: './client-hub-overview.component.scss'
 })
 export class ClientHubOverviewComponent implements OnInit {
   private readonly clientHubService = inject(ClientHubService);

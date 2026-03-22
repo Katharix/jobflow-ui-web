@@ -17,11 +17,10 @@ import { EstimateStatus, EstimateStatusLabels } from '../../../admin/estimates/m
 import { JobLifecycleStatus, JobLifecycleStatusLabels } from '../../../admin/jobs/models/job';
 
 @Component({
-  selector: 'app-client-hub-job-updates',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './client-hub-job-updates.component.html',
-  styleUrl: './client-hub-job-updates.component.scss',
+    selector: 'app-client-hub-job-updates',
+    imports: [CommonModule, RouterLink],
+    templateUrl: './client-hub-job-updates.component.html',
+    styleUrl: './client-hub-job-updates.component.scss'
 })
 export class ClientHubJobUpdatesComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);

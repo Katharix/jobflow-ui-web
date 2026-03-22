@@ -3,11 +3,10 @@ import { Component } from '@angular/core';
 import type { Feature } from '../types';
 
 @Component({
-  selector: 'app-features',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './features.component.html',
-  styleUrl: './features.component.scss'
+    selector: 'app-features',
+    imports: [CommonModule],
+    templateUrl: './features.component.html',
+    styleUrl: './features.component.scss'
 })
 export class FeaturesComponent {
   featuresRow1: Feature[] = [

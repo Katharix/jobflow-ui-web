@@ -21,10 +21,9 @@ import {ToastService} from '../../common/toast/toast.service';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 
 @Component({
-   selector: 'app-pricebook',
-   standalone: true,
-   imports: [LucideAngularModule, RouterLink],
-   templateUrl: './pricebook.component.html'
+    selector: 'app-pricebook',
+    imports: [LucideAngularModule, RouterLink],
+    templateUrl: './pricebook.component.html'
 })
 export class PriceBookComponent implements OnInit {
    private priceBookCategoryService = inject(PriceBookCategoryService);

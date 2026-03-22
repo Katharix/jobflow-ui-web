@@ -11,15 +11,14 @@ import {SelectModule} from 'primeng/select';
 import {RouterLink} from '@angular/router';
 
 @Component({
-   selector: 'app-job-create',
-   standalone: true,
-   imports: [
-    FormsModule,
-    InputTextModule,
-    SelectModule,
-    RouterLink
-],
-   templateUrl: './job-create.component.html'
+    selector: 'app-job-create',
+    imports: [
+        FormsModule,
+        InputTextModule,
+        SelectModule,
+        RouterLink
+    ],
+    templateUrl: './job-create.component.html'
 })
 export class CreateJobComponent implements OnChanges {
    private jobsService = inject(JobsService);

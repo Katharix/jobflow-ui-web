@@ -10,11 +10,10 @@ import {EmployeeRole} from '../../employee-roles/models/employee-role';
 import {OrganizationContextService} from '../../../services/shared/organization-context.service';
 
 @Component({
-   selector: 'app-employee-form',
-   standalone: true,
-   imports: [ReactiveFormsModule, InputTextModule, SelectModule, CheckboxModule],
-   templateUrl: './employee-form.component.html',
-   styleUrls: ['./employee-form.component.scss']
+    selector: 'app-employee-form',
+    imports: [ReactiveFormsModule, InputTextModule, SelectModule, CheckboxModule],
+    templateUrl: './employee-form.component.html',
+    styleUrls: ['./employee-form.component.scss']
 })
 export class EmployeeFormComponent implements OnInit {
    private fb = inject(FormBuilder);

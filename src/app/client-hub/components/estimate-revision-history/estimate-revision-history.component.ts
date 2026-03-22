@@ -8,11 +8,10 @@ import { EstimateRevisionApi } from '../../services/estimate-revision-api';
 import { EstimateRevisionRequestDto } from '../../models/client-hub.models';
 
 @Component({
-  selector: 'app-estimate-revision-history',
-  standalone: true,
-  imports: [],
-  templateUrl: './estimate-revision-history.component.html',
-  styleUrl: './estimate-revision-history.component.scss',
+    selector: 'app-estimate-revision-history',
+    imports: [],
+    templateUrl: './estimate-revision-history.component.html',
+    styleUrl: './estimate-revision-history.component.scss'
 })
 export class EstimateRevisionHistoryComponent implements OnChanges {
   private readonly api = inject(EstimateRevisionApi);

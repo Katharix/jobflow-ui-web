@@ -80,18 +80,17 @@ interface SmsStatusEvent {
 }
 
 @Component({
-  selector: 'app-chat',
-  templateUrl: './chat.component.html',
-  standalone: true,
-  imports: [
-    NgScrollbarModule,
-    CommonModule,
-    FormsModule,
-    NgbDropdownModule,
-    NgbNavModule,
-    NgbTooltipModule
-  ],
-  styleUrl: './chat.component.scss'
+    selector: 'app-chat',
+    templateUrl: './chat.component.html',
+    imports: [
+        NgScrollbarModule,
+        CommonModule,
+        FormsModule,
+        NgbDropdownModule,
+        NgbNavModule,
+        NgbTooltipModule
+    ],
+    styleUrl: './chat.component.scss'
 })
 export class ChatComponent implements OnInit, OnDestroy {
   private chatService = inject(ChatService);

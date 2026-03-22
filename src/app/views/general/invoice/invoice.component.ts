@@ -13,11 +13,10 @@ import {PaymentSessionRequest} from "../../../models/payment-session-request";
 import {environment} from "../../../../environments/environment";
 
 @Component({
-   selector: 'app-invoice',
-   standalone: true,
-   imports: [CommonModule, LucideAngularModule],
-   templateUrl: './invoice.component.html',
-   styleUrls: ['./invoice.component.scss']
+    selector: 'app-invoice',
+    imports: [CommonModule, LucideAngularModule],
+    templateUrl: './invoice.component.html',
+    styleUrls: ['./invoice.component.scss']
 })
 export class InvoiceComponent implements OnInit {
    private invoiceService = inject(InvoiceService);

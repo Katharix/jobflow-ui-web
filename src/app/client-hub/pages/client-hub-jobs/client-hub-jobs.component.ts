@@ -6,11 +6,10 @@ import { ClientHubService } from '../../services/client-hub.service';
 import { JobLifecycleStatus, JobLifecycleStatusLabels } from '../../../admin/jobs/models/job';
 
 @Component({
-  selector: 'app-client-hub-jobs',
-  standalone: true,
-  imports: [RouterLink],
-  templateUrl: './client-hub-jobs.component.html',
-  styleUrl: './client-hub-jobs.component.scss',
+    selector: 'app-client-hub-jobs',
+    imports: [RouterLink],
+    templateUrl: './client-hub-jobs.component.html',
+    styleUrl: './client-hub-jobs.component.scss'
 })
 export class ClientHubJobsComponent implements OnInit {
   private readonly clientHubService = inject(ClientHubService);

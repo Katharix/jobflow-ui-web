@@ -11,16 +11,15 @@ import { WeatherWidgetComponent } from '../../../admin/dashboard/weather-widget/
 
 
 @Component({
-   selector: 'app-admin-navbar',
-   standalone: true,
-   imports: [
-    NgbDropdownModule,
-    RouterLink,
-    RouterModule,
-    WeatherWidgetComponent
-],
-   templateUrl: './admin-navbar.component.html',
-   styleUrl: './admin-navbar.component.scss'
+    selector: 'app-admin-navbar',
+    imports: [
+        NgbDropdownModule,
+        RouterLink,
+        RouterModule,
+        WeatherWidgetComponent
+    ],
+    templateUrl: './admin-navbar.component.html',
+    styleUrl: './admin-navbar.component.scss'
 })
 export class AdminNavbarComponent implements OnInit {
    private router = inject(Router);

@@ -22,10 +22,9 @@ export interface CommandCenterFlowStep {
 }
 
 @Component({
-   selector: 'app-dashboard-comprehensive-workflow',
-   standalone: true,
-   imports: [RouterModule],
-   template: `
+    selector: 'app-dashboard-comprehensive-workflow',
+    imports: [RouterModule],
+    template: `
       @if (flowSteps.length) {
         <section class="workflow">
           <header class="workflow__header">
@@ -49,7 +48,7 @@ export interface CommandCenterFlowStep {
         </section>
       }
       `,
-   styles: [`
+    styles: [`
       .workflow {
          display: grid;
          gap: 0.75rem;
@@ -186,11 +185,10 @@ export class DashboardComprehensiveWorkflowComponent {
 }
 
 @Component({
-   selector: 'app-jobflow-command-center',
-   standalone: true,
-   imports: [RouterModule, DashboardComprehensiveWorkflowComponent],
-   templateUrl: './jobflow-command-center.component.html',
-   styleUrl: './jobflow-command-center.component.scss'
+    selector: 'app-jobflow-command-center',
+    imports: [RouterModule, DashboardComprehensiveWorkflowComponent],
+    templateUrl: './jobflow-command-center.component.html',
+    styleUrl: './jobflow-command-center.component.scss'
 })
 export class JobflowCommandCenterComponent {
    @Input() primaryActions: CommandCenterAction[] = [];

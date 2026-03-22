@@ -34,12 +34,11 @@ interface JobflowCalendarEventSettings {
 }
 
 @Component({
-  selector: 'app-jobflow-calendar',
-  standalone: true,
-  imports: [CommonModule, FormsModule, FullCalendarModule, LucideAngularModule],
-  templateUrl: './jobflow-calendar.component.html',
-  encapsulation: ViewEncapsulation.None,
-  styleUrls: ['./jobflow-calendar.component.scss'],
+    selector: 'app-jobflow-calendar',
+    imports: [CommonModule, FormsModule, FullCalendarModule, LucideAngularModule],
+    templateUrl: './jobflow-calendar.component.html',
+    encapsulation: ViewEncapsulation.None,
+    styleUrls: ['./jobflow-calendar.component.scss']
 })
 export class JobflowCalendarComponent {
   private _selectedDate: Date = new Date();

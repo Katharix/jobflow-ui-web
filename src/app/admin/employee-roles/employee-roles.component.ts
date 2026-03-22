@@ -16,11 +16,10 @@ import {
 } from '../../common/jobflow-grid/jobflow-grid.component';
 
 @Component({
-   selector: 'app-employee-roles',
-   standalone: true,
-   templateUrl: './employee-roles.component.html',
-   styleUrls: ['./employee-roles.component.scss'],
-   imports: [ReactiveFormsModule, InputTextModule, JobflowGridComponent, PageHeaderComponent, ModalComponent]
+    selector: 'app-employee-roles',
+    templateUrl: './employee-roles.component.html',
+    styleUrls: ['./employee-roles.component.scss'],
+    imports: [ReactiveFormsModule, InputTextModule, JobflowGridComponent, PageHeaderComponent, ModalComponent]
 })
 export class EmployeeRolesComponent implements OnInit {
    private employeeRoleService = inject(EmployeeRoleService);

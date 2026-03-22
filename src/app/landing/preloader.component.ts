@@ -2,10 +2,9 @@
 import { Component, Input, type OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-preloader',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'app-preloader',
+    imports: [],
+    template: `
       <div id="preloader">
         <div id="status">
             <div class="sk-chase">
@@ -19,7 +18,7 @@ import { Component, Input, type OnInit } from '@angular/core';
         </div>
     </div>
   `,
-  styles: ``,
+    styles: ``
 })
 export class PreloaderComponent implements OnInit {
   @Input() autoHideMs: number | null = null;

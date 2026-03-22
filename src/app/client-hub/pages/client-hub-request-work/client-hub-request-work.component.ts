@@ -15,11 +15,10 @@ interface ClientHubWorkRequestFormModel {
 }
 
 @Component({
-  selector: 'app-client-hub-request-work',
-  standalone: true,
-  imports: [FormsModule],
-  templateUrl: './client-hub-request-work.component.html',
-  styleUrl: './client-hub-request-work.component.scss',
+    selector: 'app-client-hub-request-work',
+    imports: [FormsModule],
+    templateUrl: './client-hub-request-work.component.html',
+    styleUrl: './client-hub-request-work.component.scss'
 })
 export class ClientHubRequestWorkComponent {
   private readonly clientHubService = inject(ClientHubService);

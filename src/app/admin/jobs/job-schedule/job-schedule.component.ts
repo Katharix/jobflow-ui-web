@@ -22,11 +22,10 @@ import { ScheduleSettingsDto } from '../../settings/models/schedule-settings';
 import { ToastService } from '../../../common/toast/toast.service';
 
 @Component({
-  selector: 'app-job-schedule',
-  standalone: true,
-  imports: [PageHeaderComponent, JobflowCalendarComponent, JobAssignmentFormComponent, JobflowDrawerComponent],
-  templateUrl: './job-schedule.component.html',
-  styleUrls: ['./job-schedule.component.scss']
+    selector: 'app-job-schedule',
+    imports: [PageHeaderComponent, JobflowCalendarComponent, JobAssignmentFormComponent, JobflowDrawerComponent],
+    templateUrl: './job-schedule.component.html',
+    styleUrls: ['./job-schedule.component.scss']
 })
 export class JobScheduleComponent implements OnInit {
   private assignments = inject(AssignmentsService);

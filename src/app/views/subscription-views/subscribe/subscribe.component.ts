@@ -43,12 +43,11 @@ declare const google: {
 };
 
 @Component({
-   selector: 'app-subscribe',
-   standalone: true,
-   imports: [RouterLink, FormsModule, CommonModule],
-   templateUrl: './subscribe.component.html',
-   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-   styleUrl: './subscribe.component.scss'
+    selector: 'app-subscribe',
+    imports: [RouterLink, FormsModule, CommonModule],
+    templateUrl: './subscribe.component.html',
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    styleUrl: './subscribe.component.scss'
 })
 export class SubscribeComponent implements AfterViewInit, OnInit {
    private router = inject(Router);

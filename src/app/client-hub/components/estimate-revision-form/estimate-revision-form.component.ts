@@ -28,11 +28,10 @@ const ALLOWED_MIME_TYPES = [
 ];
 
 @Component({
-  selector: 'app-estimate-revision-form',
-  standalone: true,
-  imports: [FormsModule],
-  templateUrl: './estimate-revision-form.component.html',
-  styleUrl: './estimate-revision-form.component.scss',
+    selector: 'app-estimate-revision-form',
+    imports: [FormsModule],
+    templateUrl: './estimate-revision-form.component.html',
+    styleUrl: './estimate-revision-form.component.scss'
 })
 export class EstimateRevisionFormComponent {
   private readonly ref = inject<ModalRef<EstimateRevisionRequestDto>>(ModalRef);

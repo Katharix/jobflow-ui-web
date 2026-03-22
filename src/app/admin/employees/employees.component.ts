@@ -23,19 +23,18 @@ import {
 } from '../../common/jobflow-grid/jobflow-grid.component';
 
 @Component({
-   selector: 'app-employees',
-   standalone: true,
-   templateUrl: './employees.component.html',
-   styleUrls: ['./employees.component.scss'],
-   imports: [
-    LucideAngularModule,
-    JobflowGridComponent,
-    PageHeaderComponent,
-    ModalComponent,
-    EmployeeFormComponent,
-    EmployeeInviteFormComponent,
-    DeleteConfirmComponent
-]
+    selector: 'app-employees',
+    templateUrl: './employees.component.html',
+    styleUrls: ['./employees.component.scss'],
+    imports: [
+        LucideAngularModule,
+        JobflowGridComponent,
+        PageHeaderComponent,
+        ModalComponent,
+        EmployeeFormComponent,
+        EmployeeInviteFormComponent,
+        DeleteConfirmComponent
+    ]
 })
 export class EmployeesComponent implements OnInit {
    @ViewChild('actionsTemplate', {static: true}) actionsTemplate!: TemplateRef<unknown>;

@@ -21,11 +21,10 @@ interface DispatchOverviewRow {
 }
 
 @Component({
-  selector: 'app-dispatch',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, PageHeaderComponent, JobflowCalendarComponent, JobflowDrawerComponent],
-  templateUrl: './dispatch.component.html',
-  styleUrl: './dispatch.component.scss'
+    selector: 'app-dispatch',
+    imports: [CommonModule, FormsModule, RouterLink, PageHeaderComponent, JobflowCalendarComponent, JobflowDrawerComponent],
+    templateUrl: './dispatch.component.html',
+    styleUrl: './dispatch.component.scss'
 })
 export class DispatchComponent implements AfterViewInit, OnDestroy {
   private dispatch = inject(DispatchService);

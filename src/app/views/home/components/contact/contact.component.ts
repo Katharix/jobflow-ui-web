@@ -7,14 +7,13 @@ import { environment } from '../../../../../environments/environment';
 import { TurnstileWidgetComponent } from '../../../../common/turnstile/turnstile-widget.component';
 
 @Component({
-  selector: 'app-contact',
-  standalone: true,
-  imports: [
-    FormsModule,
-    TurnstileWidgetComponent
-],
-  templateUrl: './contact.component.html',
-  styleUrl: './contact.component.scss'
+    selector: 'app-contact',
+    imports: [
+        FormsModule,
+        TurnstileWidgetComponent
+    ],
+    templateUrl: './contact.component.html',
+    styleUrl: './contact.component.scss'
 })
 export class ContactComponent {
   private emailService = inject(EmailService);

@@ -9,15 +9,14 @@ import {ToastService} from '../../common/toast/toast.service';
 
 
 @Component({
-   selector: 'app-login',
-   standalone: true,
-   imports: [
-      RouterLink,
-      FormsModule,
-      CommonModule
-   ],
-   templateUrl: './login.component.html',
-   styleUrl: './login.component.scss'
+    selector: 'app-login',
+    imports: [
+        RouterLink,
+        FormsModule,
+        CommonModule
+    ],
+    templateUrl: './login.component.html',
+    styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit {
    private auth = inject(Auth);

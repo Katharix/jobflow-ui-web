@@ -11,11 +11,10 @@ import { loadStripe, Stripe, StripeElements } from '@stripe/stripe-js';
 import { ClientHubNotifierService, ClientHubInvoicePaidEvent } from '../../services/client-hub-notifier.service';
 
 @Component({
-  selector: 'app-client-hub-invoice-detail',
-  standalone: true,
-  imports: [RouterLink],
-  templateUrl: './client-hub-invoice-detail.component.html',
-  styleUrl: './client-hub-invoice-detail.component.scss',
+    selector: 'app-client-hub-invoice-detail',
+    imports: [RouterLink],
+    templateUrl: './client-hub-invoice-detail.component.html',
+    styleUrl: './client-hub-invoice-detail.component.scss'
 })
 export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);

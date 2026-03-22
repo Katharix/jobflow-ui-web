@@ -3,10 +3,9 @@ import { Component, Input } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
-  selector: 'app-page-header',
-  standalone: true,
-  imports: [LucideAngularModule, CommonModule],
-  templateUrl: './page-header.component.html',
+    selector: 'app-page-header',
+    imports: [LucideAngularModule, CommonModule],
+    templateUrl: './page-header.component.html'
 })
 export class PageHeaderComponent {
   @Input() title!: string;

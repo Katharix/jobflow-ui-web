@@ -11,18 +11,17 @@ import { EstimateFormComponent } from './estimate-form/estimate-form.component';
 import { Estimate, EstimateStatus, EstimateStatusLabels } from './models/estimate';
 
 @Component({
-  selector: 'app-estimates',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    PageHeaderComponent,
-    JobflowGridComponent,
-    JobflowDrawerComponent,
-    EstimateFormComponent,
-  ],
-  templateUrl: './estimates.component.html',
-  styleUrl: './estimates.component.scss',
+    selector: 'app-estimates',
+    imports: [
+        CommonModule,
+        FormsModule,
+        PageHeaderComponent,
+        JobflowGridComponent,
+        JobflowDrawerComponent,
+        EstimateFormComponent,
+    ],
+    templateUrl: './estimates.component.html',
+    styleUrl: './estimates.component.scss'
 })
 export class EstimatesComponent implements OnInit {
   private estimateService = inject(EstimateService);

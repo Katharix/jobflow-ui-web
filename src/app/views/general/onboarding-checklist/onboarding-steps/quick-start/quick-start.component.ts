@@ -11,11 +11,10 @@ import {
 import { ToastService } from '../../../../../common/toast/toast.service';
 
 @Component({
-  selector: 'app-onboarding-quick-start',
-  standalone: true,
-  imports: [CommonModule, RouterLink, PageHeaderComponent],
-  templateUrl: './quick-start.component.html',
-  styleUrl: './quick-start.component.scss'
+    selector: 'app-onboarding-quick-start',
+    imports: [CommonModule, RouterLink, PageHeaderComponent],
+    templateUrl: './quick-start.component.html',
+    styleUrl: './quick-start.component.scss'
 })
 export class OnboardingQuickStartComponent implements OnInit {
   private readonly onboardingService = inject(OnboardingService);

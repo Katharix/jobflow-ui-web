@@ -8,11 +8,10 @@ import { ClientHubMagicLinkOrganizationClient } from '../../models/client-hub.mo
 import { ClientHubAuthService } from '../../services/client-hub-auth.service';
 
 @Component({
-  selector: 'app-client-hub-auth',
-  standalone: true,
-  imports: [FormsModule],
-  templateUrl: './client-hub-auth.component.html',
-  styleUrl: './client-hub-auth.component.scss',
+    selector: 'app-client-hub-auth',
+    imports: [FormsModule],
+    templateUrl: './client-hub-auth.component.html',
+    styleUrl: './client-hub-auth.component.scss'
 })
 export class ClientHubAuthComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);

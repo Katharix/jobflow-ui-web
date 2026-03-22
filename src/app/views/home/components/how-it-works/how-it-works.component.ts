@@ -21,11 +21,10 @@ const STEP_COPY = [
 ];
 
 @Component({
-  selector: 'app-how-it-works',
-  standalone: true,
-  imports: [],
-  templateUrl: './how-it-works.component.html',
-  styleUrl: './how-it-works.component.scss'
+    selector: 'app-how-it-works',
+    imports: [],
+    templateUrl: './how-it-works.component.html',
+    styleUrl: './how-it-works.component.scss'
 })
 export class HowItWorksComponent {
   steps = STEP_COPY;

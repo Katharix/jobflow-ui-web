@@ -4,11 +4,10 @@ import { LoadingService } from '../../services/shared/loading-service.service';
 import { PreloaderComponent } from '../../landing/preloader.component';
 
 @Component({
-  selector: 'app-general-layout',
-  standalone: true,
-  imports: [RouterOutlet, PreloaderComponent],
-  templateUrl: './general-layout.component.html',
-  styleUrl: './general-layout.component.scss',
+    selector: 'app-general-layout',
+    imports: [RouterOutlet, PreloaderComponent],
+    templateUrl: './general-layout.component.html',
+    styleUrl: './general-layout.component.scss',
     encapsulation: ViewEncapsulation.None
 })
 export class GeneralLayoutComponent implements OnInit {

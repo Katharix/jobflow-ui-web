@@ -19,17 +19,16 @@ import {
 } from '../models/estimate';
 
 @Component({
-  selector: 'app-estimate-form',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    InputTextModule,
-    SelectModule,
-    InputNumberModule,
-    TextareaModule
-],
-  templateUrl: './estimate-form.component.html',
-  styleUrl: './estimate-form.component.scss',
+    selector: 'app-estimate-form',
+    imports: [
+        ReactiveFormsModule,
+        InputTextModule,
+        SelectModule,
+        InputNumberModule,
+        TextareaModule
+    ],
+    templateUrl: './estimate-form.component.html',
+    styleUrl: './estimate-form.component.scss'
 })
 export class EstimateFormComponent implements OnInit {
   private fb = inject(FormBuilder);

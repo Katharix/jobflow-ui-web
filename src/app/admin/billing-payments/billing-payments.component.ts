@@ -7,11 +7,10 @@ import { InvoiceService } from '../invoices/services/invoice.service';
 import { ToastService } from '../../common/toast/toast.service';
 
 @Component({
-  selector: 'app-billing-payments',
-  standalone: true,
-  imports: [CommonModule, RouterLink, PageHeaderComponent],
-  templateUrl: './billing-payments.component.html',
-  styleUrl: './billing-payments.component.scss'
+    selector: 'app-billing-payments',
+    imports: [CommonModule, RouterLink, PageHeaderComponent],
+    templateUrl: './billing-payments.component.html',
+    styleUrl: './billing-payments.component.scss'
 })
 export class BillingPaymentsComponent implements OnInit {
   private readonly invoiceService = inject(InvoiceService);

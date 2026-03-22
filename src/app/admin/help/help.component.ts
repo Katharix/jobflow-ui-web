@@ -15,11 +15,10 @@ interface HelpFaqItem {
 }
 
 @Component({
-   selector: 'app-help',
-   standalone: true,
-   imports: [FormsModule, AccordionModule, InputTextModule, ButtonModule, TagModule, PageHeaderComponent],
-   templateUrl: './help.component.html',
-   styleUrl: './help.component.scss'
+    selector: 'app-help',
+    imports: [FormsModule, AccordionModule, InputTextModule, ButtonModule, TagModule, PageHeaderComponent],
+    templateUrl: './help.component.html',
+    styleUrl: './help.component.scss'
 })
 export class HelpComponent {
    searchTerm = '';

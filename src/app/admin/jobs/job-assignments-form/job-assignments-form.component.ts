@@ -13,10 +13,9 @@ import { ScheduleSettingsDto } from '../../settings/models/schedule-settings';
 type ScheduleMode = 'OneTime' | 'Recurring';
 
 @Component({
-   selector: 'app-job-assignment-form',
-   standalone: true,
-   imports: [CommonModule, ReactiveFormsModule, SelectModule, InputNumberModule, DatePickerModule, TextareaModule],
-   templateUrl: './job-assignments-form.component.html',
+    selector: 'app-job-assignment-form',
+    imports: [CommonModule, ReactiveFormsModule, SelectModule, InputNumberModule, DatePickerModule, TextareaModule],
+    templateUrl: './job-assignments-form.component.html'
 })
 export class JobAssignmentFormComponent implements OnInit, OnChanges {
    private fb = inject(FormBuilder);

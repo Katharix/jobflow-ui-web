@@ -57,10 +57,9 @@ export interface JobflowGridPageSettings {
 }
 
 @Component({
-   selector: 'app-jobflow-grid',
-   standalone: true,
-   imports: [CommonModule, TableModule, ButtonModule, FormsModule],
-   templateUrl: './jobflow-grid.component.html'
+    selector: 'app-jobflow-grid',
+    imports: [CommonModule, TableModule, ButtonModule, FormsModule],
+    templateUrl: './jobflow-grid.component.html'
 })
 export class JobflowGridComponent {
    @ViewChild('dt') table?: Table;

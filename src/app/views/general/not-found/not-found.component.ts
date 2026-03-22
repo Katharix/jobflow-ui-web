@@ -3,11 +3,10 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-not-found',
-  standalone: true,
-  imports: [RouterLink],
-  templateUrl: './not-found.component.html',
-  styleUrl: './not-found.component.scss',
+    selector: 'app-not-found',
+    imports: [RouterLink],
+    templateUrl: './not-found.component.html',
+    styleUrl: './not-found.component.scss'
 })
 export class NotFoundComponent implements OnInit {
       private route = inject(ActivatedRoute);

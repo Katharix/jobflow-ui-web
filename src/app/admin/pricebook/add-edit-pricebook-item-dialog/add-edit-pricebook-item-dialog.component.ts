@@ -30,11 +30,10 @@ export interface EditItemResult {
 }
 
 @Component({
-  selector: 'app-add-edit-pricebook-item-dialog',
-  standalone: true,
-  imports: [ReactiveFormsModule, InputTextModule, SelectModule, InputNumberModule, TextareaModule],
-  templateUrl: './add-edit-pricebook-item-dialog.component.html',
-  styleUrl: './add-edit-pricebook-item-dialog.component.scss'
+    selector: 'app-add-edit-pricebook-item-dialog',
+    imports: [ReactiveFormsModule, InputTextModule, SelectModule, InputNumberModule, TextareaModule],
+    templateUrl: './add-edit-pricebook-item-dialog.component.html',
+    styleUrl: './add-edit-pricebook-item-dialog.component.scss'
 })
 export class AddEditPricebookItemDialogComponent {
   private fb = inject(FormBuilder);

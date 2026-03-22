@@ -1,4 +1,4 @@
-import {Component, ViewEncapsulation, inject} from '@angular/core';
+import {Component, ViewEncapsulation, inject, DOCUMENT} from '@angular/core';
 import {
    NavigationCancel,
    NavigationEnd, NavigationError, NavigationStart,
@@ -7,15 +7,14 @@ import {
 } from '@angular/router';
 import {PreloaderComponent} from "../../landing/preloader.component";
 import {LoadingService} from '../../services/shared/loading-service.service';
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 @Component({
-   selector: 'app-auth-layout',
-   standalone: true,
-   imports: [RouterOutlet, CommonModule, PreloaderComponent],
-   templateUrl: './auth-layout.component.html',
-   styleUrl: './auth-layout.component.scss',
-   encapsulation: ViewEncapsulation.None
+    selector: 'app-auth-layout',
+    imports: [RouterOutlet, CommonModule, PreloaderComponent],
+    templateUrl: './auth-layout.component.html',
+    styleUrl: './auth-layout.component.scss',
+    encapsulation: ViewEncapsulation.None
 })
 export class AuthLayoutComponent {
    private router = inject(Router);

@@ -73,11 +73,10 @@ type InvoiceWithDates = Invoice & {
 };
 
 @Component({
-   selector: 'app-dashboard',
-   standalone: true,
-   imports: [CommonModule, RouterModule, OnboardingChecklistComponent, JobflowCommandCenterComponent],
-   templateUrl: './dashboard.component.html',
-   styleUrl: './dashboard.component.scss'
+    selector: 'app-dashboard',
+    imports: [CommonModule, RouterModule, OnboardingChecklistComponent, JobflowCommandCenterComponent],
+    templateUrl: './dashboard.component.html',
+    styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit, OnDestroy {
    private readonly orgContext = inject(OrganizationContextService);

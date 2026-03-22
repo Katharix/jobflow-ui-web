@@ -14,10 +14,9 @@ import {ToastService} from "../../../common/toast/toast.service";
 import {EmployeeService} from "../services/employee.service";
 
 @Component({
-   selector: 'app-employee-invite-form',
-   standalone: true,
-   imports: [ReactiveFormsModule, InputTextModule, SelectModule],
-   templateUrl: './employee-invite-form.component.html'
+    selector: 'app-employee-invite-form',
+    imports: [ReactiveFormsModule, InputTextModule, SelectModule],
+    templateUrl: './employee-invite-form.component.html'
 })
 export class EmployeeInviteFormComponent {
    private fb = inject(FormBuilder);

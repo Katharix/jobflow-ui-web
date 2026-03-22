@@ -5,11 +5,10 @@ import { EstimateService } from '../../../admin/estimates/services/estimate.serv
 import { Estimate, EstimateStatus, EstimateStatusLabels } from '../../../admin/estimates/models/estimate';
 
 @Component({
-  selector: 'app-estimate',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './estimate.component.html',
-  styleUrl: './estimate.component.scss',
+    selector: 'app-estimate',
+    imports: [CommonModule],
+    templateUrl: './estimate.component.html',
+    styleUrl: './estimate.component.scss'
 })
 export class EstimateComponent implements OnInit {
   private route = inject(ActivatedRoute);

@@ -2,10 +2,9 @@
 
 
 @Component({
-  selector: 'app-delete-confirm',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'app-delete-confirm',
+    imports: [],
+    template: `
     <div class="text-center p-3">
       <h5 class="fw-semibold">{{ title }}</h5>
       <p class="text-muted">{{ message }}</p>

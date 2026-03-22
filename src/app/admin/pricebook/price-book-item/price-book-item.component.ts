@@ -31,11 +31,10 @@ import {
 } from "../../../common/jobflow-grid/jobflow-grid.component";
 
 @Component({
-   selector: 'app-price-book-item',
-   standalone: true,
-   imports: [PageHeaderComponent, JobflowGridComponent],
-   templateUrl: './price-book-item.component.html',
-   styleUrl: './price-book-item.component.scss'
+    selector: 'app-price-book-item',
+    imports: [PageHeaderComponent, JobflowGridComponent],
+    templateUrl: './price-book-item.component.html',
+    styleUrl: './price-book-item.component.scss'
 })
 export class PriceBookItemComponent implements OnInit, OnDestroy {
 

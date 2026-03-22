@@ -22,11 +22,10 @@ interface ColorChangeEvent {
 }
 
 @Component({
-   selector: 'app-branding',
-   standalone: true,
-   imports: [CommonModule, ReactiveFormsModule, InputTextModule, TextareaModule, FloatLabelModule, ButtonModule, ColorBlockModule, ColorTwitterModule, LucideAngularModule, PageHeaderComponent],
-   templateUrl: './branding.component.html',
-   styleUrl: './branding.component.scss'
+    selector: 'app-branding',
+    imports: [CommonModule, ReactiveFormsModule, InputTextModule, TextareaModule, FloatLabelModule, ButtonModule, ColorBlockModule, ColorTwitterModule, LucideAngularModule, PageHeaderComponent],
+    templateUrl: './branding.component.html',
+    styleUrl: './branding.component.scss'
 })
 export class BrandingComponent implements OnInit {
    private fb = inject(FormBuilder);

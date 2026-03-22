@@ -7,14 +7,13 @@ import {InputTextModule} from 'primeng/inputtext';
 import {Client} from "../models/customer";
 
 @Component({
-   selector: 'app-customer-create',
-   standalone: true,
-   imports: [
+    selector: 'app-customer-create',
+    imports: [
         FormsModule,
         InputTextModule
-   ],
-   templateUrl: './customer-create.component.html',
-   styleUrl: './customer-create.component.scss'
+    ],
+    templateUrl: './customer-create.component.html',
+    styleUrl: './customer-create.component.scss'
 })
 export class CustomerCreateComponent implements OnChanges {
    private customers = inject(CustomersService);

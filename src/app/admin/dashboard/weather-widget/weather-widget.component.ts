@@ -8,11 +8,10 @@ import { WeatherDashboardDto, WeatherForecastDay } from '../../../models/weather
 import { Job, JobLifecycleStatus } from '../../jobs/models/job';
 
 @Component({
-   selector: 'app-weather-widget',
-   standalone: true,
-   imports: [CommonModule],
-   templateUrl: './weather-widget.component.html',
-   styleUrl: './weather-widget.component.scss'
+    selector: 'app-weather-widget',
+    imports: [CommonModule],
+    templateUrl: './weather-widget.component.html',
+    styleUrl: './weather-widget.component.scss'
 })
 export class WeatherWidgetComponent implements OnInit, OnChanges, OnDestroy {
    private readonly weatherService = inject(WeatherService);

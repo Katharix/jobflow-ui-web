@@ -5,11 +5,10 @@ import { TimelineModule } from 'primeng/timeline';
 import { OnboardingService, OnboardingStepDto } from './services/onboarding.service';
 
 @Component({
-   selector: 'app-jobflow-onboarding-checklist',
-   standalone: true,
-   imports: [CommonModule, TimelineModule],
-   templateUrl: './onboarding-checklist.component.html',
-   styleUrls: ['./onboarding-checklist.component.scss']
+    selector: 'app-jobflow-onboarding-checklist',
+    imports: [CommonModule, TimelineModule],
+    templateUrl: './onboarding-checklist.component.html',
+    styleUrls: ['./onboarding-checklist.component.scss']
 })
 export class OnboardingChecklistComponent implements OnChanges {
    private onboardingService = inject(OnboardingService);

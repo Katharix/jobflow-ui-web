@@ -9,11 +9,10 @@ import { ClientHubAuthService } from '../../services/client-hub-auth.service';
 import { ClientHubService } from '../../services/client-hub.service';
 
 @Component({
-  selector: 'app-client-hub-profile',
-  standalone: true,
-  imports: [FormsModule],
-  templateUrl: './client-hub-profile.component.html',
-  styleUrl: './client-hub-profile.component.scss',
+    selector: 'app-client-hub-profile',
+    imports: [FormsModule],
+    templateUrl: './client-hub-profile.component.html',
+    styleUrl: './client-hub-profile.component.scss'
 })
 export class ClientHubProfileComponent implements OnInit {
   private readonly clientHubService = inject(ClientHubService);

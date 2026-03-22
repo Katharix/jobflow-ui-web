@@ -8,11 +8,10 @@ import { AboutComponent } from "./components/about/about.component";
 import { HowItWorksComponent } from "./components/how-it-works/how-it-works.component";
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [HeroComponent, FeaturesComponent, CtaComponent, PricingComponent, ContactComponent, AboutComponent, HowItWorksComponent],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+    selector: 'app-home',
+    imports: [HeroComponent, FeaturesComponent, CtaComponent, PricingComponent, ContactComponent, AboutComponent, HowItWorksComponent],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.scss'
 })
 export class HomeComponent {
 

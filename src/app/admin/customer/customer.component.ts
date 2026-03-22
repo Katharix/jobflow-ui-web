@@ -23,11 +23,10 @@ import {formatPhone} from "../../common/utils/app-formaters";
 
 
 @Component({
-   selector: 'app-jobflow-create-customer',
-   standalone: true,
-   imports: [CommonModule, FormsModule, PageHeaderComponent, ReactiveFormsModule, JobflowGridComponent, JobflowDrawerComponent, CustomerCreateComponent, ModalComponent, DeleteConfirmComponent],
-   templateUrl: './customer.component.html',
-   styleUrls: ['./customer.component.scss'],
+    selector: 'app-jobflow-create-customer',
+    imports: [CommonModule, FormsModule, PageHeaderComponent, ReactiveFormsModule, JobflowGridComponent, JobflowDrawerComponent, CustomerCreateComponent, ModalComponent, DeleteConfirmComponent],
+    templateUrl: './customer.component.html',
+    styleUrls: ['./customer.component.scss']
 })
 export class CustomerComponent implements OnInit {
    private customers = inject(CustomersService);

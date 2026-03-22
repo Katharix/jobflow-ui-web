@@ -7,10 +7,9 @@ import {OrganizationContextService} from "../../../services/shared/organization-
 import {CreateInvoiceLineItemRequest, CreateInvoiceRequest} from "../../../models/invoice";
 
 @Component({
-   selector: 'app-jobflow-job-invoice',
-   standalone: true,
-   imports: [FormsModule],
-   templateUrl: './job-invoice.component.html'
+    selector: 'app-jobflow-job-invoice',
+    imports: [FormsModule],
+    templateUrl: './job-invoice.component.html'
 })
 export class JobInvoiceComponent {
    private invoicesService = inject(InvoicesService);

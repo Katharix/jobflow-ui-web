@@ -5,11 +5,10 @@ import { FormsModule } from '@angular/forms';
 import { InviteService, InviteInfo } from './invite.service';
 
 @Component({
-  selector: 'app-invite-accept',
-  standalone: true,
-  imports: [FormsModule],
-  templateUrl: './invite-accept.component.html',
-  styleUrls: ['./invite-accept.component.scss']
+    selector: 'app-invite-accept',
+    imports: [FormsModule],
+    templateUrl: './invite-accept.component.html',
+    styleUrls: ['./invite-accept.component.scss']
 })
 export class InviteAcceptComponent implements OnInit {
   private route = inject(ActivatedRoute);

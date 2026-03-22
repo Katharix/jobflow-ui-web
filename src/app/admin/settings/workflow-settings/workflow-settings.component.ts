@@ -14,11 +14,10 @@ import { ToastService } from '../../../common/toast/toast.service';
 import { InvoicingSettingsDto } from '../models/invoicing-settings';
 
 @Component({
-  selector: 'app-workflow-settings',
-  standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, InputNumberModule, InputTextModule, PageHeaderComponent],
-  templateUrl: './workflow-settings.component.html',
-  styleUrl: './workflow-settings.component.scss'
+    selector: 'app-workflow-settings',
+    imports: [ReactiveFormsModule, FormsModule, InputNumberModule, InputTextModule, PageHeaderComponent],
+    templateUrl: './workflow-settings.component.html',
+    styleUrl: './workflow-settings.component.scss'
 })
 export class WorkflowSettingsComponent implements OnInit {
   private fb = inject(FormBuilder);
