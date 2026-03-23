@@ -8,6 +8,61 @@
   <div class="alert alert-danger mb-3">{{ error }}</div>
 }
 
+<section class="estimates-overview">
+  <div class="estimates-overview__metrics">
+    <article class="estimates-card">
+      <p class="estimates-card__label">Total estimates</p>
+      <h3>{{ summary.total }}</h3>
+      <p class="estimates-card__note">Across all clients</p>
+    </article>
+    <article class="estimates-card">
+      <p class="estimates-card__label">Drafts</p>
+      <h3>{{ summary.draft }}</h3>
+      <p class="estimates-card__note">Ready for review</p>
+    </article>
+    <article class="estimates-card">
+      <p class="estimates-card__label">Sent</p>
+      <h3>{{ summary.sent }}</h3>
+      <p class="estimates-card__note">Awaiting response</p>
+    </article>
+    <article class="estimates-card">
+      <p class="estimates-card__label">Accepted</p>
+      <h3>{{ summary.accepted }}</h3>
+      <p class="estimates-card__note">Ready to schedule</p>
+    </article>
+    <article class="estimates-card estimates-card--accent">
+      <p class="estimates-card__label">Total value</p>
+      <h3>{{ formatCurrency(summary.totalValue) }}</h3>
+      <p class="estimates-card__note">Sum of all estimates</p>
+    </article>
+  </div>
+  <div class="estimates-cta">
+    <div>
+      <p class="estimates-cta__eyebrow">Quick action</p>
+      <h3>Create a new estimate</h3>
+      <p>Start with the client, add line items, and send when you are ready.</p>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="openNew()">
+      New Estimate
+    </button>
+  </div>
+</section>
+
+<section class="estimates-filters" aria-label="Estimate filters">
+  <div class="estimates-filters__group">
+    @for (filter of statusFilters; track filter.key) {
+      <button
+        type="button"
+        class="estimates-filter"
+        [class.estimates-filter--active]="selectedStatusFilter === filter.key"
+        (click)="setStatusFilter(filter.key)">
+        {{ filter.label }}
+        <span class="estimates-filter__count">{{ getFilterCount(filter.key) }}</span>
+      </button>
+    }
+  </div>
+</section>
+
 <!-- Client cell template -->
 <ng-template #clientTemplate let-estimate>
   <div class="estimate-client-cell">
@@ -44,7 +99,7 @@
 
 <!-- Grid -->
 <app-jobflow-grid
-  [data]="items"
+  [data]="filteredItems"
   [columns]="columns"
   [pageSettings]="pageSettings"
   [showSearchBar]="true">
@@ -57,11 +112,22 @@
   [width]="660"
   (closed)="onFormCancelled()">
   @if (isFormDrawerOpen) {
-    <app-estimate-form
-      [estimate]="editingEstimate"
-      (saved)="onFormSaved($event)"
-      (cancelled)="onFormCancelled()">
-    </app-estimate-form>
+    <div class="estimate-drawer">
+      <div class="estimate-drawer__intro">
+        <p class="estimate-drawer__eyebrow">
+          {{ editingEstimate ? 'Update estimate' : 'New estimate' }}
+        </p>
+        <h3>
+          {{ editingEstimate ? 'Review details and update' : 'Build a fresh estimate' }}
+        </h3>
+        <p>Pick the client, add line items, and send when you are ready.</p>
+      </div>
+      <app-estimate-form
+        [estimate]="editingEstimate"
+        (saved)="onFormSaved($event)"
+        (cancelled)="onFormCancelled()">
+      </app-estimate-form>
+    </div>
   }
 </app-jobflow-drawer>
 

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {BaseApiService} from '../../../services/shared/base-api.service';
-import {EmployeeRole} from '../models/employee-role';
+import {EmployeeRole, EmployeeRoleUsage} from '../models/employee-role';
 
 
 @Injectable({
@@ -18,6 +18,10 @@ export class EmployeeRoleService {
 
    getById(id: string): Observable<EmployeeRole> {
       return this.api.get<EmployeeRole>(`${this.apiUrl}/${id}`);
+   }
+
+   getUsageByOrganization(): Observable<EmployeeRoleUsage[]> {
+      return this.api.get<EmployeeRoleUsage[]>(`${this.apiUrl}/organization/usage`);
    }
 
    create(payload: Partial<EmployeeRole>): Observable<EmployeeRole> {

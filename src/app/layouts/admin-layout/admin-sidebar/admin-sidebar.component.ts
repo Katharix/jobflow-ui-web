@@ -32,7 +32,6 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
   private logoutService = inject(LogoutService);
   private orgContext = inject(OrganizationContextService);
 
-  @ViewChild('sidebarToggler') sidebarToggler: ElementRef;
   @ViewChild('sidebarMenu') sidebarMenu: ElementRef;
 
   menuItems: MenuItem[] = [];
@@ -85,17 +84,6 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
   get isSidebarOpen(): boolean {
     const body = this.document.body.classList;
     return !body.contains('sidebar-folded') || body.contains('open-sidebar-folded');
-  }
-
-  toggleSidebar(e: Event) {
-    this.sidebarToggler.nativeElement.classList.toggle('active');
-    if (window.matchMedia('(min-width: 992px)').matches) {
-      e.preventDefault();
-      this.document.body.classList.toggle('sidebar-folded');
-    } else if (window.matchMedia('(max-width: 991px)').matches) {
-      e.preventDefault();
-      this.document.body.classList.toggle('sidebar-open');
-    }
   }
 
   operSidebarFolded() {

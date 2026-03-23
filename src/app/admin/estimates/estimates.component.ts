@@ -37,6 +37,25 @@ export class EstimatesComponent implements OnInit {
   error: string | null = null;
   pageSettings: JobflowGridPageSettings = { pageSize: 20, pageSizes: [10, 20, 50, 100] };
 
+  summary = {
+    total: 0,
+    draft: 0,
+    sent: 0,
+    accepted: 0,
+    declined: 0,
+    totalValue: 0,
+  };
+
+  statusFilters: { key: string; label: string; status?: EstimateStatus }[] = [
+    { key: 'all', label: 'All' },
+    { key: 'draft', label: 'Draft', status: EstimateStatus.Draft },
+    { key: 'sent', label: 'Sent', status: EstimateStatus.Sent },
+    { key: 'accepted', label: 'Accepted', status: EstimateStatus.Accepted },
+    { key: 'declined', label: 'Declined', status: EstimateStatus.Declined },
+    { key: 'expired', label: 'Expired', status: EstimateStatus.Expired },
+  ];
+  selectedStatusFilter = 'all';
+
   isFormDrawerOpen = false;
   isSendDrawerOpen = false;
   editingEstimate: Estimate | null = null;
@@ -64,6 +83,7 @@ export class EstimatesComponent implements OnInit {
             return bDate - aDate;
           },
         );
+        this.updateSummary(this.items);
       },
       error: () => {
         this.error = 'Failed to load estimates. Please refresh.';
@@ -74,6 +94,36 @@ export class EstimatesComponent implements OnInit {
   openNew(): void {
     this.editingEstimate = null;
     this.isFormDrawerOpen = true;
+  }
+
+  get filteredItems(): Estimate[] {
+    if (this.selectedStatusFilter === 'all') {
+      return this.items;
+    }
+
+    const target = this.statusFilters.find(filter => filter.key === this.selectedStatusFilter);
+    if (!target?.status && target?.status !== 0) {
+      return this.items;
+    }
+
+    return this.items.filter(estimate => this.resolveStatus(estimate.status) === target.status);
+  }
+
+  setStatusFilter(key: string): void {
+    this.selectedStatusFilter = key;
+  }
+
+  getFilterCount(key: string): number {
+    if (key === 'all') {
+      return this.summary.total;
+    }
+
+    const target = this.statusFilters.find(filter => filter.key === key);
+    if (!target?.status && target?.status !== 0) {
+      return 0;
+    }
+
+    return this.items.filter(estimate => this.resolveStatus(estimate.status) === target.status).length;
   }
 
   openEdit(estimate: Estimate): void {
@@ -266,7 +316,29 @@ export class EstimatesComponent implements OnInit {
       : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
-  private formatCurrency(val: number): string {
+  formatCurrency(val: number): string {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val ?? 0);
+  }
+
+  private updateSummary(estimates: Estimate[]): void {
+    const summary = {
+      total: estimates.length,
+      draft: 0,
+      sent: 0,
+      accepted: 0,
+      declined: 0,
+      totalValue: 0,
+    };
+
+    for (const estimate of estimates) {
+      const status = this.resolveStatus(estimate.status);
+      if (status === EstimateStatus.Draft) summary.draft += 1;
+      if (status === EstimateStatus.Sent) summary.sent += 1;
+      if (status === EstimateStatus.Accepted) summary.accepted += 1;
+      if (status === EstimateStatus.Declined) summary.declined += 1;
+      summary.totalValue += estimate.total ?? 0;
+    }
+
+    this.summary = summary;
   }
 }

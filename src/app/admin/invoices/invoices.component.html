@@ -10,6 +10,61 @@
   </div>
 }
 
+<section class="invoices-overview">
+  <div class="invoices-overview__metrics">
+    <article class="invoices-card">
+      <p class="invoices-card__label">Total invoices</p>
+      <h3>{{ summary.total }}</h3>
+      <p class="invoices-card__note">Across all clients</p>
+    </article>
+    <article class="invoices-card">
+      <p class="invoices-card__label">Sent</p>
+      <h3>{{ summary.sent }}</h3>
+      <p class="invoices-card__note">Awaiting payment</p>
+    </article>
+    <article class="invoices-card">
+      <p class="invoices-card__label">Overdue</p>
+      <h3>{{ summary.overdue }}</h3>
+      <p class="invoices-card__note">Needs follow-up</p>
+    </article>
+    <article class="invoices-card">
+      <p class="invoices-card__label">Total billed</p>
+      <h3>{{ formatMoney(summary.totalBilled) }}</h3>
+      <p class="invoices-card__note">Gross invoice value</p>
+    </article>
+    <article class="invoices-card invoices-card--accent">
+      <p class="invoices-card__label">Outstanding</p>
+      <h3>{{ formatMoney(summary.balanceDue) }}</h3>
+      <p class="invoices-card__note">Balance due now</p>
+    </article>
+  </div>
+  <div class="invoices-cta">
+    <div>
+      <p class="invoices-cta__eyebrow">Quick action</p>
+      <h3>Create and send an invoice</h3>
+      <p>Select the job, review line items, then send to the client.</p>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="openCreateInvoiceDrawer()">
+      Create Invoice
+    </button>
+  </div>
+</section>
+
+<section class="invoices-filters" aria-label="Invoice filters">
+  <div class="invoices-filters__group">
+    @for (filter of statusFilters; track filter.key) {
+      <button
+        type="button"
+        class="invoices-filter"
+        [class.invoices-filter--active]="selectedStatusFilter === filter.key"
+        (click)="setStatusFilter(filter.key)">
+        {{ filter.label }}
+        <span class="invoices-filter__count">{{ getFilterCount(filter.key) }}</span>
+      </button>
+    }
+  </div>
+</section>
+
 <ng-template #clientTemplate let-invoice>
   <div class="invoice-client-cell">
     <div class="invoice-client-name">{{ getClientName(invoice) }}</div>
@@ -33,7 +88,7 @@
 </ng-template>
 
 <app-jobflow-grid
-  [data]="items"
+  [data]="filteredItems"
   [columns]="columns"
   [pageSettings]="pageSettings"
   [showSearchBar]="true"
@@ -47,11 +102,20 @@
   >
   <div class="invoice-drawer">
     @if (!selectedJob) {
+      <div class="invoice-drawer__intro">
+        <p class="invoice-drawer__eyebrow">
+          {{ isInvoiceOnboardingFlow ? 'Onboarding Step 4' : 'Create Invoice' }}
+        </p>
+        <h3>Pick the job to invoice</h3>
+        <p>Find the job, confirm the client, and we will build the invoice from there.</p>
+        <div class="invoice-drawer__intro-tags">
+          <span>Recent jobs first</span>
+          <span>Search by client</span>
+          <span>Fast invoice setup</span>
+        </div>
+      </div>
       <section class="invoice-drawer__picker" [class.invoice-drawer__picker--onboarding]="isInvoiceOnboardingFlow">
         <div class="invoice-drawer__picker-header">
-          <p class="invoice-drawer__eyebrow">
-            {{ isInvoiceOnboardingFlow ? 'Onboarding Step 4' : 'Create Invoice' }}
-          </p>
           <h3>Choose the job first</h3>
           <p>
             Keep it simple: select the job, confirm line items, then create the invoice.
@@ -116,6 +180,11 @@
         </section>
       } @else {
         <form [formGroup]="invoiceForm" (ngSubmit)="createInvoice()" class="invoice-form">
+          <div class="invoice-form__intro">
+            <p class="invoice-drawer__eyebrow">Invoice details</p>
+            <h3>Build the invoice</h3>
+            <p>Adjust dates, review line items, and create the invoice when ready.</p>
+          </div>
           <div class="invoice-form__job-summary">
             <button type="button" class="btn btn-sm btn-link px-0" (click)="backToJobPicker()">
               <i class="pi pi-arrow-left me-1"></i>

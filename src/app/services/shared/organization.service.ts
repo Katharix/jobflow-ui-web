@@ -30,4 +30,10 @@ export class OrganizationService {
   getOrganizationById(org: OrganizationRequest): Observable<Organization> {
     return this.api.post<Organization>(`${this.organizationUrl}retrieve`, org);
   }
+
+  updateIndustry(industryKey: string | null): Observable<OrganizationDto> {
+    return this.api.put<OrganizationDto>(`${this.organizationUrl}industry`, {
+      industryKey
+    });
+  }
 }

@@ -28,71 +28,232 @@
 
 <!-- Employee Grid -->
 @if (rolesExist && !checkingRoles) {
-  <div class="card shadow-sm mt-4">
+  <section class="employees-overview">
+    <div class="employees-overview__metrics">
+      <article class="employees-card">
+        <p class="employees-card__label">Team members</p>
+        <h3>{{ summary.total }}</h3>
+        <p class="employees-card__note">All employees in your org</p>
+      </article>
+      <article class="employees-card">
+        <p class="employees-card__label">Active</p>
+        <h3>{{ summary.active }}</h3>
+        <p class="employees-card__note">Available for assignments</p>
+      </article>
+      <article class="employees-card">
+        <p class="employees-card__label">Inactive</p>
+        <h3>{{ summary.inactive }}</h3>
+        <p class="employees-card__note">Paused or offboarding</p>
+      </article>
+      <article class="employees-card employees-card--accent">
+        <p class="employees-card__label">Roles</p>
+        <h3>{{ summary.roles }}</h3>
+        <p class="employees-card__note">Defined in roles settings</p>
+      </article>
+    </div>
+    <div class="employees-cta">
+      <div>
+        <p class="employees-cta__eyebrow">Quick action</p>
+        <h3>Invite or add employees</h3>
+        <p>Send invites for onboarding or add team members directly.</p>
+      </div>
+      <div class="employees-cta__actions">
+        <button type="button" class="btn btn-outline-primary" (click)="onInviteClick()">
+          Invite
+        </button>
+        <button type="button" class="btn btn-primary" (click)="onAddEmployeeClick()">
+          Add Employee
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="employees-filters" aria-label="Employee filters">
+    <div class="employees-filters__group">
+      @for (filter of statusFilters; track filter.key) {
+        <button
+          type="button"
+          class="employees-filter"
+          [class.employees-filter--active]="selectedStatusFilter === filter.key"
+          (click)="setStatusFilter(filter.key)">
+          {{ filter.label }}
+          <span class="employees-filter__count">{{ getFilterCount(filter.key) }}</span>
+        </button>
+      }
+      @if (hasActiveFilters) {
+        <button type="button" class="employees-filter employees-filter--clear" (click)="clearFilters()">
+          Clear filters
+        </button>
+      }
+    </div>
+    <div class="employees-filters__role">
+      <label class="employees-filters__label" for="employeeRoleFilter">Role</label>
+      <select
+        id="employeeRoleFilter"
+        class="form-select"
+        [value]="selectedRoleFilter"
+        (change)="setRoleFilter(roleSelect.value)"
+        #roleSelect>
+        <option value="all">All roles</option>
+        @for (role of roles; track role.id) {
+          <option [value]="role.id">{{ role.name }}</option>
+        }
+      </select>
+    </div>
+  </section>
+
+  <div class="employees-grid">
     <ng-template #actionsTemplate let-employee>
-      <button type="button" class="btn btn-sm btn-outline-primary me-2" (click)="onEditEmployee(employee)">
-        Edit
-      </button>
-      <button type="button" class="btn btn-sm btn-outline-danger" (click)="onDeleteEmployee(employee)">
-        Delete
-      </button>
+      <div class="employees-actions">
+        <button type="button" class="btn btn-sm btn-link" (click)="onEditEmployee(employee)">
+          Edit
+        </button>
+        <button type="button" class="btn btn-sm btn-link text-danger" (click)="onDeleteEmployee(employee)">
+          Delete
+        </button>
+      </div>
+    </ng-template>
+    <ng-template #inviteStatusTemplate let-employee>
+      <span class="invite-status" [ngClass]="getInviteStatusClass(employee)">
+        {{ getInviteStatusLabel(employee) }}
+      </span>
     </ng-template>
     <app-jobflow-grid
-      [data]="employees"
+      [data]="filteredEmployees"
       [columns]="columns"
       [allowPaging]="true"
       [allowSorting]="true"
       [allowFiltering]="false"
-      [showSearchBar]="false"
+      [showSearchBar]="true"
       [pageSettings]="pageSettings"
-      [height]="500"
+      [height]="520"
     ></app-jobflow-grid>
   </div>
+
+  <section class="employees-invites" aria-label="Employee invites">
+    <div class="employees-invites__header">
+      <div>
+        <p class="employees-invites__eyebrow">Pending invites</p>
+        <h3>Invitations</h3>
+        <p>Track who has been invited to join your organization.</p>
+      </div>
+      <button type="button" class="btn btn-outline-primary" (click)="onInviteClick()">
+        Send Invite
+      </button>
+    </div>
+    @if (sortedInvites.length) {
+      <div class="employees-invites__list">
+        @for (invite of sortedInvites; track invite.id) {
+          <article class="employees-invite-card">
+            <div>
+              <h4>{{ getInviteName(invite) }}</h4>
+              <p>{{ invite.email }}</p>
+            </div>
+            <div class="employees-invite-card__meta">
+              <div>
+                <span class="employees-invite-card__label">Role</span>
+                <span>{{ getInviteRoleName(invite) }}</span>
+              </div>
+              <div>
+                <span class="employees-invite-card__label">Expires</span>
+                <span>{{ getInviteExpiry(invite) }}</span>
+              </div>
+              <span class="invite-status" [ngClass]="getInviteStatusClassForInvite(invite)">
+                {{ getInviteStatusLabelForInvite(invite) }}
+              </span>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="employees-invites__empty">
+        <h4>No invites yet</h4>
+        <p>Send an invite to bring a new employee into JobFlow.</p>
+      </div>
+    }
+  </section>
 }
 
-@if (showAddEmployeeModal) {
-  <app-jobflow-modal
+@if (showAddEmployeeDrawer) {
+  <app-jobflow-drawer
+    [open]="showAddEmployeeDrawer"
     [title]="isEditing ? 'Edit Employee' : 'Add Employee'"
-    [confirmText]="'Save'"
-    [cancelText]="'Cancel'"
-    [formGroup]="employeeFormComponent.formGroup"
-    (cancelled)="onModalCancel()"
-    (confirmed)="employeeFormComponent.onSubmit()"
-    >
-    <app-employee-form
-      [employee]="selectedEmployee"
-      (submitted)="onFormSubmit($event)"
-    ></app-employee-form>
-  </app-jobflow-modal>
+    [width]="520"
+    (closed)="onModalCancel()">
+    <div class="employee-drawer">
+      <div class="employee-drawer__intro">
+        <p class="employee-drawer__eyebrow">{{ isEditing ? 'Update profile' : 'New employee' }}</p>
+        <h3>{{ isEditing ? 'Edit employee details' : 'Add a new team member' }}</h3>
+        <p>Fill in the basics and assign a role to keep schedules on track.</p>
+      </div>
+      <app-employee-form
+        [employee]="selectedEmployee"
+        (submitted)="onFormSubmit($event)">
+      </app-employee-form>
+      <div class="employee-drawer__actions">
+        <button type="button" class="btn btn-outline-secondary" (click)="onModalCancel()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="employeeFormComponent.onSubmit()">
+          Save Employee
+        </button>
+      </div>
+    </div>
+  </app-jobflow-drawer>
 }
 
-@if (showInviteModal) {
-  <app-jobflow-modal
-    [title]="'Invite Employee'"
-    [confirmText]="'Send Invite'"
-    [cancelText]="'Cancel'"
-    (cancelled)="closeInviteModal()"
-    (confirmed)="onInviteSubmit()"
-    >
-    <app-employee-invite-form #inviteForm
-    (submitted)="onInviteSuccess($event)"></app-employee-invite-form>
-  </app-jobflow-modal>
+@if (showInviteDrawer) {
+  <app-jobflow-drawer
+    [open]="showInviteDrawer"
+    title="Invite Employee"
+    [width]="520"
+    (closed)="closeInviteModal()">
+    <div class="employee-drawer">
+      <div class="employee-drawer__intro">
+        <p class="employee-drawer__eyebrow">Invite flow</p>
+        <h3>Send an employee invite</h3>
+        <p>We will email the invite so they can join your organization.</p>
+      </div>
+      <app-employee-invite-form #inviteForm
+        (submitted)="onInviteSuccess($event)">
+      </app-employee-invite-form>
+      <div class="employee-drawer__actions">
+        <button type="button" class="btn btn-outline-secondary" (click)="closeInviteModal()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="onInviteSubmit()">
+          Send Invite
+        </button>
+      </div>
+    </div>
+  </app-jobflow-drawer>
 }
 
-@if (showDeleteModal) {
-  <app-jobflow-modal
-    [title]="'Delete Employee'"
-    [confirmText]="'Delete'"
-    [cancelText]="'Cancel'"
-    (cancelled)="closeDeleteModal()"
-    (confirmed)="confirmDelete()"
-    [confirmButtonClass]="'btn btn-danger px-4'"
-    [cancelButtonClass]="'btn btn-outline-secondary'"
-    >
-    <app-delete-confirm
-      [title]="'Delete Employee'"
-      [message]="'Are you sure you want to delete ' + selectedEmployeeName + '?'"
-    ></app-delete-confirm>
-  </app-jobflow-modal>
+@if (showDeleteDrawer) {
+  <app-jobflow-drawer
+    [open]="showDeleteDrawer"
+    title="Delete Employee"
+    [width]="520"
+    (closed)="closeDeleteModal()">
+    <div class="employee-drawer">
+      <div class="employee-drawer__intro employee-drawer__intro--danger">
+        <p class="employee-drawer__eyebrow">Delete employee</p>
+        <h3>Confirm removal</h3>
+        <p>This action cannot be undone.</p>
+      </div>
+      <app-delete-confirm
+        [title]="'Delete Employee'"
+        [message]="'Are you sure you want to delete ' + selectedEmployeeName + '?'">
+      </app-delete-confirm>
+      <div class="employee-drawer__actions">
+        <button type="button" class="btn btn-outline-secondary" (click)="closeDeleteModal()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-danger" (click)="confirmDelete()">
+          Delete Employee
+        </button>
+      </div>
+    </div>
+  </app-jobflow-drawer>
 }
 

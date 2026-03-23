@@ -62,6 +62,25 @@ export class InvoicesComponent implements OnInit, OnDestroy {
    columns: JobflowGridColumn[] = [];
    items: Invoice[] = [];
 
+   summary = {
+      total: 0,
+      sent: 0,
+      paid: 0,
+      overdue: 0,
+      totalBilled: 0,
+      balanceDue: 0
+   };
+
+   statusFilters: { key: string; label: string; status?: InvoiceStatus }[] = [
+      { key: 'all', label: 'All' },
+      { key: 'draft', label: 'Draft', status: InvoiceStatus.Draft },
+      { key: 'sent', label: 'Sent', status: InvoiceStatus.Sent },
+      { key: 'paid', label: 'Paid', status: InvoiceStatus.Paid },
+      { key: 'overdue', label: 'Overdue', status: InvoiceStatus.Overdue },
+      { key: 'unpaid', label: 'Unpaid', status: InvoiceStatus.Unpaid }
+   ];
+   selectedStatusFilter = 'all';
+
    headerActions = [
       {
          label: 'Create Invoice',
@@ -188,6 +207,36 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       }, 0);
    }
 
+   get filteredItems(): Invoice[] {
+      if (this.selectedStatusFilter === 'all') {
+         return this.items;
+      }
+
+      const target = this.statusFilters.find(filter => filter.key === this.selectedStatusFilter);
+      if (!target?.status && target?.status !== 0) {
+         return this.items;
+      }
+
+      return this.items.filter(invoice => this.resolveStatus(invoice.status) === target.status);
+   }
+
+   setStatusFilter(key: string): void {
+      this.selectedStatusFilter = key;
+   }
+
+   getFilterCount(key: string): number {
+      if (key === 'all') {
+         return this.summary.total;
+      }
+
+      const target = this.statusFilters.find(filter => filter.key === key);
+      if (!target?.status && target?.status !== 0) {
+         return 0;
+      }
+
+      return this.items.filter(invoice => this.resolveStatus(invoice.status) === target.status).length;
+   }
+
    private buildColumns(): void {
       this.columns = [
          {
@@ -252,6 +301,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
                const rightDate = new Date(right.invoiceDate).getTime();
                return rightDate - leftDate;
             });
+            this.updateSummary(this.items);
          },
          error: (e) => {
             this.error = 'Failed to load invoices.';
@@ -273,6 +323,8 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       if (payload.paidAt) {
          target.paidAt = payload.paidAt;
       }
+
+      this.updateSummary(this.items);
    }
 
    loadRecentJobs(): void {
@@ -550,6 +602,28 @@ export class InvoicesComponent implements OnInit, OnDestroy {
          style: 'currency',
          currency: 'USD'
       }).format(normalizedValue);
+   }
+
+   private updateSummary(invoices: Invoice[]): void {
+      const summary = {
+         total: invoices.length,
+         sent: 0,
+         paid: 0,
+         overdue: 0,
+         totalBilled: 0,
+         balanceDue: 0
+      };
+
+      for (const invoice of invoices) {
+         const status = this.resolveStatus(invoice.status);
+         if (status === InvoiceStatus.Sent) summary.sent += 1;
+         if (status === InvoiceStatus.Paid) summary.paid += 1;
+         if (status === InvoiceStatus.Overdue) summary.overdue += 1;
+         summary.totalBilled += Number(invoice.totalAmount ?? 0);
+         summary.balanceDue += Number(invoice.balanceDue ?? 0);
+      }
+
+      this.summary = summary;
    }
 
    private buildInvoiceForm(): void {

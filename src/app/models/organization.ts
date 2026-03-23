@@ -5,6 +5,7 @@ export interface OrganizationDto {
     organizationTypeId?: string;
     userRole?: string;
     emailAddress?: string;
+  industryKey?: string;
     address1?: string;
     address2?: string;
     city?: string;

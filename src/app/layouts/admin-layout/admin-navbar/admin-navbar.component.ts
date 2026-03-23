@@ -96,15 +96,6 @@ export class AdminNavbarComponent implements OnInit {
    }
 
    /**
-    * Toggle the sidebar when the hamburger button is clicked
-    */
-   toggleSidebar(e: Event) {
-      e.preventDefault();
-      document.body.classList.add('sidebar-open');
-      document.querySelector('.sidebar .sidebar-toggler')?.classList.add('active');
-   }
-
-   /**
     * Logout
     */
    onLogout(e: Event) {
