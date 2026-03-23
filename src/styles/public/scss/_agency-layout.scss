@@ -3,7 +3,7 @@
 // 
 
 .bg-home-agency {
-    background-image: linear-gradient(#ffefed 2px, transparent 2px), linear-gradient(to right, #ffefed 2px, transparent 2px);
+    background-image: linear-gradient(rgba($primary, 0.08) 2px, transparent 2px), linear-gradient(to right, rgba($primary, 0.08) 2px, transparent 2px);
     background-size: 85px 85px;
 
     &::before {
@@ -192,12 +192,12 @@
 }
 
 .tab-active:hover {
-    background-color: #ddd;
+    background-color: $gray-200;
 }
 
 .tab-active.active {
-    background-color: #666;
-    color: white;
+    background-color: $gray-600;
+    color: $white;
 }
 
 /******** agency-pricing ********/

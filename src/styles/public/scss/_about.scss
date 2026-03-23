@@ -26,11 +26,11 @@
     background-repeat: no-repeat;
 }
 .bg-shape{
-    background-color: #0f172a;
+    background-color: $gray-700;
     background-image:
-        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.22), transparent 45%),
-        radial-gradient(circle at 80% 10%, rgba(14, 165, 233, 0.18), transparent 42%),
-        linear-gradient(135deg, #0f172a 0%, #111827 60%, #0b1220 100%);
+        radial-gradient(circle at 20% 20%, rgba($primary, 0.22), transparent 45%),
+        radial-gradient(circle at 80% 10%, rgba($secondary, 0.18), transparent 42%),
+        linear-gradient(135deg, $gray-700 0%, $gray-600 60%, $gray-800 100%);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
