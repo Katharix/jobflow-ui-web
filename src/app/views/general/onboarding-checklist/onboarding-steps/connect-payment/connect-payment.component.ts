@@ -4,6 +4,7 @@ import { OrganizationContextService } from '../../../../../services/shared/organ
 import { PaymentProviders } from '../data';
 import { CommonModule } from '@angular/common';
 import { PaymentProvider } from '../../../../../models/customer-payment-profile';
+import { OrganizationDto } from '../../../../../models/organization';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -25,16 +26,31 @@ export class ConnectPaymentComponent implements OnInit {
   callbackStatus: 'processing' | 'success' | 'error' | null = null;
   callbackMessage = '';
   callbackProvider: 'Stripe' | 'Square' | null = null;
+  selectedProvider: 'Stripe' | 'Square' | null = null;
+  private currentOrg: OrganizationDto | null = null;
 
   ngOnInit(): void {
     this.handleProviderCallback();
 
     this.orgContext.org$.subscribe(org => {
+      this.currentOrg = org;
       if (org) {
         this.orgId = org.id;
+        this.setSelectedProviderFromOrg(org);
         this.handleProviderCallback();
       }
     });
+  }
+
+  private setSelectedProviderFromOrg(org: { paymentProvider?: PaymentProvider; stripeConnectedAccountId?: string; stripeConnectAccountId?: string }) {
+    if (org.paymentProvider === PaymentProvider.Square) {
+      this.selectedProvider = 'Square';
+      return;
+    }
+
+    if (org.paymentProvider === PaymentProvider.Stripe || org.stripeConnectedAccountId || org.stripeConnectAccountId) {
+      this.selectedProvider = 'Stripe';
+    }
   }
 
   private handleProviderCallback() {
@@ -63,6 +79,8 @@ export class ConnectPaymentComponent implements OnInit {
     if (provider === 'stripe') {
       this.callbackStatus = 'success';
       this.callbackMessage = 'Stripe account connected successfully. You can now accept payments.';
+      this.selectedProvider = 'Stripe';
+      this.updateOrgProvider(PaymentProvider.Stripe);
       this.clearCallbackQueryParams();
       return;
     }
@@ -91,6 +109,8 @@ export class ConnectPaymentComponent implements OnInit {
       next: () => {
         this.callbackStatus = 'success';
         this.callbackMessage = 'Square account connected successfully. You can now accept payments.';
+        this.selectedProvider = 'Square';
+        this.updateOrgProvider(PaymentProvider.Square);
         this.clearCallbackQueryParams();
       },
       error: () => {
@@ -110,6 +130,9 @@ export class ConnectPaymentComponent implements OnInit {
   }
 
   createConnectedAccount(provider: 'Stripe' | 'Square') {
+    if (this.isProviderSelected(provider)) {
+      return;
+    }
     const selectedProvider = provider === 'Square' ? PaymentProvider.Square : PaymentProvider.Stripe;
 
     this.paymentService.createConnectedAccount(selectedProvider).subscribe({
@@ -124,6 +147,25 @@ export class ConnectPaymentComponent implements OnInit {
       error: (err: unknown) => {
         console.error(err);
       }
+    });
+  }
+
+  isProviderSelected(provider: 'Stripe' | 'Square'): boolean {
+    return this.selectedProvider === provider;
+  }
+
+  private updateOrgProvider(provider: PaymentProvider) {
+    if (!this.currentOrg) {
+      return;
+    }
+
+    if (this.currentOrg.paymentProvider === provider) {
+      return;
+    }
+
+    this.orgContext.setOrganization({
+      ...this.currentOrg,
+      paymentProvider: provider
     });
   }
 }

@@ -8,7 +8,7 @@
 
 .jf-hero {
 	padding: 180px 0 120px;
-	background: linear-gradient(180deg, #f8fafc 0%, #ffffff 45%, #f1f5f9 100%);
+	background: linear-gradient(180deg, var(--jf-surface-2) 0%, var(--jf-surface) 45%, var(--jf-line) 100%);
 }
 
 .jf-eyebrow {
@@ -47,8 +47,8 @@
 }
 
 .jf-proof__item {
-	background: #ffffff;
-	border: 1px solid rgba(226, 232, 240, 0.8);
+	background: var(--jf-surface);
+	border: 1px solid rgba(211, 214, 224, 0.8);
 	border-radius: 14px;
 	padding: 0.75rem 0.9rem;
 	font-size: 0.9rem;
@@ -76,11 +76,11 @@
 
 .jf-media-shell {
 	position: relative;
-	background: #ffffff;
+	background: var(--jf-surface);
 	border-radius: 24px;
-	border: 1px solid rgba(226, 232, 240, 0.9);
+	border: 1px solid rgba(211, 214, 224, 0.9);
 	padding: 1.5rem;
-	box-shadow: 0 30px 60px rgba(15, 23, 42, 0.12);
+	box-shadow: 0 30px 60px rgba(30, 30, 36, 0.12);
 }
 
 .jf-media-image {
@@ -88,17 +88,17 @@
 	height: auto;
 	display: block;
 	border-radius: 18px;
-	border: 1px solid rgba(226, 232, 240, 0.9);
-	box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+	border: 1px solid rgba(211, 214, 224, 0.9);
+	box-shadow: 0 20px 40px rgba(30, 30, 36, 0.08);
 }
 
 .jf-float-card {
 	position: absolute;
-	background: #ffffff;
+	background: var(--jf-surface);
 	border-radius: 16px;
 	padding: 0.5rem;
-	border: 1px solid rgba(226, 232, 240, 0.9);
-	box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
+	border: 1px solid rgba(211, 214, 224, 0.9);
+	box-shadow: 0 16px 30px rgba(30, 30, 36, 0.12);
 	width: 180px;
 }
 

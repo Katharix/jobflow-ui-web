@@ -3,14 +3,14 @@
 // 
 
 :root {
-    --jf-ink: #0f172a;
-    --jf-muted: #475569;
-    --jf-line: #e2e8f0;
-    --jf-surface: #ffffff;
-    --jf-surface-2: #f8fafc;
-    --jf-accent: #1d4ed8;
-    --jf-accent-strong: #1e40af;
-    --jf-accent-soft: #eff6ff;
+    --jf-ink: #{$gray-700};
+    --jf-muted: #{$gray-500};
+    --jf-line: #{$gray-200};
+    --jf-surface: #{$white};
+    --jf-surface-2: #{$gray-100};
+    --jf-accent: #{$primary};
+    --jf-accent-strong: #{darken($primary, 10%)};
+    --jf-accent-soft: #{rgba($primary, 0.12)};
 }
 
 body {

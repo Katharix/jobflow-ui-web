@@ -12,6 +12,14 @@
     <app-admin-navbar></app-admin-navbar>
 
     <div class="page-content container-xxl">
+      @if (showBackButton) {
+        <div class="admin-back">
+          <button class="btn btn-link admin-back__btn" type="button" (click)="goBack()">
+            <i class="pi pi-arrow-left"></i>
+            <span>Back</span>
+          </button>
+        </div>
+      }
       <router-outlet></router-outlet>
     </div>
 

@@ -1,1 +1,21 @@
 @import "admin/admin-styles";
+
+.admin-back {
+	margin: 1rem 0 1.25rem;
+}
+
+.admin-back__btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0;
+	color: #3a4763;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.admin-back__btn:hover,
+.admin-back__btn:focus-visible {
+	color: #1f2937;
+	text-decoration: none;
+}

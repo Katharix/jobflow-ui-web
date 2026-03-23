@@ -82,6 +82,11 @@
 		gap: 1.25rem;
 	}
 
+	.provider-card--selected {
+		border-color: #3f67da;
+		box-shadow: 0 20px 40px rgba(63, 103, 218, 0.16);
+	}
+
 	.provider-brand {
 		display: flex;
 		justify-content: space-between;
@@ -95,6 +100,13 @@
 		object-fit: contain;
 	}
 
+	.provider-tags {
+		display: inline-flex;
+		gap: 0.4rem;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+	}
+
 	.provider-tag {
 		background: #dcfce7;
 		color: #166534;
@@ -104,6 +116,11 @@
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.06em;
+	}
+
+	.provider-tag--active {
+		background: rgba(63, 103, 218, 0.12);
+		color: #3f67da;
 	}
 
 	.provider-copy {

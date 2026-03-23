@@ -99,9 +99,9 @@
 }
 
 .jf-placeholder {
-    background: linear-gradient(120deg, rgba(148, 163, 184, 0.12), rgba(59, 130, 246, 0.12));
+    background: linear-gradient(120deg, rgba($gray-400, 0.12), rgba($primary, 0.12));
     border-radius: 18px;
-    border: 1px solid rgba(226, 232, 240, 0.9);
+    border: 1px solid rgba($gray-200, 0.9);
 }
 
 .jf-placeholder--tall {

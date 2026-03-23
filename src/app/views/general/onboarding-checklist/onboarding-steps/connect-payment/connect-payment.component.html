@@ -40,26 +40,37 @@
 
     <div class="provider-grid">
       @for (provider of paymentProviders; track provider) {
-        <div class="provider-card">
+        <div class="provider-card" [class.provider-card--selected]="isProviderSelected(provider.provider)">
           <div class="provider-brand">
             <img
               [src]="provider.logoPath"
               [alt]="provider.altLogoText"
               class="provider-logo"
               />
-              @if (provider.provider === 'Stripe') {
-                <span class="provider-tag">Recommended</span>
-              }
+              <div class="provider-tags">
+                @if (provider.provider === 'Stripe') {
+                  <span class="provider-tag">Recommended</span>
+                }
+                @if (isProviderSelected(provider.provider)) {
+                  <span class="provider-tag provider-tag--active">Selected</span>
+                }
+              </div>
             </div>
             <div class="provider-copy">
               <h2>{{ provider.provider }}</h2>
               <p class="provider-description">{{ provider.description }}</p>
             </div>
             <div class="provider-actions">
-              <button class="btn btn-primary" (click)="createConnectedAccount(provider.provider)">
-                Connect {{ provider.provider }}
+              <button
+                class="btn btn-primary"
+                (click)="createConnectedAccount(provider.provider)"
+                [disabled]="isProviderSelected(provider.provider)"
+              >
+                {{ isProviderSelected(provider.provider) ? 'Connected via ' + provider.provider : 'Connect ' + provider.provider }}
               </button>
-              <p class="small-text">You will be redirected to authorize and return here.</p>
+              <p class="small-text">
+                {{ isProviderSelected(provider.provider) ? 'This provider is active for your account.' : 'You will be redirected to authorize and return here.' }}
+              </p>
             </div>
           </div>
         }

@@ -7,7 +7,7 @@
 }
 
 .jf-about {
-	background: #ffffff;
+	background: var(--jf-surface);
 }
 
 .jf-section-title {
@@ -29,7 +29,7 @@
 
 .jf-checklist__item {
 	background: var(--jf-surface-2);
-	border: 1px solid rgba(226, 232, 240, 0.8);
+	border: 1px solid rgba(211, 214, 224, 0.8);
 	border-radius: 12px;
 	padding: 0.75rem 0.9rem;
 	font-weight: 600;
@@ -43,8 +43,8 @@
 }
 
 .jf-kpi {
-	background: #ffffff;
-	border: 1px solid rgba(226, 232, 240, 0.9);
+	background: var(--jf-surface);
+	border: 1px solid rgba(211, 214, 224, 0.9);
 	border-radius: 14px;
 	padding: 0.8rem 0.9rem;
 }
@@ -63,11 +63,11 @@
 }
 
 .jf-preview {
-	background: #ffffff;
+	background: var(--jf-surface);
 	border-radius: 20px;
-	border: 1px solid rgba(226, 232, 240, 0.9);
+	border: 1px solid rgba(211, 214, 224, 0.9);
 	padding: 1.5rem;
-	box-shadow: 0 24px 50px rgba(15, 23, 42, 0.1);
+	box-shadow: 0 24px 50px rgba(30, 30, 36, 0.1);
 }
 
 .jf-preview__header {
@@ -83,7 +83,7 @@
 }
 
 .jf-preview__pill {
-	background: rgba(59, 130, 246, 0.12);
+	background: rgba(63, 103, 218, 0.12);
 	color: var(--jf-accent-strong);
 	border-radius: 999px;
 	padding: 0.3rem 0.7rem;
@@ -95,8 +95,8 @@
 	width: 100%;
 	height: auto;
 	border-radius: 16px;
-	border: 1px solid rgba(226, 232, 240, 0.9);
-	box-shadow: 0 18px 34px rgba(15, 23, 42, 0.08);
+	border: 1px solid rgba(211, 214, 224, 0.9);
+	box-shadow: 0 18px 34px rgba(30, 30, 36, 0.08);
 	margin-bottom: 1rem;
 }
 
@@ -109,7 +109,7 @@
 .jf-preview__stat {
 	background: var(--jf-surface-2);
 	border-radius: 12px;
-	border: 1px solid rgba(226, 232, 240, 0.8);
+	border: 1px solid rgba(211, 214, 224, 0.8);
 	padding: 0.6rem 0.75rem;
 }
 
