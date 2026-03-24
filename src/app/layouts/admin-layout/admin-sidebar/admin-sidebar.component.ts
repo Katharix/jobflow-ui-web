@@ -2,6 +2,7 @@ import { DOCUMENT, NgClass } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { NgScrollbar } from 'ngx-scrollbar';
 import MetisMenu from 'metismenujs';
@@ -20,7 +21,8 @@ import { OrganizationDto } from '../../../models/organization';
     RouterLinkActive,
     NgScrollbar,
     NgClass,
-    LucideAngularModule
+    LucideAngularModule,
+    TranslateModule
 ],
   templateUrl: './admin-sidebar.component.html',
   styleUrl: './admin-sidebar.component.scss'

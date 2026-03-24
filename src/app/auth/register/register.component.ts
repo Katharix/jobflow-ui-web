@@ -16,11 +16,12 @@ import { firstValueFrom } from 'rxjs';
 import { PaymentService } from '../../services/shared/payment.service';
 import { PaymentProvider } from '../../models/customer-payment-profile';
 import { ToastService } from '../../common/toast/toast.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
    selector: 'app-register',
    standalone: true,
-   imports: [RouterLink, FormsModule, CommonModule],
+   imports: [RouterLink, FormsModule, CommonModule, TranslateModule],
    templateUrl: './register.component.html',
    styleUrl: './register.component.scss'
 })
@@ -34,6 +35,7 @@ export class RegisterComponent implements OnInit {
    private orgContext = inject(OrganizationContextService);
    private paymentService = inject(PaymentService);
    private toast = inject(ToastService);
+   private translate = inject(TranslateService);
 
    @ViewChild('form') form?: NgForm;
 
@@ -97,8 +99,8 @@ export class RegisterComponent implements OnInit {
       }
 
       if (this.password.trim() !== this.confirmPassword.trim()) {
-         this.error = 'Passwords do not match';
-         this.toast.error('Passwords do not match.');
+         this.error = this.translate.instant('auth.register.errors.passwordMismatch');
+         this.toast.error(this.translate.instant('auth.register.errors.passwordMismatch'));
          return;
       }
 
@@ -131,12 +133,15 @@ export class RegisterComponent implements OnInit {
          this.orgService.registerOrganization(orgDto).subscribe({
             next: (data) => {
                this.orgContext.setOrganization(data);
-               this.toast.success('Account created', 'Welcome');
+               this.toast.success(
+                  this.translate.instant('auth.register.toastCreated'),
+                  this.translate.instant('auth.register.toastWelcome')
+               );
                this.router.navigate(['/admin'], {queryParams: {organizationId: data.id}});
             },
             error: (err) => {
                console.error(err);
-               this.toast.error('Failed to create account.');
+               this.toast.error(this.translate.instant('auth.register.errors.createFailed'));
                this.isSubmitting = false;
             }
          });
@@ -145,7 +150,7 @@ export class RegisterComponent implements OnInit {
       } catch (err: unknown) {
          console.error('Registration Error:', err);
          this.error = this.mapFirebaseAuthError(err);
-         this.toast.error(this.error || 'Registration failed.');
+         this.toast.error(this.error || this.translate.instant('auth.register.errors.generic'));
          this.isSubmitting = false;
       }
    }
@@ -155,38 +160,39 @@ export class RegisterComponent implements OnInit {
       const maybeError = error as { code?: string; message?: string } | null;
       const code = maybeError?.code;
       if (!code) {
-         return maybeError?.message || 'Something went wrong. Please try again.';
+         return maybeError?.message || this.translate.instant('auth.register.errors.generic');
       }
 
       let message: string;
       switch (code) {
          case 'auth/invalid-email':
-            message = 'Please enter a valid email address.';
+            message = this.translate.instant('auth.register.errors.invalidEmail');
             break;
          case 'auth/email-already-in-use':
-            message = 'That email is already in use. Try signing in instead.';
+            message = this.translate.instant('auth.register.errors.emailInUse');
             break;
          case 'auth/weak-password':
-            message = 'Password is too weak. Use at least 8 characters.';
+            message = this.translate.instant('auth.register.errors.weakPassword');
             break;
          case 'auth/too-many-requests':
-            message = 'Too many attempts. Please wait a moment and try again.';
+            message = this.translate.instant('auth.register.errors.tooManyRequests');
             break;
          case 'auth/network-request-failed':
-            message = 'Network error. Check your connection and try again.';
+            message = this.translate.instant('auth.register.errors.network');
             break;
          case 'auth/operation-not-allowed':
-            message = 'Email/password sign-up is not enabled for this project.';
+            message = this.translate.instant('auth.register.errors.notEnabled');
             break;
          case 'auth/unauthorized-domain':
-            message = 'This domain is not authorized for sign-in.';
+            message = this.translate.instant('auth.register.errors.unauthorizedDomain');
             break;
          default:
-            message = maybeError?.message || 'Something went wrong. Please try again.';
+            message = maybeError?.message || this.translate.instant('auth.register.errors.generic');
             break;
       }
 
-      return `${message} (code: ${code})`;
+      const codeSuffix = this.translate.instant('auth.register.errorCode', { code });
+      return `${message} ${codeSuffix}`;
    }
 
    async startPaymentProviderOnboarding(orgId?: string) {
@@ -201,7 +207,7 @@ export class RegisterComponent implements OnInit {
          }
       } catch (error) {
          console.error('Error during payment onboarding:', error);
-         alert('Something went wrong. Please try again.');
+         alert(this.translate.instant('auth.register.errors.generic'));
       }
    }
 }

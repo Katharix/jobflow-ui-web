@@ -8,6 +8,7 @@ import {ButtonModule} from 'primeng/button';
 import {ColorBlockModule} from 'ngx-color/block';
 import {ColorTwitterModule} from 'ngx-color/twitter';
 import {LucideAngularModule} from 'lucide-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {OrganizationDto} from '../../models/organization';
 import {BrandingDto} from '../../models/organization-branding';
 import {FileUploadService} from './services/file-upload.service';
@@ -24,7 +25,19 @@ interface ColorChangeEvent {
 @Component({
    selector: 'app-branding',
    standalone: true,
-   imports: [CommonModule, ReactiveFormsModule, InputTextModule, TextareaModule, FloatLabelModule, ButtonModule, ColorBlockModule, ColorTwitterModule, LucideAngularModule, PageHeaderComponent],
+      imports: [
+         CommonModule,
+         ReactiveFormsModule,
+         InputTextModule,
+         TextareaModule,
+         FloatLabelModule,
+         ButtonModule,
+         ColorBlockModule,
+         ColorTwitterModule,
+         LucideAngularModule,
+         PageHeaderComponent,
+         TranslateModule
+      ],
    templateUrl: './branding.component.html',
    styleUrl: './branding.component.scss'
 })
@@ -33,6 +46,7 @@ export class BrandingComponent implements OnInit {
    private orgContext = inject(OrganizationContextService);
    private brandingService = inject(OrganizationBrandingService);
    private uploadService = inject(FileUploadService);
+      private translate = inject(TranslateService);
 
    organization!: OrganizationDto;
    brandingForm!: FormGroup;
@@ -148,7 +162,7 @@ export class BrandingComponent implements OnInit {
          error: () => {
             this.isSaving = false;
             this.saveStatus = 'error';
-            this.saveMessage = 'Logo upload failed. Please try again.';
+            this.saveMessage = this.translate.instant('admin.branding.toast.logoUploadFailed');
          }
       });
    }
@@ -165,12 +179,12 @@ export class BrandingComponent implements OnInit {
             this.isSaving = false;
             this.uploadedLogo = null;
             this.saveStatus = 'success';
-            this.saveMessage = 'Branding saved successfully.';
+            this.saveMessage = this.translate.instant('admin.branding.toast.saveSuccess');
          },
          error: () => {
             this.isSaving = false;
             this.saveStatus = 'error';
-            this.saveMessage = 'Unable to save branding. Please try again.';
+            this.saveMessage = this.translate.instant('admin.branding.toast.saveFailed');
          }
       });
    }

@@ -1,8 +1,8 @@
 <section class="dashboard-page dashboard-page--gentelella">
   <section class="dashboard-welcome">
     <div class="dashboard-welcome__message">
-      <h1>{{ welcomeTitle }}</h1>
-      <p>{{ welcomeSubtext }}</p>
+      <h1>{{ 'dashboard.welcomeTitle' | translate:{ organization: organizationName } }}</h1>
+      <p>{{ 'dashboard.welcomeSubtitle' | translate }}</p>
     </div>
 
     <div class="dashboard-welcome__meta">
@@ -20,7 +20,7 @@
         <strong>{{ tile.value }}</strong>
         <span>{{ tile.detail }}</span>
         @if (tile.route) {
-          <a [routerLink]="tile.route">View</a>
+          <a [routerLink]="tile.route">{{ 'dashboard.view' | translate }}</a>
         }
       </article>
     }
@@ -31,8 +31,8 @@
     @if (showOnboardingChecklist) {
       <article class="dashboard-panel dashboard-panel--onboarding">
         <div class="dashboard-panel__header">
-          <h2>Onboarding checklist</h2>
-          <span>Complete setup once for a smoother daily flow</span>
+          <h2>{{ 'dashboard.onboardingTitle' | translate }}</h2>
+          <span>{{ 'dashboard.onboardingSubtitle' | translate }}</span>
         </div>
         <app-jobflow-onboarding-checklist
           [organizationId]="organizationId"
@@ -46,8 +46,8 @@
       [ngClass]="{ 'dashboard-panel--activity-full': !showOnboardingChecklist }"
       >
       <div class="dashboard-panel__header">
-        <h2>Client Activity</h2>
-        <span>Estimate decisions, revisions, and invoice payments</span>
+        <h2>{{ 'dashboard.clientActivityTitle' | translate }}</h2>
+        <span>{{ 'dashboard.clientActivitySubtitle' | translate }}</span>
       </div>
 
       @if (clientActivity.length) {
@@ -62,12 +62,12 @@
               </div>
               <p>{{ activity.title }}</p>
               <small>{{ activity.detail }}</small>
-              <a [routerLink]="activity.route">Open</a>
+              <a [routerLink]="activity.route">{{ 'dashboard.open' | translate }}</a>
             </li>
           }
         </ul>
       } @else {
-        <p class="dashboard-empty-state mb-0">No recent client activity yet.</p>
+        <p class="dashboard-empty-state mb-0">{{ 'dashboard.clientActivityEmpty' | translate }}</p>
       }
 
     </article>

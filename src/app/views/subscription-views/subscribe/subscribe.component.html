@@ -6,15 +6,15 @@
           <a routerLink="/" class="subscribe-hero__logo">
             <img src="/assets/public/images/Asset 1.png" alt="JobFlow" />
           </a>
-          <p class="subscribe-hero__eyebrow">Get started</p>
-          <h1>Launch your JobFlow workspace in minutes.</h1>
+          <p class="subscribe-hero__eyebrow">{{ 'subscribe.eyebrow' | translate }}</p>
+          <h1>{{ 'subscribe.headline' | translate }}</h1>
           <p class="subscribe-hero__lead">
-            Enter your business details to activate billing and unlock scheduling, estimates, and payments.
+            {{ 'subscribe.lead' | translate }}
           </p>
           <div class="subscribe-hero__checks">
-            <span><i class="ti ti-circle-check text-success me-2"></i>Instant access after checkout</span>
-            <span><i class="ti ti-circle-check text-success me-2"></i>Secure payments via Stripe</span>
-            <span><i class="ti ti-circle-check text-success me-2"></i>Cancel anytime</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>{{ 'subscribe.checks.access' | translate }}</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>{{ 'subscribe.checks.secure' | translate }}</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>{{ 'subscribe.checks.cancel' | translate }}</span>
           </div>
         </div>
       </div>
@@ -23,17 +23,17 @@
         <div class="subscribe-card">
           <div class="subscribe-card__header">
             <div class="flow-steps" aria-label="Signup steps">
-              <span class="flow-step is-active">1. Subscription</span>
-              <span class="flow-step">2. Create account</span>
+              <span class="flow-step is-active">{{ 'subscribe.steps.subscription' | translate }}</span>
+              <span class="flow-step">{{ 'subscribe.steps.account' | translate }}</span>
             </div>
-            <h2>Purchase subscription plan</h2>
-            <p class="text-muted">Complete the details below to continue to checkout.</p>
+            <h2>{{ 'subscribe.title' | translate }}</h2>
+            <p class="text-muted">{{ 'subscribe.subtitle' | translate }}</p>
           </div>
 
           <form #form="ngForm" (ngSubmit)="onSubscribe($event)" novalidate>
             @if (submitted && form.invalid) {
               <div class="alert alert-danger">
-                Please fix the highlighted fields and try again.
+                {{ 'subscribe.validation.formInvalid' | translate }}
               </div>
             }
 
@@ -41,19 +41,19 @@
               <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ error }}
                 <button type="button" class="btn-close" (click)="error = ''">
-                  <span class="visually-hidden">Close</span>
+                  <span class="visually-hidden">{{ 'subscribe.close' | translate }}</span>
                 </button>
               </div>
             }
 
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label class="form-label" for="companyName">Company name</label>
+                <label class="form-label" for="companyName">{{ 'subscribe.companyName' | translate }}</label>
                 <input
                   id="companyName"
                   type="text"
                   class="form-control"
-                  placeholder="Company Name"
+                  [placeholder]="'subscribe.placeholders.companyName' | translate"
                   [(ngModel)]="organizationName"
                   name="organizationName"
                   required
@@ -64,17 +64,17 @@
                   @if (companyNameCtrl.invalid && (companyNameCtrl.touched || submitted)) {
                     <div class="text-danger small">
                       @if (companyNameCtrl.errors?.['required']) {
-                        <div>Company name is required.</div>
+                        <div>{{ 'subscribe.validation.companyRequired' | translate }}</div>
                       }
                       @if (companyNameCtrl.errors?.['minlength']) {
-                        <div>Minimum 2 characters.</div>
+                        <div>{{ 'subscribe.validation.companyMin' | translate }}</div>
                       }
                     </div>
                   }
                 </div>
 
                 <div class="col-md-6 mb-3">
-                  <label class="form-label" for="companyType">Company type</label>
+                  <label class="form-label" for="companyType">{{ 'subscribe.companyType' | translate }}</label>
                   <select
                     id="companyType"
                     class="form-select"
@@ -84,7 +84,7 @@
                     #orgTypeCtrl="ngModel"
                     [ngClass]="{ 'is-invalid': orgTypeCtrl.invalid && (orgTypeCtrl.touched || submitted) }"
                     >
-                    <option [ngValue]="''" disabled>Select company type</option>
+                    <option [ngValue]="''" disabled>{{ 'subscribe.placeholders.companyType' | translate }}</option>
                     @for (type of organizationTypes; track type) {
                       <option [ngValue]="type.id">
                         {{ type.typeName }}
@@ -93,7 +93,7 @@
                   </select>
                   @if (orgTypeCtrl.invalid && (orgTypeCtrl.touched || submitted)) {
                     <div class="text-danger small">
-                      Please select a company type.
+                      {{ 'subscribe.validation.companyTypeRequired' | translate }}
                     </div>
                   }
                 </div>
@@ -101,12 +101,12 @@
 
               <div class="row">
                 <div class="col-md-6 mb-3">
-                  <label class="form-label" for="workEmail">Work email</label>
+                  <label class="form-label" for="workEmail">{{ 'subscribe.workEmail' | translate }}</label>
                   <input
                     id="workEmail"
                     type="email"
                     class="form-control"
-                    placeholder="you@company.com"
+                    [placeholder]="'subscribe.placeholders.email' | translate"
                     [(ngModel)]="email"
                     name="email"
                     required
@@ -117,22 +117,22 @@
                     @if (emailCtrl.invalid && (emailCtrl.touched || submitted)) {
                       <div class="text-danger small">
                         @if (emailCtrl.errors?.['required']) {
-                          <div>Email is required.</div>
+                          <div>{{ 'subscribe.validation.emailRequired' | translate }}</div>
                         }
                         @if (emailCtrl.errors?.['email']) {
-                          <div>Enter a valid email.</div>
+                          <div>{{ 'subscribe.validation.emailInvalid' | translate }}</div>
                         }
                       </div>
                     }
                   </div>
 
                   <div class="col-md-6 mb-3">
-                    <label class="form-label" for="workPhone">Phone number</label>
+                    <label class="form-label" for="workPhone">{{ 'subscribe.phone' | translate }}</label>
                     <input
                       id="workPhone"
                       type="text"
                       class="form-control"
-                      placeholder="(555) 555-1234"
+                      [placeholder]="'subscribe.placeholders.phone' | translate"
                       [(ngModel)]="phoneNumber"
                       name="phoneNumber"
                       required
@@ -143,10 +143,10 @@
                       @if (phoneCtrl.invalid && (phoneCtrl.touched || submitted)) {
                         <div class="text-danger small">
                           @if (phoneCtrl.errors?.['required']) {
-                            <div>Phone number is required.</div>
+                            <div>{{ 'subscribe.validation.phoneRequired' | translate }}</div>
                           }
                           @if (phoneCtrl.errors?.['pattern']) {
-                            <div>Enter a valid phone number.</div>
+                            <div>{{ 'subscribe.validation.phoneInvalid' | translate }}</div>
                           }
                         </div>
                       }
@@ -154,12 +154,12 @@
                   </div>
 
                   <div class="mb-3">
-                    <label class="form-label" for="businessAddress">Business address</label>
+                    <label class="form-label" for="businessAddress">{{ 'subscribe.address' | translate }}</label>
                     <input
                       id="businessAddress"
                       type="text"
                       class="form-control"
-                      placeholder="Business Address"
+                      [placeholder]="'subscribe.placeholders.address' | translate"
                       [(ngModel)]="companyAddress"
                       name="companyAddress"
                       required
@@ -169,30 +169,30 @@
                       />
                       @if (addressCtrl.invalid && (addressCtrl.touched || submitted)) {
                         <div class="text-danger small">
-                          Business address is required.
+                          {{ 'subscribe.validation.addressRequired' | translate }}
                         </div>
                       }
                     </div>
 
                     <div class="mb-3">
-                      <label class="form-label" for="businessAddress2">Business address 2</label>
+                      <label class="form-label" for="businessAddress2">{{ 'subscribe.address2' | translate }}</label>
                       <input
                         id="businessAddress2"
                         type="text"
                         class="form-control"
-                        placeholder="Suite, unit, etc."
+                        [placeholder]="'subscribe.placeholders.address2' | translate"
                         [(ngModel)]="companyAddress2"
                         name="companyAddress2"
                         />
                       </div>
 
                       <div class="mb-3">
-                        <label class="form-label" for="businessCity">City</label>
+                        <label class="form-label" for="businessCity">{{ 'subscribe.city' | translate }}</label>
                         <input
                           id="businessCity"
                           type="text"
                           class="form-control"
-                          placeholder="City"
+                          [placeholder]="'subscribe.placeholders.city' | translate"
                           [(ngModel)]="city"
                           name="city"
                           required
@@ -201,14 +201,14 @@
                           />
                           @if (cityCtrl.invalid && (cityCtrl.touched || submitted)) {
                             <div class="text-danger small">
-                              City is required.
+                              {{ 'subscribe.validation.cityRequired' | translate }}
                             </div>
                           }
                         </div>
 
                         <div class="row">
                           <div class="col-md-6 mb-3">
-                            <label class="form-label" for="businessState">State</label>
+                            <label class="form-label" for="businessState">{{ 'subscribe.state' | translate }}</label>
                             <select
                               id="businessState"
                               class="form-select"
@@ -218,25 +218,25 @@
                               #stateCtrl="ngModel"
                               [ngClass]="{ 'is-invalid': stateCtrl.invalid && (stateCtrl.touched || submitted) }"
                               >
-                              <option [ngValue]="''" disabled>Select state</option>
+                              <option [ngValue]="''" disabled>{{ 'subscribe.placeholders.state' | translate }}</option>
                               @for (s of usStates; track s) {
                                 <option [value]="s.code">{{ s.name }}</option>
                               }
                             </select>
                             @if (stateCtrl.invalid && (stateCtrl.touched || submitted)) {
                               <div class="text-danger small">
-                                State is required.
+                                  {{ 'subscribe.validation.stateRequired' | translate }}
                               </div>
                             }
                           </div>
 
                           <div class="col-md-6 mb-3">
-                            <label class="form-label" for="businessZip">Zip code</label>
+                            <label class="form-label" for="businessZip">{{ 'subscribe.zip' | translate }}</label>
                             <input
                               id="businessZip"
                               type="text"
                               class="form-control"
-                              placeholder="Zip Code"
+                              [placeholder]="'subscribe.placeholders.zip' | translate"
                               [(ngModel)]="zipCode"
                               name="zipCode"
                               required
@@ -247,10 +247,10 @@
                               @if (zipCtrl.invalid && (zipCtrl.touched || submitted)) {
                                 <div class="text-danger small">
                                   @if (zipCtrl.errors?.['required']) {
-                                    <div>Zip code is required.</div>
+                                    <div>{{ 'subscribe.validation.zipRequired' | translate }}</div>
                                   }
                                   @if (zipCtrl.errors?.['pattern']) {
-                                    <div>Zip code must be 5 digits.</div>
+                                    <div>{{ 'subscribe.validation.zipPattern' | translate }}</div>
                                   }
                                 </div>
                               }
@@ -269,34 +269,34 @@
                               [ngClass]="{ 'is-invalid': twilioConsentCtrl.invalid && (twilioConsentCtrl.touched || submitted) }"
                               />
                               <label class="form-check-label" for="twilioConsent">
-                                I consent to receive SMS or voice calls regarding my subscription and service usage.
+                                {{ 'subscribe.twilioConsent' | translate }}
                               </label>
                               @if (twilioConsentCtrl.invalid && (twilioConsentCtrl.touched || submitted)) {
                                 <div class="text-danger small">
-                                  You must provide consent to continue.
+                                  {{ 'subscribe.validation.twilioConsent' | translate }}
                                 </div>
                               }
                               <small class="form-text text-muted">
-                                Message and data rates may apply. You can opt out at any time by replying STOP.
+                                {{ 'subscribe.twilioNote' | translate }}
                               </small>
                             </div>
 
                             <div class="d-grid">
                               <button type="submit" class="btn btn-primary" [disabled]="form.invalid || (isLoading$ | async)">
                                 @if ((isLoading$ | async) === false) {
-                                  <span>Purchase</span>
+                                  <span>{{ 'subscribe.submit' | translate }}</span>
                                 }
                                 @if ((isLoading$ | async) === true) {
-                                  <span>Processing...</span>
+                                  <span>{{ 'subscribe.submitting' | translate }}</span>
                                 }
                               </button>
                             </div>
                             <p class="form-hint mt-2">
-                              Next: After checkout, you will create your JobFlow login.
+                              {{ 'subscribe.nextStep' | translate }}
                             </p>
                             @if ((isLoading$ | async) === true) {
                               <p class="form-hint">
-                                Redirecting you to Stripe checkout...
+                                {{ 'subscribe.redirecting' | translate }}
                               </p>
                             }
                           </form>

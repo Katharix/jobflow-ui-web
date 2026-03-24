@@ -1,7 +1,8 @@
-import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../dashboard/page-header/page-header.component';
 import { JobflowGridColumn, JobflowGridComponent, JobflowGridPageSettings } from '../../common/jobflow-grid/jobflow-grid.component';
 import { JobflowDrawerComponent } from '../../common/jobflow-drawer/jobflow-drawer.component';
@@ -16,6 +17,7 @@ import { Estimate, EstimateStatus, EstimateStatusLabels } from './models/estimat
   imports: [
     CommonModule,
     FormsModule,
+    TranslateModule,
     PageHeaderComponent,
     JobflowGridComponent,
     JobflowDrawerComponent,
@@ -24,9 +26,10 @@ import { Estimate, EstimateStatus, EstimateStatusLabels } from './models/estimat
   templateUrl: './estimates.component.html',
   styleUrl: './estimates.component.scss',
 })
-export class EstimatesComponent implements OnInit {
+export class EstimatesComponent implements OnInit, OnDestroy {
   private estimateService = inject(EstimateService);
   private router = inject(Router);
+  private translate = inject(TranslateService);
 
   @ViewChild('clientTemplate', { static: true }) clientTemplate!: TemplateRef<unknown>;
   @ViewChild('statusTemplate', { static: true }) statusTemplate!: TemplateRef<unknown>;
@@ -46,15 +49,10 @@ export class EstimatesComponent implements OnInit {
     totalValue: 0,
   };
 
-  statusFilters: { key: string; label: string; status?: EstimateStatus }[] = [
-    { key: 'all', label: 'All' },
-    { key: 'draft', label: 'Draft', status: EstimateStatus.Draft },
-    { key: 'sent', label: 'Sent', status: EstimateStatus.Sent },
-    { key: 'accepted', label: 'Accepted', status: EstimateStatus.Accepted },
-    { key: 'declined', label: 'Declined', status: EstimateStatus.Declined },
-    { key: 'expired', label: 'Expired', status: EstimateStatus.Expired },
-  ];
+  statusFilters: { key: string; label: string; status?: EstimateStatus }[] = [];
   selectedStatusFilter = 'all';
+
+  headerActions = [] as { label: string; icon: string; class: string; click: () => void }[];
 
   isFormDrawerOpen = false;
   isSendDrawerOpen = false;
@@ -67,10 +65,37 @@ export class EstimatesComponent implements OnInit {
   sendError: string | null = null;
 
   private toast = inject(ToastService);
+  private translateLangSub = this.translate.onLangChange.subscribe(() => this.refreshLabels());
 
   ngOnInit(): void {
-    this.buildColumns();
+    this.refreshLabels();
     this.load();
+  }
+
+  ngOnDestroy(): void {
+    this.translateLangSub?.unsubscribe();
+  }
+
+  private refreshLabels(): void {
+    this.statusFilters = [
+      { key: 'all', label: this.translate.instant('admin.estimates.filters.all') },
+      { key: 'draft', label: this.translate.instant('admin.estimates.filters.draft'), status: EstimateStatus.Draft },
+      { key: 'sent', label: this.translate.instant('admin.estimates.filters.sent'), status: EstimateStatus.Sent },
+      { key: 'accepted', label: this.translate.instant('admin.estimates.filters.accepted'), status: EstimateStatus.Accepted },
+      { key: 'declined', label: this.translate.instant('admin.estimates.filters.declined'), status: EstimateStatus.Declined },
+      { key: 'expired', label: this.translate.instant('admin.estimates.filters.expired'), status: EstimateStatus.Expired },
+    ];
+
+    this.headerActions = [
+      {
+        label: this.translate.instant('admin.estimates.actions.new'),
+        icon: 'plus',
+        class: 'btn-primary',
+        click: this.openNew.bind(this),
+      },
+    ];
+
+    this.buildColumns();
   }
 
   load(): void {
@@ -86,7 +111,7 @@ export class EstimatesComponent implements OnInit {
         this.updateSummary(this.items);
       },
       error: () => {
-        this.error = 'Failed to load estimates. Please refresh.';
+        this.error = this.translate.instant('admin.estimates.errors.load');
       },
     });
   }
@@ -139,14 +164,14 @@ export class EstimatesComponent implements OnInit {
 
     if (!isCreate) {
       this.load();
-      this.toast.success('Estimate updated successfully.');
+      this.toast.success(this.translate.instant('admin.estimates.toast.updated'));
       return;
     }
 
     const recipientEmail = result.organizationClient?.emailAddress ?? '';
     if (!recipientEmail.trim()) {
       this.load();
-      this.toast.warning('Estimate created, but client email is missing so it was not sent.');
+      this.toast.warning(this.translate.instant('admin.estimates.toast.createdMissingEmail'));
       return;
     }
 
@@ -157,11 +182,11 @@ export class EstimatesComponent implements OnInit {
       .subscribe({
         next: () => {
           this.load();
-          this.toast.success('Estimate created and sent.');
+          this.toast.success(this.translate.instant('admin.estimates.toast.createdSent'));
         },
         error: () => {
           this.load();
-          this.toast.error('Estimate created but failed to send.');
+          this.toast.error(this.translate.instant('admin.estimates.toast.createdSendFailed'));
         },
       });
   }
@@ -194,23 +219,26 @@ export class EstimatesComponent implements OnInit {
           this.sending = false;
           this.isSendDrawerOpen = false;
           this.load();
-          this.toast.success('Estimate sent successfully.');
+            this.toast.success(this.translate.instant('admin.estimates.toast.sent'));
         },
         error: () => {
           this.sending = false;
-          this.sendError = 'Failed to send estimate. Please try again.';
+            this.sendError = this.translate.instant('admin.estimates.errors.send');
         },
       });
   }
 
   deleteEstimate(estimate: Estimate): void {
-    if (!confirm(`Delete estimate ${estimate.estimateNumber}? This cannot be undone.`)) return;
+    const confirmMessage = this.translate.instant('admin.estimates.confirm.delete', {
+      number: estimate.estimateNumber,
+    });
+    if (!confirm(confirmMessage)) return;
     this.estimateService.delete(estimate.id).subscribe({
       next: () => {
         this.load();
-        this.toast.success('Estimate deleted.');
+        this.toast.success(this.translate.instant('admin.estimates.toast.deleted'));
       },
-      error: () => this.toast.show('Failed to delete estimate.', undefined, 'error'),
+      error: () => this.toast.show(this.translate.instant('admin.estimates.toast.deleteFailed'), undefined, 'error'),
     });
   }
 
@@ -226,7 +254,24 @@ export class EstimatesComponent implements OnInit {
 
   getStatusLabel(estimate: Estimate): string {
     const s = this.resolveStatus(estimate.status);
-    return EstimateStatusLabels[s] ?? 'Unknown';
+    switch (s) {
+      case EstimateStatus.Draft:
+        return this.translate.instant('admin.estimates.status.draft');
+      case EstimateStatus.Sent:
+        return this.translate.instant('admin.estimates.status.sent');
+      case EstimateStatus.Accepted:
+        return this.translate.instant('admin.estimates.status.accepted');
+      case EstimateStatus.Declined:
+        return this.translate.instant('admin.estimates.status.declined');
+      case EstimateStatus.Cancelled:
+        return this.translate.instant('admin.estimates.status.cancelled');
+      case EstimateStatus.Expired:
+        return this.translate.instant('admin.estimates.status.expired');
+      case EstimateStatus.RevisionRequested:
+        return this.translate.instant('admin.estimates.status.revisionRequested');
+      default:
+        return this.translate.instant('admin.estimates.labels.unknown');
+    }
   }
 
   getStatusClass(estimate: Estimate): string {
@@ -266,9 +311,9 @@ export class EstimatesComponent implements OnInit {
 
   private buildColumns(): void {
     this.columns = [
-      { field: 'estimateNumber', headerText: 'Estimate #', width: 145 },
+      { field: 'estimateNumber', headerText: this.translate.instant('admin.estimates.table.estimateNumber'), width: 145 },
       {
-        headerText: 'Client',
+        headerText: this.translate.instant('admin.estimates.table.client'),
         width: 220,
         sortField: 'organizationClient.firstName',
         searchFields: [
@@ -280,39 +325,39 @@ export class EstimatesComponent implements OnInit {
       },
       {
         field: 'createdAt',
-        headerText: 'Date',
+        headerText: this.translate.instant('admin.estimates.table.date'),
         width: 135,
         valueAccessor: (_: string, d: unknown) => this.formatDate((d as Estimate)?.createdAt),
       },
       {
         field: 'expirationDate',
-        headerText: 'Expires',
+        headerText: this.translate.instant('admin.estimates.table.expires'),
         width: 130,
         valueAccessor: (_: string, d: unknown) => this.formatDate((d as Estimate)?.expirationDate),
       },
       {
         field: 'total',
-        headerText: 'Total',
+        headerText: this.translate.instant('admin.estimates.table.total'),
         width: 120,
         textAlign: 'Right',
         valueAccessor: (_: string, d: unknown) => this.formatCurrency((d as Estimate)?.total ?? 0),
       },
       {
-        headerText: 'Status',
+        headerText: this.translate.instant('admin.estimates.table.status'),
         width: 115,
         sortField: 'status',
         searchFields: ['status'],
         template: this.statusTemplate,
       },
-      { headerText: 'Actions', width: 185, template: this.actionsTemplate, textAlign: 'Right' },
+      { headerText: this.translate.instant('admin.estimates.table.actions'), width: 185, template: this.actionsTemplate, textAlign: 'Right' },
     ];
   }
 
   private formatDate(val?: string): string {
-    if (!val) return '—';
+    if (!val) return this.translate.instant('admin.estimates.labels.missing');
     const d = new Date(val);
     return isNaN(d.getTime())
-      ? '—'
+      ? this.translate.instant('admin.estimates.labels.missing')
       : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 

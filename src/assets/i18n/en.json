@@ -1,0 +1,922 @@
+{
+  "languages": {
+    "english": "English",
+    "spanish": "Spanish",
+    "french": "French",
+    "portuguese": "Portuguese",
+    "german": "German",
+    "italian": "Italian"
+  },
+  "profile": {
+    "title": "User Profile",
+    "subtitle": "Manage your contact info and language preferences.",
+    "loading": "Loading your profile...",
+    "email": "Email",
+    "emailError": "Enter a valid email address.",
+    "phone": "Phone",
+    "language": "Language",
+    "languageError": "Select a language.",
+    "save": "Save changes",
+    "saving": "Saving..."
+  },
+  "nav": {
+    "home": "Home",
+    "company": "Company",
+    "jobs": "Jobs",
+    "invoicing": "Invoicing",
+    "estimates": "Estimates",
+    "tracking": "Tracking",
+    "settings": "Settings",
+    "dispatch": "Dispatch",
+    "messaging": "Messaging",
+    "clients": "Clients",
+    "employees": "Employees",
+    "priceBook": "Price Book",
+    "billingPayments": "Billing & Payments",
+    "reporting": "Reporting",
+    "help": "Help",
+    "organization": "Organization",
+    "logout": "Logout",
+    "userProfile": "User Profile",
+    "confirmLogout": "Confirm Logout",
+    "confirmLogoutMessage": "Are you sure you want to log out?",
+    "cancel": "Cancel"
+  },
+  "onboarding": {
+    "title": "Getting started",
+    "subtitle": "Complete these steps to start scheduling jobs and getting paid.",
+    "summary": "{{completed}}/{{total}} completed",
+    "empty": "Your onboarding steps will appear here once they are available.",
+    "action": {
+      "completed": "Task Completed",
+      "complete": "Complete step"
+    },
+    "stepCompletedTitle": "Step already completed",
+    "stepLockedTitle": "Complete the previous step first",
+    "stepOpenTitle": "Open step",
+    "stepNoRouteTitle": "No route configured for this step yet",
+    "description": {
+      "track": "Pick the onboarding track that matches your immediate priorities.",
+      "quickStart": "Select an industry preset to load suggested services and workflow labels.",
+      "payment": "Connect your payment provider so you can collect payments.",
+      "branding": "Upload your logo and set your brand details.",
+      "company": "Add your company profile and business information.",
+      "roles": "Set up roles to control permissions for your team.",
+      "employees": "Add team members who will schedule and complete work.",
+      "pricebook": "Create services and pricing used when building jobs.",
+      "customer": "Create your first customer contact to start booking jobs.",
+      "job": "Create and schedule your first job to begin operations.",
+      "invoice": "Generate your first invoice and prepare to get paid.",
+      "default": "Complete this setup step to continue onboarding."
+    }
+  },
+  "dashboard": {
+    "welcomeTitle": "Welcome, {{organization}}",
+    "welcomeSubtitle": "Here is your command center for today-start with what matters most.",
+    "view": "View",
+    "onboardingTitle": "Onboarding checklist",
+    "onboardingSubtitle": "Complete setup once for a smoother daily flow",
+    "clientActivityTitle": "Client Activity",
+    "clientActivitySubtitle": "Estimate decisions, revisions, and invoice payments",
+    "open": "Open",
+    "clientActivityEmpty": "No recent client activity yet."
+  },
+  "landing": {
+    "nav": {
+      "home": "Home",
+      "about": "About",
+      "features": "Features",
+      "pricing": "Pricing",
+      "contact": "Contact",
+      "login": "Login"
+    }
+  },
+  "auth": {
+    "login": {
+      "eyebrow": "Welcome back",
+      "headline": "Run every job from request to payment.",
+      "lead": "Sign in to schedule crews, send estimates, and get paid faster with a single workflow.",
+      "checks": {
+        "dispatch": "Dispatch-ready calendar",
+        "estimate": "Instant estimate to invoice",
+        "payment": "Modern payment links"
+      },
+      "title": "Sign in",
+      "subtitle": "Use your JobFlow account to continue.",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@company.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Your password",
+      "submit": "Login",
+      "footer": {
+        "prefix": "By continuing, you agree to our",
+        "terms": "Terms",
+        "and": "and",
+        "privacy": "Privacy Policy"
+      },
+      "validation": {
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Enter a valid email address.",
+        "passwordRequired": "Password is required.",
+        "passwordMin": "Password must be at least 6 characters.",
+        "formInvalid": "Please fix the highlighted fields and try again."
+      },
+      "errors": {
+        "invalidEmail": "Please enter a valid email address.",
+        "invalidCredentials": "Incorrect email or password.",
+        "userDisabled": "This account is disabled. Contact support for help.",
+        "tooManyRequests": "Too many attempts. Please wait a moment and try again.",
+        "network": "Network error. Check your connection and try again.",
+        "notEnabled": "Email/password sign-in is not enabled for this project.",
+        "unauthorizedDomain": "This domain is not authorized for sign-in."
+      },
+      "errorCode": "(code: {{code}})",
+      "errorGeneric": "Something went wrong. Please try again.",
+      "serverError": "Login failed on server. Please try again.",
+      "toastFailed": "Login failed. Please try again."
+    },
+    "register": {
+      "eyebrow": "Join JobFlow",
+      "headline": "Turn new leads into paid jobs faster.",
+      "lead": "Set up your account so your team can schedule crews, send estimates, and collect payments.",
+      "checks": {
+        "access": "Instant access to your workspace",
+        "secure": "Secure login with Firebase",
+        "billing": "Ready for billing activation"
+      },
+      "steps": {
+        "subscription": "1. Subscription",
+        "account": "2. Create account"
+      },
+      "title": "Create your account",
+      "subtitle": "Finish your details to launch JobFlow.",
+      "companyName": "Company name",
+      "companyNamePlaceholder": "Company Name",
+      "workEmail": "Work email",
+      "emailPlaceholder": "you@company.com",
+      "billingEmailHint": "This is the billing email you entered.",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Create a password",
+      "passwordHint": "Use at least 8 characters with upper/lowercase, number, and symbol.",
+      "confirmPasswordLabel": "Confirm password",
+      "confirmPasswordPlaceholder": "Confirm Password",
+      "submit": "Create Account",
+      "submitting": "Creating account...",
+      "footer": {
+        "prefix": "By continuing, you agree to our",
+        "terms": "Terms",
+        "and": "and",
+        "privacy": "Privacy Policy"
+      },
+      "validation": {
+        "formInvalid": "Please fix the highlighted fields and try again.",
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Enter a valid email address.",
+        "passwordRequired": "Password is required.",
+        "passwordMin": "Minimum 8 characters required.",
+        "passwordPattern": "Must include uppercase, lowercase, number, and special character.",
+        "confirmPassword": "Confirm your password."
+      },
+      "errors": {
+        "passwordMismatch": "Passwords do not match.",
+        "createFailed": "Failed to create account.",
+        "generic": "Something went wrong. Please try again.",
+        "invalidEmail": "Please enter a valid email address.",
+        "emailInUse": "That email is already in use. Try signing in instead.",
+        "weakPassword": "Password is too weak. Use at least 8 characters.",
+        "tooManyRequests": "Too many attempts. Please wait a moment and try again.",
+        "network": "Network error. Check your connection and try again.",
+        "notEnabled": "Email/password sign-up is not enabled for this project.",
+        "unauthorizedDomain": "This domain is not authorized for sign-in."
+      },
+      "errorCode": "(code: {{code}})",
+      "toastCreated": "Account created",
+      "toastWelcome": "Welcome"
+    }
+  },
+  "subscribe": {
+    "eyebrow": "Get started",
+    "headline": "Launch your JobFlow workspace in minutes.",
+    "lead": "Enter your business details to activate billing and unlock scheduling, estimates, and payments.",
+    "checks": {
+      "access": "Instant access after checkout",
+      "secure": "Secure payments via Stripe",
+      "cancel": "Cancel anytime"
+    },
+    "steps": {
+      "subscription": "1. Subscription",
+      "account": "2. Create account"
+    },
+    "title": "Purchase subscription plan",
+    "subtitle": "Complete the details below to continue to checkout.",
+    "close": "Close",
+    "companyName": "Company name",
+    "companyType": "Company type",
+    "workEmail": "Work email",
+    "phone": "Phone number",
+    "address": "Business address",
+    "address2": "Business address 2",
+    "city": "City",
+    "state": "State",
+    "zip": "Zip code",
+    "twilioConsent": "I consent to receive SMS or voice calls regarding my subscription and service usage.",
+    "twilioNote": "Message and data rates may apply. You can opt out at any time by replying STOP.",
+    "submit": "Purchase",
+    "submitting": "Processing...",
+    "nextStep": "Next: After checkout, you will create your JobFlow login.",
+    "redirecting": "Redirecting you to Stripe checkout...",
+    "placeholders": {
+      "companyName": "Company Name",
+      "companyType": "Select company type",
+      "email": "you@company.com",
+      "phone": "(555) 555-1234",
+      "address": "Business Address",
+      "address2": "Suite, unit, etc.",
+      "city": "City",
+      "state": "Select state",
+      "zip": "Zip Code"
+    },
+    "validation": {
+      "formInvalid": "Please fix the highlighted fields and try again.",
+      "companyRequired": "Company name is required.",
+      "companyMin": "Minimum 2 characters.",
+      "companyTypeRequired": "Please select a company type.",
+      "emailRequired": "Email is required.",
+      "emailInvalid": "Enter a valid email.",
+      "phoneRequired": "Phone number is required.",
+      "phoneInvalid": "Enter a valid phone number.",
+      "addressRequired": "Business address is required.",
+      "cityRequired": "City is required.",
+      "stateRequired": "State is required.",
+      "zipRequired": "Zip code is required.",
+      "zipPattern": "Zip code must be 5 digits.",
+      "twilioConsent": "You must provide consent to continue."
+    },
+    "errors": {
+      "checkoutRedirect": "Payment checkout did not return a redirect URL.",
+      "subscriptionFailed": "Failed to create subscription. Please try again.",
+      "organizationFailed": "Failed to create organization. Please try again."
+    }
+  },
+  "support": {
+    "common": {
+      "organization": "Organization",
+      "unknownOrganization": "Unknown",
+      "selectOrganization": "Select organization",
+      "find": "Find",
+      "copyId": "Copy ID",
+      "closeModal": "Close modal",
+      "close": "Close",
+      "searchOrganizations": "Search organizations"
+    },
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in with your Support Hub credentials.",
+      "formInvalid": "Please fix the highlighted fields and try again.",
+      "emailLabel": "Work email",
+      "emailPlaceholder": "you@katharix.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "registerLink": "Need access? Register",
+      "validation": {
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Enter a valid email address.",
+        "passwordRequired": "Password is required."
+      },
+      "errors": {
+        "invalidEmail": "Please enter a valid email address.",
+        "userNotFound": "No account found for this email.",
+        "wrongPassword": "Incorrect password. Try again.",
+        "tooManyRequests": "Too many attempts. Please wait and try again.",
+        "generic": "Something went wrong. Please try again."
+      }
+    },
+    "tickets": {
+      "header": {
+        "title": "Support Tickets",
+        "subtitle": "Track and triage incoming requests across all organizations."
+      },
+      "priorityTitle": "Priority queue",
+      "prioritySubtitle": "Escalate urgent tickets or assign to a pod.",
+      "seedDemo": "Seed demo data",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Ticket title",
+      "summaryLabel": "Summary",
+      "summaryPlaceholder": "Short summary",
+      "priorityLabel": "Priority",
+      "create": "Create ticket",
+      "loading": "Loading tickets...",
+      "columns": {
+        "title": "Title",
+        "organization": "Organization",
+        "opened": "Opened",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "urgent": "Urgent",
+        "high": "High",
+        "normal": "Normal",
+        "low": "Low",
+        "resolved": "Resolved"
+      },
+      "errors": {
+        "loadOrganizations": "Unable to load organizations.",
+        "loadTickets": "Unable to load tickets.",
+        "selectOrganization": "Select an organization before creating a ticket.",
+        "titleRequired": "Ticket title is required.",
+        "createTicket": "Unable to create ticket.",
+        "seedOrganization": "Select an organization before seeding.",
+        "seedDemo": "Unable to seed demo data."
+      },
+      "actions": {
+        "created": "Ticket created.",
+        "seeded": "Seeded {{tickets}} tickets and {{sessions}} sessions.",
+        "copied": "Ticket ID copied."
+      }
+    },
+    "sessions": {
+      "header": {
+        "title": "Live Sessions",
+        "subtitle": "Monitor active screenshares and async assistance sessions."
+      },
+      "queueTitle": "Active queue",
+      "queueSubtitle": "Jump into a session or assign a specialist.",
+      "startSession": "Start new session",
+      "agentLabel": "Agent",
+      "agentPlaceholder": "Agent name",
+      "assignMe": "Assign me",
+      "statusLabel": "Status",
+      "viewScreen": "View screen",
+      "loading": "Loading sessions...",
+      "columns": {
+        "organization": "Organization",
+        "agent": "Agent",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "live": "Live",
+        "queued": "Queued",
+        "followup": "Follow-up",
+        "ended": "Ended"
+      },
+      "errors": {
+        "loadOrganizations": "Unable to load organizations.",
+        "loadSessions": "Unable to load sessions.",
+        "startScreen": "Unable to start screen view.",
+        "selectOrganization": "Select an organization before creating a session.",
+        "agentRequired": "Agent name is required.",
+        "createSession": "Unable to create session."
+      },
+      "actions": {
+        "created": "Session created.",
+        "copied": "Session ID copied."
+      },
+      "defaultAgent": "Katharix Staff"
+    }
+  },
+  "admin": {
+    "billing": {
+      "title": "Billing & Payments",
+      "subtitle": "Track unbilled work, sent invoices, and overdue balances in one place",
+      "summary": {
+        "outstanding": "Outstanding balance",
+        "draft": "Draft (unbilled)",
+        "sent": "Sent",
+        "overdue": "Overdue"
+      },
+      "actions": {
+        "manageConnection": "Manage payment connection",
+        "openInvoices": "Open invoices",
+        "preview": "Preview",
+        "sendInvoice": "Send invoice",
+        "collectNow": "Collect now",
+        "sendReminder": "Send reminder",
+        "view": "View"
+      },
+      "state": {
+        "loading": "Loading billing details...",
+        "error": "Unable to load billing details right now."
+      },
+      "sections": {
+        "draft": {
+          "title": "Unbilled (Draft) invoices",
+          "subtitle": "Invoices that are created but not sent yet."
+        },
+        "sent": {
+          "title": "Sent invoices",
+          "subtitle": "Invoices waiting on payment or follow-up."
+        },
+        "overdue": {
+          "title": "Overdue invoices",
+          "subtitle": "Past due invoices that need immediate attention."
+        },
+        "paid": {
+          "title": "Recently paid",
+          "subtitle": "Closed invoices for reference."
+        },
+        "total": "total"
+      },
+      "empty": {
+        "draft": "No draft invoices right now.",
+        "sent": "No sent invoices right now.",
+        "overdue": "No overdue invoices right now."
+      },
+      "table": {
+        "invoice": "Invoice",
+        "client": "Client",
+        "due": "Due",
+        "paid": "Paid",
+        "total": "Total",
+        "balance": "Balance",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "draft": "Draft",
+        "sent": "Sent",
+        "paid": "Paid",
+        "overdue": "Overdue",
+        "unknown": "Unknown"
+      },
+      "toast": {
+        "invoiceSent": "Your invoice has been sent to the client.",
+        "invoiceSentTitle": "Invoice sent",
+        "invoiceFailed": "Unable to send the invoice right now.",
+        "invoiceFailedTitle": "Send failed",
+        "reminderSent": "A payment reminder was sent to the client.",
+        "reminderSentTitle": "Reminder sent",
+        "reminderFailed": "Unable to send the reminder right now.",
+        "reminderFailedTitle": "Reminder failed"
+      }
+    },
+    "branding": {
+      "title": "Branding",
+      "subtitle": "Customize your look and personalize your invoices",
+      "hero": {
+        "title": "Keep it simple",
+        "subtitle": "Update logo, colors, and invoice text. Changes apply to your outgoing documents."
+      },
+      "actions": {
+        "save": "Save Branding"
+      },
+      "sections": {
+        "logo": {
+          "title": "1. Logo",
+          "cta": "Choose Logo",
+          "note": "PNG or JPG works best",
+          "previewAlt": "Logo preview"
+        },
+        "colors": {
+          "title": "2. Colors",
+          "primary": "Primary",
+          "secondary": "Secondary"
+        },
+        "text": {
+          "title": "3. Text",
+          "businessName": "Business Name",
+          "tagline": "Tagline",
+          "footerNote": "Invoice Footer Note"
+        }
+      },
+      "preview": {
+        "title": "Live Invoice Preview",
+        "badge": "Sample",
+        "logoPlaceholder": "Logo",
+        "businessNameFallback": "Your Business Name",
+        "taglineFallback": "Your tagline here",
+        "invoiceNumber": "Invoice #",
+        "date": "Date",
+        "total": "Total",
+        "footerFallback": "Thanks for your business."
+      },
+      "toast": {
+        "logoUploadFailed": "Logo upload failed. Please try again.",
+        "saveSuccess": "Branding saved successfully.",
+        "saveFailed": "Unable to save branding. Please try again."
+      }
+    },
+    "invoices": {
+      "title": "Invoices",
+      "subtitle": "All invoices for your organization",
+      "metrics": {
+        "total": "Total invoices",
+        "totalNote": "Across all clients",
+        "sent": "Sent",
+        "sentNote": "Awaiting payment",
+        "overdue": "Overdue",
+        "overdueNote": "Needs follow-up",
+        "totalBilled": "Total billed",
+        "totalBilledNote": "Gross invoice value",
+        "outstanding": "Outstanding",
+        "outstandingNote": "Balance due now"
+      },
+      "cta": {
+        "eyebrow": "Quick action",
+        "title": "Create and send an invoice",
+        "subtitle": "Select the job, review line items, then send to the client.",
+        "button": "Create Invoice"
+      },
+      "filters": {
+        "all": "All",
+        "draft": "Draft",
+        "sent": "Sent",
+        "paid": "Paid",
+        "overdue": "Overdue",
+        "unpaid": "Unpaid"
+      },
+      "actions": {
+        "view": "View",
+        "create": "Create Invoice"
+      },
+      "drawer": {
+        "createTitle": "Create Invoice",
+        "selectTitle": "Select Job to Invoice",
+        "onboardingStep": "Onboarding Step 4",
+        "pickJobTitle": "Pick the job to invoice",
+        "pickJobSubtitle": "Find the job, confirm the client, and we will build the invoice from there.",
+        "tags": {
+          "recent": "Recent jobs first",
+          "search": "Search by client",
+          "fast": "Fast invoice setup"
+        },
+        "chooseJobTitle": "Choose the job first",
+        "chooseJobSubtitle": "Keep it simple: select the job, confirm line items, then create the invoice. Jobs are listed with the most recent first.",
+        "searchPlaceholder": "Search by job title or client",
+        "untitledJob": "Untitled job",
+        "selectJob": "Select",
+        "noMatches": "No matching jobs found",
+        "noJobs": "No jobs found yet",
+        "noMatchesHint": "Try another search to find the right job.",
+        "noJobsHint": "Create a job first, then invoice it from this drawer.",
+        "createJob": "Create a job",
+        "detailsEyebrow": "Invoice details",
+        "detailsTitle": "Build the invoice",
+        "detailsSubtitle": "Adjust dates, review line items, and create the invoice when ready.",
+        "backToJobs": "Choose different job",
+        "prefill": "Preloaded from estimate",
+        "prefillHint": "Adjust any line item before creating the invoice."
+      },
+      "form": {
+        "invoiceDate": "Invoice Date",
+        "dueDate": "Due Date",
+        "lineItems": "Line Items",
+        "addLine": "Add Line",
+        "description": "Description",
+        "quantity": "Qty",
+        "unitPrice": "Unit Price",
+        "total": "Total",
+        "descriptionPlaceholder": "Line item description",
+        "removeLine": "Remove line",
+        "invoiceTotal": "Invoice Total",
+        "cancel": "Cancel",
+        "creating": "Creating...",
+        "create": "Create Invoice",
+        "lineItemFallback": "Line item"
+      },
+      "errors": {
+        "load": "Failed to load invoices.",
+        "loadJobs": "Unable to load jobs right now.",
+        "create": "Failed to create invoice. Please review details and try again."
+      },
+      "toast": {
+        "loadFailed": "Failed to load invoices",
+        "loadJobsFailed": "Failed to load jobs for invoice selection",
+        "created": "Invoice created successfully.",
+        "createFailed": "Failed to create invoice."
+      },
+      "labels": {
+        "unknownClient": "Unknown client",
+        "unknown": "Unknown",
+        "noEmail": "No email",
+        "missing": "-"
+      },
+      "table": {
+        "invoiceNumber": "Invoice #",
+        "client": "Client",
+        "invoiceDate": "Invoice Date",
+        "dueDate": "Due Date",
+        "total": "Total",
+        "balance": "Balance",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "draft": "Draft",
+        "sent": "Sent",
+        "paid": "Paid",
+        "overdue": "Overdue",
+        "unpaid": "Unpaid"
+      }
+    },
+    "estimates": {
+      "title": "Estimates",
+      "subtitle": "Manage quotes and estimates for your clients",
+      "metrics": {
+        "total": "Total estimates",
+        "totalNote": "Across all clients",
+        "draft": "Drafts",
+        "draftNote": "Ready for review",
+        "sent": "Sent",
+        "sentNote": "Awaiting response",
+        "accepted": "Accepted",
+        "acceptedNote": "Ready to schedule",
+        "totalValue": "Total value",
+        "totalValueNote": "Sum of all estimates"
+      },
+      "cta": {
+        "eyebrow": "Quick action",
+        "title": "Create a new estimate",
+        "subtitle": "Start with the client, add line items, and send when you are ready.",
+        "button": "New Estimate"
+      },
+      "actions": {
+        "edit": "Edit",
+        "send": "Send",
+        "delete": "Delete",
+        "new": "New Estimate"
+      },
+      "filters": {
+        "all": "All",
+        "draft": "Draft",
+        "sent": "Sent",
+        "accepted": "Accepted",
+        "declined": "Declined",
+        "expired": "Expired"
+      },
+      "drawer": {
+        "editTitle": "Edit Estimate",
+        "newTitle": "New Estimate",
+        "updateEyebrow": "Update estimate",
+        "newEyebrow": "New estimate",
+        "updateTitle": "Review details and update",
+        "newTitleMain": "Build a fresh estimate",
+        "subtitle": "Pick the client, add line items, and send when you are ready."
+      },
+      "send": {
+        "title": "Send Estimate",
+        "intro": "Sending estimate",
+        "subtitle": "Confirm the recipient's email and include an optional personal message.",
+        "recipientEmail": "Recipient Email",
+        "recipientPlaceholder": "client@example.com",
+        "message": "Message",
+        "optional": "optional",
+        "messagePlaceholder": "Include a personal note with this estimate...",
+        "cancel": "Cancel",
+        "sending": "Sending...",
+        "send": "Send Estimate"
+      },
+      "errors": {
+        "load": "Failed to load estimates. Please refresh.",
+        "send": "Failed to send estimate. Please try again."
+      },
+      "toast": {
+        "updated": "Estimate updated successfully.",
+        "createdMissingEmail": "Estimate created, but client email is missing so it was not sent.",
+        "createdSent": "Estimate created and sent.",
+        "createdSendFailed": "Estimate created but failed to send.",
+        "sent": "Estimate sent successfully.",
+        "deleted": "Estimate deleted.",
+        "deleteFailed": "Failed to delete estimate."
+      },
+      "confirm": {
+        "delete": "Delete estimate {{number}}? This cannot be undone."
+      },
+      "table": {
+        "estimateNumber": "Estimate #",
+        "client": "Client",
+        "date": "Date",
+        "expires": "Expires",
+        "total": "Total",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "draft": "Draft",
+        "sent": "Sent",
+        "accepted": "Accepted",
+        "declined": "Declined",
+        "cancelled": "Cancelled",
+        "expired": "Expired",
+        "revisionRequested": "Revision requested"
+      },
+      "labels": {
+        "unknown": "Unknown",
+        "missing": "-"
+      }
+    },
+    "jobs": {
+      "title": "Jobs",
+      "subtitle": "Keep every job flowing with zero drag",
+      "drawer": {
+        "addTitle": "Add Job"
+      },
+      "hero": {
+        "eyebrow": "Flow pulse",
+        "subtitle": "Queue unscheduled work, surface what is active, and keep status changes one tap away."
+      },
+      "metrics": {
+        "total": "Total jobs",
+        "unscheduled": "Unscheduled",
+        "inProgress": "In progress",
+        "completed": "Completed"
+      },
+      "filters": {
+        "status": "Status",
+        "allStatuses": "All statuses",
+        "statusHint": "Match the board to how your team labels work.",
+        "client": "Client",
+        "allClients": "All clients",
+        "clientHint": "Focus on one customer without losing context.",
+        "assignee": "Assignee",
+        "allAssignees": "All assignees",
+        "assigneeHint": "Quickly spot who is overloaded.",
+        "clear": "Clear filters"
+      },
+      "lanes": {
+        "unscheduled": {
+          "title": "Unscheduled queue",
+          "subtitle": "Drag these into dispatch when the day opens up.",
+          "hint": "Aim to clear this before crews roll out.",
+          "count": "waiting"
+        },
+        "scheduled": {
+          "title": "Scheduled next 7 days",
+          "subtitle": "High-velocity jobs that need a steady hand.",
+          "hint": "Check for gaps and rebalance early.",
+          "count": "scheduled"
+        }
+      },
+      "empty": {
+        "unscheduled": {
+          "title": "No jobs waiting for scheduling.",
+          "subtitle": "New jobs will appear here automatically."
+        },
+        "scheduled": {
+          "title": "No scheduled jobs in the next week.",
+          "subtitle": "Use dispatch to pull work forward."
+        }
+      },
+      "preview": {
+        "eyebrow": "Job focus",
+        "titleFallback": "Select a job",
+        "subtitle": "Choose a job card to view details.",
+        "status": "Status",
+        "nextSchedule": "Next schedule",
+        "quickAssign": "Quick assign",
+        "assignHint": "Schedule the job to assign a crew.",
+        "saving": "Saving...",
+        "applyCrew": "Apply crew",
+        "notes": "Notes",
+        "noNotes": "No notes yet."
+      },
+      "actions": {
+        "schedule": "Schedule",
+        "edit": "Edit job",
+        "copyUpdates": "Copy updates link",
+        "openDispatch": "Open Dispatch",
+        "add": "Add Job",
+        "delete": "Delete"
+      },
+      "table": {
+        "title": "All jobs",
+        "subtitle": "Search and scan across every job in your workspace.",
+        "columns": {
+          "job": "Job",
+          "status": "Status",
+          "phone": "Phone Number",
+          "actions": "Actions"
+        }
+      },
+      "labels": {
+        "untitled": "Untitled job",
+        "missing": "-",
+        "clientTbd": "Client TBD"
+      },
+      "toast": {
+        "loadFailed": "Failed to load jobs",
+        "statusFailed": "Failed to update job status",
+        "linkCopied": "Client updates link copied.",
+        "linkCopyFailed": "Unable to copy the updates link.",
+        "assigneesFailed": "Failed to update assignees",
+        "deleteUnavailable": "Delete not available for job {{title}}"
+      },
+      "status": {
+        "draft": "Draft",
+        "approved": "Approved",
+        "inprogress": "In progress",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "failed": "Failed"
+      }
+    },
+    "employees": {
+      "title": "Employees",
+      "subtitle": "Manage your team members and roles",
+      "loading": {
+        "roles": "Checking for organization roles..."
+      },
+      "empty": {
+        "rolesTitle": "No employee roles found.",
+        "rolesSubtitle": "Please create one before adding employees."
+      },
+      "actions": {
+        "goToRoles": "Go to Employee Roles",
+        "invite": "Invite",
+        "add": "Add Employee",
+        "edit": "Edit",
+        "delete": "Delete",
+        "cancel": "Cancel",
+        "save": "Save Employee"
+      },
+      "metrics": {
+        "total": "Team members",
+        "totalNote": "All employees in your org",
+        "active": "Active",
+        "activeNote": "Available for assignments",
+        "inactive": "Inactive",
+        "inactiveNote": "Paused or offboarding",
+        "roles": "Roles",
+        "rolesNote": "Defined in roles settings"
+      },
+      "cta": {
+        "eyebrow": "Quick action",
+        "title": "Invite or add employees",
+        "subtitle": "Send invites for onboarding or add team members directly."
+      },
+      "filters": {
+        "clear": "Clear filters",
+        "role": "Role",
+        "allRoles": "All roles",
+        "all": "All",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "table": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "invite": "Invite",
+        "actions": "Actions"
+      },
+      "invites": {
+        "eyebrow": "Pending invites",
+        "title": "Invitations",
+        "subtitle": "Track who has been invited to join your organization.",
+        "send": "Send Invite",
+        "role": "Role",
+        "expires": "Expires",
+        "emptyTitle": "No invites yet",
+        "emptySubtitle": "Send an invite to bring a new employee into JobFlow."
+      },
+      "drawer": {
+        "editTitle": "Edit Employee",
+        "addTitle": "Add Employee",
+        "updateEyebrow": "Update profile",
+        "newEyebrow": "New employee",
+        "subtitle": "Fill in the basics and assign a role to keep schedules on track."
+      },
+      "inviteDrawer": {
+        "title": "Invite Employee",
+        "eyebrow": "Invite flow",
+        "subtitle": "We will email the invite so they can join your organization."
+      },
+      "delete": {
+        "title": "Delete Employee",
+        "eyebrow": "Delete employee",
+        "subtitle": "This action cannot be undone.",
+        "confirm": "Are you sure you want to delete {{name}}?",
+        "confirmButton": "Delete Employee"
+      },
+      "inviteStatus": {
+        "revoked": "Revoked",
+        "accepted": "Accepted",
+        "expired": "Expired",
+        "pending": "Pending"
+      },
+      "labels": {
+        "employee": "Employee",
+        "unknownRole": "Unknown role",
+        "missing": "-"
+      },
+      "toast": {
+        "rolesRequired": "You must create at least one Employee Role before adding employees.",
+        "updated": "Employee updated",
+        "successTitle": "Success",
+        "updateFailed": "Failed to update employee",
+        "failedTitle": "Failed",
+        "emailExists": "{{email}} already exists",
+        "warningTitle": "Warning",
+        "added": "Employee added",
+        "addFailed": "Failed to add employee",
+        "checkEmailFailed": "Failed to check employee email",
+        "inviteSent": "Invite sent to {{name}}",
+        "deleted": "Employee deleted",
+        "deleteFailed": "Failed to delete employee"
+      }
+    }
+  }
+}

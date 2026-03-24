@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../dashboard/page-header/page-header.component';
 import { Invoice, InvoiceStatus } from '../../models/invoice';
 import { InvoiceService } from '../invoices/services/invoice.service';
@@ -9,13 +10,14 @@ import { ToastService } from '../../common/toast/toast.service';
 @Component({
   selector: 'app-billing-payments',
   standalone: true,
-  imports: [CommonModule, RouterLink, PageHeaderComponent],
+  imports: [CommonModule, RouterLink, PageHeaderComponent, TranslateModule],
   templateUrl: './billing-payments.component.html',
   styleUrl: './billing-payments.component.scss'
 })
 export class BillingPaymentsComponent implements OnInit {
   private readonly invoiceService = inject(InvoiceService);
   private readonly toast = inject(ToastService);
+  private readonly translate = inject(TranslateService);
 
   invoices: Invoice[] = [];
   loading = true;
@@ -62,15 +64,15 @@ export class BillingPaymentsComponent implements OnInit {
   getStatusLabel(status: InvoiceStatus): string {
     switch (status) {
       case InvoiceStatus.Draft:
-        return 'Draft';
+        return this.translate.instant('admin.billing.status.draft');
       case InvoiceStatus.Sent:
-        return 'Sent';
+        return this.translate.instant('admin.billing.status.sent');
       case InvoiceStatus.Paid:
-        return 'Paid';
+        return this.translate.instant('admin.billing.status.paid');
       case InvoiceStatus.Overdue:
-        return 'Overdue';
+        return this.translate.instant('admin.billing.status.overdue');
       default:
-        return 'Unknown';
+        return this.translate.instant('admin.billing.status.unknown');
     }
   }
 
@@ -96,11 +98,17 @@ export class BillingPaymentsComponent implements OnInit {
   sendInvoice(invoice: Invoice): void {
     this.invoiceService.sendInvoice(invoice.id).subscribe({
       next: () => {
-        this.toast.success('Your invoice has been sent to the client.', 'Invoice sent');
+        this.toast.success(
+          this.translate.instant('admin.billing.toast.invoiceSent'),
+          this.translate.instant('admin.billing.toast.invoiceSentTitle')
+        );
         this.loadInvoices();
       },
       error: () => {
-        this.toast.error('Unable to send the invoice right now.', 'Send failed');
+        this.toast.error(
+          this.translate.instant('admin.billing.toast.invoiceFailed'),
+          this.translate.instant('admin.billing.toast.invoiceFailedTitle')
+        );
       }
     });
   }
@@ -108,10 +116,16 @@ export class BillingPaymentsComponent implements OnInit {
   sendReminder(invoice: Invoice): void {
     this.invoiceService.sendReminder(invoice.id).subscribe({
       next: () => {
-        this.toast.success('A payment reminder was sent to the client.', 'Reminder sent');
+        this.toast.success(
+          this.translate.instant('admin.billing.toast.reminderSent'),
+          this.translate.instant('admin.billing.toast.reminderSentTitle')
+        );
       },
       error: () => {
-        this.toast.error('Unable to send the reminder right now.', 'Reminder failed');
+        this.toast.error(
+          this.translate.instant('admin.billing.toast.reminderFailed'),
+          this.translate.instant('admin.billing.toast.reminderFailedTitle')
+        );
       }
     });
   }
@@ -125,7 +139,7 @@ export class BillingPaymentsComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.error = 'Unable to load billing details right now.';
+        this.error = this.translate.instant('admin.billing.state.error');
         this.loading = false;
       }
     });

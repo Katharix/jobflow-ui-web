@@ -11,9 +11,9 @@
     <ng-scrollbar orientation="vertical" appearance="compact">
       <ul class="sidebar-nav metismenu" id="sidebar-menu" #sidebarMenu>
 
-        @for (item of menuItems; track item.label) {
+        @for (item of menuItems; track (item.labelKey || item.label)) {
           @if (item.isTitle) {
-            <li class="nav-item nav-category">{{ item.label }}</li>
+            <li class="nav-item nav-category">{{ item.labelKey ? (item.labelKey | translate) : item.label }}</li>
           } @else {
             <li class="nav-item"
               routerLinkActive="mm-active"
@@ -23,14 +23,14 @@
               @if (hasItems(item)) {
                 <a class="nav-link" href="javascript:void(0);">
                   <lucide-icon class="link-icon" [name]="item.icon"></lucide-icon>
-                  <span class="link-title">{{ item.label }}</span>
+                  <span class="link-title">{{ item.labelKey ? (item.labelKey | translate) : item.label }}</span>
                   <lucide-icon class="link-arrow" name="chevron-down"></lucide-icon>
                 </a>
 
                 <ul class="sidebar-nav sub-menu nav-second-level"
                   routerLinkActive="mm-show"
                   [routerLinkActiveOptions]="{ exact: false }">
-                  @for (subitem of item.subItems; track subitem.label) {
+                  @for (subitem of item.subItems; track (subitem.labelKey || subitem.label)) {
                     <li class="nav-item"
                       [ngClass]="{'side-nav-item': hasItems(subitem)}"
                       routerLinkActive="mm-active"
@@ -38,19 +38,19 @@
 
                       @if (hasItems(subitem)) {
                         <a class="nav-link side-nav-link-a-ref" href="javascript:void(0);">
-                          <span class="link-title">{{ subitem.label }}</span>
+                          <span class="link-title">{{ subitem.labelKey ? (subitem.labelKey | translate) : subitem.label }}</span>
                           <lucide-icon class="link-arrow" name="chevron-down"></lucide-icon>
                         </a>
 
                         <ul class="sidebar-nav sub-menu nav-third-level"
                           routerLinkActive="mm-show"
                           [routerLinkActiveOptions]="{ exact: false }">
-                          @for (subSubitem of subitem.subItems; track subSubitem.label) {
+                          @for (subSubitem of subitem.subItems; track (subSubitem.labelKey || subSubitem.label)) {
                             <li class="nav-item" routerLinkActive="mm-active">
                               <a class="nav-link nav-link-ref"
                                 [routerLink]="subSubitem.link"
                                 routerLinkActive="mm-active">
-                                {{ subSubitem.label }}
+                                {{ subSubitem.labelKey ? (subSubitem.labelKey | translate) : subSubitem.label }}
                               </a>
                             </li>
                           }
@@ -59,7 +59,7 @@
                         <a class="nav-link nav-link-ref"
                           [routerLink]="subitem.link"
                           routerLinkActive="mm-active">
-                          {{ subitem.label }}
+                          {{ subitem.labelKey ? (subitem.labelKey | translate) : subitem.label }}
                         </a>
                       }
                     </li>
@@ -74,7 +74,7 @@
                 routerLinkActive="mm-active"
                 [routerLinkActiveOptions]="{ exact: item.label === 'Home' }">
                 <lucide-icon class="link-icon" [name]="item.icon"></lucide-icon>
-                <span class="link-title">{{ item.label }}</span>
+                <span class="link-title">{{ item.labelKey ? (item.labelKey | translate) : item.label }}</span>
                 @if (item.badge) {
                   <span class="badge bg-{{item.badge.variant}}">{{ item.badge.text }}</span>
                 }
@@ -96,7 +96,7 @@
         [routerLinkActiveOptions]="{ exact: true }">
         @if (isSidebarOpen) {
           <lucide-icon class="sidebar-link-icon me-1" name="life-buoy"></lucide-icon>
-          <span class="sidebar-link-title">Help</span>
+          <span class="sidebar-link-title">{{ 'nav.help' | translate }}</span>
         } @else {
           <lucide-icon class="sidebar-link-icon me-1" name="life-buoy"></lucide-icon>
         }
@@ -111,24 +111,24 @@
           aria-expanded="false">
           @if (isSidebarOpen) {
             <lucide-icon class="sidebar-link-icon me-2" name="network"></lucide-icon>
-            <span>{{ org?.organizationName || 'Organization' }}</span>
+            <span>{{ org?.organizationName || ('nav.organization' | translate) }}</span>
           } @else {
             <lucide-icon class="sidebar-link-icon pl-8"
               name="building-2"
-            [attr.title]="org?.organizationName || 'Organization'"></lucide-icon>
+              [attr.title]="org?.organizationName || ('nav.organization' | translate)"></lucide-icon>
           }
         </button>
 
         <ul class="dropdown-menu sidebar-drop-menu shadow-sm border-0 rounded-3 p-0 overflow-hidden">
           <li class="drop-menu-header">
             <lucide-icon class="me-1" name="network"></lucide-icon>
-            {{ org?.organizationName || 'Organization' }}
+            {{ org?.organizationName || ('nav.organization' | translate) }}
           </li>
           <li>
             <hr class="dropdown-divider my-0">
           </li>
           <li class="drop-menu-item">
-            <a class="dropdown-item px-3" href="javascript:void(0);" (click)="openLogoutModal()">Logout</a>
+            <a class="dropdown-item px-3" href="javascript:void(0);" (click)="openLogoutModal()">{{ 'nav.logout' | translate }}</a>
           </li>
           <li>
             <hr class="dropdown-divider my-0">
@@ -138,7 +138,7 @@
               class="dropdown-item d-flex align-items-center justify-content-start px-3 py-2"
               routerLinkActive="active"
               [routerLinkActiveOptions]="{ exact: true }">
-              <span>User Profile</span>
+              <span>{{ 'nav.userProfile' | translate }}</span>
             </a>
           </li>
         </ul>
@@ -153,15 +153,15 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content shadow">
         <div class="modal-header">
-          <h5 class="modal-title">Confirm Logout</h5>
+          <h5 class="modal-title">{{ 'nav.confirmLogout' | translate }}</h5>
           <button type="button" class="btn-close" aria-label="Close" (click)="closeLogoutModal()"></button>
         </div>
         <div class="modal-body">
-          <p class="mb-0">Are you sure you want to log out?</p>
+          <p class="mb-0">{{ 'nav.confirmLogoutMessage' | translate }}</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" (click)="closeLogoutModal()">Cancel</button>
-          <button type="button" class="btn btn-danger" (click)="logout()">Logout</button>
+          <button type="button" class="btn btn-outline-secondary" (click)="closeLogoutModal()">{{ 'nav.cancel' | translate }}</button>
+          <button type="button" class="btn btn-danger" (click)="logout()">{{ 'nav.logout' | translate }}</button>
         </div>
       </div>
     </div>

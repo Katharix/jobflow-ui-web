@@ -1,35 +1,35 @@
 <app-page-header
-  title="Billing & Payments"
-  subtitle="Track unbilled work, sent invoices, and overdue balances in one place"
+  [title]="'admin.billing.title' | translate"
+  [subtitle]="'admin.billing.subtitle' | translate"
 ></app-page-header>
 
 <section class="billing-layout">
   <div class="billing-summary">
     <div class="billing-summary__card">
-      <span>Outstanding balance</span>
+      <span>{{ 'admin.billing.summary.outstanding' | translate }}</span>
       <strong>{{ totalOutstanding | currency }}</strong>
     </div>
     <div class="billing-summary__card">
-      <span>Draft (unbilled)</span>
+      <span>{{ 'admin.billing.summary.draft' | translate }}</span>
       <strong>{{ totalDrafts }}</strong>
     </div>
     <div class="billing-summary__card">
-      <span>Sent</span>
+      <span>{{ 'admin.billing.summary.sent' | translate }}</span>
       <strong>{{ totalSent }}</strong>
     </div>
     <div class="billing-summary__card">
-      <span>Overdue</span>
+      <span>{{ 'admin.billing.summary.overdue' | translate }}</span>
       <strong>{{ totalOverdue }}</strong>
     </div>
   </div>
 
   <div class="billing-actions">
-    <a class="btn btn-primary" routerLink="/admin/connectedpayment">Manage payment connection</a>
-    <a class="btn btn-outline-primary" routerLink="/admin/invoices">Open invoices</a>
+    <a class="btn btn-primary" routerLink="/admin/connectedpayment">{{ 'admin.billing.actions.manageConnection' | translate }}</a>
+    <a class="btn btn-outline-primary" routerLink="/admin/invoices">{{ 'admin.billing.actions.openInvoices' | translate }}</a>
   </div>
 
   @if (loading) {
-    <p class="billing-state">Loading billing details...</p>
+    <p class="billing-state">{{ 'admin.billing.state.loading' | translate }}</p>
   }
   @if (error) {
     <p class="billing-state billing-state--error">{{ error }}</p>
@@ -39,26 +39,26 @@
     <section class="billing-section">
       <div class="billing-section__header">
         <div>
-          <h3>Unbilled (Draft) invoices</h3>
-          <p>Invoices that are created but not sent yet.</p>
+          <h3>{{ 'admin.billing.sections.draft.title' | translate }}</h3>
+          <p>{{ 'admin.billing.sections.draft.subtitle' | translate }}</p>
         </div>
-        <span>{{ totalDrafts }} total</span>
+        <span>{{ totalDrafts }} {{ 'admin.billing.sections.total' | translate }}</span>
       </div>
       @if (!draftInvoices.length) {
-        <div class="billing-empty">No draft invoices right now.</div>
+        <div class="billing-empty">{{ 'admin.billing.empty.draft' | translate }}</div>
       }
       @if (draftInvoices.length) {
         <div class="table-responsive">
           <table class="table align-middle mb-0">
             <thead>
               <tr>
-                <th>Invoice</th>
-                <th>Client</th>
-                <th>Due</th>
-                <th class="text-end">Total</th>
-                <th class="text-end">Balance</th>
-                <th>Status</th>
-                <th class="text-end">Actions</th>
+                <th>{{ 'admin.billing.table.invoice' | translate }}</th>
+                <th>{{ 'admin.billing.table.client' | translate }}</th>
+                <th>{{ 'admin.billing.table.due' | translate }}</th>
+                <th class="text-end">{{ 'admin.billing.table.total' | translate }}</th>
+                <th class="text-end">{{ 'admin.billing.table.balance' | translate }}</th>
+                <th>{{ 'admin.billing.table.status' | translate }}</th>
+                <th class="text-end">{{ 'admin.billing.table.actions' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -71,8 +71,8 @@
                   <td class="text-end">{{ invoice.balanceDue | currency }}</td>
                   <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
                   <td class="text-end">
-                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">Preview</button>
-                    <button class="btn btn-sm btn-primary" (click)="sendInvoice(invoice)">Send invoice</button>
+                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.preview' | translate }}</button>
+                    <button class="btn btn-sm btn-primary" (click)="sendInvoice(invoice)">{{ 'admin.billing.actions.sendInvoice' | translate }}</button>
                   </td>
                 </tr>
               }
@@ -84,26 +84,26 @@
     <section class="billing-section">
       <div class="billing-section__header">
         <div>
-          <h3>Sent invoices</h3>
-          <p>Invoices waiting on payment or follow-up.</p>
+          <h3>{{ 'admin.billing.sections.sent.title' | translate }}</h3>
+          <p>{{ 'admin.billing.sections.sent.subtitle' | translate }}</p>
         </div>
-        <span>{{ totalSent }} total</span>
+        <span>{{ totalSent }} {{ 'admin.billing.sections.total' | translate }}</span>
       </div>
       @if (!sentInvoices.length) {
-        <div class="billing-empty">No sent invoices right now.</div>
+        <div class="billing-empty">{{ 'admin.billing.empty.sent' | translate }}</div>
       }
       @if (sentInvoices.length) {
         <div class="table-responsive">
           <table class="table align-middle mb-0">
             <thead>
               <tr>
-                <th>Invoice</th>
-                <th>Client</th>
-                <th>Due</th>
-                <th class="text-end">Total</th>
-                <th class="text-end">Balance</th>
-                <th>Status</th>
-                <th class="text-end">Actions</th>
+                <th>{{ 'admin.billing.table.invoice' | translate }}</th>
+                <th>{{ 'admin.billing.table.client' | translate }}</th>
+                <th>{{ 'admin.billing.table.due' | translate }}</th>
+                <th class="text-end">{{ 'admin.billing.table.total' | translate }}</th>
+                <th class="text-end">{{ 'admin.billing.table.balance' | translate }}</th>
+                <th>{{ 'admin.billing.table.status' | translate }}</th>
+                <th class="text-end">{{ 'admin.billing.table.actions' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -116,8 +116,8 @@
                   <td class="text-end">{{ invoice.balanceDue | currency }}</td>
                   <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
                   <td class="text-end">
-                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">Collect now</button>
-                    <button class="btn btn-sm btn-outline-primary" (click)="sendReminder(invoice)">Send reminder</button>
+                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.collectNow' | translate }}</button>
+                    <button class="btn btn-sm btn-outline-primary" (click)="sendReminder(invoice)">{{ 'admin.billing.actions.sendReminder' | translate }}</button>
                   </td>
                 </tr>
               }
@@ -129,26 +129,26 @@
     <section class="billing-section">
       <div class="billing-section__header">
         <div>
-          <h3>Overdue invoices</h3>
-          <p>Past due invoices that need immediate attention.</p>
+          <h3>{{ 'admin.billing.sections.overdue.title' | translate }}</h3>
+          <p>{{ 'admin.billing.sections.overdue.subtitle' | translate }}</p>
         </div>
-        <span>{{ totalOverdue }} total</span>
+        <span>{{ totalOverdue }} {{ 'admin.billing.sections.total' | translate }}</span>
       </div>
       @if (!overdueInvoices.length) {
-        <div class="billing-empty">No overdue invoices right now.</div>
+        <div class="billing-empty">{{ 'admin.billing.empty.overdue' | translate }}</div>
       }
       @if (overdueInvoices.length) {
         <div class="table-responsive">
           <table class="table align-middle mb-0">
             <thead>
               <tr>
-                <th>Invoice</th>
-                <th>Client</th>
-                <th>Due</th>
-                <th class="text-end">Total</th>
-                <th class="text-end">Balance</th>
-                <th>Status</th>
-                <th class="text-end">Actions</th>
+                <th>{{ 'admin.billing.table.invoice' | translate }}</th>
+                <th>{{ 'admin.billing.table.client' | translate }}</th>
+                <th>{{ 'admin.billing.table.due' | translate }}</th>
+                <th class="text-end">{{ 'admin.billing.table.total' | translate }}</th>
+                <th class="text-end">{{ 'admin.billing.table.balance' | translate }}</th>
+                <th>{{ 'admin.billing.table.status' | translate }}</th>
+                <th class="text-end">{{ 'admin.billing.table.actions' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -161,8 +161,8 @@
                   <td class="text-end">{{ invoice.balanceDue | currency }}</td>
                   <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
                   <td class="text-end">
-                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">Collect now</button>
-                    <button class="btn btn-sm btn-outline-primary" (click)="sendReminder(invoice)">Send reminder</button>
+                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.collectNow' | translate }}</button>
+                    <button class="btn btn-sm btn-outline-primary" (click)="sendReminder(invoice)">{{ 'admin.billing.actions.sendReminder' | translate }}</button>
                   </td>
                 </tr>
               }
@@ -175,21 +175,21 @@
       <section class="billing-section">
         <div class="billing-section__header">
           <div>
-            <h3>Recently paid</h3>
-            <p>Closed invoices for reference.</p>
+            <h3>{{ 'admin.billing.sections.paid.title' | translate }}</h3>
+            <p>{{ 'admin.billing.sections.paid.subtitle' | translate }}</p>
           </div>
-          <span>{{ paidInvoices.length }} total</span>
+          <span>{{ paidInvoices.length }} {{ 'admin.billing.sections.total' | translate }}</span>
         </div>
         <div class="table-responsive">
           <table class="table align-middle mb-0">
             <thead>
               <tr>
-                <th>Invoice</th>
-                <th>Client</th>
-                <th>Paid</th>
-                <th class="text-end">Total</th>
-                <th>Status</th>
-                <th class="text-end">Actions</th>
+                <th>{{ 'admin.billing.table.invoice' | translate }}</th>
+                <th>{{ 'admin.billing.table.client' | translate }}</th>
+                <th>{{ 'admin.billing.table.paid' | translate }}</th>
+                <th class="text-end">{{ 'admin.billing.table.total' | translate }}</th>
+                <th>{{ 'admin.billing.table.status' | translate }}</th>
+                <th class="text-end">{{ 'admin.billing.table.actions' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -201,7 +201,7 @@
                   <td class="text-end">{{ invoice.totalAmount | currency }}</td>
                   <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
                   <td class="text-end">
-                    <button class="btn btn-sm btn-outline-secondary" (click)="openInvoice(invoice)">View</button>
+                    <button class="btn btn-sm btn-outline-secondary" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.view' | translate }}</button>
                   </td>
                 </tr>
               }

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Auth } from '@angular/fire/auth';
 import { NgScrollbar, NgScrollbarModule } from 'ngx-scrollbar';
 import { CommonModule } from '@angular/common';
@@ -200,7 +200,18 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.conversations = convos.map((convo) => this.normalizeConversation(convo));
 
       if (selectedConversationId) {
-        this.selectedConversation = this.conversations.find((convo) => convo.id === selectedConversationId) ?? this.selectedConversation;
+        const matchedConversation = this.conversations.find((convo) => convo.id === selectedConversationId) ?? null;
+
+        if (!matchedConversation) {
+          this.selectedConversation = null;
+          this.messages = [];
+          this.chatPanelVisible = false;
+          this.hasMoreMessages = false;
+          this.isRemoteTyping = false;
+          return;
+        }
+
+        this.selectedConversation = matchedConversation;
       }
     });
   }
@@ -637,8 +648,12 @@ export class ChatComponent implements OnInit, OnDestroy {
             this.scrollToBottom();
           }
         },
-        error: () => {
+        error: (error: HttpErrorResponse) => {
           this.isLoadingMessages = false;
+
+          if (error.status === 403) {
+            this.handleConversationAccessDenied(this.selectedConversation?.id);
+          }
         }
       });
   }
@@ -646,8 +661,30 @@ export class ChatComponent implements OnInit, OnDestroy {
   private markConversationRead(conversationId: string): void {
     this.http.post(`${this.apiBaseUrl}/chat/conversations/${conversationId}/read`, {}).subscribe({
       next: () => undefined,
-      error: () => undefined
+      error: (error: HttpErrorResponse) => {
+        if (error.status === 403) {
+          this.handleConversationAccessDenied(conversationId);
+        }
+      }
     });
+  }
+
+  private handleConversationAccessDenied(conversationId: string | undefined): void {
+    if (!conversationId) {
+      return;
+    }
+
+    this.conversations = this.conversations.filter((convo) => convo.id !== conversationId);
+
+    if (this.selectedConversation?.id === conversationId) {
+      this.selectedConversation = null;
+      this.messages = [];
+      this.chatPanelVisible = false;
+      this.hasMoreMessages = false;
+      this.isRemoteTyping = false;
+    }
+
+    this.loadConversations();
   }
 
   private scrollToBottom(): void {

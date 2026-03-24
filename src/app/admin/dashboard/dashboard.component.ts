@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { forkJoin, of, Subject } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { Auth } from '@angular/fire/auth';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { OrganizationContextService } from '../../services/shared/organization-context.service';
 import { OrganizationService } from '../../services/shared/organization.service';
@@ -75,7 +76,7 @@ type InvoiceWithDates = Invoice & {
 @Component({
    selector: 'app-dashboard',
    standalone: true,
-   imports: [CommonModule, RouterModule, OnboardingChecklistComponent, JobflowCommandCenterComponent],
+   imports: [CommonModule, RouterModule, TranslateModule, OnboardingChecklistComponent, JobflowCommandCenterComponent],
    templateUrl: './dashboard.component.html',
    styleUrl: './dashboard.component.scss'
 })
