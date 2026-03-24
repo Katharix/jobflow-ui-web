@@ -1,0 +1,150 @@
+<app-page-header
+  title="Live Sessions"
+  subtitle="Monitor active screenshares and async assistance sessions."
+></app-page-header>
+
+<section class="support-table">
+  <div class="support-table__header">
+    <div>
+      <h5 class="support-mb-1">Active queue</h5>
+      <p class="support-muted">Jump into a session or assign a specialist.</p>
+    </div>
+    <button
+      pButton
+      type="button"
+      label="Start new session"
+      class="p-button-primary"
+      (click)="createSession()"
+    ></button>
+  </div>
+
+  <div class="support-table__composer">
+    <div>
+      <label class="form-label">Organization</label>
+      <div class="support-org-select">
+        <p-dropdown
+          [options]="organizationOptions"
+          optionLabel="label"
+          optionValue="value"
+          [(ngModel)]="selectedOrganizationId"
+          placeholder="Select organization"
+          styleClass="support-w-100"
+        ></p-dropdown>
+        <button
+          pButton
+          type="button"
+          label="Find"
+          class="p-button-outlined p-button-secondary"
+          (click)="openOrgModal()"
+        ></button>
+      </div>
+    </div>
+    <div>
+      <label class="form-label">Agent</label>
+      <div class="support-agent-select">
+        <input pInputText class="support-w-100" [(ngModel)]="newAgentName" placeholder="Agent name" />
+        <button
+          pButton
+          type="button"
+          label="Assign me"
+          class="p-button-outlined p-button-secondary"
+          (click)="assignToMe()"
+        ></button>
+      </div>
+    </div>
+    <div>
+      <label class="form-label">Status</label>
+      <p-dropdown
+        [options]="statusOptions"
+        optionLabel="label"
+        optionValue="value"
+        [(ngModel)]="newStatus"
+        styleClass="support-w-100"
+      ></p-dropdown>
+    </div>
+  </div>
+
+  @if (actionMessage) {
+    <p-message severity="success" [text]="actionMessage"></p-message>
+  }
+
+  <ng-template #statusTemplate let-session>
+    <span [ngClass]="getSessionStatusClass(session.status)">
+      {{ formatSessionStatus(session.status) }}
+    </span>
+  </ng-template>
+
+  <ng-template #actionsTemplate let-session>
+    <div class="support-table__grid-actions">
+      <button
+        pButton
+        type="button"
+        label="View screen"
+        class="p-button-outlined p-button-secondary p-button-sm"
+        [disabled]="viewingSessionId === session.id"
+        (click)="onViewScreen(session.id)"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Copy ID"
+        class="p-button-outlined p-button-secondary p-button-sm"
+        (click)="copySessionId(session)"
+      ></button>
+    </div>
+  </ng-template>
+
+  <div class="support-table__grid">
+    @if (isLoading) {
+      <div class="support-table__empty">
+        <p class="support-muted support-mb-0">Loading sessions...</p>
+      </div>
+    } @else if (error) {
+      <div class="support-table__empty">
+        <p-message severity="error" [text]="error"></p-message>
+      </div>
+    } @else {
+      <app-jobflow-grid
+        [data]="sessions"
+        [columns]="columns"
+        [allowPaging]="true"
+        [allowSorting]="true"
+        [allowFiltering]="false"
+        [showSearchBar]="true"
+        [pageSettings]="pageSettings"
+        [height]="520"
+      ></app-jobflow-grid>
+    }
+  </div>
+</section>
+
+@if (isOrgModalOpen) {
+  <div class="support-modal">
+    <div class="support-modal__backdrop" (click)="closeOrgModal()"></div>
+    <div class="support-modal__panel">
+      <div class="support-modal__header">
+        <h5>Select organization</h5>
+        <button
+          pButton
+          type="button"
+          label="Close"
+          class="p-button-text"
+          (click)="closeOrgModal()"
+        ></button>
+      </div>
+      <input
+        pInputText
+        class="support-w-100"
+        placeholder="Search organizations"
+        [(ngModel)]="orgSearchTerm"
+      />
+      <div class="support-modal__list">
+        @for (org of filteredOrganizations; track org.id) {
+          <button class="support-modal__item" type="button" (click)="selectOrganization(org)">
+            <span>{{ org.organizationName }}</span>
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

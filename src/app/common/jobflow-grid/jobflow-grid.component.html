@@ -1,24 +1,25 @@
 <div class="jobflow-grid-wrapper">
   @if (showSearchBar) {
-    <div
-      class="jobflow-grid-search"
-      >
+    <div class="jobflow-grid-search">
       <input
+        pInputText
         type="text"
-        class="form-control form-control-lg"
-        placeholder="Search…"
+        class="p-inputtext-lg"
+        placeholder="Search..."
         [(ngModel)]="searchText"
         (input)="onSearchChange()"
         />
-        @if (searchText) {
-          <button
-            class="btn btn-link clear-btn"
-            (click)="clearSearch()"
-            >
-            ✕
-          </button>
-        }
-      </div>
+      @if (searchText) {
+        <button
+          pButton
+          type="button"
+          class="p-button-text p-button-plain clear-btn"
+          icon="pi pi-times"
+          aria-label="Clear search"
+          (click)="clearSearch()"
+          ></button>
+      }
+    </div>
     }
 
     @if (toolbar.length) {

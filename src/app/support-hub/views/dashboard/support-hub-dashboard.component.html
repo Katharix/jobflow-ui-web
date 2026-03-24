@@ -1,0 +1,45 @@
+<app-page-header
+  title="Support Hub"
+  subtitle="Command center for internal support, live assistance, and organization health."
+></app-page-header>
+
+<section class="support-dashboard">
+  <div class="support-dashboard__metrics">
+    @for (metric of metrics; track metric.label) {
+      <div class="support-card">
+        <p class="support-card__label">{{ metric.label }}</p>
+        <h3>{{ metric.value }}</h3>
+        <span class="support-card__trend">{{ metric.trend }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="support-dashboard__grid">
+    <div class="support-card support-card--wide">
+      <h5>Assist a customer now</h5>
+      <p class="support-muted">Start a live support session, view screens, and guide teams through blockers.</p>
+      <div class="support-card__actions">
+        <button pButton type="button" label="Start session" class="p-button-primary"></button>
+        <button pButton type="button" label="Schedule follow-up" class="p-button-outlined p-button-secondary"></button>
+      </div>
+    </div>
+
+    <div class="support-card">
+      <h5>Organization pulse</h5>
+      <p class="support-muted">Review billing state, onboarding status, and critical alerts across accounts.</p>
+      <button pButton type="button" label="Open org console" class="p-button-outlined p-button-secondary support-w-100"></button>
+    </div>
+
+    <div class="support-card">
+      <h5>Ticket triage</h5>
+      <p class="support-muted">Prioritize urgent issues and auto-route to the right support pod.</p>
+      <button pButton type="button" label="View tickets" class="p-button-outlined p-button-secondary support-w-100"></button>
+    </div>
+
+    <div class="support-card">
+      <h5>Identity & access</h5>
+      <p class="support-muted">Manage internal staff permissions and MFA/passkey readiness.</p>
+      <button pButton type="button" label="Manage access" class="p-button-outlined p-button-secondary support-w-100"></button>
+    </div>
+  </div>
+</section>

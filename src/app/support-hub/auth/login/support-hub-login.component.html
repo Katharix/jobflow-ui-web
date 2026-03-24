@@ -1,0 +1,75 @@
+<div class="support-auth__header">
+  <h2>Welcome back</h2>
+  <p class="support-muted">Sign in with your Support Hub credentials.</p>
+</div>
+
+<form #form="ngForm" (ngSubmit)="onLogin($event)" novalidate>
+  @if (submitted && form.invalid) {
+    <p-message severity="error" text="Please fix the highlighted fields and try again."></p-message>
+  }
+
+  @if (error) {
+    <p-message severity="error" [text]="error"></p-message>
+  }
+
+  <div class="support-auth__field">
+    <label class="form-label" for="email">Work email</label>
+    <input
+      pInputText
+      type="email"
+      class="support-w-100"
+      id="email"
+      name="email"
+      placeholder="you@katharix.com"
+      [(ngModel)]="email"
+      required
+      email
+      #emailModel="ngModel"
+      [ngClass]="{ 'p-invalid': emailModel.invalid && (emailModel.touched || submitted) }"
+    />
+    @if (emailModel.invalid && (emailModel.touched || submitted)) {
+      <div class="support-error support-mt-1">
+        @if (emailModel.errors?.['required']) {
+          <div>Email is required.</div>
+        }
+        @if (emailModel.errors?.['email']) {
+          <div>Enter a valid email address.</div>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="support-auth__field">
+    <label class="form-label" for="password">Password</label>
+    <p-password
+      id="password"
+      name="password"
+      placeholder="Enter your password"
+      [(ngModel)]="password"
+      required
+      [toggleMask]="true"
+      [feedback]="false"
+      styleClass="support-w-100"
+      inputStyleClass="support-w-100"
+      #passwordModel="ngModel"
+      [ngClass]="{ 'p-invalid': passwordModel.invalid && (passwordModel.touched || submitted) }"
+    ></p-password>
+    @if (passwordModel.invalid && (passwordModel.touched || submitted)) {
+      <div class="support-error support-mt-1">
+        <div>Password is required.</div>
+      </div>
+    }
+  </div>
+
+  <div class="support-auth__actions">
+    <button pButton type="submit" class="support-auth__submit" [disabled]="isSubmitting" (click)="onLogin($event)">
+      @if (!isSubmitting) {
+        <span>Sign in</span>
+      }
+      @if (isSubmitting) {
+        <span>Signing in...</span>
+      }
+    </button>
+    <a routerLink="/support-hub/auth/register">Need access? Register</a>
+  </div>
+</form>
