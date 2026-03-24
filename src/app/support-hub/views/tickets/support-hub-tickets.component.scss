@@ -91,6 +91,9 @@
 .support-modal__backdrop {
   position: absolute;
   inset: 0;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
   background: rgba(15, 23, 42, 0.55);
 }
 

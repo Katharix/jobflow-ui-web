@@ -20,11 +20,10 @@
       <button
         pButton
         type="button"
-        [label]="isCreatingInvite ? 'Creating...' : 'Create invite'"
         class="p-button-outlined p-button-secondary"
         [disabled]="isCreatingInvite"
         (click)="createInvite()"
-      ></button>
+      >{{ isCreatingInvite ? 'Creating...' : 'Create invite' }}</button>
     </div>
   </div>
 
