@@ -142,6 +142,10 @@ export const routes: Routes = [
       loadChildren: () => import('./client-hub/client-hub.routes')
    },
    {
+      path: 'support-hub',
+      loadChildren: () => import('./support-hub/support-hub.routes').then(m => m.SUPPORT_HUB_ROUTES)
+   },
+   {
       path: 'subscribe',
       component: AuthLayoutComponent,
       children: [

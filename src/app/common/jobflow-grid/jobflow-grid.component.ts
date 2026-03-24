@@ -3,6 +3,7 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from "@angular/forms";
 import {Table, TableModule} from 'primeng/table';
 import {ButtonModule} from 'primeng/button';
+import {InputTextModule} from 'primeng/inputtext';
 
 export interface JobflowGridColumn {
    field?: string;
@@ -59,7 +60,7 @@ export interface JobflowGridPageSettings {
 @Component({
    selector: 'app-jobflow-grid',
    standalone: true,
-   imports: [CommonModule, TableModule, ButtonModule, FormsModule],
+   imports: [CommonModule, TableModule, ButtonModule, InputTextModule, FormsModule],
    templateUrl: './jobflow-grid.component.html'
 })
 export class JobflowGridComponent {

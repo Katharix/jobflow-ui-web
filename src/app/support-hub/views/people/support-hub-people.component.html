@@ -1,0 +1,67 @@
+<app-page-header
+  title="People"
+  subtitle="Manage internal support staff and verify access levels."
+></app-page-header>
+
+<section class="support-people">
+  <div class="support-people__header">
+    <div>
+      <h5 class="support-mb-1">Support roster</h5>
+      <p class="support-muted">Invite staff, assign roles, and review activity.</p>
+    </div>
+    <div class="support-people__invite">
+      <p-dropdown
+        [options]="inviteRoleOptions"
+        optionLabel="label"
+        optionValue="value"
+        [(ngModel)]="newInviteRole"
+        styleClass="support-w-100"
+      ></p-dropdown>
+      <button
+        pButton
+        type="button"
+        class="p-button-outlined p-button-secondary"
+        [disabled]="isCreatingInvite"
+        (click)="createInvite()"
+      >{{ isCreatingInvite ? 'Creating...' : 'Create invite' }}</button>
+    </div>
+  </div>
+
+  <div class="support-people__invite-list">
+    <h6 class="support-mb-2">Active invites</h6>
+    @if (isLoadingInvites) {
+      <p class="support-muted support-mb-0">Loading invites...</p>
+    } @else if (inviteError) {
+      <p-message severity="error" [text]="inviteError"></p-message>
+    } @else if (!invites.length) {
+      <p class="support-muted support-mb-0">No active invites yet.</p>
+    } @else {
+      <app-jobflow-grid
+        [data]="invites"
+        [columns]="inviteColumns"
+        [allowPaging]="true"
+        [allowSorting]="true"
+        [allowFiltering]="false"
+        [showSearchBar]="true"
+        [pageSettings]="pageSettings"
+        [height]="320"
+      ></app-jobflow-grid>
+    }
+  </div>
+
+  <ng-template #staffStatusTemplate let-person>
+    <span class="support-people__status">{{ person.status }}</span>
+  </ng-template>
+
+  <div class="support-people__grid">
+    <app-jobflow-grid
+      [data]="staff"
+      [columns]="staffColumns"
+      [allowPaging]="false"
+      [allowSorting]="true"
+      [allowFiltering]="false"
+      [showSearchBar]="false"
+      [height]="320"
+    ></app-jobflow-grid>
+  </div>
+</section>

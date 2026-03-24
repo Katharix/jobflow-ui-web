@@ -1,0 +1,90 @@
+.support-auth__header {
+  margin-bottom: 1.5rem;
+}
+
+.support-auth__header h2 {
+  margin-bottom: 0.35rem;
+  font-weight: 700;
+}
+
+.support-auth__header p {
+  margin-bottom: 0;
+}
+
+.support-auth__field {
+  margin-bottom: 1.1rem;
+}
+
+.support-auth__field .form-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: var(--jf-ink);
+}
+
+.support-auth__field :is(.p-inputtext, .p-password) {
+  width: 100%;
+}
+
+.support-auth__field .p-inputtext,
+.support-auth__field .p-password .p-inputtext {
+  min-height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  padding: 0.6rem 0.9rem;
+}
+
+.support-auth__field .p-inputtext:focus,
+.support-auth__field .p-password .p-inputtext:focus {
+  box-shadow: none;
+  border-color: rgba(59, 130, 246, 0.6);
+}
+
+.support-auth__field .text-danger {
+  font-size: 0.85rem;
+}
+
+
+.support-auth__actions {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+}
+
+.support-auth__submit {
+  width: 100%;
+}
+
+.support-auth__submit,
+.support-auth__submit.p-button {
+  opacity: 1;
+  visibility: visible;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  min-height: 46px;
+  border-radius: 12px;
+  border: none;
+  background: var(--jf-accent, #2563eb);
+  background-color: var(--jf-accent, #2563eb);
+  color: var(--jf-accent-contrast, #ffffff);
+  font-weight: 600;
+}
+
+.support-auth__submit.p-button:enabled:hover {
+  filter: brightness(0.95);
+}
+
+.support-auth__submit.p-button:enabled:focus {
+  box-shadow: none;
+}
+
+.support-auth__actions a {
+  font-weight: 600;
+  color: var(--jf-accent);
+  text-align: center;
+}
