@@ -9,7 +9,7 @@ import { JobflowDrawerComponent } from '../../common/jobflow-drawer/jobflow-draw
 import { ToastService } from '../../common/toast/toast.service';
 import { EstimateService } from './services/estimate.service';
 import { EstimateFormComponent } from './estimate-form/estimate-form.component';
-import { Estimate, EstimateStatus, EstimateStatusLabels } from './models/estimate';
+import { Estimate, EstimateStatus } from './models/estimate';
 
 @Component({
   selector: 'app-estimates',
