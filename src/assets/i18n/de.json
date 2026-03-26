@@ -1,0 +1,922 @@
+{
+  "languages": {
+    "english": "Englisch",
+    "spanish": "Spanisch",
+    "french": "Franzosisch",
+    "portuguese": "Portugiesisch",
+    "german": "Deutsch",
+    "italian": "Italienisch"
+  },
+  "profile": {
+    "title": "Benutzerprofil",
+    "subtitle": "Verwalten Sie Ihre Kontaktdaten und Spracheinstellungen.",
+    "loading": "Profil wird geladen...",
+    "email": "E-Mail",
+    "emailError": "Geben Sie eine gultige E-Mail-Adresse ein.",
+    "phone": "Telefon",
+    "language": "Sprache",
+    "languageError": "Wahlen Sie eine Sprache aus.",
+    "save": "Anderungen speichern",
+    "saving": "Speichern..."
+  },
+  "nav": {
+    "home": "Start",
+    "company": "Unternehmen",
+    "jobs": "Auftrage",
+    "invoicing": "Rechnungen",
+    "estimates": "Angebote",
+    "tracking": "Tracking",
+    "settings": "Einstellungen",
+    "dispatch": "Disposition",
+    "messaging": "Nachrichten",
+    "clients": "Kunden",
+    "employees": "Mitarbeiter",
+    "priceBook": "Preisliste",
+    "billingPayments": "Abrechnung und Zahlungen",
+    "reporting": "Berichte",
+    "help": "Hilfe",
+    "organization": "Organisation",
+    "logout": "Abmelden",
+    "userProfile": "Benutzerprofil",
+    "confirmLogout": "Abmeldung bestatigen",
+    "confirmLogoutMessage": "Mochten Sie sich wirklich abmelden?",
+    "cancel": "Abbrechen"
+  },
+  "onboarding": {
+    "title": "Erste Schritte",
+    "subtitle": "Schliessen Sie diese Schritte ab, um Auftrage zu planen und bezahlt zu werden.",
+    "summary": "{{completed}}/{{total}} abgeschlossen",
+    "empty": "Ihre Onboarding-Schritte erscheinen hier, sobald sie verfugbar sind.",
+    "action": {
+      "completed": "Aufgabe abgeschlossen",
+      "complete": "Schritt abschliessen"
+    },
+    "stepCompletedTitle": "Schritt bereits abgeschlossen",
+    "stepLockedTitle": "Schliessen Sie zuerst den vorherigen Schritt ab",
+    "stepOpenTitle": "Schritt offnen",
+    "stepNoRouteTitle": "Keine Route fur diesen Schritt konfiguriert",
+    "description": {
+      "track": "Wahlen Sie den Onboarding-Pfad, der Ihren Prioritaten entspricht.",
+      "quickStart": "Wahlen Sie ein Branchen-Preset, um empfohlene Services zu laden.",
+      "payment": "Verbinden Sie Ihren Zahlungsanbieter, um Zahlungen zu erhalten.",
+      "branding": "Laden Sie Ihr Logo hoch und legen Sie Ihre Marke fest.",
+      "company": "Fugen Sie Ihr Unternehmensprofil und Ihre Informationen hinzu.",
+      "roles": "Richten Sie Rollen ein, um Berechtigungen zu steuern.",
+      "employees": "Fugen Sie Teammitglieder hinzu, die Arbeiten planen und ausfuhren.",
+      "pricebook": "Erstellen Sie Services und Preise fur Auftrage.",
+      "customer": "Erstellen Sie Ihren ersten Kunden, um zu starten.",
+      "job": "Erstellen und planen Sie Ihren ersten Auftrag.",
+      "invoice": "Erstellen Sie Ihre erste Rechnung und bereiten Sie Zahlungen vor.",
+      "default": "Schliessen Sie diesen Schritt ab, um fortzufahren."
+    }
+  },
+  "dashboard": {
+    "welcomeTitle": "Willkommen, {{organization}}",
+    "welcomeSubtitle": "Hier ist Ihr Kommandocenter fur heute - starten Sie mit dem Wichtigsten.",
+    "view": "Ansehen",
+    "onboardingTitle": "Onboarding-Checkliste",
+    "onboardingSubtitle": "Schliessen Sie die Einrichtung einmalig ab fur einen reibungslosen Alltag",
+    "clientActivityTitle": "Kundenaktivitat",
+    "clientActivitySubtitle": "Angebotsentscheidungen, Revisionen und Rechnungszahlungen",
+    "open": "Offnen",
+    "clientActivityEmpty": "Noch keine aktuelle Kundenaktivitat."
+  },
+  "landing": {
+    "nav": {
+      "home": "Start",
+      "about": "Uber",
+      "features": "Funktionen",
+      "pricing": "Preise",
+      "contact": "Kontakt",
+      "login": "Login"
+    }
+  },
+  "auth": {
+    "login": {
+      "eyebrow": "Willkommen zuruck",
+      "headline": "Verwalten Sie jeden Auftrag vom Request bis zur Zahlung.",
+      "lead": "Melden Sie sich an, um Teams zu planen, Angebote zu senden und schneller bezahlt zu werden.",
+      "checks": {
+        "dispatch": "Einsatzbereiter Kalender",
+        "estimate": "Angebot zu Rechnung sofort",
+        "payment": "Moderne Zahlungslinks"
+      },
+      "title": "Anmelden",
+      "subtitle": "Nutzen Sie Ihr JobFlow-Konto.",
+      "emailLabel": "E-Mail",
+      "emailPlaceholder": "sie@firma.com",
+      "passwordLabel": "Passwort",
+      "passwordPlaceholder": "Ihr Passwort",
+      "submit": "Login",
+      "footer": {
+        "prefix": "Durch das Fortfahren stimmen Sie unseren",
+        "terms": "Bedingungen",
+        "and": "und",
+        "privacy": "Datenschutzrichtlinie"
+      },
+      "validation": {
+        "emailRequired": "E-Mail ist erforderlich.",
+        "emailInvalid": "Geben Sie eine gultige E-Mail ein.",
+        "passwordRequired": "Passwort ist erforderlich.",
+        "passwordMin": "Passwort muss mindestens 6 Zeichen haben.",
+        "formInvalid": "Bitte korrigieren Sie die markierten Felder."
+      },
+      "errors": {
+        "invalidEmail": "Geben Sie eine gultige E-Mail ein.",
+        "invalidCredentials": "E-Mail oder Passwort falsch.",
+        "userDisabled": "Dieses Konto ist deaktiviert. Kontaktieren Sie den Support.",
+        "tooManyRequests": "Zu viele Versuche. Bitte warten Sie.",
+        "network": "Netzwerkfehler. Prufen Sie Ihre Verbindung.",
+        "notEnabled": "E-Mail/Passwort Login ist nicht aktiviert.",
+        "unauthorizedDomain": "Diese Domain ist nicht autorisiert."
+      },
+      "errorCode": "(code: {{code}})",
+      "errorGeneric": "Etwas ist schief gelaufen. Bitte erneut versuchen.",
+      "serverError": "Server-Login fehlgeschlagen. Bitte erneut versuchen.",
+      "toastFailed": "Login fehlgeschlagen. Bitte erneut versuchen."
+    },
+    "register": {
+      "eyebrow": "JobFlow beitreten",
+      "headline": "Neue Leads schneller zu bezahlten Auftragen machen.",
+      "lead": "Richten Sie Ihr Konto ein, um Teams zu planen und Zahlungen zu erhalten.",
+      "checks": {
+        "access": "Sofortiger Zugriff auf Ihren Bereich",
+        "secure": "Sicherer Login mit Firebase",
+        "billing": "Bereit fur Abrechnung"
+      },
+      "steps": {
+        "subscription": "1. Abo",
+        "account": "2. Konto erstellen"
+      },
+      "title": "Konto erstellen",
+      "subtitle": "Schliessen Sie Ihre Angaben ab, um JobFlow zu starten.",
+      "companyName": "Firmenname",
+      "companyNamePlaceholder": "Firmenname",
+      "workEmail": "Arbeits-E-Mail",
+      "emailPlaceholder": "sie@firma.com",
+      "billingEmailHint": "Dies ist die eingegebene Abrechnungs-E-Mail.",
+      "passwordLabel": "Passwort",
+      "passwordPlaceholder": "Passwort erstellen",
+      "passwordHint": "Mindestens 8 Zeichen mit Gross/Kleinbuchstaben, Zahl und Symbol.",
+      "confirmPasswordLabel": "Passwort bestatigen",
+      "confirmPasswordPlaceholder": "Passwort bestatigen",
+      "submit": "Konto erstellen",
+      "submitting": "Konto wird erstellt...",
+      "footer": {
+        "prefix": "Durch das Fortfahren stimmen Sie unseren",
+        "terms": "Bedingungen",
+        "and": "und",
+        "privacy": "Datenschutzrichtlinie"
+      },
+      "validation": {
+        "formInvalid": "Bitte korrigieren Sie die markierten Felder.",
+        "emailRequired": "E-Mail ist erforderlich.",
+        "emailInvalid": "Geben Sie eine gultige E-Mail ein.",
+        "passwordRequired": "Passwort ist erforderlich.",
+        "passwordMin": "Mindestens 8 Zeichen erforderlich.",
+        "passwordPattern": "Gross/Kleinbuchstaben, Zahl und Sonderzeichen erforderlich.",
+        "confirmPassword": "Bestatigen Sie Ihr Passwort."
+      },
+      "errors": {
+        "passwordMismatch": "Passworter stimmen nicht uberein.",
+        "createFailed": "Konto konnte nicht erstellt werden.",
+        "generic": "Etwas ist schief gelaufen. Bitte erneut versuchen.",
+        "invalidEmail": "Geben Sie eine gultige E-Mail ein.",
+        "emailInUse": "Diese E-Mail wird bereits verwendet. Bitte anmelden.",
+        "weakPassword": "Passwort zu schwach. Mindestens 8 Zeichen.",
+        "tooManyRequests": "Zu viele Versuche. Bitte warten.",
+        "network": "Netzwerkfehler. Prufen Sie Ihre Verbindung.",
+        "notEnabled": "Registrierung mit E-Mail/Passwort ist nicht aktiviert.",
+        "unauthorizedDomain": "Diese Domain ist nicht autorisiert."
+      },
+      "errorCode": "(code: {{code}})",
+      "toastCreated": "Konto erstellt",
+      "toastWelcome": "Willkommen"
+    }
+  },
+  "subscribe": {
+    "eyebrow": "Loslegen",
+    "headline": "Starten Sie Ihren JobFlow-Bereich in Minuten.",
+    "lead": "Geben Sie Ihre Unternehmensdaten ein, um Abrechnung zu aktivieren.",
+    "checks": {
+      "access": "Sofortiger Zugriff nach Zahlung",
+      "secure": "Sichere Zahlungen uber Stripe",
+      "cancel": "Jederzeit kundbar"
+    },
+    "steps": {
+      "subscription": "1. Abo",
+      "account": "2. Konto erstellen"
+    },
+    "title": "Abo-Plan kaufen",
+    "subtitle": "Fullen Sie die Details aus, um zum Checkout zu gelangen.",
+    "close": "Schliessen",
+    "companyName": "Firmenname",
+    "companyType": "Unternehmenstyp",
+    "workEmail": "Arbeits-E-Mail",
+    "phone": "Telefon",
+    "address": "Firmenadresse",
+    "address2": "Firmenadresse 2",
+    "city": "Stadt",
+    "state": "Bundesland",
+    "zip": "PLZ",
+    "twilioConsent": "Ich stimme zu, SMS oder Anrufe zu erhalten.",
+    "twilioNote": "Es konnen Kosten anfallen. Abmeldung jederzeit mit STOP.",
+    "submit": "Kaufen",
+    "submitting": "Verarbeitung...",
+    "nextStep": "Weiter: Nach dem Checkout erstellen Sie Ihren JobFlow-Login.",
+    "redirecting": "Weiterleitung zu Stripe...",
+    "placeholders": {
+      "companyName": "Firmenname",
+      "companyType": "Unternehmenstyp auswahlen",
+      "email": "sie@firma.com",
+      "phone": "(555) 555-1234",
+      "address": "Firmenadresse",
+      "address2": "Suite, Einheit, usw.",
+      "city": "Stadt",
+      "state": "Bundesland auswahlen",
+      "zip": "PLZ"
+    },
+    "validation": {
+      "formInvalid": "Bitte korrigieren Sie die markierten Felder.",
+      "companyRequired": "Firmenname ist erforderlich.",
+      "companyMin": "Mindestens 2 Zeichen.",
+      "companyTypeRequired": "Bitte Unternehmenstyp auswahlen.",
+      "emailRequired": "E-Mail ist erforderlich.",
+      "emailInvalid": "Geben Sie eine gultige E-Mail ein.",
+      "phoneRequired": "Telefon ist erforderlich.",
+      "phoneInvalid": "Geben Sie eine gultige Telefonnummer ein.",
+      "addressRequired": "Adresse ist erforderlich.",
+      "cityRequired": "Stadt ist erforderlich.",
+      "stateRequired": "Bundesland ist erforderlich.",
+      "zipRequired": "PLZ ist erforderlich.",
+      "zipPattern": "PLZ muss 5 Ziffern haben.",
+      "twilioConsent": "Sie mussen zustimmen, um fortzufahren."
+    },
+    "errors": {
+      "checkoutRedirect": "Checkout hat keine Weiterleitungs-URL geliefert.",
+      "subscriptionFailed": "Abo konnte nicht erstellt werden. Bitte erneut versuchen.",
+      "organizationFailed": "Organisation konnte nicht erstellt werden. Bitte erneut versuchen."
+    }
+  },
+  "support": {
+    "common": {
+      "organization": "Organisation",
+      "unknownOrganization": "Unbekannt",
+      "selectOrganization": "Organisation auswahlen",
+      "find": "Finden",
+      "copyId": "ID kopieren",
+      "closeModal": "Modal schliessen",
+      "close": "Schliessen",
+      "searchOrganizations": "Organisationen suchen"
+    },
+    "login": {
+      "title": "Willkommen zuruck",
+      "subtitle": "Melden Sie sich mit Ihren Support Hub Daten an.",
+      "formInvalid": "Bitte korrigieren Sie die markierten Felder.",
+      "emailLabel": "Arbeits-E-Mail",
+      "emailPlaceholder": "sie@katharix.com",
+      "passwordLabel": "Passwort",
+      "passwordPlaceholder": "Passwort eingeben",
+      "submit": "Anmelden",
+      "submitting": "Anmeldung...",
+      "registerLink": "Zugang benotigt? Registrieren",
+      "validation": {
+        "emailRequired": "E-Mail ist erforderlich.",
+        "emailInvalid": "Geben Sie eine gultige E-Mail ein.",
+        "passwordRequired": "Passwort ist erforderlich."
+      },
+      "errors": {
+        "invalidEmail": "Geben Sie eine gultige E-Mail ein.",
+        "userNotFound": "Kein Konto fur diese E-Mail.",
+        "wrongPassword": "Falsches Passwort. Bitte erneut versuchen.",
+        "tooManyRequests": "Zu viele Versuche. Bitte warten.",
+        "generic": "Etwas ist schief gelaufen. Bitte erneut versuchen."
+      }
+    },
+    "tickets": {
+      "header": {
+        "title": "Support-Tickets",
+        "subtitle": "Anfragen aller Organisationen verfolgen und triagieren."
+      },
+      "priorityTitle": "Prioritats-Queue",
+      "prioritySubtitle": "Dringende Tickets eskalieren oder zuweisen.",
+      "seedDemo": "Demo-Daten einfugen",
+      "titleLabel": "Titel",
+      "titlePlaceholder": "Ticket-Titel",
+      "summaryLabel": "Zusammenfassung",
+      "summaryPlaceholder": "Kurze Zusammenfassung",
+      "priorityLabel": "Prioritat",
+      "create": "Ticket erstellen",
+      "loading": "Tickets werden geladen...",
+      "columns": {
+        "title": "Titel",
+        "organization": "Organisation",
+        "opened": "Geoffnet",
+        "status": "Status",
+        "actions": "Aktionen"
+      },
+      "status": {
+        "urgent": "Dringend",
+        "high": "Hoch",
+        "normal": "Normal",
+        "low": "Niedrig",
+        "resolved": "Geloscht"
+      },
+      "errors": {
+        "loadOrganizations": "Organisationen konnten nicht geladen werden.",
+        "loadTickets": "Tickets konnten nicht geladen werden.",
+        "selectOrganization": "Bitte Organisation auswahlen.",
+        "titleRequired": "Ticket-Titel ist erforderlich.",
+        "createTicket": "Ticket konnte nicht erstellt werden.",
+        "seedOrganization": "Bitte Organisation auswahlen, bevor Sie einfugen.",
+        "seedDemo": "Demo-Daten konnten nicht eingefugt werden."
+      },
+      "actions": {
+        "created": "Ticket erstellt.",
+        "seeded": "{{tickets}} Tickets und {{sessions}} Sessions erstellt.",
+        "copied": "Ticket-ID kopiert."
+      }
+    },
+    "sessions": {
+      "header": {
+        "title": "Live-Sessions",
+        "subtitle": "Aktive Screenshares und asynchrone Sessions uberwachen."
+      },
+      "queueTitle": "Aktive Queue",
+      "queueSubtitle": "In eine Session springen oder Spezialisten zuweisen.",
+      "startSession": "Neue Session starten",
+      "agentLabel": "Agent",
+      "agentPlaceholder": "Agentenname",
+      "assignMe": "Mir zuweisen",
+      "statusLabel": "Status",
+      "viewScreen": "Bildschirm ansehen",
+      "loading": "Sessions werden geladen...",
+      "columns": {
+        "organization": "Organisation",
+        "agent": "Agent",
+        "status": "Status",
+        "actions": "Aktionen"
+      },
+      "status": {
+        "live": "Live",
+        "queued": "In Warteschlange",
+        "followup": "Nachverfolgung",
+        "ended": "Beendet"
+      },
+      "errors": {
+        "loadOrganizations": "Organisationen konnten nicht geladen werden.",
+        "loadSessions": "Sessions konnten nicht geladen werden.",
+        "startScreen": "Bildschirmansicht konnte nicht gestartet werden.",
+        "selectOrganization": "Bitte Organisation auswahlen, bevor Sie eine Session erstellen.",
+        "agentRequired": "Agentenname ist erforderlich.",
+        "createSession": "Session konnte nicht erstellt werden."
+      },
+      "actions": {
+        "created": "Session erstellt.",
+        "copied": "Session-ID kopiert."
+      },
+      "defaultAgent": "Katharix Team"
+    }
+  },
+  "admin": {
+    "billing": {
+      "title": "Abrechnung und Zahlungen",
+      "subtitle": "Verfolgen Sie nicht fakturierte Arbeiten, versendete Rechnungen und uberfallige Salden an einem Ort",
+      "summary": {
+        "outstanding": "Offener Betrag",
+        "draft": "Entwurf (nicht fakturiert)",
+        "sent": "Gesendet",
+        "overdue": "Uberfallig"
+      },
+      "actions": {
+        "manageConnection": "Zahlungsanbindung verwalten",
+        "openInvoices": "Rechnungen offnen",
+        "preview": "Vorschau",
+        "sendInvoice": "Rechnung senden",
+        "collectNow": "Jetzt einziehen",
+        "sendReminder": "Erinnerung senden",
+        "view": "Ansehen"
+      },
+      "state": {
+        "loading": "Lade Abrechnungsdaten...",
+        "error": "Abrechnungsdaten konnten nicht geladen werden."
+      },
+      "sections": {
+        "draft": {
+          "title": "Nicht fakturierte (Entwurf) Rechnungen",
+          "subtitle": "Rechnungen, die erstellt, aber noch nicht gesendet wurden."
+        },
+        "sent": {
+          "title": "Gesendete Rechnungen",
+          "subtitle": "Rechnungen, die auf Zahlung oder Nachverfolgung warten."
+        },
+        "overdue": {
+          "title": "Uberfallige Rechnungen",
+          "subtitle": "Fallige Rechnungen, die sofortige Aufmerksamkeit brauchen."
+        },
+        "paid": {
+          "title": "Kurzlich bezahlt",
+          "subtitle": "Abgeschlossene Rechnungen zur Referenz."
+        },
+        "total": "gesamt"
+      },
+      "empty": {
+        "draft": "Derzeit keine Entwurfsrechnungen.",
+        "sent": "Derzeit keine gesendeten Rechnungen.",
+        "overdue": "Derzeit keine uberfalligen Rechnungen."
+      },
+      "table": {
+        "invoice": "Rechnung",
+        "client": "Kunde",
+        "due": "Fallig",
+        "paid": "Bezahlt",
+        "total": "Summe",
+        "balance": "Saldo",
+        "status": "Status",
+        "actions": "Aktionen"
+      },
+      "status": {
+        "draft": "Entwurf",
+        "sent": "Gesendet",
+        "paid": "Bezahlt",
+        "overdue": "Uberfallig",
+        "unknown": "Unbekannt"
+      },
+      "toast": {
+        "invoiceSent": "Ihre Rechnung wurde an den Kunden gesendet.",
+        "invoiceSentTitle": "Rechnung gesendet",
+        "invoiceFailed": "Rechnung konnte derzeit nicht gesendet werden.",
+        "invoiceFailedTitle": "Senden fehlgeschlagen",
+        "reminderSent": "Eine Zahlungserinnerung wurde an den Kunden gesendet.",
+        "reminderSentTitle": "Erinnerung gesendet",
+        "reminderFailed": "Die Erinnerung konnte derzeit nicht gesendet werden.",
+        "reminderFailedTitle": "Erinnerung fehlgeschlagen"
+      }
+    },
+    "branding": {
+      "title": "Branding",
+      "subtitle": "Passen Sie Ihr Erscheinungsbild und Ihre Rechnungen an",
+      "hero": {
+        "title": "Einfach halten",
+        "subtitle": "Logo, Farben und Rechnungstext aktualisieren. Anderungen gelten fur ausgehende Dokumente."
+      },
+      "actions": {
+        "save": "Branding speichern"
+      },
+      "sections": {
+        "logo": {
+          "title": "1. Logo",
+          "cta": "Logo wahlen",
+          "note": "PNG oder JPG funktioniert am besten",
+          "previewAlt": "Logo-Vorschau"
+        },
+        "colors": {
+          "title": "2. Farben",
+          "primary": "Primar",
+          "secondary": "Sekundar"
+        },
+        "text": {
+          "title": "3. Text",
+          "businessName": "Firmenname",
+          "tagline": "Slogan",
+          "footerNote": "Rechnungs-Fussnote"
+        }
+      },
+      "preview": {
+        "title": "Live-Rechnungsvorschau",
+        "badge": "Beispiel",
+        "logoPlaceholder": "Logo",
+        "businessNameFallback": "Ihr Firmenname",
+        "taglineFallback": "Ihr Slogan",
+        "invoiceNumber": "Rechnung #",
+        "date": "Datum",
+        "total": "Gesamt",
+        "footerFallback": "Danke fur Ihr Vertrauen."
+      },
+      "toast": {
+        "logoUploadFailed": "Logo-Upload fehlgeschlagen. Bitte erneut versuchen.",
+        "saveSuccess": "Branding erfolgreich gespeichert.",
+        "saveFailed": "Branding konnte nicht gespeichert werden. Bitte erneut versuchen."
+      }
+    },
+    "invoices": {
+      "title": "Rechnungen",
+      "subtitle": "Alle Rechnungen Ihrer Organisation",
+      "metrics": {
+        "total": "Rechnungen gesamt",
+        "totalNote": "Uber alle Kunden",
+        "sent": "Gesendet",
+        "sentNote": "Warten auf Zahlung",
+        "overdue": "Uberfallig",
+        "overdueNote": "Nachverfolgung notig",
+        "totalBilled": "Insgesamt fakturiert",
+        "totalBilledNote": "Bruttowert der Rechnungen",
+        "outstanding": "Offen",
+        "outstandingNote": "Derzeit falliger Saldo"
+      },
+      "cta": {
+        "eyebrow": "Schnellaktion",
+        "title": "Rechnung erstellen und senden",
+        "subtitle": "Job auswahlen, Positionen prufen, dann an den Kunden senden.",
+        "button": "Rechnung erstellen"
+      },
+      "filters": {
+        "all": "Alle",
+        "draft": "Entwurf",
+        "sent": "Gesendet",
+        "paid": "Bezahlt",
+        "overdue": "Uberfallig",
+        "unpaid": "Unbezahlt"
+      },
+      "actions": {
+        "view": "Ansehen",
+        "create": "Rechnung erstellen"
+      },
+      "drawer": {
+        "createTitle": "Rechnung erstellen",
+        "selectTitle": "Job zum Fakturieren auswahlen",
+        "onboardingStep": "Onboarding Schritt 4",
+        "pickJobTitle": "Job zum Fakturieren auswahlen",
+        "pickJobSubtitle": "Job finden, Kunden bestatigen, wir erstellen die Rechnung.",
+        "tags": {
+          "recent": "Neueste Jobs zuerst",
+          "search": "Suche nach Kunde",
+          "fast": "Schnelle Rechnungserstellung"
+        },
+        "chooseJobTitle": "Wahlen Sie zuerst den Job",
+        "chooseJobSubtitle": "Job auswahlen, Positionen bestatigen, dann Rechnung erstellen. Neueste zuerst.",
+        "searchPlaceholder": "Suche nach Jobtitel oder Kunde",
+        "untitledJob": "Job ohne Titel",
+        "selectJob": "Auswahlen",
+        "noMatches": "Keine passenden Jobs gefunden",
+        "noJobs": "Noch keine Jobs",
+        "noMatchesHint": "Versuchen Sie eine andere Suche.",
+        "noJobsHint": "Erstellen Sie zuerst einen Job und fakturieren Sie ihn hier.",
+        "createJob": "Job erstellen",
+        "detailsEyebrow": "Rechnungsdetails",
+        "detailsTitle": "Rechnung erstellen",
+        "detailsSubtitle": "Daten anpassen, Positionen prufen und Rechnung erstellen.",
+        "backToJobs": "Anderen Job wahlen",
+        "prefill": "Aus Angebot vorbefullt",
+        "prefillHint": "Passen Sie Positionen vor dem Erstellen an."
+      },
+      "form": {
+        "invoiceDate": "Rechnungsdatum",
+        "dueDate": "Falligkeitsdatum",
+        "lineItems": "Positionen",
+        "addLine": "Position hinzufugen",
+        "description": "Beschreibung",
+        "quantity": "Menge",
+        "unitPrice": "Einzelpreis",
+        "total": "Summe",
+        "descriptionPlaceholder": "Positionsbeschreibung",
+        "removeLine": "Position entfernen",
+        "invoiceTotal": "Rechnungssumme",
+        "cancel": "Abbrechen",
+        "creating": "Wird erstellt...",
+        "create": "Rechnung erstellen",
+        "lineItemFallback": "Position"
+      },
+      "errors": {
+        "load": "Rechnungen konnten nicht geladen werden.",
+        "loadJobs": "Jobs konnten derzeit nicht geladen werden.",
+        "create": "Rechnung konnte nicht erstellt werden. Details prufen."
+      },
+      "toast": {
+        "loadFailed": "Rechnungen laden fehlgeschlagen",
+        "loadJobsFailed": "Jobs fur Rechnungsauswahl konnten nicht geladen werden",
+        "created": "Rechnung erfolgreich erstellt.",
+        "createFailed": "Rechnungserstellung fehlgeschlagen."
+      },
+      "labels": {
+        "unknownClient": "Unbekannter Kunde",
+        "unknown": "Unbekannt",
+        "noEmail": "Keine E-Mail",
+        "missing": "-"
+      },
+      "table": {
+        "invoiceNumber": "Rechnung #",
+        "client": "Kunde",
+        "invoiceDate": "Rechnungsdatum",
+        "dueDate": "Falligkeitsdatum",
+        "total": "Summe",
+        "balance": "Saldo",
+        "status": "Status",
+        "actions": "Aktionen"
+      },
+      "status": {
+        "draft": "Entwurf",
+        "sent": "Gesendet",
+        "paid": "Bezahlt",
+        "overdue": "Uberfallig",
+        "unpaid": "Unbezahlt"
+      }
+    },
+    "estimates": {
+      "title": "Angebote",
+      "subtitle": "Angebote und Kostenvoranschlage verwalten",
+      "metrics": {
+        "total": "Angebote gesamt",
+        "totalNote": "Uber alle Kunden",
+        "draft": "Entwurfe",
+        "draftNote": "Bereit zur Prufung",
+        "sent": "Gesendet",
+        "sentNote": "Warten auf Antwort",
+        "accepted": "Akzeptiert",
+        "acceptedNote": "Bereit zur Planung",
+        "totalValue": "Gesamtwert",
+        "totalValueNote": "Summe aller Angebote"
+      },
+      "cta": {
+        "eyebrow": "Schnellaktion",
+        "title": "Neues Angebot erstellen",
+        "subtitle": "Kunden wahlen, Positionen hinzufugen und senden.",
+        "button": "Neues Angebot"
+      },
+      "actions": {
+        "edit": "Bearbeiten",
+        "send": "Senden",
+        "delete": "Loschen",
+        "new": "Neues Angebot"
+      },
+      "filters": {
+        "all": "Alle",
+        "draft": "Entwurf",
+        "sent": "Gesendet",
+        "accepted": "Akzeptiert",
+        "declined": "Abgelehnt",
+        "expired": "Abgelaufen"
+      },
+      "drawer": {
+        "editTitle": "Angebot bearbeiten",
+        "newTitle": "Neues Angebot",
+        "updateEyebrow": "Angebot aktualisieren",
+        "newEyebrow": "Neues Angebot",
+        "updateTitle": "Details prufen und aktualisieren",
+        "newTitleMain": "Neues Angebot erstellen",
+        "subtitle": "Kunden wahlen, Positionen hinzufugen und senden."
+      },
+      "send": {
+        "title": "Angebot senden",
+        "intro": "Angebot senden",
+        "subtitle": "Empfanger-E-Mail bestatigen und optional eine Nachricht hinzufugen.",
+        "recipientEmail": "Empfanger-E-Mail",
+        "recipientPlaceholder": "kunde@beispiel.com",
+        "message": "Nachricht",
+        "optional": "optional",
+        "messagePlaceholder": "Personliche Notiz hinzufugen...",
+        "cancel": "Abbrechen",
+        "sending": "Wird gesendet...",
+        "send": "Angebot senden"
+      },
+      "errors": {
+        "load": "Angebote konnten nicht geladen werden. Bitte aktualisieren.",
+        "send": "Angebot konnte nicht gesendet werden. Bitte erneut versuchen."
+      },
+      "toast": {
+        "updated": "Angebot aktualisiert.",
+        "createdMissingEmail": "Angebot erstellt, aber Kunden-E-Mail fehlt, daher nicht gesendet.",
+        "createdSent": "Angebot erstellt und gesendet.",
+        "createdSendFailed": "Angebot erstellt, Senden fehlgeschlagen.",
+        "sent": "Angebot gesendet.",
+        "deleted": "Angebot geloscht.",
+        "deleteFailed": "Angebot konnte nicht geloscht werden."
+      },
+      "confirm": {
+        "delete": "Angebot {{number}} loschen? Dies kann nicht ruckgangig gemacht werden."
+      },
+      "table": {
+        "estimateNumber": "Angebot #",
+        "client": "Kunde",
+        "date": "Datum",
+        "expires": "Lauft ab",
+        "total": "Summe",
+        "status": "Status",
+        "actions": "Aktionen"
+      },
+      "status": {
+        "draft": "Entwurf",
+        "sent": "Gesendet",
+        "accepted": "Akzeptiert",
+        "declined": "Abgelehnt",
+        "cancelled": "Storniert",
+        "expired": "Abgelaufen",
+        "revisionRequested": "Uberarbeitung angefordert"
+      },
+      "labels": {
+        "unknown": "Unbekannt",
+        "missing": "-"
+      }
+    },
+    "jobs": {
+      "title": "Jobs",
+      "subtitle": "Halten Sie jeden Job am Laufen",
+      "drawer": {
+        "addTitle": "Job hinzufugen"
+      },
+      "hero": {
+        "eyebrow": "Flow-Puls",
+        "subtitle": "Nicht geplante Arbeit einreihen, Aktives anzeigen und Status mit einem Tipp andern."
+      },
+      "metrics": {
+        "total": "Jobs gesamt",
+        "unscheduled": "Nicht geplant",
+        "inProgress": "In Arbeit",
+        "completed": "Abgeschlossen"
+      },
+      "filters": {
+        "status": "Status",
+        "allStatuses": "Alle Status",
+        "statusHint": "Passe das Board an eure Bezeichnungen an.",
+        "client": "Kunde",
+        "allClients": "Alle Kunden",
+        "clientHint": "Fokussiere einen Kunden ohne Kontextverlust.",
+        "assignee": "Zugewiesen",
+        "allAssignees": "Alle Zugewiesenen",
+        "assigneeHint": "Uberlastung schnell erkennen.",
+        "clear": "Filter loschen"
+      },
+      "lanes": {
+        "unscheduled": {
+          "title": "Nicht geplante Warteschlange",
+          "subtitle": "Ziehe diese in die Disposition, wenn der Tag beginnt.",
+          "hint": "Ziel: vor dem Einsatz leeren.",
+          "count": "wartend"
+        },
+        "scheduled": {
+          "title": "Geplant fur die nachsten 7 Tage",
+          "subtitle": "Jobs mit hoher Taktung brauchen eine ruhige Hand.",
+          "hint": "Lucken prufen und fruh ausgleichen.",
+          "count": "geplant"
+        }
+      },
+      "empty": {
+        "unscheduled": {
+          "title": "Keine Jobs warten auf Planung.",
+          "subtitle": "Neue Jobs erscheinen hier automatisch."
+        },
+        "scheduled": {
+          "title": "Keine Jobs in der nachsten Woche geplant.",
+          "subtitle": "Nutze Disposition, um Arbeit vorzuziehen."
+        }
+      },
+      "preview": {
+        "eyebrow": "Job-Fokus",
+        "titleFallback": "Job auswahlen",
+        "subtitle": "Wahle eine Jobkarte, um Details zu sehen.",
+        "status": "Status",
+        "nextSchedule": "Nachster Termin",
+        "quickAssign": "Schnell zuweisen",
+        "assignHint": "Plane den Job, um ein Team zuzuweisen.",
+        "saving": "Speichern...",
+        "applyCrew": "Team anwenden",
+        "notes": "Notizen",
+        "noNotes": "Noch keine Notizen."
+      },
+      "actions": {
+        "schedule": "Planen",
+        "edit": "Job bearbeiten",
+        "copyUpdates": "Update-Link kopieren",
+        "openDispatch": "Disposition offnen",
+        "add": "Job hinzufugen",
+        "delete": "Loschen"
+      },
+      "table": {
+        "title": "Alle Jobs",
+        "subtitle": "Durchsuchen Sie alle Jobs in Ihrem Workspace.",
+        "columns": {
+          "job": "Job",
+          "status": "Status",
+          "phone": "Telefon",
+          "actions": "Aktionen"
+        }
+      },
+      "labels": {
+        "untitled": "Job ohne Titel",
+        "missing": "-",
+        "clientTbd": "Kunde folgt"
+      },
+      "toast": {
+        "loadFailed": "Jobs konnten nicht geladen werden",
+        "statusFailed": "Statusaktualisierung fehlgeschlagen",
+        "linkCopied": "Update-Link kopiert.",
+        "linkCopyFailed": "Link konnte nicht kopiert werden.",
+        "assigneesFailed": "Zuweisungen konnten nicht aktualisiert werden",
+        "deleteUnavailable": "Loschen nicht verfugbar fur {{title}}"
+      },
+      "status": {
+        "draft": "Entwurf",
+        "approved": "Freigegeben",
+        "inprogress": "In Arbeit",
+        "completed": "Abgeschlossen",
+        "cancelled": "Storniert",
+        "failed": "Fehlgeschlagen"
+      }
+    },
+    "employees": {
+      "title": "Mitarbeiter",
+      "subtitle": "Teammitglieder und Rollen verwalten",
+      "loading": {
+        "roles": "Rollen der Organisation werden gepruft..."
+      },
+      "empty": {
+        "rolesTitle": "Keine Mitarbeiterrollen gefunden.",
+        "rolesSubtitle": "Bitte zuerst eine Rolle erstellen."
+      },
+      "actions": {
+        "goToRoles": "Zu Mitarbeiterrollen",
+        "invite": "Einladen",
+        "add": "Mitarbeiter hinzufugen",
+        "edit": "Bearbeiten",
+        "delete": "Loschen",
+        "cancel": "Abbrechen",
+        "save": "Mitarbeiter speichern"
+      },
+      "metrics": {
+        "total": "Teammitglieder",
+        "totalNote": "Alle Mitarbeiter in Ihrer Org",
+        "active": "Aktiv",
+        "activeNote": "Fur Einsatze verfugbar",
+        "inactive": "Inaktiv",
+        "inactiveNote": "Pausiert oder im Offboarding",
+        "roles": "Rollen",
+        "rolesNote": "In den Rolleneinstellungen definiert"
+      },
+      "cta": {
+        "eyebrow": "Schnellaktion",
+        "title": "Mitarbeiter einladen oder hinzufugen",
+        "subtitle": "Einladungen senden oder direkt hinzufugen."
+      },
+      "filters": {
+        "clear": "Filter loschen",
+        "role": "Rolle",
+        "allRoles": "Alle Rollen",
+        "all": "Alle",
+        "active": "Aktiv",
+        "inactive": "Inaktiv"
+      },
+      "table": {
+        "name": "Name",
+        "email": "E-Mail",
+        "role": "Rolle",
+        "invite": "Einladung",
+        "actions": "Aktionen"
+      },
+      "invites": {
+        "eyebrow": "Ausstehende Einladungen",
+        "title": "Einladungen",
+        "subtitle": "Verfolgen Sie Einladungen zur Organisation.",
+        "send": "Einladung senden",
+        "role": "Rolle",
+        "expires": "Lauft ab",
+        "emptyTitle": "Noch keine Einladungen",
+        "emptySubtitle": "Senden Sie eine Einladung, um einen Mitarbeiter hinzuzufugen."
+      },
+      "drawer": {
+        "editTitle": "Mitarbeiter bearbeiten",
+        "addTitle": "Mitarbeiter hinzufugen",
+        "updateEyebrow": "Profil aktualisieren",
+        "newEyebrow": "Neuer Mitarbeiter",
+        "subtitle": "Grunddaten ausfullen und Rolle zuweisen."
+      },
+      "inviteDrawer": {
+        "title": "Mitarbeiter einladen",
+        "eyebrow": "Einladungsfluss",
+        "subtitle": "Wir senden die Einladung per E-Mail."
+      },
+      "delete": {
+        "title": "Mitarbeiter loschen",
+        "eyebrow": "Mitarbeiter loschen",
+        "subtitle": "Diese Aktion kann nicht ruckgangig gemacht werden.",
+        "confirm": "Mochten Sie {{name}} wirklich loschen?",
+        "confirmButton": "Mitarbeiter loschen"
+      },
+      "inviteStatus": {
+        "revoked": "Widerrufen",
+        "accepted": "Akzeptiert",
+        "expired": "Abgelaufen",
+        "pending": "Ausstehend"
+      },
+      "labels": {
+        "employee": "Mitarbeiter",
+        "unknownRole": "Unbekannte Rolle",
+        "missing": "-"
+      },
+      "toast": {
+        "rolesRequired": "Sie mussen mindestens eine Rolle erstellen, bevor Sie Mitarbeiter hinzufugen.",
+        "updated": "Mitarbeiter aktualisiert",
+        "successTitle": "Erfolg",
+        "updateFailed": "Mitarbeiteraktualisierung fehlgeschlagen",
+        "failedTitle": "Fehlgeschlagen",
+        "emailExists": "{{email}} existiert bereits",
+        "warningTitle": "Warnung",
+        "added": "Mitarbeiter hinzugefugt",
+        "addFailed": "Mitarbeiter konnte nicht hinzugefugt werden",
+        "checkEmailFailed": "E-Mail-Prufung fehlgeschlagen",
+        "inviteSent": "Einladung an {{name}} gesendet",
+        "deleted": "Mitarbeiter geloscht",
+        "deleteFailed": "Mitarbeiter konnte nicht geloscht werden"
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-support-hub-login',
@@ -18,7 +19,8 @@ import { MessageModule } from 'primeng/message';
     InputTextModule,
     PasswordModule,
     ButtonModule,
-    MessageModule
+    MessageModule,
+    TranslateModule
   ],
   templateUrl: './support-hub-login.component.html',
   styleUrl: './support-hub-login.component.scss',
@@ -26,6 +28,7 @@ import { MessageModule } from 'primeng/message';
 export class SupportHubLoginComponent {
   private auth = inject(Auth);
   private router = inject(Router);
+  private translate = inject(TranslateService);
 
   @ViewChild('form') form?: NgForm;
 
@@ -68,20 +71,20 @@ export class SupportHubLoginComponent {
     const maybeError = error as { code?: string; message?: string } | null;
     const code = maybeError?.code;
     if (!code) {
-      return maybeError?.message || 'Something went wrong. Please try again.';
+      return maybeError?.message || this.translate.instant('support.login.errors.generic');
     }
 
     switch (code) {
       case 'auth/invalid-email':
-        return 'Please enter a valid email address.';
+        return this.translate.instant('support.login.errors.invalidEmail');
       case 'auth/user-not-found':
-        return 'No account found for this email.';
+        return this.translate.instant('support.login.errors.userNotFound');
       case 'auth/wrong-password':
-        return 'Incorrect password. Try again.';
+        return this.translate.instant('support.login.errors.wrongPassword');
       case 'auth/too-many-requests':
-        return 'Too many attempts. Please wait and try again.';
+        return this.translate.instant('support.login.errors.tooManyRequests');
       default:
-        return maybeError?.message || 'Something went wrong. Please try again.';
+        return maybeError?.message || this.translate.instant('support.login.errors.generic');
     }
   }
 }

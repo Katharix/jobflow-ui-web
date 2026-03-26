@@ -1,25 +1,25 @@
 <app-page-header
-  title="Support Tickets"
-  subtitle="Track and triage incoming requests across all organizations."
+  [title]="'support.tickets.header.title' | translate"
+  [subtitle]="'support.tickets.header.subtitle' | translate"
 ></app-page-header>
 
 <section class="support-list">
   <div class="support-list__header">
     <div>
-      <h5 class="support-mb-1">Priority queue</h5>
-      <p class="support-muted">Escalate urgent tickets or assign to a pod.</p>
+      <h5 class="support-mb-1">{{ 'support.tickets.priorityTitle' | translate }}</h5>
+      <p class="support-muted">{{ 'support.tickets.prioritySubtitle' | translate }}</p>
     </div>
     <button
       pButton
       type="button"
       class="p-button-outlined p-button-secondary"
       (click)="seedDemo()"
-    >Seed demo data</button>
+    >{{ 'support.tickets.seedDemo' | translate }}</button>
   </div>
 
   <div class="support-list__composer">
     <div>
-      <label class="form-label" for="support-ticket-org">Organization</label>
+      <label class="form-label" for="support-ticket-org">{{ 'support.common.organization' | translate }}</label>
       <div class="support-org-select">
         <p-dropdown
           [options]="organizationOptions"
@@ -27,7 +27,7 @@
           optionValue="value"
           inputId="support-ticket-org"
           [(ngModel)]="selectedOrganizationId"
-          placeholder="Select organization"
+          [placeholder]="'support.common.selectOrganization' | translate"
           styleClass="support-w-100"
         ></p-dropdown>
         <button
@@ -35,31 +35,31 @@
           type="button"
           class="p-button-outlined p-button-secondary"
           (click)="openOrgModal()"
-        >Find</button>
+        >{{ 'support.common.find' | translate }}</button>
       </div>
     </div>
     <div>
-      <label class="form-label" for="support-ticket-title">Title</label>
+      <label class="form-label" for="support-ticket-title">{{ 'support.tickets.titleLabel' | translate }}</label>
       <input
         pInputText
         id="support-ticket-title"
         class="support-w-100"
         [(ngModel)]="newTitle"
-        placeholder="Ticket title"
+        [placeholder]="'support.tickets.titlePlaceholder' | translate"
       />
     </div>
     <div>
-      <label class="form-label" for="support-ticket-summary">Summary</label>
+      <label class="form-label" for="support-ticket-summary">{{ 'support.tickets.summaryLabel' | translate }}</label>
       <input
         pInputText
         id="support-ticket-summary"
         class="support-w-100"
         [(ngModel)]="newSummary"
-        placeholder="Short summary"
+        [placeholder]="'support.tickets.summaryPlaceholder' | translate"
       />
     </div>
     <div>
-      <label class="form-label" for="support-ticket-priority">Priority</label>
+      <label class="form-label" for="support-ticket-priority">{{ 'support.tickets.priorityLabel' | translate }}</label>
       <p-dropdown
         [options]="statusOptions"
         optionLabel="label"
@@ -74,7 +74,7 @@
       type="button"
       class="p-button-primary"
       (click)="createTicket()"
-    >Create ticket</button>
+    >{{ 'support.tickets.create' | translate }}</button>
   </div>
 
   @if (actionMessage) {
@@ -82,7 +82,9 @@
   }
 
   <ng-template #statusTemplate let-ticket>
-    <span [ngClass]="getTicketStatusClass(ticket.status)">{{ ticket.status }}</span>
+    <span [ngClass]="getTicketStatusClass(ticket.status)">
+      {{ getTicketStatusLabelKey(ticket.status) | translate }}
+    </span>
   </ng-template>
 
   <ng-template #actionsTemplate let-ticket>
@@ -91,13 +93,13 @@
       type="button"
       class="p-button-outlined p-button-secondary p-button-sm"
       (click)="copyTicketId(ticket)"
-    >Copy ID</button>
+    >{{ 'support.common.copyId' | translate }}</button>
   </ng-template>
 
   <div class="support-list__grid">
     @if (isLoading) {
       <div class="support-list__empty">
-        <p class="support-muted support-mb-0">Loading tickets...</p>
+        <p class="support-muted support-mb-0">{{ 'support.tickets.loading' | translate }}</p>
       </div>
     } @else if (error) {
       <div class="support-list__empty">
@@ -124,22 +126,22 @@
       type="button"
       class="support-modal__backdrop"
       (click)="closeOrgModal()"
-      aria-label="Close modal"
+      [attr.aria-label]="'support.common.closeModal' | translate"
     ></button>
     <div class="support-modal__panel">
       <div class="support-modal__header">
-        <h5>Select organization</h5>
+        <h5>{{ 'support.common.selectOrganization' | translate }}</h5>
         <button
           pButton
           type="button"
           class="p-button-text"
           (click)="closeOrgModal()"
-        >Close</button>
+        >{{ 'support.common.close' | translate }}</button>
       </div>
       <input
         pInputText
         class="support-w-100"
-        placeholder="Search organizations"
+        [placeholder]="'support.common.searchOrganizations' | translate"
         [(ngModel)]="orgSearchTerm"
       />
       <div class="support-modal__list">

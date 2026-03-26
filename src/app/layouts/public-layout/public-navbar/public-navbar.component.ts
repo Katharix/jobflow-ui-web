@@ -1,13 +1,14 @@
-import { CommonModule, TitleCasePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, HostListener, Input, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { filter } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-public-navbar',
   standalone: true,
-  imports: [CommonModule, NgbCollapseModule,TitleCasePipe,RouterLink],
+  imports: [CommonModule, NgbCollapseModule, RouterLink, TranslateModule],
   templateUrl: './public-navbar.component.html',
   styleUrl: './public-navbar.component.scss'
 })

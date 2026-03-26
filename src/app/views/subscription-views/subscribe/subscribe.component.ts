@@ -12,6 +12,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { US_STATES } from '../../../common/constants';
 import { LoadingService } from '../../../services/shared/loading-service.service';
 import { Observable } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 interface GoogleAddressComponent {
    long_name: string;
@@ -45,7 +46,7 @@ declare const google: {
 @Component({
    selector: 'app-subscribe',
    standalone: true,
-   imports: [RouterLink, FormsModule, CommonModule],
+   imports: [RouterLink, FormsModule, CommonModule, TranslateModule],
    templateUrl: './subscribe.component.html',
    schemas: [CUSTOM_ELEMENTS_SCHEMA],
    styleUrl: './subscribe.component.scss'
@@ -58,6 +59,7 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
    private cdRef = inject(ChangeDetectorRef);
    private paymentService = inject(PaymentService);
    private loadingService = inject(LoadingService);
+   private translate = inject(TranslateService);
 
 
    @ViewChild('addressInput') addressInput?: ElementRef<HTMLInputElement>;
@@ -208,13 +210,13 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
                  window.location.href = checkoutResponse.url;
                  return;
               }
-              this.error = 'Payment checkout did not return a redirect URL.';
+             this.error = this.translate.instant('subscribe.errors.checkoutRedirect');
               this.loadingService.hide();
            },
 
            error: (paymentError: unknown) => {
               console.error('Failed to create subscription:', paymentError);
-              this.error = 'Failed to create subscription. Please try again.';
+              this.error = this.translate.instant('subscribe.errors.subscriptionFailed');
               this.loadingService.hide();
               this.loadingService.hide();
            }
@@ -225,7 +227,7 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
 
      error: (err: unknown) => {
         console.error('Failed to create organization:', err);
-        this.error = 'Failed to create organization. Please try again.';
+        this.error = this.translate.instant('subscribe.errors.organizationFailed');
         this.loadingService.hide();
      }
   });

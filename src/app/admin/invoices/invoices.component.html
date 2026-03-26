@@ -1,6 +1,6 @@
 <app-page-header
-  title="Invoices"
-  subtitle="All invoices for your organization"
+  [title]="'admin.invoices.title' | translate"
+  [subtitle]="'admin.invoices.subtitle' | translate"
   [actions]="headerActions"
 ></app-page-header>
 
@@ -13,39 +13,39 @@
 <section class="invoices-overview">
   <div class="invoices-overview__metrics">
     <article class="invoices-card">
-      <p class="invoices-card__label">Total invoices</p>
+      <p class="invoices-card__label">{{ 'admin.invoices.metrics.total' | translate }}</p>
       <h3>{{ summary.total }}</h3>
-      <p class="invoices-card__note">Across all clients</p>
+      <p class="invoices-card__note">{{ 'admin.invoices.metrics.totalNote' | translate }}</p>
     </article>
     <article class="invoices-card">
-      <p class="invoices-card__label">Sent</p>
+      <p class="invoices-card__label">{{ 'admin.invoices.metrics.sent' | translate }}</p>
       <h3>{{ summary.sent }}</h3>
-      <p class="invoices-card__note">Awaiting payment</p>
+      <p class="invoices-card__note">{{ 'admin.invoices.metrics.sentNote' | translate }}</p>
     </article>
     <article class="invoices-card">
-      <p class="invoices-card__label">Overdue</p>
+      <p class="invoices-card__label">{{ 'admin.invoices.metrics.overdue' | translate }}</p>
       <h3>{{ summary.overdue }}</h3>
-      <p class="invoices-card__note">Needs follow-up</p>
+      <p class="invoices-card__note">{{ 'admin.invoices.metrics.overdueNote' | translate }}</p>
     </article>
     <article class="invoices-card">
-      <p class="invoices-card__label">Total billed</p>
+      <p class="invoices-card__label">{{ 'admin.invoices.metrics.totalBilled' | translate }}</p>
       <h3>{{ formatMoney(summary.totalBilled) }}</h3>
-      <p class="invoices-card__note">Gross invoice value</p>
+      <p class="invoices-card__note">{{ 'admin.invoices.metrics.totalBilledNote' | translate }}</p>
     </article>
     <article class="invoices-card invoices-card--accent">
-      <p class="invoices-card__label">Outstanding</p>
+      <p class="invoices-card__label">{{ 'admin.invoices.metrics.outstanding' | translate }}</p>
       <h3>{{ formatMoney(summary.balanceDue) }}</h3>
-      <p class="invoices-card__note">Balance due now</p>
+      <p class="invoices-card__note">{{ 'admin.invoices.metrics.outstandingNote' | translate }}</p>
     </article>
   </div>
   <div class="invoices-cta">
     <div>
-      <p class="invoices-cta__eyebrow">Quick action</p>
-      <h3>Create and send an invoice</h3>
-      <p>Select the job, review line items, then send to the client.</p>
+      <p class="invoices-cta__eyebrow">{{ 'admin.invoices.cta.eyebrow' | translate }}</p>
+      <h3>{{ 'admin.invoices.cta.title' | translate }}</h3>
+      <p>{{ 'admin.invoices.cta.subtitle' | translate }}</p>
     </div>
     <button type="button" class="btn btn-primary" (click)="openCreateInvoiceDrawer()">
-      Create Invoice
+      {{ 'admin.invoices.cta.button' | translate }}
     </button>
   </div>
 </section>
@@ -83,7 +83,7 @@
     type="button"
     class="btn btn-sm btn-link"
     (click)="openInvoice(invoice)">
-    View
+    {{ 'admin.invoices.actions.view' | translate }}
   </button>
 </ng-template>
 
@@ -96,7 +96,7 @@
 
 <app-jobflow-drawer
   [open]="isCreateDrawerOpen"
-  [title]="selectedJob ? 'Create Invoice' : 'Select Job to Invoice'"
+  [title]="selectedJob ? ('admin.invoices.drawer.createTitle' | translate) : ('admin.invoices.drawer.selectTitle' | translate)"
   [width]="760"
   (closed)="onCreateDrawerClosed()"
   >
@@ -104,28 +104,25 @@
     @if (!selectedJob) {
       <div class="invoice-drawer__intro">
         <p class="invoice-drawer__eyebrow">
-          {{ isInvoiceOnboardingFlow ? 'Onboarding Step 4' : 'Create Invoice' }}
+          {{ isInvoiceOnboardingFlow ? ('admin.invoices.drawer.onboardingStep' | translate) : ('admin.invoices.drawer.createTitle' | translate) }}
         </p>
-        <h3>Pick the job to invoice</h3>
-        <p>Find the job, confirm the client, and we will build the invoice from there.</p>
+        <h3>{{ 'admin.invoices.drawer.pickJobTitle' | translate }}</h3>
+        <p>{{ 'admin.invoices.drawer.pickJobSubtitle' | translate }}</p>
         <div class="invoice-drawer__intro-tags">
-          <span>Recent jobs first</span>
-          <span>Search by client</span>
-          <span>Fast invoice setup</span>
+          <span>{{ 'admin.invoices.drawer.tags.recent' | translate }}</span>
+          <span>{{ 'admin.invoices.drawer.tags.search' | translate }}</span>
+          <span>{{ 'admin.invoices.drawer.tags.fast' | translate }}</span>
         </div>
       </div>
       <section class="invoice-drawer__picker" [class.invoice-drawer__picker--onboarding]="isInvoiceOnboardingFlow">
         <div class="invoice-drawer__picker-header">
-          <h3>Choose the job first</h3>
-          <p>
-            Keep it simple: select the job, confirm line items, then create the invoice.
-            Jobs are listed with the most recent first.
-          </p>
+          <h3>{{ 'admin.invoices.drawer.chooseJobTitle' | translate }}</h3>
+          <p>{{ 'admin.invoices.drawer.chooseJobSubtitle' | translate }}</p>
         </div>
         <input
           type="search"
           class="form-control"
-          placeholder="Search by job title or client"
+          [placeholder]="'admin.invoices.drawer.searchPlaceholder' | translate"
           [(ngModel)]="jobSearchText"
           />
           @if (jobPickerError) {
@@ -138,7 +135,7 @@
               @for (job of filteredRecentJobs; track trackByJobId($index, job)) {
                 <article class="invoice-drawer__job-card">
                   <div>
-                    <h4>{{ job.title || 'Untitled job' }}</h4>
+                    <h4>{{ job.title || ('admin.invoices.drawer.untitledJob' | translate) }}</h4>
                     <p>{{ getJobClientName(job) }} • {{ formatJobDate(job.scheduledStart) }}</p>
                   </div>
                   <div class="invoice-drawer__job-card-actions">
@@ -150,7 +147,7 @@
                       class="btn btn-primary btn-sm"
                       (click)="selectJobForInvoice(job)"
                       >
-                      Select
+                      {{ 'admin.invoices.drawer.selectJob' | translate }}
                     </button>
                   </div>
                 </article>
@@ -158,13 +155,11 @@
             </div>
           } @else {
             <div class="invoice-drawer__empty-state">
-              <h4>{{ jobSearchText.trim() ? 'No matching jobs found' : 'No jobs found yet' }}</h4>
+              <h4>{{ jobSearchText.trim() ? ('admin.invoices.drawer.noMatches' | translate) : ('admin.invoices.drawer.noJobs' | translate) }}</h4>
               @if (jobSearchText.trim()) {
-                <p>
-                  Try another search to find the right job.
-                </p>
+                <p>{{ 'admin.invoices.drawer.noMatchesHint' | translate }}</p>
               } @else {
-                Create a job first, then invoice it from this drawer.
+                {{ 'admin.invoices.drawer.noJobsHint' | translate }}
               }
               <a
                 class="btn btn-outline-primary btn-sm"
@@ -173,7 +168,7 @@
                   ? { onboardingAction: 'open-job-drawer', returnTo: 'dashboard-command-center' }
                   : { onboardingAction: 'open-job-drawer' }"
                 >
-                Create a job
+                {{ 'admin.invoices.drawer.createJob' | translate }}
               </a>
             </div>
           }
@@ -181,16 +176,16 @@
       } @else {
         <form [formGroup]="invoiceForm" (ngSubmit)="createInvoice()" class="invoice-form">
           <div class="invoice-form__intro">
-            <p class="invoice-drawer__eyebrow">Invoice details</p>
-            <h3>Build the invoice</h3>
-            <p>Adjust dates, review line items, and create the invoice when ready.</p>
+            <p class="invoice-drawer__eyebrow">{{ 'admin.invoices.drawer.detailsEyebrow' | translate }}</p>
+            <h3>{{ 'admin.invoices.drawer.detailsTitle' | translate }}</h3>
+            <p>{{ 'admin.invoices.drawer.detailsSubtitle' | translate }}</p>
           </div>
           <div class="invoice-form__job-summary">
             <button type="button" class="btn btn-sm btn-link px-0" (click)="backToJobPicker()">
               <i class="pi pi-arrow-left me-1"></i>
-              Choose different job
+              {{ 'admin.invoices.drawer.backToJobs' | translate }}
             </button>
-            <h4>{{ selectedJob.title || 'Untitled job' }}</h4>
+            <h4>{{ selectedJob.title || ('admin.invoices.drawer.untitledJob' | translate) }}</h4>
             <p>{{ getJobClientName(selectedJob) }} • {{ formatJobDate(selectedJob.scheduledStart) }}</p>
             <span class="job-status-chip" [ngClass]="getJobStatusClass(selectedJob)">
               {{ getJobStatusLabel(selectedJob) }}
@@ -198,9 +193,9 @@
           </div>
           @if (prefillEstimate) {
             <div class="alert alert-info mb-4">
-              Preloaded from estimate
+              {{ 'admin.invoices.drawer.prefill' | translate }}
               <strong>#{{ prefillEstimate.estimateNumber }}</strong>.
-              Adjust any line item before creating the invoice.
+              {{ 'admin.invoices.drawer.prefillHint' | translate }}
             </div>
           }
           @if (createInvoiceError) {
@@ -210,7 +205,7 @@
           }
           <div class="row g-3 mb-4">
             <div class="col-12 col-md-6">
-              <label class="invoice-form__label" for="invoiceDate">Invoice Date <span class="text-danger">*</span></label>
+              <label class="invoice-form__label" for="invoiceDate">{{ 'admin.invoices.form.invoiceDate' | translate }} <span class="text-danger">*</span></label>
               <input
                 id="invoiceDate"
                 type="date"
@@ -220,7 +215,7 @@
                 />
               </div>
               <div class="col-12 col-md-6">
-                <label class="invoice-form__label" for="invoiceDueDate">Due Date <span class="text-danger">*</span></label>
+                <label class="invoice-form__label" for="invoiceDueDate">{{ 'admin.invoices.form.dueDate' | translate }} <span class="text-danger">*</span></label>
                 <input
                   id="invoiceDueDate"
                   type="date"
@@ -232,21 +227,21 @@
               </div>
               <div class="mb-4">
                 <div class="d-flex align-items-center justify-content-between mb-2">
-                  <span class="invoice-form__section-heading">Line Items</span>
+                  <span class="invoice-form__section-heading">{{ 'admin.invoices.form.lineItems' | translate }}</span>
                   <button
                     type="button"
                     class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
                     (click)="addInvoiceLine()"
                     >
                     <i class="pi pi-plus"></i>
-                    Add Line
+                    {{ 'admin.invoices.form.addLine' | translate }}
                   </button>
                 </div>
                 <div class="invoice-form__line-header d-none d-md-grid">
-                  <span>Description</span>
-                  <span>Qty</span>
-                  <span>Unit Price</span>
-                  <span class="text-end">Total</span>
+                  <span>{{ 'admin.invoices.form.description' | translate }}</span>
+                  <span>{{ 'admin.invoices.form.quantity' | translate }}</span>
+                  <span>{{ 'admin.invoices.form.unitPrice' | translate }}</span>
+                  <span class="text-end">{{ 'admin.invoices.form.total' | translate }}</span>
                   <span></span>
                 </div>
                 <div formArrayName="lineItems">
@@ -259,7 +254,7 @@
                         <input
                           pInputText
                           formControlName="description"
-                          placeholder="Line item description"
+                          [placeholder]="'admin.invoices.form.descriptionPlaceholder' | translate"
                           class="w-100"
                           />
                         </div>
@@ -293,7 +288,7 @@
                             class="btn btn-sm btn-link text-danger p-0"
                             (click)="removeInvoiceLine(i)"
                             [disabled]="invoiceLineItems.length === 1"
-                            title="Remove line"
+                            [title]="'admin.invoices.form.removeLine' | translate"
                             >
                             <i class="pi pi-trash"></i>
                           </button>
@@ -302,7 +297,7 @@
                     }
                   </div>
                   <div class="invoice-form__total-row">
-                    <span class="text-muted">Invoice Total</span>
+                    <span class="text-muted">{{ 'admin.invoices.form.invoiceTotal' | translate }}</span>
                     <strong>{{ formatMoney(invoiceTotal) }}</strong>
                   </div>
                 </div>
@@ -313,14 +308,14 @@
                     (click)="closeCreateInvoiceDrawer({ navigateToCommandCenter: true })"
                     [disabled]="creatingInvoice"
                     >
-                    Cancel
+                    {{ 'admin.invoices.form.cancel' | translate }}
                   </button>
                   <button
                     type="submit"
                     class="btn btn-primary"
                     [disabled]="creatingInvoice || invoiceForm.invalid"
                     >
-                    {{ creatingInvoice ? 'Creating…' : 'Create Invoice' }}
+                    {{ creatingInvoice ? ('admin.invoices.form.creating' | translate) : ('admin.invoices.form.create' | translate) }}
                   </button>
                 </div>
               </form>

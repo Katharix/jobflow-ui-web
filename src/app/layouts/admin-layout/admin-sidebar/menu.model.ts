@@ -2,6 +2,7 @@ export type SubscriptionPlan = 'Go' | 'Flow' | 'Max';
 
 export interface MenuItem {
   label: string;
+  labelKey?: string;
   icon?: string;
   link?: string;
   subItems?: MenuItem[];

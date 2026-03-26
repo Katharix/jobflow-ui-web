@@ -1,6 +1,6 @@
 <app-page-header
-  title="Jobs"
-  subtitle="Keep every job flowing with zero drag"
+  [title]="'admin.jobs.title' | translate"
+  [subtitle]="'admin.jobs.subtitle' | translate"
   [actions]="headerActions"
 ></app-page-header>
 
@@ -12,7 +12,7 @@
 
 <app-jobflow-drawer
   [open]="isDrawerOpen"
-  title="Add Job"
+  [title]="'admin.jobs.drawer.addTitle' | translate"
   (closed)="onDrawerClosed()"
   >
   <app-job-create [job]="editingJob" (saved)="onCreateSaved()" (cancelled)="onCreateCancelled()"/>
@@ -20,24 +20,24 @@
 
 <section class="jobflow-hero">
   <div class="jobflow-hero__intro">
-    <span class="jobflow-hero__eyebrow">Flow pulse</span>
-    <p>Queue unscheduled work, surface what is active, and keep status changes one tap away.</p>
+    <span class="jobflow-hero__eyebrow">{{ 'admin.jobs.hero.eyebrow' | translate }}</span>
+    <p>{{ 'admin.jobs.hero.subtitle' | translate }}</p>
   </div>
   <div class="jobflow-hero__metrics">
     <div class="jobflow-metric">
-      <span class="jobflow-metric__label">Total jobs</span>
+      <span class="jobflow-metric__label">{{ 'admin.jobs.metrics.total' | translate }}</span>
       <span class="jobflow-metric__value">{{ totalJobs }}</span>
     </div>
     <div class="jobflow-metric">
-      <span class="jobflow-metric__label">Unscheduled</span>
+      <span class="jobflow-metric__label">{{ 'admin.jobs.metrics.unscheduled' | translate }}</span>
       <span class="jobflow-metric__value">{{ unscheduledJobs.length }}</span>
     </div>
     <div class="jobflow-metric">
-      <span class="jobflow-metric__label">In progress</span>
+      <span class="jobflow-metric__label">{{ 'admin.jobs.metrics.inProgress' | translate }}</span>
       <span class="jobflow-metric__value">{{ inProgressCount }}</span>
     </div>
     <div class="jobflow-metric">
-      <span class="jobflow-metric__label">Completed</span>
+      <span class="jobflow-metric__label">{{ 'admin.jobs.metrics.completed' | translate }}</span>
       <span class="jobflow-metric__value">{{ completedCount }}</span>
     </div>
   </div>
@@ -45,43 +45,43 @@
 
 <section class="jobflow-filters">
   <div class="jobflow-filters__group">
-    <label for="jobFilterStatus">Status</label>
+    <label for="jobFilterStatus">{{ 'admin.jobs.filters.status' | translate }}</label>
     <select id="jobFilterStatus" class="form-select" [(ngModel)]="selectedStatusFilter" (change)="onFiltersChanged()">
-      <option value="">All statuses</option>
+      <option value="">{{ 'admin.jobs.filters.allStatuses' | translate }}</option>
       @for (status of statusOptions; track status) {
         <option [value]="status.statusKey">
           {{ status.label }}
         </option>
       }
     </select>
-    <small class="text-muted">Match the board to how your team labels work.</small>
+    <small class="text-muted">{{ 'admin.jobs.filters.statusHint' | translate }}</small>
   </div>
   <div class="jobflow-filters__group">
-    <label for="jobFilterClient">Client</label>
+    <label for="jobFilterClient">{{ 'admin.jobs.filters.client' | translate }}</label>
     <select id="jobFilterClient" class="form-select" [(ngModel)]="selectedClientFilter" (change)="onFiltersChanged()">
-      <option value="">All clients</option>
+      <option value="">{{ 'admin.jobs.filters.allClients' | translate }}</option>
       @for (client of clientOptions; track client) {
         <option [value]="client.value">
           {{ client.label }}
         </option>
       }
     </select>
-    <small class="text-muted">Focus on one customer without losing context.</small>
+    <small class="text-muted">{{ 'admin.jobs.filters.clientHint' | translate }}</small>
   </div>
   <div class="jobflow-filters__group">
-    <label for="jobFilterAssignee">Assignee</label>
+    <label for="jobFilterAssignee">{{ 'admin.jobs.filters.assignee' | translate }}</label>
     <select id="jobFilterAssignee" class="form-select" [(ngModel)]="selectedAssigneeFilter" (change)="onFiltersChanged()">
-      <option value="">All assignees</option>
+      <option value="">{{ 'admin.jobs.filters.allAssignees' | translate }}</option>
       @for (assignee of assigneeOptions; track assignee) {
         <option [value]="assignee.value">
           {{ assignee.label }}
         </option>
       }
     </select>
-    <small class="text-muted">Quickly spot who is overloaded.</small>
+    <small class="text-muted">{{ 'admin.jobs.filters.assigneeHint' | translate }}</small>
   </div>
   <button class="btn btn-link jobflow-filters__clear" type="button" (click)="clearFilters()">
-    Clear filters
+    {{ 'admin.jobs.filters.clear' | translate }}
   </button>
 </section>
 
@@ -90,11 +90,11 @@
     <div class="jobflow-lane">
       <div class="jobflow-lane__header">
         <div>
-          <h5>Unscheduled queue</h5>
-          <p>Drag these into dispatch when the day opens up.</p>
-          <small class="text-muted">Aim to clear this before crews roll out.</small>
+          <h5>{{ 'admin.jobs.lanes.unscheduled.title' | translate }}</h5>
+          <p>{{ 'admin.jobs.lanes.unscheduled.subtitle' | translate }}</p>
+          <small class="text-muted">{{ 'admin.jobs.lanes.unscheduled.hint' | translate }}</small>
         </div>
-        <span class="jobflow-lane__count">{{ unscheduledJobs.length }} waiting</span>
+        <span class="jobflow-lane__count">{{ unscheduledJobs.length }} {{ 'admin.jobs.lanes.unscheduled.count' | translate }}</span>
       </div>
       @if (unscheduledJobs.length) {
         <div class="jobflow-lane__body">
@@ -109,22 +109,22 @@
               role="button"
               >
               <div>
-                <h6>{{ job.title || 'Untitled job' }}</h6>
+                <h6>{{ job.title || ('admin.jobs.labels.untitled' | translate) }}</h6>
                 <p>{{ getClientName(job) }}</p>
               </div>
               <div class="jobflow-card__meta">
                 <span class="job-status-chip" [ngClass]="getStatusChipClass(job)">
                   {{ getStatusChipLabel(job) }}
                 </span>
-                <button class="btn btn-sm btn-primary" (click)="scheduleJob(job); $event.stopPropagation()">Schedule</button>
+                <button class="btn btn-sm btn-primary" (click)="scheduleJob(job); $event.stopPropagation()">{{ 'admin.jobs.actions.schedule' | translate }}</button>
               </div>
             </article>
           }
         </div>
       } @else {
         <div class="jobflow-empty">
-          <p>No jobs waiting for scheduling.</p>
-          <span>New jobs will appear here automatically.</span>
+          <p>{{ 'admin.jobs.empty.unscheduled.title' | translate }}</p>
+          <span>{{ 'admin.jobs.empty.unscheduled.subtitle' | translate }}</span>
         </div>
       }
     </div>
@@ -132,11 +132,11 @@
     <div class="jobflow-lane">
       <div class="jobflow-lane__header">
         <div>
-          <h5>Scheduled next 7 days</h5>
-          <p>High-velocity jobs that need a steady hand.</p>
-          <small class="text-muted">Check for gaps and rebalance early.</small>
+          <h5>{{ 'admin.jobs.lanes.scheduled.title' | translate }}</h5>
+          <p>{{ 'admin.jobs.lanes.scheduled.subtitle' | translate }}</p>
+          <small class="text-muted">{{ 'admin.jobs.lanes.scheduled.hint' | translate }}</small>
         </div>
-        <span class="jobflow-lane__count">{{ upcomingScheduledJobs.length }} scheduled</span>
+        <span class="jobflow-lane__count">{{ upcomingScheduledJobs.length }} {{ 'admin.jobs.lanes.scheduled.count' | translate }}</span>
       </div>
       @if (upcomingScheduledJobs.length) {
         <div class="jobflow-lane__body">
@@ -151,7 +151,7 @@
               role="button"
               >
               <div>
-                <h6>{{ job.title || 'Untitled job' }}</h6>
+                <h6>{{ job.title || ('admin.jobs.labels.untitled' | translate) }}</h6>
                 <p>{{ getClientName(job) }}</p>
                 @if (getTimelineMarkers(job).length) {
                   <div class="jobflow-timeline">
@@ -189,8 +189,8 @@
         </div>
       } @else {
         <div class="jobflow-empty">
-          <p>No scheduled jobs in the next week.</p>
-          <span>Use dispatch to pull work forward.</span>
+          <p>{{ 'admin.jobs.empty.scheduled.title' | translate }}</p>
+          <span>{{ 'admin.jobs.empty.scheduled.subtitle' | translate }}</span>
         </div>
       }
     </div>
@@ -198,15 +198,15 @@
 
   <aside class="jobflow-preview">
     <div class="jobflow-preview__header">
-      <span class="jobflow-preview__eyebrow">Job focus</span>
-      <h5>{{ selectedJob?.title || 'Select a job' }}</h5>
-      <p>{{ selectedJob ? getClientName(selectedJob) : 'Choose a job card to view details.' }}</p>
+      <span class="jobflow-preview__eyebrow">{{ 'admin.jobs.preview.eyebrow' | translate }}</span>
+      <h5>{{ selectedJob?.title || ('admin.jobs.preview.titleFallback' | translate) }}</h5>
+      <p>{{ selectedJob ? getClientName(selectedJob) : ('admin.jobs.preview.subtitle' | translate) }}</p>
     </div>
 
     @if (selectedJob) {
       <div class="jobflow-preview__body">
         <div class="jobflow-preview__row">
-          <span>Status</span>
+          <span>{{ 'admin.jobs.preview.status' | translate }}</span>
           <div class="jobflow-status-toggle">
             @for (status of statusOptions; track status) {
               <button
@@ -219,13 +219,13 @@
           </div>
         </div>
         <div class="jobflow-preview__row">
-          <span>Next schedule</span>
+          <span>{{ 'admin.jobs.preview.nextSchedule' | translate }}</span>
           <span>{{ getNextScheduledLabel(selectedJob) }}</span>
         </div>
         <div class="jobflow-preview__assignees">
-          <span>Quick assign</span>
+          <span>{{ 'admin.jobs.preview.quickAssign' | translate }}</span>
           @if (!previewAssignment) {
-            <p class="text-muted small mb-2">Schedule the job to assign a crew.</p>
+            <p class="text-muted small mb-2">{{ 'admin.jobs.preview.assignHint' | translate }}</p>
           }
           @if (previewAssignment) {
             <div class="jobflow-assignee-list">
@@ -247,27 +247,27 @@
               (click)="savePreviewAssignees()"
               [disabled]="!previewAssignment || updatingAssignees"
               >
-              {{ updatingAssignees ? 'Saving�' : 'Apply crew' }}
+              {{ updatingAssignees ? ('admin.jobs.preview.saving' | translate) : ('admin.jobs.preview.applyCrew' | translate) }}
             </button>
           </div>
           <div class="jobflow-preview__notes">
-            <span>Notes</span>
-            <p>{{ selectedJob.comments || 'No notes yet.' }}</p>
+            <span>{{ 'admin.jobs.preview.notes' | translate }}</span>
+            <p>{{ selectedJob.comments || ('admin.jobs.preview.noNotes' | translate) }}</p>
           </div>
           <div class="jobflow-preview__actions">
             @if (isUnscheduled(selectedJob)) {
-              <button class="btn btn-primary" (click)="scheduleJob(selectedJob)">Schedule</button>
+              <button class="btn btn-primary" (click)="scheduleJob(selectedJob)">{{ 'admin.jobs.actions.schedule' | translate }}</button>
             }
-            <button class="btn btn-outline-primary" (click)="editJob(selectedJob)">Edit job</button>
+            <button class="btn btn-outline-primary" (click)="editJob(selectedJob)">{{ 'admin.jobs.actions.edit' | translate }}</button>
             @if (canShareUpdates) {
               <button
                 class="btn btn-outline-secondary"
                 (click)="copyClientUpdatesLink(selectedJob)"
                 >
-                Copy updates link
+                {{ 'admin.jobs.actions.copyUpdates' | translate }}
               </button>
             }
-            <a class="btn btn-outline-secondary" routerLink="/admin/dispatch">Open Dispatch</a>
+            <a class="btn btn-outline-secondary" routerLink="/admin/dispatch">{{ 'admin.jobs.actions.openDispatch' | translate }}</a>
           </div>
         </div>
       }
@@ -276,13 +276,13 @@
 
   <section class="jobflow-table">
     <div class="jobflow-table__header">
-      <h5>All jobs</h5>
-      <p>Search and scan across every job in your workspace.</p>
+      <h5>{{ 'admin.jobs.table.title' | translate }}</h5>
+      <p>{{ 'admin.jobs.table.subtitle' | translate }}</p>
     </div>
 
     <ng-template #jobTitleTemplate let-job>
       <div class="job-cell">
-        <div class="job-title">{{ job.title }}</div>
+        <div class="job-title">{{ job.title || ('admin.jobs.labels.untitled' | translate) }}</div>
         <div class="job-client">
           {{ job.organizationClient.firstName }}
           {{ job.organizationClient.lastName }}
@@ -296,20 +296,20 @@
           <button
             class="btn btn-sm btn-primary"
             (click)="scheduleJob(data)">
-            Schedule
+            {{ 'admin.jobs.actions.schedule' | translate }}
           </button>
         }
 
         <button
           class="btn btn-sm btn-link"
           (click)="editJob(data)">
-          Edit
+          {{ 'admin.jobs.actions.edit' | translate }}
         </button>
 
         <button
           class="btn btn-sm btn-link text-danger"
           (click)="deleteJob(data)">
-          Delete
+          {{ 'admin.jobs.actions.delete' | translate }}
         </button>
       </div>
     </ng-template>

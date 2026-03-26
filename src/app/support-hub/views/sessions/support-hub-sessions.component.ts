@@ -16,6 +16,7 @@ import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-support-hub-sessions',
@@ -28,7 +29,8 @@ import { MessageModule } from 'primeng/message';
     ButtonModule,
     DropdownModule,
     InputTextModule,
-    MessageModule
+    MessageModule,
+    TranslateModule
   ],
   templateUrl: './support-hub-sessions.component.html',
   styleUrl: './support-hub-sessions.component.scss',
@@ -37,6 +39,7 @@ export class SupportHubSessionsComponent implements OnInit {
   private dataService = inject(SupportHubDataService);
   private organizationService = inject(OrganizationService);
   private auth = inject(Auth);
+  private translate = inject(TranslateService);
 
   @ViewChild('statusTemplate', { static: true }) statusTemplate!: TemplateRef<unknown>;
   @ViewChild('actionsTemplate', { static: true }) actionsTemplate!: TemplateRef<unknown>;
@@ -44,12 +47,7 @@ export class SupportHubSessionsComponent implements OnInit {
   sessions: SupportHubSession[] = [];
   organizations: OrganizationDto[] = [];
   organizationOptions: { label: string; value: string }[] = [];
-  statusOptions: { label: string; value: SupportHubSession['status'] }[] = [
-    { label: 'Live', value: 'Live' },
-    { label: 'Queued', value: 'Queued' },
-    { label: 'Follow-up', value: 'FollowUp' },
-    { label: 'Ended', value: 'Ended' }
-  ];
+  statusOptions: { label: string; value: SupportHubSession['status'] }[] = [];
   columns: JobflowGridColumn[] = [];
   pageSettings: JobflowGridPageSettings = { pageSize: 10, pageSizes: [10, 20, 50] };
   selectedOrganizationId = '';
@@ -63,19 +61,15 @@ export class SupportHubSessionsComponent implements OnInit {
   actionMessage = '';
 
   ngOnInit(): void {
-    this.columns = [
-      { field: 'organizationName', headerText: 'Organization' },
-      { field: 'agentName', headerText: 'Agent' },
-      { headerText: 'Status', width: 140, textAlign: 'Center', template: this.statusTemplate },
-      { headerText: 'Actions', width: 170, textAlign: 'Right', template: this.actionsTemplate }
-    ];
+    this.refreshLabels();
+    this.translate.onLangChange.subscribe(() => this.refreshLabels());
 
     this.loadSessions();
     this.organizationService.getAllOrganizations().subscribe({
       next: (organizations) => {
         this.organizations = (organizations ?? []) as OrganizationDto[];
         this.organizationOptions = this.organizations.map((org) => ({
-          label: org.organizationName ?? 'Unknown',
+          label: org.organizationName ?? this.translate.instant('support.common.unknownOrganization'),
           value: org.id ?? ''
         }));
         if (!this.selectedOrganizationId && this.organizations.length) {
@@ -83,7 +77,7 @@ export class SupportHubSessionsComponent implements OnInit {
         }
       },
       error: () => {
-        this.error = 'Unable to load organizations.';
+        this.error = this.translate.instant('support.sessions.errors.loadOrganizations');
       },
     });
   }
@@ -96,7 +90,7 @@ export class SupportHubSessionsComponent implements OnInit {
         this.isLoading = false;
       },
       error: () => {
-        this.error = 'Unable to load sessions.';
+        this.error = this.translate.instant('support.sessions.errors.loadSessions');
         this.isLoading = false;
       },
     });
@@ -114,7 +108,7 @@ export class SupportHubSessionsComponent implements OnInit {
         this.viewingSessionId = null;
       },
       error: () => {
-        this.error = 'Unable to start screen view.';
+        this.error = this.translate.instant('support.sessions.errors.startScreen');
         this.viewingSessionId = null;
       },
     });
@@ -125,12 +119,12 @@ export class SupportHubSessionsComponent implements OnInit {
     this.actionMessage = '';
 
     if (!this.selectedOrganizationId) {
-      this.error = 'Select an organization before creating a session.';
+      this.error = this.translate.instant('support.sessions.errors.selectOrganization');
       return;
     }
 
     if (!this.newAgentName.trim()) {
-      this.error = 'Agent name is required.';
+      this.error = this.translate.instant('support.sessions.errors.agentRequired');
       return;
     }
 
@@ -144,11 +138,11 @@ export class SupportHubSessionsComponent implements OnInit {
         next: () => {
           this.newAgentName = '';
           this.newStatus = 'Queued';
-          this.actionMessage = 'Session created.';
+          this.actionMessage = this.translate.instant('support.sessions.actions.created');
           this.loadSessions();
         },
         error: () => {
-          this.error = 'Unable to create session.';
+          this.error = this.translate.instant('support.sessions.errors.createSession');
         },
       });
   }
@@ -160,7 +154,7 @@ export class SupportHubSessionsComponent implements OnInit {
       return;
     }
 
-    this.newAgentName = 'Katharix Staff';
+    this.newAgentName = this.translate.instant('support.sessions.defaultAgent');
   }
 
   get filteredOrganizations(): OrganizationDto[] {
@@ -190,9 +184,9 @@ export class SupportHubSessionsComponent implements OnInit {
 
   formatSessionStatus(status: SupportHubSession['status']): string {
     if (status === 'FollowUp') {
-      return 'Follow-up';
+      return this.translate.instant('support.sessions.status.followup');
     }
-    return status;
+    return this.translate.instant(this.getSessionStatusLabelKey(status));
   }
 
   getSessionStatusClass(status: SupportHubSession['status']): string {
@@ -214,7 +208,7 @@ export class SupportHubSessionsComponent implements OnInit {
 
     if (navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(id).then(() => {
-        this.actionMessage = 'Session ID copied.';
+        this.actionMessage = this.translate.instant('support.sessions.actions.copied');
       });
       return;
     }
@@ -227,6 +221,47 @@ export class SupportHubSessionsComponent implements OnInit {
     textarea.select();
     document.execCommand('copy');
     document.body.removeChild(textarea);
-    this.actionMessage = 'Session ID copied.';
+    this.actionMessage = this.translate.instant('support.sessions.actions.copied');
+  }
+
+  getSessionStatusLabelKey(status: SupportHubSession['status']): string {
+    switch (status) {
+      case 'Live':
+        return 'support.sessions.status.live';
+      case 'Queued':
+        return 'support.sessions.status.queued';
+      case 'FollowUp':
+        return 'support.sessions.status.followup';
+      case 'Ended':
+        return 'support.sessions.status.ended';
+      default:
+        return 'support.sessions.status.queued';
+    }
+  }
+
+  private refreshLabels(): void {
+    this.columns = [
+      { field: 'organizationName', headerText: this.translate.instant('support.sessions.columns.organization') },
+      { field: 'agentName', headerText: this.translate.instant('support.sessions.columns.agent') },
+      {
+        headerText: this.translate.instant('support.sessions.columns.status'),
+        width: 140,
+        textAlign: 'Center',
+        template: this.statusTemplate
+      },
+      {
+        headerText: this.translate.instant('support.sessions.columns.actions'),
+        width: 170,
+        textAlign: 'Right',
+        template: this.actionsTemplate
+      }
+    ];
+
+    this.statusOptions = [
+      { label: this.translate.instant('support.sessions.status.live'), value: 'Live' },
+      { label: this.translate.instant('support.sessions.status.queued'), value: 'Queued' },
+      { label: this.translate.instant('support.sessions.status.followup'), value: 'FollowUp' },
+      { label: this.translate.instant('support.sessions.status.ended'), value: 'Ended' }
+    ];
   }
 }

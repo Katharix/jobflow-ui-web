@@ -6,15 +6,15 @@
           <a routerLink="/" class="login-hero__logo">
             <img src="/assets/public/images/Asset 1.png" alt="JobFlow" />
           </a>
-          <p class="login-hero__eyebrow">Welcome back</p>
-          <h1>Run every job from request to payment.</h1>
+          <p class="login-hero__eyebrow">{{ 'auth.login.eyebrow' | translate }}</p>
+          <h1>{{ 'auth.login.headline' | translate }}</h1>
           <p class="login-hero__lead">
-            Sign in to schedule crews, send estimates, and get paid faster with a single workflow.
+            {{ 'auth.login.lead' | translate }}
           </p>
           <div class="login-hero__checks">
-            <span><i class="ti ti-circle-check text-success me-2"></i>Dispatch-ready calendar</span>
-            <span><i class="ti ti-circle-check text-success me-2"></i>Instant estimate to invoice</span>
-            <span><i class="ti ti-circle-check text-success me-2"></i>Modern payment links</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>{{ 'auth.login.checks.dispatch' | translate }}</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>{{ 'auth.login.checks.estimate' | translate }}</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>{{ 'auth.login.checks.payment' | translate }}</span>
           </div>
         </div>
       </div>
@@ -22,19 +22,19 @@
       <div class="col-lg-6">
         <div class="login-card">
           <div class="login-card__header">
-            <h2>Sign in</h2>
-            <p class="text-muted">Use your JobFlow account to continue.</p>
+            <h2>{{ 'auth.login.title' | translate }}</h2>
+            <p class="text-muted">{{ 'auth.login.subtitle' | translate }}</p>
           </div>
 
           <form #form="ngForm" (ngSubmit)="onLoggedin($event)" novalidate>
             <div class="form-group mb-3">
-              <label class="form-label" for="email">Email address</label>
+              <label class="form-label" for="email">{{ 'auth.login.emailLabel' | translate }}</label>
               <input
                 type="email"
                 class="form-control"
                 id="email"
                 name="email"
-                placeholder="you@company.com"
+                [placeholder]="'auth.login.emailPlaceholder' | translate"
                 [(ngModel)]="email"
                 required
                 email
@@ -44,23 +44,23 @@
                 @if (emailModel.invalid && (emailModel.touched || submitted)) {
                   <div class="text-danger mt-1">
                     @if (emailModel.errors?.['required']) {
-                      <div>Email is required.</div>
+                      <div>{{ 'auth.login.validation.emailRequired' | translate }}</div>
                     }
                     @if (emailModel.errors?.['email']) {
-                      <div>Enter a valid email address.</div>
+                      <div>{{ 'auth.login.validation.emailInvalid' | translate }}</div>
                     }
                   </div>
                 }
               </div>
 
               <div class="form-group mb-3">
-                <label class="form-label" for="password">Password</label>
+                <label class="form-label" for="password">{{ 'auth.login.passwordLabel' | translate }}</label>
                 <input
                   type="password"
                   class="form-control"
                   id="password"
                   name="password"
-                  placeholder="Your password"
+                  [placeholder]="'auth.login.passwordPlaceholder' | translate"
                   [(ngModel)]="password"
                   required
                   minlength="6"
@@ -70,10 +70,10 @@
                   @if (passwordModel.invalid && (passwordModel.touched || submitted)) {
                     <div class="text-danger mt-1">
                       @if (passwordModel.errors?.['required']) {
-                        <div>Password is required.</div>
+                        <div>{{ 'auth.login.validation.passwordRequired' | translate }}</div>
                       }
                       @if (passwordModel.errors?.['minlength']) {
-                        <div>Password must be at least 6 characters.</div>
+                        <div>{{ 'auth.login.validation.passwordMin' | translate }}</div>
                       }
                     </div>
                   }
@@ -81,7 +81,7 @@
 
                 @if (submitted && form.invalid) {
                   <div class="alert alert-danger">
-                    Please fix the highlighted fields and try again.
+                    {{ 'auth.login.validation.formInvalid' | translate }}
                   </div>
                 }
 
@@ -93,15 +93,15 @@
 
                 <div class="d-grid gap-2">
                   <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
-                    Login
+                    {{ 'auth.login.submit' | translate }}
                   </button>
                 </div>
 
                 <div class="login-card__footer">
-                  <span>By continuing, you agree to our</span>
-                  <a routerLink="/terms">Terms</a>
-                  <span>and</span>
-                  <a routerLink="/privacy">Privacy Policy</a>.
+                  <span>{{ 'auth.login.footer.prefix' | translate }}</span>
+                  <a routerLink="/terms">{{ 'auth.login.footer.terms' | translate }}</a>
+                  <span>{{ 'auth.login.footer.and' | translate }}</span>
+                  <a routerLink="/privacy">{{ 'auth.login.footer.privacy' | translate }}</a>.
                 </div>
               </form>
             </div>

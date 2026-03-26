@@ -1,6 +1,7 @@
 ﻿import {
    Component,
    inject,
+   OnDestroy,
    OnInit,
    TemplateRef,
    ViewChild
@@ -29,6 +30,7 @@ import {EmployeeService} from "../employees/services/employee.service";
 import {Employee} from "../employees/models/employee";
 import {AssignmentsService} from "./services/assignments.service";
 import {AssignmentDto} from "./models/assignment";
+import { TranslateModule, TranslateService } from "@ngx-translate/core";
 
 
 @Component({
@@ -42,12 +44,13 @@ import {AssignmentDto} from "./models/assignment";
       JobflowGridComponent,
       JobflowDrawerComponent,
       CreateJobComponent,
-      RouterLink
+      RouterLink,
+      TranslateModule
    ],
    styleUrls: ['./job.component.scss'],
    templateUrl: './job.component.html'
 })
-export class JobComponent implements OnInit {
+export class JobComponent implements OnInit, OnDestroy {
    private jobs = inject(JobsService);
    private employeesService = inject(EmployeeService);
    private assignmentsService = inject(AssignmentsService);
@@ -55,6 +58,8 @@ export class JobComponent implements OnInit {
    private orgContext = inject(OrganizationContextService);
    private router = inject(Router);
    private route = inject(ActivatedRoute);
+   private translate = inject(TranslateService);
+   private translateLangSub = this.translate.onLangChange.subscribe(() => this.refreshLabels());
 
 
    @ViewChild('jobTitleTemplate', {static: true})
@@ -101,17 +106,7 @@ export class JobComponent implements OnInit {
 
    private toast = inject(ToastService);
 
-   headerActions = [
-      {
-         key: 'add',
-         label: 'Add Job',
-         icon: 'plus-circle',
-         class: 'btn btn-primary px-4 fw-semibold'
-      }
-   ].map(action => ({
-      ...action,
-      click: getClickHandler(action.key, this.getActionMap())
-   }));
+   headerActions = [] as { key: string; label: string; icon: string; class: string; click: () => void }[];
 
    constructor() {
       this.orgContext.org$.subscribe(org => {
@@ -120,7 +115,7 @@ export class JobComponent implements OnInit {
    }
 
    ngOnInit(): void {
-      this.buildColumns();
+      this.refreshLabels();
       this.loadWorkflowStatuses();
 
       this.orgContext.hasMinPlan$('Flow').subscribe(canShare => {
@@ -142,6 +137,10 @@ export class JobComponent implements OnInit {
          this.openAddJob();
          this.onboardingActionHandled = true;
       });
+   }
+
+   ngOnDestroy(): void {
+      this.translateLangSub?.unsubscribe();
    }
 
    private loadWorkflowStatuses(): void {
@@ -192,30 +191,36 @@ export class JobComponent implements OnInit {
          .sort((a, b) => a - b)
          .map((value, index) => ({
             statusKey: JobLifecycleStatus[value as JobLifecycleStatus],
-            label: JobLifecycleStatusLabels[value as JobLifecycleStatus],
+            label: this.getDefaultStatusLabel(JobLifecycleStatus[value as JobLifecycleStatus]),
             sortOrder: index
          }));
+   }
+
+   private getDefaultStatusLabel(statusKey: string): string {
+      const fallback = JobLifecycleStatusLabels[JobLifecycleStatus[statusKey as keyof typeof JobLifecycleStatus]] ?? statusKey;
+      const translated = this.translate.instant(`admin.jobs.status.${statusKey.toLowerCase()}`);
+      return translated === `admin.jobs.status.${statusKey.toLowerCase()}` ? fallback : translated;
    }
 
    private buildColumns(): void {
 
       this.columns = [
          {
-            headerText: 'Job',
+            headerText: this.translate.instant('admin.jobs.table.columns.job'),
             width: 220,
             sortField: 'title',
             searchFields: ['title', 'organizationClient.firstName', 'organizationClient.lastName'],
             template: this.jobTitleTemplate
          },
          {
-            headerText: 'Status',
+            headerText: this.translate.instant('admin.jobs.table.columns.status'),
             width: 120,
             sortField: 'lifecycleStatus',
             template: this.statusTemplate
          },
          {
             field: 'organizationClient.phoneNumber',
-            headerText: 'Phone Number',
+            headerText: this.translate.instant('admin.jobs.table.columns.phone'),
             width: 160,
             valueAccessor: (_field: string, data: unknown) => {
                const job = data as Job;
@@ -223,11 +228,25 @@ export class JobComponent implements OnInit {
             }
          },
          {
-            headerText: 'Actions',
+            headerText: this.translate.instant('admin.jobs.table.columns.actions'),
             width: 200,
             template: this.actionsTemplate
          }
       ];
+   }
+
+   private refreshLabels(): void {
+      this.headerActions = [
+         {
+            key: 'add',
+            label: this.translate.instant('admin.jobs.actions.add'),
+            icon: 'plus-circle',
+            class: 'btn btn-primary px-4 fw-semibold',
+            click: getClickHandler('add', this.getActionMap())
+         }
+      ];
+
+      this.buildColumns();
    }
 
    private getActionMap() {
@@ -245,7 +264,7 @@ export class JobComponent implements OnInit {
             this.syncPreviewAssignment();
          },
          error: e => {
-            this.toast.error('Failed to load jobs');
+            this.toast.error(this.translate.instant('admin.jobs.toast.loadFailed'));
             console.error(e);
          }
       });
@@ -433,7 +452,7 @@ export class JobComponent implements OnInit {
             this.updatingStatus = false;
          },
          error: () => {
-            this.toast.error('Failed to update job status');
+            this.toast.error(this.translate.instant('admin.jobs.toast.statusFailed'));
             this.updatingStatus = false;
          }
       });
@@ -446,9 +465,9 @@ export class JobComponent implements OnInit {
 
       try {
          await navigator.clipboard.writeText(link);
-         this.toast.success('Client updates link copied.');
+         this.toast.success(this.translate.instant('admin.jobs.toast.linkCopied'));
       } catch {
-         this.toast.error('Unable to copy the updates link.');
+         this.toast.error(this.translate.instant('admin.jobs.toast.linkCopyFailed'));
       }
    }
 
@@ -477,14 +496,14 @@ export class JobComponent implements OnInit {
             this.updatingAssignees = false;
          },
          error: () => {
-            this.toast.error('Failed to update assignees');
+            this.toast.error(this.translate.instant('admin.jobs.toast.assigneesFailed'));
             this.updatingAssignees = false;
          }
       });
    }
 
    getClientName(job: Job | null): string {
-      if (!job?.organizationClient) return 'Client TBD';
+      if (!job?.organizationClient) return this.translate.instant('admin.jobs.labels.clientTbd');
 
       return [job.organizationClient.firstName, job.organizationClient.lastName]
          .filter(Boolean)
@@ -591,7 +610,7 @@ export class JobComponent implements OnInit {
          return this.statusLabelMap[status] ?? JobLifecycleStatusLabels[status];
       }
 
-      return '—';
+      return this.translate.instant('admin.jobs.labels.missing');
    }
 
    getStatusChipClass(job: Job | null | undefined): string {
@@ -616,7 +635,11 @@ export class JobComponent implements OnInit {
    }
 
    deleteJob(job: Job): void {
-      this.toast.error(`Delete not available for job ${job?.title ?? ''}`.trim());
+      this.toast.error(
+         this.translate.instant('admin.jobs.toast.deleteUnavailable', {
+            title: job?.title ?? ''
+         }).trim()
+      );
    }
 
    editJob(job: Job): void {

@@ -35,6 +35,7 @@ import {PrivacyComponent} from "./views/general/privacy/privacy.component";
 import {BillingPaymentsComponent} from './admin/billing-payments/billing-payments.component';
 import { DispatchComponent } from './admin/dispatch/dispatch.component';
 import { WorkflowSettingsComponent } from './admin/settings/workflow-settings/workflow-settings.component';
+import { UserProfileComponent } from './views/general/user-profile/user-profile.component';
 
 
 export const routes: Routes = [
@@ -120,6 +121,19 @@ export const routes: Routes = [
          {
             path: 'billing-payments',
             component: BillingPaymentsComponent
+         }
+      ]
+   },
+   {
+      path: 'user-profile',
+      component: AdminLayoutComponent,
+      canActivate: [authGuard],
+      children: [
+         {
+            path: '',
+            component: UserProfileComponent,
+            canActivate: [subscriptionGuard],
+            data: { minPlan: 'Go' }
          }
       ]
    },

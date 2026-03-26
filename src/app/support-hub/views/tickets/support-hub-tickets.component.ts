@@ -15,6 +15,7 @@ import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-support-hub-tickets',
@@ -27,7 +28,8 @@ import { MessageModule } from 'primeng/message';
     ButtonModule,
     DropdownModule,
     InputTextModule,
-    MessageModule
+    MessageModule,
+    TranslateModule
   ],
   templateUrl: './support-hub-tickets.component.html',
   styleUrl: './support-hub-tickets.component.scss',
@@ -35,6 +37,7 @@ import { MessageModule } from 'primeng/message';
 export class SupportHubTicketsComponent implements OnInit {
   private dataService = inject(SupportHubDataService);
   private organizationService = inject(OrganizationService);
+  private translate = inject(TranslateService);
 
   @ViewChild('statusTemplate', { static: true }) statusTemplate!: TemplateRef<unknown>;
   @ViewChild('actionsTemplate', { static: true }) actionsTemplate!: TemplateRef<unknown>;
@@ -42,12 +45,7 @@ export class SupportHubTicketsComponent implements OnInit {
   tickets: SupportHubTicket[] = [];
   organizations: OrganizationDto[] = [];
   organizationOptions: { label: string; value: string }[] = [];
-  statusOptions: { label: string; value: SupportHubTicket['status'] }[] = [
-    { label: 'Urgent', value: 'Urgent' },
-    { label: 'High', value: 'High' },
-    { label: 'Normal', value: 'Normal' },
-    { label: 'Low', value: 'Low' }
-  ];
+  statusOptions: { label: string; value: SupportHubTicket['status'] }[] = [];
   columns: JobflowGridColumn[] = [];
   pageSettings: JobflowGridPageSettings = { pageSize: 10, pageSizes: [10, 20, 50] };
   selectedOrganizationId = '';
@@ -61,20 +59,15 @@ export class SupportHubTicketsComponent implements OnInit {
   actionMessage = '';
 
   ngOnInit(): void {
-    this.columns = [
-      { field: 'title', headerText: 'Title' },
-      { field: 'organizationName', headerText: 'Organization' },
-      { headerText: 'Opened', width: 140, textAlign: 'Center', valueAccessor: this.createdAtAccessor },
-      { headerText: 'Status', width: 140, textAlign: 'Center', template: this.statusTemplate },
-      { headerText: 'Actions', width: 140, textAlign: 'Right', template: this.actionsTemplate }
-    ];
+    this.refreshLabels();
+    this.translate.onLangChange.subscribe(() => this.refreshLabels());
 
     this.loadTickets();
     this.organizationService.getAllOrganizations().subscribe({
       next: (organizations) => {
         this.organizations = (organizations ?? []) as OrganizationDto[];
         this.organizationOptions = this.organizations.map((org) => ({
-          label: org.organizationName ?? 'Unknown',
+          label: org.organizationName ?? this.translate.instant('support.common.unknownOrganization'),
           value: org.id ?? ''
         }));
         if (!this.selectedOrganizationId && this.organizations.length) {
@@ -82,7 +75,7 @@ export class SupportHubTicketsComponent implements OnInit {
         }
       },
       error: () => {
-        this.error = 'Unable to load organizations.';
+        this.error = this.translate.instant('support.tickets.errors.loadOrganizations');
       },
     });
   }
@@ -95,7 +88,7 @@ export class SupportHubTicketsComponent implements OnInit {
         this.isLoading = false;
       },
       error: () => {
-        this.error = 'Unable to load tickets.';
+        this.error = this.translate.instant('support.tickets.errors.loadTickets');
         this.isLoading = false;
       },
     });
@@ -106,12 +99,12 @@ export class SupportHubTicketsComponent implements OnInit {
     this.actionMessage = '';
 
     if (!this.selectedOrganizationId) {
-      this.error = 'Select an organization before creating a ticket.';
+      this.error = this.translate.instant('support.tickets.errors.selectOrganization');
       return;
     }
 
     if (!this.newTitle.trim()) {
-      this.error = 'Ticket title is required.';
+      this.error = this.translate.instant('support.tickets.errors.titleRequired');
       return;
     }
 
@@ -127,11 +120,11 @@ export class SupportHubTicketsComponent implements OnInit {
           this.newTitle = '';
           this.newSummary = '';
           this.newStatus = 'Normal';
-          this.actionMessage = 'Ticket created.';
+          this.actionMessage = this.translate.instant('support.tickets.actions.created');
           this.loadTickets();
         },
         error: () => {
-          this.error = 'Unable to create ticket.';
+          this.error = this.translate.instant('support.tickets.errors.createTicket');
         },
       });
   }
@@ -187,17 +180,20 @@ export class SupportHubTicketsComponent implements OnInit {
     this.actionMessage = '';
 
     if (!this.selectedOrganizationId) {
-      this.error = 'Select an organization before seeding.';
+      this.error = this.translate.instant('support.tickets.errors.seedOrganization');
       return;
     }
 
     this.dataService.seedDemo(this.selectedOrganizationId).subscribe({
       next: (result) => {
-        this.actionMessage = `Seeded ${result.ticketsCreated} tickets and ${result.sessionsCreated} sessions.`;
+        this.actionMessage = this.translate.instant('support.tickets.actions.seeded', {
+          tickets: result.ticketsCreated,
+          sessions: result.sessionsCreated
+        });
         this.loadTickets();
       },
       error: () => {
-        this.error = 'Unable to seed demo data.';
+        this.error = this.translate.instant('support.tickets.errors.seedDemo');
       },
     });
   }
@@ -208,7 +204,7 @@ export class SupportHubTicketsComponent implements OnInit {
 
     if (navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(id).then(() => {
-        this.actionMessage = 'Ticket ID copied.';
+        this.actionMessage = this.translate.instant('support.tickets.actions.copied');
       });
       return;
     }
@@ -221,6 +217,53 @@ export class SupportHubTicketsComponent implements OnInit {
     textarea.select();
     document.execCommand('copy');
     document.body.removeChild(textarea);
-    this.actionMessage = 'Ticket ID copied.';
+    this.actionMessage = this.translate.instant('support.tickets.actions.copied');
+  }
+
+  getTicketStatusLabelKey(status: SupportHubTicket['status']): string {
+    switch (status) {
+      case 'Urgent':
+        return 'support.tickets.status.urgent';
+      case 'High':
+        return 'support.tickets.status.high';
+      case 'Low':
+        return 'support.tickets.status.low';
+      case 'Resolved':
+        return 'support.tickets.status.resolved';
+      default:
+        return 'support.tickets.status.normal';
+    }
+  }
+
+  private refreshLabels(): void {
+    this.columns = [
+      { field: 'title', headerText: this.translate.instant('support.tickets.columns.title') },
+      { field: 'organizationName', headerText: this.translate.instant('support.tickets.columns.organization') },
+      {
+        headerText: this.translate.instant('support.tickets.columns.opened'),
+        width: 140,
+        textAlign: 'Center',
+        valueAccessor: this.createdAtAccessor
+      },
+      {
+        headerText: this.translate.instant('support.tickets.columns.status'),
+        width: 140,
+        textAlign: 'Center',
+        template: this.statusTemplate
+      },
+      {
+        headerText: this.translate.instant('support.tickets.columns.actions'),
+        width: 140,
+        textAlign: 'Right',
+        template: this.actionsTemplate
+      }
+    ];
+
+    this.statusOptions = [
+      { label: this.translate.instant('support.tickets.status.urgent'), value: 'Urgent' },
+      { label: this.translate.instant('support.tickets.status.high'), value: 'High' },
+      { label: this.translate.instant('support.tickets.status.normal'), value: 'Normal' },
+      { label: this.translate.instant('support.tickets.status.low'), value: 'Low' }
+    ];
   }
 }

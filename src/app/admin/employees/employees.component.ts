@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef, ViewChild, inject} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef, ViewChild, inject} from '@angular/core';
 import {CommonModule, NgClass} from '@angular/common';
 
 import {ActivatedRoute, Router} from '@angular/router';
@@ -25,6 +25,7 @@ import {
    JobflowGridPageSettings
 } from '../../common/jobflow-grid/jobflow-grid.component';
 import { JobflowDrawerComponent } from '../../common/jobflow-drawer/jobflow-drawer.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
    selector: 'app-employees',
@@ -40,10 +41,11 @@ import { JobflowDrawerComponent } from '../../common/jobflow-drawer/jobflow-draw
    JobflowDrawerComponent,
     EmployeeFormComponent,
     EmployeeInviteFormComponent,
-    DeleteConfirmComponent
+      DeleteConfirmComponent,
+      TranslateModule
 ]
 })
-export class EmployeesComponent implements OnInit {
+export class EmployeesComponent implements OnInit, OnDestroy {
    @ViewChild('actionsTemplate', {static: true}) actionsTemplate!: TemplateRef<unknown>;
    @ViewChild('inviteStatusTemplate', {static: true}) inviteStatusTemplate!: TemplateRef<unknown>;
    @ViewChild('inviteForm') inviteForm!: EmployeeInviteFormComponent;
@@ -82,23 +84,7 @@ export class EmployeesComponent implements OnInit {
    checkingRoles = true;
    private onboardingActionHandled = false;
 
-   public headerActions = [
-      {
-         key: 'invite',
-         label: 'Invite',
-         icon: 'user-plus',
-         class: 'btn btn-outline-primary px-4 fw-semibold'
-      },
-      {
-         key: 'add',
-         label: 'Add Employee',
-         icon: 'plus-circle',
-         class: 'btn btn-primary px-4 fw-semibold'
-      }
-   ].map(action => ({
-      ...action,
-      click: getClickHandler(action.key, this.getActionMap())
-   }));
+   public headerActions = [] as { key: string; label: string; icon: string; class: string; click: () => void }[];
 
    private employeeService = inject(EmployeeService);
    private organizationContext = inject(OrganizationContextService);
@@ -107,6 +93,8 @@ export class EmployeesComponent implements OnInit {
    public toast = inject(ToastService);
    public router = inject(Router);
    private route = inject(ActivatedRoute);
+   private translate = inject(TranslateService);
+   private translateLangSub = this.translate.onLangChange.subscribe(() => this.refreshLabels());
 
    constructor() {
       this.organizationContext.org$.subscribe(org => {
@@ -118,13 +106,7 @@ export class EmployeesComponent implements OnInit {
    }
 
    ngOnInit(): void {
-      this.columns = [
-         {field: 'firstName', headerText: 'Name', valueAccessor: this.fullNameAccessor},
-         {field: 'email', headerText: 'Email'},
-         {field: 'roleName', headerText: 'Role'},
-         {headerText: 'Invite', width: 130, textAlign: 'Center', template: this.inviteStatusTemplate},
-         {headerText: 'Actions', width: 180, textAlign: 'Right', template: this.actionsTemplate}
-      ];
+      this.refreshLabels();
       this.checkRolesBeforeLoad();
 
       this.route.queryParamMap.subscribe(params => {
@@ -134,6 +116,43 @@ export class EmployeesComponent implements OnInit {
          this.onAddEmployeeClick();
          this.onboardingActionHandled = true;
       });
+   }
+
+   ngOnDestroy(): void {
+      this.translateLangSub?.unsubscribe();
+   }
+
+   private refreshLabels(): void {
+      this.columns = [
+         {field: 'firstName', headerText: this.translate.instant('admin.employees.table.name'), valueAccessor: this.fullNameAccessor},
+         {field: 'email', headerText: this.translate.instant('admin.employees.table.email')},
+         {field: 'roleName', headerText: this.translate.instant('admin.employees.table.role')},
+         {headerText: this.translate.instant('admin.employees.table.invite'), width: 130, textAlign: 'Center', template: this.inviteStatusTemplate},
+         {headerText: this.translate.instant('admin.employees.table.actions'), width: 180, textAlign: 'Right', template: this.actionsTemplate}
+      ];
+
+      this.statusFilters = [
+         { key: 'all', label: this.translate.instant('admin.employees.filters.all') },
+         { key: 'active', label: this.translate.instant('admin.employees.filters.active'), active: true },
+         { key: 'inactive', label: this.translate.instant('admin.employees.filters.inactive'), active: false }
+      ];
+
+      this.headerActions = [
+         {
+            key: 'invite',
+            label: this.translate.instant('admin.employees.actions.invite'),
+            icon: 'user-plus',
+            class: 'btn btn-outline-primary px-4 fw-semibold',
+            click: getClickHandler('invite', this.getActionMap())
+         },
+         {
+            key: 'add',
+            label: this.translate.instant('admin.employees.actions.add'),
+            icon: 'plus-circle',
+            class: 'btn btn-primary px-4 fw-semibold',
+            click: getClickHandler('add', this.getActionMap())
+         }
+      ];
    }
 
    fullNameAccessor = (_field: string, data: unknown): string => {
@@ -199,7 +218,7 @@ export class EmployeesComponent implements OnInit {
 
    onAddEmployeeClick(): void {
       if (!this.rolesExist) {
-         this.toast.warning('You must create at least one Employee Role before adding employees.');
+         this.toast.warning(this.translate.instant('admin.employees.toast.rolesRequired'));
          return;
       }
 
@@ -233,9 +252,9 @@ export class EmployeesComponent implements OnInit {
                this.loadEmployees();
                this.showAddEmployeeDrawer = false;
                this.isEditing = false;
-               this.toast.success('Employee updated', 'Success');
+               this.toast.success(this.translate.instant('admin.employees.toast.updated'), this.translate.instant('admin.employees.toast.successTitle'));
             },
-            error: () => this.toast.error('Failed to update employee', 'Failed')
+            error: () => this.toast.error(this.translate.instant('admin.employees.toast.updateFailed'), this.translate.instant('admin.employees.toast.failedTitle'))
          });
          return;
       }
@@ -243,7 +262,10 @@ export class EmployeesComponent implements OnInit {
       this.employeeService.employeeExistByEmail(employeeData.email!).subscribe({
          next: (exists) => {
             if (exists) {
-               this.toast.warning(`${employeeData.email} already exists`, 'Warning');
+               this.toast.warning(
+                  this.translate.instant('admin.employees.toast.emailExists', { email: employeeData.email }),
+                  this.translate.instant('admin.employees.toast.warningTitle')
+               );
                return;
             }
 
@@ -251,12 +273,12 @@ export class EmployeesComponent implements OnInit {
                next: () => {
                   this.loadEmployees();
                      this.showAddEmployeeDrawer = false;
-                  this.toast.success('Employee added', 'Success');
+                  this.toast.success(this.translate.instant('admin.employees.toast.added'), this.translate.instant('admin.employees.toast.successTitle'));
                },
-               error: () => this.toast.error('Failed to add employee', 'Failed')
+               error: () => this.toast.error(this.translate.instant('admin.employees.toast.addFailed'), this.translate.instant('admin.employees.toast.failedTitle'))
             });
          },
-         error: () => this.toast.error('Failed to check employee email', 'Failed')
+         error: () => this.toast.error(this.translate.instant('admin.employees.toast.checkEmailFailed'), this.translate.instant('admin.employees.toast.failedTitle'))
       });
    }
 
@@ -267,8 +289,11 @@ export class EmployeesComponent implements OnInit {
    onInviteSuccess(invite: unknown): void {
       this.closeInviteModal();
       const inviteData = invite as { firstName?: string; lastName?: string } | null;
-      const name = `${inviteData?.firstName ?? ''} ${inviteData?.lastName ?? ''}`.trim() || 'Employee';
-      this.toast.success(`Invite sent to ${name}`, 'Success');
+      const name = `${inviteData?.firstName ?? ''} ${inviteData?.lastName ?? ''}`.trim() || this.translate.instant('admin.employees.labels.employee');
+      this.toast.success(
+         this.translate.instant('admin.employees.toast.inviteSent', { name }),
+         this.translate.instant('admin.employees.toast.successTitle')
+      );
    }
 
    closeInviteModal(): void {
@@ -285,13 +310,13 @@ export class EmployeesComponent implements OnInit {
 
       this.employeeService.delete(this.selectedEmployee.id).subscribe({
          next: () => {
-            this.toast.success('Employee deleted', 'Success');
+            this.toast.success(this.translate.instant('admin.employees.toast.deleted'), this.translate.instant('admin.employees.toast.successTitle'));
             this.loadEmployees();
             this.closeDeleteModal();
          },
          error: (err) => {
             console.error(err);
-            this.toast.error('Failed to delete employee');
+            this.toast.error(this.translate.instant('admin.employees.toast.deleteFailed'));
          }
       });
    }
@@ -355,19 +380,19 @@ export class EmployeesComponent implements OnInit {
 
    getInviteStatusLabelForInvite(invite: EmployeeInvite): string {
       if (invite.isRevoked) {
-         return 'Revoked';
+         return this.translate.instant('admin.employees.inviteStatus.revoked');
       }
 
       if (invite.isAccepted) {
-         return 'Accepted';
+         return this.translate.instant('admin.employees.inviteStatus.accepted');
       }
 
       const expiresAt = new Date(invite.expiresAt);
       if (!Number.isNaN(expiresAt.getTime()) && expiresAt.getTime() < Date.now()) {
-         return 'Expired';
+         return this.translate.instant('admin.employees.inviteStatus.expired');
       }
 
-      return 'Pending';
+      return this.translate.instant('admin.employees.inviteStatus.pending');
    }
 
    getInviteStatusClassForInvite(invite: EmployeeInvite): string {
@@ -388,7 +413,7 @@ export class EmployeesComponent implements OnInit {
    }
 
    getInviteName(invite: EmployeeInvite): string {
-      return invite.name?.trim() || invite.email || 'Employee';
+      return invite.name?.trim() || invite.email || this.translate.instant('admin.employees.labels.employee');
    }
 
    getInviteRoleName(invite: EmployeeInvite): string {
@@ -401,11 +426,11 @@ export class EmployeesComponent implements OnInit {
 
    getRoleName(roleId?: string | null): string {
       if (!roleId) {
-         return 'Unknown role';
+         return this.translate.instant('admin.employees.labels.unknownRole');
       }
 
       const match = this.roles.find(role => role.id === roleId);
-      return match?.name ?? 'Unknown role';
+      return match?.name ?? this.translate.instant('admin.employees.labels.unknownRole');
    }
 
    get sortedInvites(): EmployeeInvite[] {
@@ -419,7 +444,7 @@ export class EmployeesComponent implements OnInit {
    getInviteStatusLabel(employee: Employee): string {
       const invite = this.findInviteByEmployee(employee);
       if (!invite) {
-         return '—';
+         return this.translate.instant('admin.employees.labels.missing');
       }
 
       return this.getInviteStatusLabelForInvite(invite);
@@ -464,12 +489,12 @@ export class EmployeesComponent implements OnInit {
 
    private formatDate(value: string | null | undefined): string {
       if (!value) {
-         return '—';
+         return this.translate.instant('admin.employees.labels.missing');
       }
 
       const date = new Date(value);
       if (Number.isNaN(date.getTime())) {
-         return '—';
+         return this.translate.instant('admin.employees.labels.missing');
       }
 
       return date.toLocaleDateString('en-US', {

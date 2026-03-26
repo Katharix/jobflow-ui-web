@@ -3,6 +3,7 @@ import {CommonModule} from '@angular/common';
 import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {RouterModule} from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {CreateInvoiceLineItemRequest, CreateInvoiceRequest, Invoice, InvoiceStatus} from '../../models/invoice';
 import {InvoiceService} from './services/invoice.service';
 import {PageHeaderComponent} from '../dashboard/page-header/page-header.component';
@@ -29,6 +30,7 @@ import { useNotifierHub, InvoicePaidEvent } from '../services/useNotifierHub';
       FormsModule,
       ReactiveFormsModule,
       RouterModule,
+      TranslateModule,
       InputTextModule,
       InputNumberModule,
       PageHeaderComponent,
@@ -48,6 +50,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
    private toast = inject(ToastService);
    private workflowSettings = inject(WorkflowSettingsService);
    private auth = inject(Auth);
+   private translate = inject(TranslateService);
 
 
    @ViewChild('clientTemplate', {static: true})
@@ -71,24 +74,10 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       balanceDue: 0
    };
 
-   statusFilters: { key: string; label: string; status?: InvoiceStatus }[] = [
-      { key: 'all', label: 'All' },
-      { key: 'draft', label: 'Draft', status: InvoiceStatus.Draft },
-      { key: 'sent', label: 'Sent', status: InvoiceStatus.Sent },
-      { key: 'paid', label: 'Paid', status: InvoiceStatus.Paid },
-      { key: 'overdue', label: 'Overdue', status: InvoiceStatus.Overdue },
-      { key: 'unpaid', label: 'Unpaid', status: InvoiceStatus.Unpaid }
-   ];
+   statusFilters: { key: string; label: string; status?: InvoiceStatus }[] = [];
    selectedStatusFilter = 'all';
 
-   headerActions = [
-      {
-         label: 'Create Invoice',
-         icon: 'plus-circle',
-         class: 'btn-primary px-4 fw-semibold',
-         click: () => this.openCreateInvoiceDrawer()
-      }
-   ];
+   headerActions = [] as { label: string; icon: string; class: string; click: () => void }[];
 
    recentJobs: Job[] = [];
    jobSearchText = '';
@@ -121,7 +110,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       this.returnToCommandCenter = this.route.snapshot.queryParamMap.get('returnTo') === 'dashboard-command-center';
       this.isInvoiceOnboardingFlow = this.route.snapshot.queryParamMap.get('onboardingAction') === 'select-job-for-invoice';
 
-      this.buildColumns();
+      this.refreshLabels();
       this.buildInvoiceForm();
       this.loadWorkflowStatuses();
       this.load();
@@ -139,6 +128,33 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
    ngOnDestroy(): void {
       void this.notifierHub?.disconnect();
+      this.translateLangSub?.unsubscribe();
+   }
+
+   private translateLangSub = this.translate.onLangChange.subscribe(() => {
+      this.refreshLabels();
+   });
+
+   private refreshLabels(): void {
+      this.statusFilters = [
+         { key: 'all', label: this.translate.instant('admin.invoices.filters.all') },
+         { key: 'draft', label: this.translate.instant('admin.invoices.filters.draft'), status: InvoiceStatus.Draft },
+         { key: 'sent', label: this.translate.instant('admin.invoices.filters.sent'), status: InvoiceStatus.Sent },
+         { key: 'paid', label: this.translate.instant('admin.invoices.filters.paid'), status: InvoiceStatus.Paid },
+         { key: 'overdue', label: this.translate.instant('admin.invoices.filters.overdue'), status: InvoiceStatus.Overdue },
+         { key: 'unpaid', label: this.translate.instant('admin.invoices.filters.unpaid'), status: InvoiceStatus.Unpaid }
+      ];
+
+      this.headerActions = [
+         {
+            label: this.translate.instant('admin.invoices.actions.create'),
+            icon: 'plus-circle',
+            class: 'btn-primary px-4 fw-semibold',
+            click: () => this.openCreateInvoiceDrawer()
+         }
+      ];
+
+      this.buildColumns();
    }
 
    private loadWorkflowStatuses(): void {
@@ -241,11 +257,11 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       this.columns = [
          {
             field: 'invoiceNumber',
-            headerText: 'Invoice #',
+            headerText: this.translate.instant('admin.invoices.table.invoiceNumber'),
             width: 130
          },
          {
-            headerText: 'Client',
+            headerText: this.translate.instant('admin.invoices.table.client'),
             width: 220,
             sortField: 'organizationClient.firstName',
             searchFields: ['organizationClient.firstName', 'organizationClient.lastName', 'organizationClient.emailAddress'],
@@ -253,39 +269,39 @@ export class InvoicesComponent implements OnInit, OnDestroy {
          },
          {
             field: 'invoiceDate',
-            headerText: 'Invoice Date',
+            headerText: this.translate.instant('admin.invoices.table.invoiceDate'),
             width: 140,
             valueAccessor: (_field: string, data: unknown) => this.formatDate((data as Invoice)?.invoiceDate)
          },
          {
             field: 'dueDate',
-            headerText: 'Due Date',
+            headerText: this.translate.instant('admin.invoices.table.dueDate'),
             width: 140,
             valueAccessor: (_field: string, data: unknown) => this.formatDate((data as Invoice)?.dueDate)
          },
          {
             field: 'totalAmount',
-            headerText: 'Total',
+            headerText: this.translate.instant('admin.invoices.table.total'),
             width: 120,
             textAlign: 'Right',
             valueAccessor: (_field: string, data: unknown) => this.formatCurrency((data as Invoice)?.totalAmount)
          },
          {
             field: 'balanceDue',
-            headerText: 'Balance',
+            headerText: this.translate.instant('admin.invoices.table.balance'),
             width: 120,
             textAlign: 'Right',
             valueAccessor: (_field: string, data: unknown) => this.formatCurrency((data as Invoice)?.balanceDue)
          },
          {
-            headerText: 'Status',
+            headerText: this.translate.instant('admin.invoices.table.status'),
             width: 120,
             sortField: 'status',
             searchFields: ['status'],
             template: this.statusTemplate
          },
          {
-            headerText: 'Actions',
+            headerText: this.translate.instant('admin.invoices.table.actions'),
             width: 120,
             template: this.actionsTemplate,
             textAlign: 'Right'
@@ -304,8 +320,8 @@ export class InvoicesComponent implements OnInit, OnDestroy {
             this.updateSummary(this.items);
          },
          error: (e) => {
-            this.error = 'Failed to load invoices.';
-            this.toast.error('Failed to load invoices');
+            this.error = this.translate.instant('admin.invoices.errors.load');
+            this.toast.error(this.translate.instant('admin.invoices.toast.loadFailed'));
             console.error(e);
          }
       });
@@ -335,8 +351,8 @@ export class InvoicesComponent implements OnInit, OnDestroy {
          },
          error: (e) => {
             this.recentJobs = [];
-            this.jobPickerError = 'Unable to load jobs right now.';
-            this.toast.error('Failed to load jobs for invoice selection');
+            this.jobPickerError = this.translate.instant('admin.invoices.errors.loadJobs');
+            this.toast.error(this.translate.instant('admin.invoices.toast.loadJobsFailed'));
             console.error(e);
          }
       });
@@ -433,14 +449,14 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       this.invoiceService.upsertForOrganization(payload).subscribe({
          next: () => {
             this.creatingInvoice = false;
-            this.toast.success('Invoice created successfully.');
+            this.toast.success(this.translate.instant('admin.invoices.toast.created'));
             this.load();
             this.closeCreateInvoiceDrawer({navigateToCommandCenter: true});
          },
          error: (e) => {
             this.creatingInvoice = false;
-            this.createInvoiceError = 'Failed to create invoice. Please review details and try again.';
-            this.toast.error('Failed to create invoice.');
+            this.createInvoiceError = this.translate.instant('admin.invoices.errors.create');
+            this.toast.error(this.translate.instant('admin.invoices.toast.createFailed'));
             console.error(e);
          }
       });
@@ -452,7 +468,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
    getJobClientName(job: Job | null | undefined): string {
       if (!job) {
-         return 'Unknown client';
+         return this.translate.instant('admin.invoices.labels.unknownClient');
       }
 
       const firstName = job.organizationClient?.firstName?.trim() ?? '';
@@ -462,7 +478,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
    getJobStatusLabel(job: Job | null | undefined): string {
       if (!job) {
-         return 'Unknown';
+         return this.translate.instant('admin.invoices.labels.unknown');
       }
 
       const status = this.resolveJobStatus(job.lifecycleStatus);
@@ -512,7 +528,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
    }
 
    getClientEmail(invoice: Invoice): string {
-      return invoice.organizationClient?.emailAddress?.trim() || 'No email';
+      return invoice.organizationClient?.emailAddress?.trim() || this.translate.instant('admin.invoices.labels.noEmail');
    }
 
    getStatusLabel(invoice: Invoice): string {
@@ -520,17 +536,17 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
       switch (status) {
          case InvoiceStatus.Draft:
-            return 'Draft';
+            return this.translate.instant('admin.invoices.status.draft');
          case InvoiceStatus.Sent:
-            return 'Sent';
+            return this.translate.instant('admin.invoices.status.sent');
          case InvoiceStatus.Paid:
-            return 'Paid';
+            return this.translate.instant('admin.invoices.status.paid');
          case InvoiceStatus.Overdue:
-            return 'Overdue';
+            return this.translate.instant('admin.invoices.status.overdue');
          case InvoiceStatus.Unpaid:
-            return 'Unpaid';
+            return this.translate.instant('admin.invoices.status.unpaid');
          default:
-            return 'Unknown';
+            return this.translate.instant('admin.invoices.labels.unknown');
       }
    }
 
@@ -581,12 +597,12 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
    private formatDate(value: string | null | undefined): string {
       if (!value) {
-         return '—';
+         return this.translate.instant('admin.invoices.labels.missing');
       }
 
       const date = new Date(value);
       if (Number.isNaN(date.getTime())) {
-         return '—';
+         return this.translate.instant('admin.invoices.labels.missing');
       }
 
       return date.toLocaleDateString('en-US', {
@@ -717,7 +733,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
    private mapEstimateLineToInvoiceLine(line: EstimateLineItem): CreateInvoiceLineItemRequest {
       return {
-         description: (line.description ?? line.name ?? 'Line item').trim(),
+         description: (line.description ?? line.name ?? this.translate.instant('admin.invoices.form.lineItemFallback')).trim(),
          quantity: Number(line.quantity && line.quantity > 0 ? line.quantity : 1),
          unitPrice: Number(line.unitPrice ?? 0)
       };

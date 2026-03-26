@@ -22,13 +22,13 @@
             class="nav-link"
             (click)="$event.preventDefault(); navigateToSection(item)"
             [class.active]="isActiveSection(item)">
-            {{ item | titlecase }}
+            {{ ('landing.nav.' + item) | translate }}
           </a>
         </li>
         }
       </ul>
       <div class="navbar-actions">
-        <button class="btn btn-sm btn-primary" routerLink="/auth/login">Login</button>
+        <button class="btn btn-sm btn-primary" routerLink="/auth/login">{{ 'landing.nav.login' | translate }}</button>
       </div>
     </div>
   </div>
