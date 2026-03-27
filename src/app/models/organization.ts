@@ -21,6 +21,10 @@ export interface OrganizationDto {
     stripeConnectedAccountId?: string;
     stripeConnectAccountId?: string;
     paymentProvider?: PaymentProvider;
+    squareMerchantId?: string;
+    isSquareConnected?: boolean;
+    isStripeConnected?: boolean;
+    canAcceptPayments?: boolean;
 }
 
 export interface Organization {
@@ -28,7 +32,10 @@ export interface Organization {
     organizationTypeId: string;
     stripeCustomerId?: string;
     stripeConnectedAccountId?: string;
-  stripeConnectAccountId?: string;
+    stripeConnectAccountId?: string;
+    squareMerchantId?: string;
+    isSquareConnected?: boolean;
+    isStripeConnected?: boolean;
     zipCode?: string;
     organizationName?: string;
     address1?: string;

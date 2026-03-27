@@ -1,26 +1,19 @@
-// Minimal fallback styles to prevent first-load layout shift before admin styles load.
-.sidebar {
-	.sidebar-nav {
-		.nav-link {
-			position: relative;
-		}
+.sidebar .sidebar-nav .nav-link {
+	position: relative;
+	display: flex;
+	align-items: center;
+	padding: .625rem 1.188rem;
+}
 
-		.link-icon {
-			position: absolute;
-			width: 16px;
-			height: 16px;
-			color: #fff;
-		}
+.sidebar .sidebar-nav .link-icon {
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	color: #fff;
+}
 
-		.link-title {
-			margin-left: 1.8rem;
-		}
-	}
-
-	.sidebar-footer-btn {
-		background-color: rgba(255, 255, 255, 0.08);
-		color: #fff;
-	}
+.sidebar .sidebar-nav .link-title {
+	margin-left: 1.8rem;
 }
 
 
