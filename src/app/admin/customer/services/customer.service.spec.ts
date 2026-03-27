@@ -2,17 +2,21 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { CustomersService } from './customer.service';
 import { BaseApiService } from '../../../services/shared/base-api.service';
+import { HttpClient } from '@angular/common/http';
 
 describe('CustomersService', () => {
    let service: CustomersService;
    let api: jasmine.SpyObj<BaseApiService>;
+   let http: jasmine.SpyObj<HttpClient>;
 
    beforeEach(() => {
       api = jasmine.createSpyObj<BaseApiService>('BaseApiService', ['get', 'post', 'delete']);
+      http = jasmine.createSpyObj<HttpClient>('HttpClient', ['post']);
       TestBed.configureTestingModule({
          providers: [
             CustomersService,
-            { provide: BaseApiService, useValue: api }
+            { provide: BaseApiService, useValue: api },
+            { provide: HttpClient, useValue: http }
          ]
       });
       service = TestBed.inject(CustomersService);

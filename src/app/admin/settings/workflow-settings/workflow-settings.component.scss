@@ -1,4 +1,9 @@
 .workflow-settings {
+  .export-jobs-table {
+    max-height: 260px;
+    overflow: auto;
+  }
+
   .workflow-status-row {
     display: grid;
     grid-template-columns: 40px 1fr auto;

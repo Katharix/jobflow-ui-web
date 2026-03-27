@@ -1,9 +1,8 @@
-import {Component, inject, TemplateRef, ViewChild, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {OrganizationContextService} from "../../services/shared/organization-context.service";
-import {CustomersService} from "./services/customer.service";
 import {PageHeaderComponent} from "../dashboard/page-header/page-header.component";
 import {getClickHandler} from "../../common/utils/page-action-dispatcher";
 import {
@@ -20,6 +19,12 @@ import {ModalComponent} from "../../views/shared/modal/modal.component";
 import {DeleteConfirmComponent} from "../../views/shared/delete-confirm/delete-confirm-component";
 import {CustomerCreateComponent} from "./customer-create/customer-create.component";
 import {formatPhone} from "../../common/utils/app-formaters";
+import {
+   ClientImportJobStatusResponse,
+   ClientImportPreviewResponse,
+   CustomersService
+} from "./services/customer.service";
+import {Subscription, catchError, interval, of, startWith, switchMap} from 'rxjs';
 
 
 @Component({
@@ -29,7 +34,7 @@ import {formatPhone} from "../../common/utils/app-formaters";
    templateUrl: './customer.component.html',
    styleUrls: ['./customer.component.scss'],
 })
-export class CustomerComponent implements OnInit {
+export class CustomerComponent implements OnInit, OnDestroy {
    private customers = inject(CustomersService);
    private orgContext = inject(OrganizationContextService);
    private router = inject(Router);
@@ -54,6 +59,26 @@ export class CustomerComponent implements OnInit {
    private onboardingActionHandled = false;
    private returnToCommandCenter = false;
    private suppressNextDrawerClosedHandler = false;
+   private importPollSub: Subscription | null = null;
+
+   showImportModal = false;
+   selectedImportFile: File | null = null;
+   selectedImportFileName = '';
+   selectedSourceSystem = 'generic';
+   importSystems = [
+      {value: 'jobber', label: 'Jobber CSV'},
+      {value: 'housecall-pro', label: 'Housecall Pro CSV'},
+      {value: 'servicetitan', label: 'ServiceTitan CSV'},
+      {value: 'generic', label: 'Generic CSV'}
+   ];
+
+   importPreview: ClientImportPreviewResponse | null = null;
+   importMappings: Record<string, string | null> = {};
+   importLoading = false;
+   importError: string | null = null;
+
+   importStatus: ClientImportJobStatusResponse | null = null;
+   importJobId: string | null = null;
 
 
    private toast = inject(ToastService);
@@ -71,6 +96,12 @@ export class CustomerComponent implements OnInit {
          label: 'Add Client',
          icon: 'plus-circle',
          class: 'btn btn-primary px-4 fw-semibold'
+      },
+      {
+         key: 'import',
+         label: 'Import Data',
+         icon: 'upload',
+         class: 'btn btn-outline-primary px-4 fw-semibold'
       }
    ].map(action => ({
       ...action,
@@ -122,9 +153,14 @@ export class CustomerComponent implements OnInit {
       });
    }
 
+   ngOnDestroy(): void {
+      this.stopImportPolling();
+   }
+
    private getActionMap() {
       return {
-         add: () => this.openAddClient()
+         add: () => this.openAddClient(),
+         import: () => this.openImportModal()
       };
    }
 
@@ -319,5 +355,168 @@ export class CustomerComponent implements OnInit {
    closeDrawer(): void {
       this.isDrawerOpen = false;
       this.editingClient = null;
+   }
+
+   openImportModal(): void {
+      this.showImportModal = true;
+      this.selectedImportFile = null;
+      this.selectedImportFileName = '';
+      this.importPreview = null;
+      this.importMappings = {};
+      this.importError = null;
+      this.importLoading = false;
+      this.importStatus = null;
+      this.importJobId = null;
+      this.stopImportPolling();
+   }
+
+   closeImportModal(): void {
+      this.showImportModal = false;
+      this.stopImportPolling();
+   }
+
+   onImportFileSelected(event: Event): void {
+      const file = (event.target as HTMLInputElement).files?.[0] ?? null;
+      this.selectedImportFile = file;
+      this.selectedImportFileName = file?.name ?? '';
+      this.importPreview = null;
+      this.importMappings = {};
+      this.importStatus = null;
+      this.importJobId = null;
+      this.importError = null;
+   }
+
+   loadImportPreview(): void {
+      if (!this.selectedImportFile) {
+         this.importError = 'Choose a CSV file first.';
+         return;
+      }
+
+      this.importLoading = true;
+      this.importError = null;
+      this.importPreview = null;
+
+      this.customers.previewClientImport(this.selectedImportFile, this.selectedSourceSystem).subscribe({
+         next: response => {
+            this.importPreview = response;
+            this.importMappings = {...response.suggestedMappings};
+            this.importLoading = false;
+         },
+         error: err => {
+            this.importLoading = false;
+            this.importError = err?.error ?? 'Failed to preview CSV import. Check your file and try again.';
+         }
+      });
+   }
+
+   startImport(): void {
+      if (!this.importPreview?.uploadToken) {
+         this.importError = 'Preview your CSV before starting import.';
+         return;
+      }
+
+      if (!this.hasMappedColumns) {
+         this.importError = 'Map at least one column before importing.';
+         return;
+      }
+
+      this.importLoading = true;
+      this.importError = null;
+
+      this.customers.startClientImport({
+         uploadToken: this.importPreview.uploadToken,
+         sourceSystem: this.selectedSourceSystem,
+         columnMappings: this.importMappings
+      }).subscribe({
+         next: response => {
+            this.importLoading = false;
+            this.importJobId = response.jobId;
+            this.beginImportPolling(response.jobId);
+         },
+         error: err => {
+            this.importLoading = false;
+            this.importError = err?.error ?? 'Could not start import.';
+         }
+      });
+   }
+
+   onMappingChange(column: string, value: string): void {
+      this.importMappings[column] = value;
+   }
+
+   get hasMappedColumns(): boolean {
+      return Object.values(this.importMappings).some(value => !!value && value !== 'Ignore');
+   }
+
+   get importProgressPercent(): number {
+      if (!this.importStatus || this.importStatus.totalRows <= 0) {
+         return 0;
+      }
+
+      return Math.min(100, Math.round((this.importStatus.processedRows / this.importStatus.totalRows) * 100));
+   }
+
+   private beginImportPolling(jobId: string): void {
+      this.stopImportPolling();
+
+      this.importPollSub = interval(1500)
+         .pipe(
+            startWith(0),
+            switchMap(() => this.customers.getClientImportStatus(jobId).pipe(
+               catchError(() => of(null))
+            ))
+         )
+         .subscribe(status => {
+            if (!status) {
+               return;
+            }
+
+            this.importStatus = status;
+
+            if (status.status === 'completed') {
+               this.stopImportPolling();
+               this.importJobId = null;
+               this.load();
+               this.toast.success(`Import completed. ${status.succeededRows} clients imported.`);
+            }
+
+            if (status.status === 'failed') {
+               this.stopImportPolling();
+               this.importJobId = null;
+               this.importError = status.errorMessage ?? 'Import failed.';
+               this.toast.error(this.importError);
+            }
+         });
+   }
+
+   private stopImportPolling(): void {
+      this.importPollSub?.unsubscribe();
+      this.importPollSub = null;
+   }
+
+   downloadClientsCsv(): void {
+      this.customers.downloadClientsCsv().subscribe({
+         next: blob => {
+            this.downloadBlob(blob, this.fileNameWithTimestamp('jobflow-clients-export', 'csv'));
+            this.toast.success('Client CSV downloaded.');
+         },
+         error: () => {
+            this.toast.error('Could not download client CSV. Please try again.');
+         }
+      });
+   }
+
+   private downloadBlob(blob: Blob, fileName: string): void {
+      const objectUrl = window.URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = objectUrl;
+      anchor.download = fileName;
+      anchor.click();
+      window.URL.revokeObjectURL(objectUrl);
+   }
+
+   private fileNameWithTimestamp(prefix: string, extension: string): string {
+      const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\..+/, '');
+      return `${prefix}-${stamp}.${extension}`;
    }
 }
