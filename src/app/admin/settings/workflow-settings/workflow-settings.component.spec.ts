@@ -5,6 +5,7 @@ import { WorkflowSettingsComponent } from './workflow-settings.component';
 import { WorkflowSettingsService } from '../services/workflow-settings.service';
 import { ScheduleSettingsService } from '../services/schedule-settings.service';
 import { InvoicingSettingsService } from '../services/invoicing-settings.service';
+import { DataExportService } from '../services/data-export.service';
 import { ToastService } from '../../../common/toast/toast.service';
 import { InvoicingWorkflow, JobLifecycleStatus } from '../../jobs/models/job';
 import { WorkflowStatusDto } from '../models/workflow-status';
@@ -14,6 +15,7 @@ describe('WorkflowSettingsComponent', () => {
   let workflowService: jasmine.SpyObj<WorkflowSettingsService>;
   let scheduleService: jasmine.SpyObj<ScheduleSettingsService>;
   let invoicingService: jasmine.SpyObj<InvoicingSettingsService>;
+  let dataExportService: jasmine.SpyObj<DataExportService>;
   let toast: jasmine.SpyObj<ToastService>;
 
   beforeEach(() => {
@@ -28,6 +30,14 @@ describe('WorkflowSettingsComponent', () => {
     invoicingService = jasmine.createSpyObj<InvoicingSettingsService>('InvoicingSettingsService', [
       'getInvoicingSettings',
       'updateInvoicingSettings'
+    ]);
+    dataExportService = jasmine.createSpyObj<DataExportService>('DataExportService', [
+      'getDataExportJobs',
+      'startDataExportJob',
+      'getDataExportJobStatus',
+      'downloadDataExportJob',
+      'downloadOrganizationDataJson',
+      'downloadClientsCsv'
     ]);
     toast = jasmine.createSpyObj<ToastService>('ToastService', ['success', 'error']);
 
@@ -56,6 +66,7 @@ describe('WorkflowSettingsComponent', () => {
     invoicingService.updateInvoicingSettings.and.returnValue(of({
       defaultWorkflow: InvoicingWorkflow.InPerson
     }));
+    dataExportService.getDataExportJobs.and.returnValue(of([]));
 
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule],
@@ -63,6 +74,7 @@ describe('WorkflowSettingsComponent', () => {
         { provide: WorkflowSettingsService, useValue: workflowService },
         { provide: ScheduleSettingsService, useValue: scheduleService },
         { provide: InvoicingSettingsService, useValue: invoicingService },
+        { provide: DataExportService, useValue: dataExportService },
         { provide: ToastService, useValue: toast }
       ]
     });

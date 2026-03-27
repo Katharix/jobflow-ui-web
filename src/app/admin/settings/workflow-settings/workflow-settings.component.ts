@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -12,6 +12,8 @@ import { ScheduleSettingsDto } from '../models/schedule-settings';
 import { InvoicingWorkflow, InvoicingWorkflowLabels, JobLifecycleStatus, JobLifecycleStatusLabels } from '../../jobs/models/job';
 import { ToastService } from '../../../common/toast/toast.service';
 import { InvoicingSettingsDto } from '../models/invoicing-settings';
+import { Subscription, catchError, interval, of, startWith, switchMap } from 'rxjs';
+import { DataExportJobStatusResponse, DataExportService } from '../services/data-export.service';
 
 @Component({
   selector: 'app-workflow-settings',
@@ -20,11 +22,12 @@ import { InvoicingSettingsDto } from '../models/invoicing-settings';
   templateUrl: './workflow-settings.component.html',
   styleUrl: './workflow-settings.component.scss'
 })
-export class WorkflowSettingsComponent implements OnInit {
+export class WorkflowSettingsComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private workflowSettings = inject(WorkflowSettingsService);
   private scheduleSettings = inject(ScheduleSettingsService);
   private invoicingSettings = inject(InvoicingSettingsService);
+  private dataExport = inject(DataExportService);
   private toast = inject(ToastService);
 
   statusRows: WorkflowStatusUpsertRequestDto[] = [];
@@ -33,6 +36,11 @@ export class WorkflowSettingsComponent implements OnInit {
   isSavingStatuses = false;
   isSavingSchedule = false;
   isSavingInvoicing = false;
+  isStartingExport = false;
+  exportJobs: DataExportJobStatusResponse[] = [];
+  exportJobStatus: DataExportJobStatusResponse | null = null;
+  exportJobId: string | null = null;
+  private exportPollSub: Subscription | null = null;
 
   invoicingOptions = [
     { label: InvoicingWorkflowLabels[InvoicingWorkflow.SendInvoice], value: InvoicingWorkflow.SendInvoice },
@@ -54,6 +62,11 @@ export class WorkflowSettingsComponent implements OnInit {
     this.loadStatuses();
     this.loadScheduleSettings();
     this.loadInvoicingSettings();
+    this.refreshExportJobs();
+  }
+
+  ngOnDestroy(): void {
+    this.stopExportPolling();
   }
 
   loadStatuses(): void {
@@ -170,6 +183,74 @@ export class WorkflowSettingsComponent implements OnInit {
     this.statusRows = this.buildDefaultStatuses();
   }
 
+  startDataExportJob(): void {
+    if (this.isStartingExport) {
+      return;
+    }
+
+    this.isStartingExport = true;
+    this.dataExport.startDataExportJob().subscribe({
+      next: response => {
+        this.isStartingExport = false;
+        this.exportJobId = response.jobId;
+        this.exportJobStatus = {
+          jobId: response.jobId,
+          status: 'queued',
+          downloadCount: 0
+        };
+        this.beginExportPolling(response.jobId);
+        this.toast.success('Export queued. We will notify you when it is ready.');
+      },
+      error: err => {
+        this.isStartingExport = false;
+        const detail = err?.error?.detail;
+        if (typeof detail === 'string' && detail.length > 0) {
+          this.toast.error(detail);
+          return;
+        }
+
+        this.toast.error('Could not start data export. Please try again.');
+      }
+    });
+  }
+
+  downloadExportJob(jobId: string): void {
+    this.dataExport.downloadDataExportJob(jobId).subscribe({
+      next: blob => {
+        this.downloadBlob(blob, this.fileNameWithTimestamp('jobflow-export', 'zip'));
+        this.toast.success('Export ZIP downloaded.');
+        this.refreshExportJobs();
+      },
+      error: () => {
+        this.toast.error('Could not download export ZIP. It may have expired.');
+      }
+    });
+  }
+
+  downloadDataBundleJson(): void {
+    this.dataExport.downloadOrganizationDataJson().subscribe({
+      next: blob => {
+        this.downloadBlob(blob, this.fileNameWithTimestamp('jobflow-data-export', 'json'));
+        this.toast.success('Data export JSON downloaded.');
+      },
+      error: () => {
+        this.toast.error('Could not download JSON export. Please try again.');
+      }
+    });
+  }
+
+  downloadClientsCsv(): void {
+    this.dataExport.downloadClientsCsv().subscribe({
+      next: blob => {
+        this.downloadBlob(blob, this.fileNameWithTimestamp('jobflow-clients-export', 'csv'));
+        this.toast.success('Client CSV downloaded.');
+      },
+      error: () => {
+        this.toast.error('Could not download client CSV. Please try again.');
+      }
+    });
+  }
+
   moveStatus(index: number, direction: number): void {
     const target = index + direction;
     if (target < 0 || target >= this.statusRows.length) {
@@ -198,6 +279,69 @@ export class WorkflowSettingsComponent implements OnInit {
     this.invoicingForm.patchValue({
       defaultWorkflow: settings.defaultWorkflow
     }, { emitEvent: false });
+  }
+
+  private beginExportPolling(jobId: string): void {
+    this.stopExportPolling();
+
+    this.exportPollSub = interval(1500)
+      .pipe(
+        startWith(0),
+        switchMap(() => this.dataExport.getDataExportJobStatus(jobId).pipe(
+          catchError(() => of(null))
+        ))
+      )
+      .subscribe(status => {
+        if (!status) {
+          return;
+        }
+
+        this.exportJobStatus = status;
+
+        if (status.status === 'completed') {
+          this.stopExportPolling();
+          this.exportJobId = null;
+          this.refreshExportJobs();
+          this.downloadExportJob(status.jobId);
+        }
+
+        if (status.status === 'failed') {
+          this.stopExportPolling();
+          this.exportJobId = null;
+          this.refreshExportJobs();
+          this.toast.error(status.errorMessage ?? 'Data export failed.');
+        }
+      });
+  }
+
+  private stopExportPolling(): void {
+    this.exportPollSub?.unsubscribe();
+    this.exportPollSub = null;
+  }
+
+  private refreshExportJobs(): void {
+    this.dataExport.getDataExportJobs().subscribe({
+      next: jobs => {
+        this.exportJobs = jobs ?? [];
+      },
+      error: () => {
+        this.exportJobs = [];
+      }
+    });
+  }
+
+  private downloadBlob(blob: Blob, fileName: string): void {
+    const objectUrl = window.URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = objectUrl;
+    anchor.download = fileName;
+    anchor.click();
+    window.URL.revokeObjectURL(objectUrl);
+  }
+
+  private fileNameWithTimestamp(prefix: string, extension: string): string {
+    const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\..+/, '');
+    return `${prefix}-${stamp}.${extension}`;
   }
 
   private buildDefaultStatuses(): WorkflowStatusUpsertRequestDto[] {

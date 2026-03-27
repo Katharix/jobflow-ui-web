@@ -100,4 +100,129 @@
     </app-jobflow-modal>
   }
 
+  @if (showImportModal) {
+    <app-jobflow-modal
+      [title]="'Import Clients'"
+      [size]="'xl'"
+      [showFooter]="false"
+      (cancelled)="closeImportModal()"
+      >
+      <div class="import-workflow">
+        <div class="import-workflow__row">
+          <div>
+            <label class="form-label" for="importSourceSystem">Source system</label>
+            <select id="importSourceSystem" class="form-select" [(ngModel)]="selectedSourceSystem">
+              @for (system of importSystems; track system.value) {
+                <option [value]="system.value">{{ system.label }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label class="form-label" for="importCsvFile">CSV file</label>
+            <input id="importCsvFile" class="form-control" type="file" accept=".csv,text/csv" (change)="onImportFileSelected($event)">
+            @if (selectedImportFileName) {
+              <small class="text-muted">Selected: {{ selectedImportFileName }}</small>
+            }
+          </div>
+          <div class="import-workflow__actions">
+            <button class="btn btn-outline-primary" type="button" (click)="loadImportPreview()" [disabled]="importLoading">
+              {{ importLoading ? 'Loading...' : 'Load Preview' }}
+            </button>
+          </div>
+        </div>
+
+        @if (importError) {
+          <div class="alert alert-danger mt-3 mb-0">{{ importError }}</div>
+        }
+
+        @if (importPreview) {
+          <div class="import-workflow__section mt-3">
+            <h6 class="mb-1">Column Mapping</h6>
+            <p class="text-muted small mb-2">Map source columns to JobFlow client fields. Unmapped columns are ignored.</p>
+            <div class="import-mapping-grid">
+              @for (column of importPreview.sourceColumns; track column; let idx = $index) {
+                <div class="import-mapping-grid__item">
+                  <label class="form-label" [attr.for]="'import-map-' + idx">{{ column }}</label>
+                  <select
+                    [id]="'import-map-' + idx"
+                    class="form-select form-select-sm"
+                    [ngModel]="importMappings[column] ?? 'Ignore'"
+                    (ngModelChange)="onMappingChange(column, $event)">
+                    @for (field of importPreview.supportedTargetFields; track field) {
+                      <option [value]="field">{{ field }}</option>
+                    }
+                  </select>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="import-workflow__section mt-3">
+            <h6 class="mb-1">Preview ({{ importPreview.totalRows }} rows detected)</h6>
+            <div class="table-responsive import-preview-table">
+              <table class="table table-sm align-middle mb-0">
+                <thead>
+                <tr>
+                  @for (column of importPreview.sourceColumns; track column) {
+                    <th>{{ column }}</th>
+                  }
+                </tr>
+                </thead>
+                <tbody>
+                @for (row of importPreview.previewRows; track $index) {
+                  <tr>
+                    @for (column of importPreview.sourceColumns; track column) {
+                      <td>{{ row[column] || '—' }}</td>
+                    }
+                  </tr>
+                }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          @if (importStatus) {
+            <div class="import-workflow__section mt-3">
+              <h6 class="mb-2">Import Status</h6>
+              <div class="progress" role="progressbar" aria-label="Import progress" [attr.aria-valuenow]="importProgressPercent" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar" [style.width.%]="importProgressPercent">{{ importProgressPercent }}%</div>
+              </div>
+              <div class="small text-muted mt-2">
+                Processed {{ importStatus.processedRows }} / {{ importStatus.totalRows }} rows.
+                Imported: {{ importStatus.succeededRows }}.
+                Failed: {{ importStatus.failedRows }}.
+                Status: {{ importStatus.status }}.
+              </div>
+              @if (importStatus.errors.length) {
+                <div class="import-errors mt-2">
+                  <h6 class="small mb-1">Row errors</h6>
+                  <ul class="mb-0">
+                    @for (rowError of importStatus.errors; track $index) {
+                      <li>Row {{ rowError.rowNumber }}: {{ rowError.message }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+          }
+        }
+
+        <div class="import-workflow__footer mt-4">
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary" (click)="downloadClientsCsv()">Download Clients CSV</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="closeImportModal()">Close</button>
+          </div>
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="importLoading || !importPreview || !hasMappedColumns || !!importJobId"
+            (click)="startImport()"
+            >
+            {{ importLoading ? 'Starting...' : 'Start Import' }}
+          </button>
+        </div>
+      </div>
+    </app-jobflow-modal>
+  }
+
 
