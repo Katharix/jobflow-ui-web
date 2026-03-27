@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import {
   ClientHubEstimate,
@@ -19,7 +20,7 @@ import { JobLifecycleStatus, JobLifecycleStatusLabels } from '../../../admin/job
 @Component({
   selector: 'app-client-hub-job-updates',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './client-hub-job-updates.component.html',
   styleUrl: './client-hub-job-updates.component.scss',
 })
@@ -35,6 +36,9 @@ export class ClientHubJobUpdatesComponent implements OnInit, OnDestroy {
   job: ClientHubJobSummary | null = null;
   timeline: ClientHubTimelineItem[] = [];
   pendingEstimates: ClientHubEstimate[] = [];
+  selectedFiles: File[] = [];
+  uploading = false;
+  uploadMessage = '';
   private attachmentUrls = new Map<string, SafeUrl>();
   private attachmentObjectUrls: string[] = [];
 
@@ -127,6 +131,38 @@ export class ClientHubJobUpdatesComponent implements OnInit, OnDestroy {
 
   getAttachmentUrl(attachment: ClientHubTimelineAttachment): SafeUrl | null {
     return this.attachmentUrls.get(attachment.id) ?? null;
+  }
+
+  onFilesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    this.selectedFiles = Array.from(input.files).filter((f) => allowed.includes(f.type));
+  }
+
+  removeFile(index: number): void {
+    this.selectedFiles.splice(index, 1);
+  }
+
+  uploadPhotos(): void {
+    if (!this.job || !this.selectedFiles.length) return;
+
+    this.uploading = true;
+    this.clientHubService
+      .uploadJobPhotos(this.job.id, this.selectedFiles, this.uploadMessage || undefined)
+      .subscribe({
+        next: () => {
+          this.uploading = false;
+          this.selectedFiles = [];
+          this.uploadMessage = '';
+          this.loadJobUpdates();
+        },
+        error: () => {
+          this.uploading = false;
+          this.error = 'Unable to upload photos. Please try again.';
+        },
+      });
   }
 
   private loadAttachmentPreviews(jobId: string, timeline: ClientHubTimelineItem[]): void {

@@ -743,6 +743,12 @@
         "inProgress": "Em andamento",
         "completed": "Concluidos"
       },
+      "cta": {
+        "eyebrow": "Ação rápida",
+        "title": "Criar um novo trabalho",
+        "subtitle": "Adicione um trabalho, atribua uma equipe e acompanhe o progresso.",
+        "button": "Adicionar trabalho"
+      },
       "filters": {
         "status": "Status",
         "allStatuses": "Todos os status",

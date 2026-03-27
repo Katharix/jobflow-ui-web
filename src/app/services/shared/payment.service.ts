@@ -61,4 +61,16 @@ export class PaymentService {
          paymentSessionRequest
       );
    }
+
+   createDeposit(request: DepositPaymentRequest): Observable<CheckoutPaymentResponse> {
+      return this.api.post<CheckoutPaymentResponse>(`${this.paymentUrl}deposit`, request);
+   }
+}
+
+export interface DepositPaymentRequest {
+   provider: PaymentProvider;
+   organizationClientId: string;
+   invoiceId?: string;
+   productName?: string;
+   amount: number;
 }

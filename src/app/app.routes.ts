@@ -15,7 +15,6 @@ import {ChatComponent} from './admin/chat/chat.component';
 import {CompanyComponent} from './admin/company/company.component';
 import {EmployeesComponent} from './admin/employees/employees.component';
 import {PriceBookComponent} from './admin/pricebook/pricebook.component';
-import {EmployeeScheduleComponent} from './admin/scheduling/employee-schedule/employee-schedule.component';
 import {JobScheduleComponent} from './admin/jobs/job-schedule/job-schedule.component';
 import {EmployeeRolesComponent} from './admin/employee-roles/employee-roles.component';
 import {CustomerComponent} from "./admin/customer/customer.component";
@@ -62,7 +61,6 @@ export const routes: Routes = [
          {path: 'company', component: CompanyComponent},
 
          {path: 'employees', component: EmployeesComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
-         {path: 'employees/scheduling-employees', component: EmployeeScheduleComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
          {path: 'employees/roles', component: EmployeeRolesComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
 
          {path: 'scheduling-jobs', component: JobScheduleComponent},

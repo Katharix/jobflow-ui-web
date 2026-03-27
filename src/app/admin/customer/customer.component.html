@@ -1,7 +1,6 @@
 <app-page-header
   title="Clients"
   subtitle="Keep client data tidy and ready for every workflow."
-  [actions]="headerActions"
 ></app-page-header>
 @if (error) {
   <div class="alert alert-danger mb-3">
@@ -31,6 +30,21 @@
     <div class="clientflow-metric">
       <span class="clientflow-metric__label">Missing email</span>
       <span class="clientflow-metric__value">{{ clientsMissingEmail }}</span>
+    </div>
+  </div>
+  <div class="clientflow-cta">
+    <div>
+      <p class="clientflow-cta__eyebrow">Quick action</p>
+      <h3>Add or import clients</h3>
+      <p>Create a client manually or import from a CSV file.</p>
+    </div>
+    <div class="clientflow-cta__actions">
+      <button type="button" class="btn btn-primary" (click)="openAddClient()">
+        Add Client
+      </button>
+      <button type="button" class="btn btn-outline-primary" (click)="openImportModal()">
+        Import Data
+      </button>
     </div>
   </div>
 </section>

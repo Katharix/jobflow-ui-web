@@ -1,6 +1,6 @@
 ﻿.jobflow-hero {
    display: grid;
-   grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+   grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, .8fr);
    gap: 1.5rem;
    padding: 1.5rem;
    border-radius: 1.25rem;
@@ -90,6 +90,39 @@
    font-size: 1.4rem;
    font-weight: 700;
    color: #0f172a;
+}
+
+.jobflow-cta {
+   border: 1px solid var(--bs-border-color);
+   border-radius: 1rem;
+   padding: 1.05rem 1.1rem;
+   background: var(--bs-body-bg);
+   display: grid;
+   gap: .85rem;
+   align-content: space-between;
+   box-shadow: 0 0 0 1px rgba(var(--bs-info-rgb), .06);
+
+   h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--bs-heading-color);
+   }
+
+   p {
+      margin: .35rem 0 0;
+      color: var(--bs-secondary-color);
+      font-size: .88rem;
+   }
+}
+
+.jobflow-cta__eyebrow {
+   margin: 0;
+   font-size: .7rem;
+   text-transform: uppercase;
+   letter-spacing: .08em;
+   font-weight: 700;
+   color: var(--bs-info);
 }
 
 .jobflow-lanes {

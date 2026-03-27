@@ -105,4 +105,20 @@ export class BaseApiService {
          responseType: 'blob'
       });
    }
+
+   postFormWithHeaders<T>(endpoint: string, formData: FormData, headers?: HttpHeaders): Observable<T> {
+      let formHeaders = new HttpHeaders();
+      if (headers) {
+         headers.keys().forEach(key => {
+            const value = headers.get(key);
+            if (value !== null) {
+               formHeaders = formHeaders.set(key, value);
+            }
+         });
+      }
+      // Do not set Content-Type — browser sets multipart boundary automatically
+      return this.http.post<T>(`${this.baseUrl}/${endpoint}`, formData, {
+         headers: formHeaders
+      });
+   }
 }

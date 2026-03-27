@@ -743,6 +743,12 @@
         "inProgress": "In Arbeit",
         "completed": "Abgeschlossen"
       },
+      "cta": {
+        "eyebrow": "Schnellaktion",
+        "title": "Neuen Job erstellen",
+        "subtitle": "Job anlegen, Team zuweisen und Fortschritt verfolgen.",
+        "button": "Job hinzufügen"
+      },
       "filters": {
         "status": "Status",
         "allStatuses": "Alle Status",

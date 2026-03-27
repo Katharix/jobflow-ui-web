@@ -198,6 +198,46 @@
   background: #60a5fa;
 }
 
+.upload-section {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px dashed #cbd5e1;
+  border-radius: 0.75rem;
+  background: #f8fafc;
+
+  h4 {
+    margin: 0 0 0.25rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+}
+
+.upload-controls {
+  margin-top: 0.75rem;
+}
+
+.selected-files {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.selected-file {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.5rem;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.82rem;
+}
+
+.upload-message {
+  margin-top: 0.75rem;
+}
+
 .timeline-item--note .timeline-item__marker {
   background: #a5b4fc;
 }

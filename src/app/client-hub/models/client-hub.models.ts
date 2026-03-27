@@ -140,3 +140,9 @@ export interface ClientHubTimelineAttachment {
   fileName: string;
   contentType: string;
 }
+
+export interface ClientHubDepositResponse {
+  clientSecret?: string;
+  url?: string;
+  providerPaymentId?: string;
+}
