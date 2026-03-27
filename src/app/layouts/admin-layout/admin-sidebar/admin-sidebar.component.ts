@@ -25,7 +25,7 @@ import { OrganizationDto } from '../../../models/organization';
     TranslateModule
 ],
   templateUrl: './admin-sidebar.component.html',
-  styleUrl: './admin-sidebar.component.scss'
+  styleUrl: './admin-sidebar.component.scss',
 })
 export class AdminSidebarComponent implements OnInit, AfterViewInit {
   private document = inject<Document>(DOCUMENT);

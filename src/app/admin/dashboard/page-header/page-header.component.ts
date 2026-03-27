@@ -17,4 +17,12 @@ export class PageHeaderComponent {
     class: string;
     click?: () => void;
   }[];
+
+  normalizeActionClass(value?: string): string {
+    if (!value) return '';
+    return value
+      .split(/\s+/)
+      .filter(token => token && token !== 'btn')
+      .join(' ');
+  }
 }

@@ -9,7 +9,7 @@
         @for (action of actions; track action) {
           <button
             class="btn d-flex align-items-center gap-2 w-100 w-md-auto"
-            [ngClass]="action.class"
+            [ngClass]="normalizeActionClass(action.class)"
             (click)="action.click?.()"
             >
             @if (action.icon) {

@@ -20,7 +20,7 @@ import { WeatherWidgetComponent } from '../../../admin/dashboard/weather-widget/
     WeatherWidgetComponent
 ],
    templateUrl: './admin-navbar.component.html',
-   styleUrl: './admin-navbar.component.scss'
+   styleUrl: './admin-navbar.component.scss',
 })
 export class AdminNavbarComponent implements OnInit {
    private router = inject(Router);
