@@ -1,6 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { BaseApiService } from '../../services/shared/base-api.service';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '@angular/fire/auth';
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from '@angular/fire/auth';
+import {
+  GoogleAuthProvider,
+  signInWithPopup as firebaseSignInWithPopup,
+  UserCredential
+} from 'firebase/auth';
 import { OrganizationDto } from '../../models/organization';
 
 interface LoginWithFirebaseResponse {
@@ -18,6 +27,12 @@ export class AuthService {
     return signInWithEmailAndPassword(this.auth, email, password);
   }
 
+  loginWithGoogle(): Promise<UserCredential> {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    return firebaseSignInWithPopup(this.auth, provider);
+  }
+
   register(email: string, password: string) {
     return createUserWithEmailAndPassword(this.auth, email, password);
   }
@@ -28,6 +43,15 @@ export class AuthService {
 
   loginWithFirebase(idToken: string) {
     return this.api.post<LoginWithFirebaseResponse>(`${this.authUrl}login-with-firebase`, { token: idToken });
+  }
+
+  async getCurrentUserIdToken(forceRefresh = false): Promise<string> {
+    const currentUser = this.auth.currentUser;
+    if (!currentUser) {
+      throw new Error('No current user found.');
+    }
+
+    return currentUser.getIdToken(forceRefresh);
   }
 
   get currentUser() {

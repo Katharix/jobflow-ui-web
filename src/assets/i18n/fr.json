@@ -128,12 +128,20 @@
         "tooManyRequests": "Trop de tentatives. Attendez puis reessayez.",
         "network": "Erreur reseau. Verifiez votre connexion.",
         "notEnabled": "La connexion email/mot de passe n'est pas activee.",
-        "unauthorizedDomain": "Ce domaine n'est pas autorise."
+        "unauthorizedDomain": "Ce domaine n'est pas autorise.",
+        "popupClosed": "Google sign-in was canceled.",
+        "popupBlocked": "Your browser blocked the Google sign-in popup. Please allow popups and try again.",
+        "popupCancelled": "Another sign-in request is already in progress.",
+        "accountExistsDifferentCredential": "An account already exists with this email using a different sign-in method."
       },
       "errorCode": "(code: {{code}})",
       "errorGeneric": "Un probleme est survenu. Reessayez.",
       "serverError": "Echec de connexion cote serveur. Reessayez.",
-      "toastFailed": "Echec de connexion. Reessayez."
+      "toastFailed": "Echec de connexion. Reessayez.",
+      "submitting": "Signing in...",
+      "orContinueWith": "Or continue with",
+      "googleSignIn": "Continue with Google",
+      "googleSubmitting": "Connecting Google account..."
     },
     "register": {
       "eyebrow": "Rejoignez JobFlow",
@@ -187,11 +195,22 @@
         "tooManyRequests": "Trop de tentatives. Attendez un moment.",
         "network": "Erreur reseau. Verifiez votre connexion.",
         "notEnabled": "L'inscription email/mot de passe n'est pas activee.",
-        "unauthorizedDomain": "Ce domaine n'est pas autorise."
+        "unauthorizedDomain": "Ce domaine n'est pas autorise.",
+        "popupClosed": "Google sign-in was canceled.",
+        "popupBlocked": "Your browser blocked the Google sign-in popup. Please allow popups and try again.",
+        "popupCancelled": "Another sign-in request is already in progress.",
+        "accountExistsDifferentCredential": "An account already exists with this email using a different sign-in method.",
+        "googleEmailMismatch": "Please use the same email address used for your JobFlow subscription.",
+        "googleMissingEmail": "Your Google account did not provide an email address.",
+        "missingOrganization": "We could not find your organization setup. Please start from subscription checkout again.",
+        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again."
       },
       "errorCode": "(code: {{code}})",
       "toastCreated": "Compte cree",
-      "toastWelcome": "Bienvenue"
+      "toastWelcome": "Bienvenue",
+      "googleSignUp": "Continue with Google",
+      "googleSubmitting": "Connecting Google account...",
+      "orCreateWithEmail": "Or create with email"
     }
   },
   "subscribe": {

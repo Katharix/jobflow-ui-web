@@ -92,8 +92,32 @@
                 }
 
                 <div class="d-grid gap-2">
-                  <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
-                    {{ 'auth.login.submit' | translate }}
+                  <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isSubmitting || isGoogleSubmitting">
+                    @if (!isSubmitting) {
+                      <span>{{ 'auth.login.submit' | translate }}</span>
+                    }
+                    @if (isSubmitting) {
+                      <span>{{ 'auth.login.submitting' | translate }}</span>
+                    }
+                  </button>
+                </div>
+
+                <div class="auth-separator">
+                  <span>{{ 'auth.login.orContinueWith' | translate }}</span>
+                </div>
+
+                <div class="d-grid gap-2">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary google-auth-btn"
+                    [disabled]="isSubmitting || isGoogleSubmitting"
+                    (click)="onGoogleLogin()">
+                    @if (!isGoogleSubmitting) {
+                      <span>{{ 'auth.login.googleSignIn' | translate }}</span>
+                    }
+                    @if (isGoogleSubmitting) {
+                      <span>{{ 'auth.login.googleSubmitting' | translate }}</span>
+                    }
                   </button>
                 </div>
 

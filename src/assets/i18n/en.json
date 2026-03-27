@@ -108,6 +108,10 @@
       "passwordLabel": "Password",
       "passwordPlaceholder": "Your password",
       "submit": "Login",
+      "submitting": "Signing in...",
+      "orContinueWith": "Or continue with",
+      "googleSignIn": "Continue with Google",
+      "googleSubmitting": "Connecting Google account...",
       "footer": {
         "prefix": "By continuing, you agree to our",
         "terms": "Terms",
@@ -128,7 +132,11 @@
         "tooManyRequests": "Too many attempts. Please wait a moment and try again.",
         "network": "Network error. Check your connection and try again.",
         "notEnabled": "Email/password sign-in is not enabled for this project.",
-        "unauthorizedDomain": "This domain is not authorized for sign-in."
+        "unauthorizedDomain": "This domain is not authorized for sign-in.",
+        "popupClosed": "Google sign-in was canceled.",
+        "popupBlocked": "Your browser blocked the Google sign-in popup. Please allow popups and try again.",
+        "popupCancelled": "Another sign-in request is already in progress.",
+        "accountExistsDifferentCredential": "An account already exists with this email using a different sign-in method."
       },
       "errorCode": "(code: {{code}})",
       "errorGeneric": "Something went wrong. Please try again.",
@@ -160,6 +168,9 @@
       "passwordHint": "Use at least 8 characters with upper/lowercase, number, and symbol.",
       "confirmPasswordLabel": "Confirm password",
       "confirmPasswordPlaceholder": "Confirm Password",
+      "googleSignUp": "Continue with Google",
+      "googleSubmitting": "Connecting Google account...",
+      "orCreateWithEmail": "Or create with email",
       "submit": "Create Account",
       "submitting": "Creating account...",
       "footer": {
@@ -187,7 +198,15 @@
         "tooManyRequests": "Too many attempts. Please wait a moment and try again.",
         "network": "Network error. Check your connection and try again.",
         "notEnabled": "Email/password sign-up is not enabled for this project.",
-        "unauthorizedDomain": "This domain is not authorized for sign-in."
+        "unauthorizedDomain": "This domain is not authorized for sign-in.",
+        "popupClosed": "Google sign-in was canceled.",
+        "popupBlocked": "Your browser blocked the Google sign-in popup. Please allow popups and try again.",
+        "popupCancelled": "Another sign-in request is already in progress.",
+        "accountExistsDifferentCredential": "An account already exists with this email using a different sign-in method.",
+        "googleEmailMismatch": "Please use the same email address used for your JobFlow subscription.",
+        "googleMissingEmail": "Your Google account did not provide an email address.",
+        "missingOrganization": "We could not find your organization setup. Please start from subscription checkout again.",
+        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again."
       },
       "errorCode": "(code: {{code}})",
       "toastCreated": "Account created",
