@@ -142,6 +142,25 @@
                     </div>
 
                     <div class="d-grid gap-2">
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary google-auth-btn"
+                        [disabled]="isSubmitting"
+                        (click)="onGoogleRegister()">
+                        @if (!isSubmitting) {
+                          <span>{{ 'auth.register.googleSignUp' | translate }}</span>
+                        }
+                        @if (isSubmitting) {
+                          <span>{{ 'auth.register.googleSubmitting' | translate }}</span>
+                        }
+                      </button>
+                    </div>
+
+                    <div class="auth-separator">
+                      <span>{{ 'auth.register.orCreateWithEmail' | translate }}</span>
+                    </div>
+
+                    <div class="d-grid gap-2">
                       <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isSubmitting">
                         @if (!isSubmitting) {
                           <span>{{ 'auth.register.submit' | translate }}</span>

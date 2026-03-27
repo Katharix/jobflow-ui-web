@@ -128,12 +128,20 @@
         "tooManyRequests": "Troppi tentativi. Attendi e riprova.",
         "network": "Errore di rete. Controlla la connessione.",
         "notEnabled": "Accesso email/password non abilitato.",
-        "unauthorizedDomain": "Dominio non autorizzato."
+        "unauthorizedDomain": "Dominio non autorizzato.",
+        "popupClosed": "Google sign-in was canceled.",
+        "popupBlocked": "Your browser blocked the Google sign-in popup. Please allow popups and try again.",
+        "popupCancelled": "Another sign-in request is already in progress.",
+        "accountExistsDifferentCredential": "An account already exists with this email using a different sign-in method."
       },
       "errorCode": "(codice: {{code}})",
       "errorGeneric": "Qualcosa e andato storto. Riprova.",
       "serverError": "Accesso al server fallito. Riprova.",
-      "toastFailed": "Accesso fallito. Riprova."
+      "toastFailed": "Accesso fallito. Riprova.",
+      "submitting": "Signing in...",
+      "orContinueWith": "Or continue with",
+      "googleSignIn": "Continue with Google",
+      "googleSubmitting": "Connecting Google account..."
     },
     "register": {
       "eyebrow": "Unisciti a JobFlow",
@@ -187,11 +195,22 @@
         "tooManyRequests": "Troppi tentativi. Attendi.",
         "network": "Errore di rete. Controlla la connessione.",
         "notEnabled": "Registrazione email/password non abilitata.",
-        "unauthorizedDomain": "Dominio non autorizzato."
+        "unauthorizedDomain": "Dominio non autorizzato.",
+        "popupClosed": "Google sign-in was canceled.",
+        "popupBlocked": "Your browser blocked the Google sign-in popup. Please allow popups and try again.",
+        "popupCancelled": "Another sign-in request is already in progress.",
+        "accountExistsDifferentCredential": "An account already exists with this email using a different sign-in method.",
+        "googleEmailMismatch": "Please use the same email address used for your JobFlow subscription.",
+        "googleMissingEmail": "Your Google account did not provide an email address.",
+        "missingOrganization": "We could not find your organization setup. Please start from subscription checkout again.",
+        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again."
       },
       "errorCode": "(codice: {{code}})",
       "toastCreated": "Account creato",
-      "toastWelcome": "Benvenuto"
+      "toastWelcome": "Benvenuto",
+      "googleSignUp": "Continue with Google",
+      "googleSubmitting": "Connecting Google account...",
+      "orCreateWithEmail": "Or create with email"
     }
   },
   "subscribe": {

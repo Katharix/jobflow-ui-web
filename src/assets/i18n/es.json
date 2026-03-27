@@ -128,12 +128,20 @@
         "tooManyRequests": "Demasiados intentos. Espera un momento y vuelve a intentar.",
         "network": "Error de red. Revisa tu conexion.",
         "notEnabled": "El acceso con correo/contrasena no esta habilitado.",
-        "unauthorizedDomain": "Este dominio no esta autorizado."
+        "unauthorizedDomain": "Este dominio no esta autorizado.",
+        "popupClosed": "Google sign-in was canceled.",
+        "popupBlocked": "Your browser blocked the Google sign-in popup. Please allow popups and try again.",
+        "popupCancelled": "Another sign-in request is already in progress.",
+        "accountExistsDifferentCredential": "An account already exists with this email using a different sign-in method."
       },
       "errorCode": "(codigo: {{code}})",
       "errorGeneric": "Algo salio mal. Intenta de nuevo.",
       "serverError": "Error al iniciar sesion en el servidor. Intenta de nuevo.",
-      "toastFailed": "No se pudo iniciar sesion. Intenta de nuevo."
+      "toastFailed": "No se pudo iniciar sesion. Intenta de nuevo.",
+      "submitting": "Signing in...",
+      "orContinueWith": "Or continue with",
+      "googleSignIn": "Continue with Google",
+      "googleSubmitting": "Connecting Google account..."
     },
     "register": {
       "eyebrow": "Unete a JobFlow",
@@ -187,11 +195,22 @@
         "tooManyRequests": "Demasiados intentos. Espera un momento.",
         "network": "Error de red. Revisa tu conexion.",
         "notEnabled": "El registro con correo/contrasena no esta habilitado.",
-        "unauthorizedDomain": "Este dominio no esta autorizado."
+        "unauthorizedDomain": "Este dominio no esta autorizado.",
+        "popupClosed": "Google sign-in was canceled.",
+        "popupBlocked": "Your browser blocked the Google sign-in popup. Please allow popups and try again.",
+        "popupCancelled": "Another sign-in request is already in progress.",
+        "accountExistsDifferentCredential": "An account already exists with this email using a different sign-in method.",
+        "googleEmailMismatch": "Please use the same email address used for your JobFlow subscription.",
+        "googleMissingEmail": "Your Google account did not provide an email address.",
+        "missingOrganization": "We could not find your organization setup. Please start from subscription checkout again.",
+        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again."
       },
       "errorCode": "(codigo: {{code}})",
       "toastCreated": "Cuenta creada",
-      "toastWelcome": "Bienvenido"
+      "toastWelcome": "Bienvenido",
+      "googleSignUp": "Continue with Google",
+      "googleSubmitting": "Connecting Google account...",
+      "orCreateWithEmail": "Or create with email"
     }
   },
   "subscribe": {

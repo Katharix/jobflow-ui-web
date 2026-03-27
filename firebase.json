@@ -8,6 +8,15 @@
     ],
     "headers": [
       {
+        "source": "/__/**",
+        "headers": [
+          {
+            "key": "X-Robots-Tag",
+            "value": "none"
+          }
+        ]
+      },
+      {
         "source": "**",
         "headers": [
           {

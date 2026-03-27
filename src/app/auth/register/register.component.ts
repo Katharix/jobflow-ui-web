@@ -2,10 +2,6 @@ import {CommonModule} from '@angular/common';
 import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import {FormsModule, NgForm} from '@angular/forms';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {
-   Auth,
-   createUserWithEmailAndPassword
-} from '@angular/fire/auth';
 import {doc, Firestore, setDoc} from '@angular/fire/firestore';
 import {Organization, OrganizationRequest, OrganizationDto} from '../../models/organization';
 import {OrganizationType} from '../../models/organization-type';
@@ -17,6 +13,7 @@ import { PaymentService } from '../../services/shared/payment.service';
 import { PaymentProvider } from '../../models/customer-payment-profile';
 import { ToastService } from '../../common/toast/toast.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { AuthService } from '../services/auth.service';
 
 @Component({
    selector: 'app-register',
@@ -26,7 +23,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
    styleUrl: './register.component.scss'
 })
 export class RegisterComponent implements OnInit {
-   private auth = inject(Auth);
    private firestore = inject(Firestore);
    private router = inject(Router);
    private orgService = inject(OrganizationService);
@@ -36,6 +32,7 @@ export class RegisterComponent implements OnInit {
    private paymentService = inject(PaymentService);
    private toast = inject(ToastService);
    private translate = inject(TranslateService);
+   private authService = inject(AuthService);
 
    @ViewChild('form') form?: NgForm;
 
@@ -104,6 +101,12 @@ export class RegisterComponent implements OnInit {
          return;
       }
 
+      if (!this.organizationId) {
+         this.error = this.translate.instant('auth.register.errors.missingOrganization');
+         this.toast.error(this.error);
+         return;
+      }
+
       if (this.isSubmitting) {
          return;
       }
@@ -111,48 +114,94 @@ export class RegisterComponent implements OnInit {
       this.isSubmitting = true;
 
       try {
-         const userCredential = await createUserWithEmailAndPassword(
-            this.auth,
+         const userCredential = await this.authService.register(
             this.email.trim(),
             this.password.trim()
          );
 
-         const uid = userCredential.user.uid;
-
-         await setDoc(doc(this.firestore, 'users', uid), {
-            email: this.email.trim(),
-            role,
-            createdAt: new Date()
-         });
-         const orgDto: OrganizationDto = {
-            id: this.organizationId ?? '',
-            firebaseUid: uid,
-            userRole: role,
-            emailAddress: this.email
-         }
-         this.orgService.registerOrganization(orgDto).subscribe({
-            next: (data) => {
-               this.orgContext.setOrganization(data);
-               this.toast.success(
-                  this.translate.instant('auth.register.toastCreated'),
-                  this.translate.instant('auth.register.toastWelcome')
-               );
-               this.router.navigate(['/admin'], {queryParams: {organizationId: data.id}});
-            },
-            error: (err) => {
-               console.error(err);
-               this.toast.error(this.translate.instant('auth.register.errors.createFailed'));
-               this.isSubmitting = false;
-            }
-         });
-
+         await this.completeRegistration(userCredential.user.uid, this.email.trim(), role);
 
       } catch (err: unknown) {
          console.error('Registration Error:', err);
-         this.error = this.mapFirebaseAuthError(err);
+         if (this.isBackendAuthError(err)) {
+            this.error = this.translate.instant('auth.register.errors.serverSyncFailed');
+         } else {
+            this.error = this.mapFirebaseAuthError(err);
+         }
          this.toast.error(this.error || this.translate.instant('auth.register.errors.generic'));
+      } finally {
          this.isSubmitting = false;
       }
+   }
+
+   async onGoogleRegister(): Promise<void> {
+      this.error = '';
+
+      if (!this.organizationId) {
+         this.error = this.translate.instant('auth.register.errors.missingOrganization');
+         this.toast.error(this.error);
+         return;
+      }
+
+      if (this.isSubmitting) {
+         return;
+      }
+
+      this.isSubmitting = true;
+      const role = 'OrganizationAdmin';
+
+      try {
+         const userCredential = await this.authService.loginWithGoogle();
+         const googleEmail = userCredential.user.email?.trim();
+
+         if (!googleEmail) {
+            throw new Error(this.translate.instant('auth.register.errors.googleMissingEmail'));
+         }
+
+         const invitedEmail = this.email.trim();
+         if (invitedEmail && invitedEmail.toLowerCase() !== googleEmail.toLowerCase()) {
+            this.error = this.translate.instant('auth.register.errors.googleEmailMismatch');
+            this.toast.error(this.error);
+            await this.authService.logout();
+            return;
+         }
+
+         this.email = googleEmail;
+         await this.completeRegistration(userCredential.user.uid, googleEmail, role);
+      } catch (err: unknown) {
+         console.error('Google Registration Error:', err);
+         if (this.isBackendAuthError(err)) {
+            this.error = this.translate.instant('auth.register.errors.serverSyncFailed');
+         } else {
+            this.error = this.mapFirebaseAuthError(err);
+         }
+         this.toast.error(this.error || this.translate.instant('auth.register.errors.generic'));
+      } finally {
+         this.isSubmitting = false;
+      }
+   }
+
+   private async completeRegistration(uid: string, email: string, role: string): Promise<void> {
+      await setDoc(doc(this.firestore, 'users', uid), {
+         email,
+         role,
+         createdAt: new Date()
+      });
+
+      const orgDto: OrganizationDto = {
+         id: this.organizationId ?? '',
+         firebaseUid: uid,
+         userRole: role,
+         emailAddress: email
+      };
+
+      const data = await firstValueFrom(this.orgService.registerOrganization(orgDto));
+      this.orgContext.setOrganization(data);
+      this.toast.success(
+         this.translate.instant('auth.register.toastCreated'),
+         this.translate.instant('auth.register.toastWelcome')
+      );
+      await this.router.navigate(['/admin'], {queryParams: {organizationId: data.id}});
    }
 
 
@@ -186,6 +235,18 @@ export class RegisterComponent implements OnInit {
          case 'auth/unauthorized-domain':
             message = this.translate.instant('auth.register.errors.unauthorizedDomain');
             break;
+         case 'auth/popup-closed-by-user':
+            message = this.translate.instant('auth.register.errors.popupClosed');
+            break;
+         case 'auth/popup-blocked':
+            message = this.translate.instant('auth.register.errors.popupBlocked');
+            break;
+         case 'auth/cancelled-popup-request':
+            message = this.translate.instant('auth.register.errors.popupCancelled');
+            break;
+         case 'auth/account-exists-with-different-credential':
+            message = this.translate.instant('auth.register.errors.accountExistsDifferentCredential');
+            break;
          default:
             message = maybeError?.message || this.translate.instant('auth.register.errors.generic');
             break;
@@ -193,6 +254,11 @@ export class RegisterComponent implements OnInit {
 
       const codeSuffix = this.translate.instant('auth.register.errorCode', { code });
       return `${message} ${codeSuffix}`;
+   }
+
+   private isBackendAuthError(error: unknown): boolean {
+      const maybeHttpError = error as { status?: number; name?: string } | null;
+      return typeof maybeHttpError?.status === 'number' || maybeHttpError?.name === 'HttpErrorResponse';
    }
 
    async startPaymentProviderOnboarding(orgId?: string) {
