@@ -21,6 +21,7 @@ import {
 } from '../add-edit-pricebook-item-dialog/add-edit-pricebook-item-dialog.component';
 import {PageHeaderComponent} from "../../dashboard/page-header/page-header.component";
 import {PriceBookCategoryService} from '../services/price-book-category.service';
+import {LucideAngularModule} from 'lucide-angular';
 import {
    JobflowGridColumn,
    JobflowGridCommandClickEventArgs,
@@ -33,7 +34,7 @@ import {
 @Component({
    selector: 'app-price-book-item',
    standalone: true,
-   imports: [PageHeaderComponent, JobflowGridComponent],
+   imports: [PageHeaderComponent, JobflowGridComponent, LucideAngularModule],
    templateUrl: './price-book-item.component.html',
    styleUrl: './price-book-item.component.scss'
 })
@@ -118,7 +119,7 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
    }
 
 // --- Implement the handlers you need ---
-   private goBackToCategories() {
+   goBackToCategories() {
       // navigate back to your categories page/route
       this.router.navigate(['/admin/pricebook']); // adjust route as needed
    }

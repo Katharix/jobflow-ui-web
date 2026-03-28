@@ -743,6 +743,12 @@
         "inProgress": "In progress",
         "completed": "Completed"
       },
+      "cta": {
+        "eyebrow": "Quick action",
+        "title": "Create a new job",
+        "subtitle": "Add a job, assign a crew, and track it through completion.",
+        "button": "Add Job"
+      },
       "filters": {
         "status": "Status",
         "allStatuses": "All statuses",

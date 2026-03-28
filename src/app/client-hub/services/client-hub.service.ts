@@ -11,6 +11,7 @@ import {
   ClientHubWorkRequestResponse,
   ClientHubJobSummary,
   ClientHubTimelineItem,
+  ClientHubDepositResponse,
   UpdateClientHubProfileRequest,
 } from '../models/client-hub.models';
 
@@ -100,10 +101,33 @@ export class ClientHubService {
     );
   }
 
+  uploadJobPhotos(jobId: string, files: File[], message?: string): Observable<unknown> {
+    const formData = new FormData();
+    formData.append('Type', '2'); // JobUpdateType.Photo
+    if (message) {
+      formData.append('Message', message);
+    }
+    files.forEach((file) => formData.append('Attachments', file));
+
+    return this.api.postFormWithHeaders(
+      `${this.baseUrl}/jobs/${jobId}/updates`,
+      formData,
+      this.getAuthHeaders(),
+    );
+  }
+
   requestWork(request: ClientHubWorkRequest): Observable<ClientHubWorkRequestResponse> {
     return this.api.postWithHeaders<ClientHubWorkRequestResponse>(
       `${this.baseUrl}/work-requests`,
       request,
+      this.getAuthHeaders(),
+    );
+  }
+
+  createDepositPayment(invoiceId: string, amount: number): Observable<ClientHubDepositResponse> {
+    return this.api.postWithHeaders<ClientHubDepositResponse>(
+      `payments/deposit`,
+      { invoiceId, amount, productName: 'Deposit' },
       this.getAuthHeaders(),
     );
   }

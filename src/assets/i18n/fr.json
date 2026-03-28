@@ -743,6 +743,12 @@
         "inProgress": "En cours",
         "completed": "Termines"
       },
+      "cta": {
+        "eyebrow": "Action rapide",
+        "title": "Créer un nouveau chantier",
+        "subtitle": "Ajoutez un chantier, assignez une équipe et suivez son avancement.",
+        "button": "Ajouter un chantier"
+      },
       "filters": {
         "status": "Statut",
         "allStatuses": "Tous les statuts",

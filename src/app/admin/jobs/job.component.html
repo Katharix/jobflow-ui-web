@@ -1,7 +1,6 @@
 <app-page-header
   [title]="'admin.jobs.title' | translate"
   [subtitle]="'admin.jobs.subtitle' | translate"
-  [actions]="headerActions"
 ></app-page-header>
 
 @if (error) {
@@ -40,6 +39,16 @@
       <span class="jobflow-metric__label">{{ 'admin.jobs.metrics.completed' | translate }}</span>
       <span class="jobflow-metric__value">{{ completedCount }}</span>
     </div>
+  </div>
+  <div class="jobflow-cta">
+    <div>
+      <p class="jobflow-cta__eyebrow">{{ 'admin.jobs.cta.eyebrow' | translate }}</p>
+      <h3>{{ 'admin.jobs.cta.title' | translate }}</h3>
+      <p>{{ 'admin.jobs.cta.subtitle' | translate }}</p>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="openAddJob()">
+      {{ 'admin.jobs.cta.button' | translate }}
+    </button>
   </div>
 </section>
 
