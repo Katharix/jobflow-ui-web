@@ -93,6 +93,8 @@ export class OnboardingChecklistComponent implements OnChanges {
       const title = (step.title ?? '').toLowerCase();
       const text = `${key} ${title}`;
 
+      if (text.includes('schedule')) return '/admin/scheduling-jobs';
+
       if (text.includes('quick-start') || text.includes('onboarding path') || text.includes('industry')) {
          return '/admin/onboarding/quick-start';
       }
@@ -114,6 +116,8 @@ export class OnboardingChecklistComponent implements OnChanges {
       const key = (step.key ?? '').toLowerCase();
       const title = (step.title ?? '').toLowerCase();
       const text = `${key} ${title}`;
+
+      if (text.includes('schedule')) return null;
 
       if (text.includes('employee role') || text.includes('roles')) return 'open-role-modal';
       if (text.includes('employee')) return 'open-employee-modal';

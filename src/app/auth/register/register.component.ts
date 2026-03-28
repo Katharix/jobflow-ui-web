@@ -51,7 +51,9 @@ export class RegisterComponent implements OnInit {
 
    ngOnInit(): void {
       this.loadOrganizationTypes();
-      this.organizationId = this.route.snapshot.queryParamMap.get('organizationId');
+      this.organizationId = this.normalizeOrganizationId(
+         this.route.snapshot.queryParamMap.get('organizationId')
+      );
 
       if (this.organizationId) {
          this.getOrganizationData(this.organizationId);
@@ -69,6 +71,18 @@ export class RegisterComponent implements OnInit {
          },
          error: (err) => console.error(err)
       });
+   }
+
+   private normalizeOrganizationId(rawValue: string | null): string | null {
+      if (!rawValue) {
+         return null;
+      }
+
+      const guidMatch = rawValue.match(
+         /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/
+      );
+
+      return guidMatch ? guidMatch[0] : null;
    }
 
    private loadOrganizationTypes(): void {
