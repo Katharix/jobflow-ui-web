@@ -73,3 +73,63 @@ jobs:
 
       - name: Build Angular app
         run: npm run build:prod
+
+  e2e-public:
+    name: E2E Public (Playwright)
+    runs-on: ubuntu-latest
+    needs: [build]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.11.1'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright public E2E
+        run: npx playwright test tests/e2e/public-smoke.spec.ts
+
+  e2e-authenticated:
+    name: E2E Authenticated (Playwright)
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: ${{ secrets.JOBFLOW_UI_STORAGE_STATE_B64 != '' && secrets.JOBFLOW_API_BASE_URL != '' && secrets.JOBFLOW_API_BEARER_TOKEN != '' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.11.1'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Materialize auth storage state
+        shell: bash
+        run: |
+          mkdir -p tests/e2e/.auth
+          echo "${{ secrets.JOBFLOW_UI_STORAGE_STATE_B64 }}" | base64 --decode > tests/e2e/.auth/admin-storage-state.json
+
+      - name: Run Playwright authenticated workflow E2E
+        env:
+          JOBFLOW_UI_STORAGE_STATE_PATH: ./tests/e2e/.auth/admin-storage-state.json
+          JOBFLOW_API_BASE_URL: ${{ secrets.JOBFLOW_API_BASE_URL }}
+          JOBFLOW_API_BEARER_TOKEN: ${{ secrets.JOBFLOW_API_BEARER_TOKEN }}
+          JOBFLOW_ORGANIZATION_ID: ${{ secrets.JOBFLOW_ORGANIZATION_ID }}
+        run: npx playwright test tests/e2e/admin-business-flow.spec.ts

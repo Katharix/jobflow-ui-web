@@ -1,0 +1,10 @@
+{
+  "seededAdmin": {
+    "description": "Authenticated admin storageState captured from a valid login",
+    "env": "JOBFLOW_UI_STORAGE_STATE_PATH"
+  },
+  "seededApiIdentity": {
+    "description": "JWT with organizationId claim",
+    "env": "JOBFLOW_API_BEARER_TOKEN"
+  }
+}
