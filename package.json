@@ -11,6 +11,14 @@
     "test": "ng test --watch=false --browsers=ChromeHeadlessNoSandbox",
     "test:watch": "ng test",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadlessNoSandbox",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:business": "playwright test tests/e2e/admin-business-flow.spec.ts",
+    "test:e2e:report": "playwright show-report",
+    "e2e:auth:state": "node tests/e2e/scripts/generate-storage-state.mjs",
+    "e2e:auth:state:b64": "node tests/e2e/scripts/print-storage-state-b64.mjs",
+    "e2e:auth:verify": "node tests/e2e/scripts/verify-storage-state.mjs",
     "lint": "ng lint"
   },
   "private": true,
@@ -58,6 +66,7 @@
     "zone.js": "~0.14.10"
   },
   "devDependencies": {
+    "@playwright/test": "^1.56.1",
     "@angular-devkit/build-angular": "^18.2.1",
     "@angular/cli": "^18.2.15",
     "@angular/compiler-cli": "^18.2.13",
