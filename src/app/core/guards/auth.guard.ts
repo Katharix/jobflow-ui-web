@@ -1,11 +1,9 @@
 import {inject} from '@angular/core';
 import {CanActivateFn, Router} from '@angular/router';
 import {Auth, onAuthStateChanged} from '@angular/fire/auth';
-import {Firestore, doc, getDoc} from '@angular/fire/firestore';
 
 export const authGuard: CanActivateFn = (route, state) => {
    const auth = inject(Auth);
-   const db = inject(Firestore);
    const router = inject(Router);
 
    const allowedRoles: string[] = route.data?.['roles'] ?? [];
@@ -19,14 +17,9 @@ export const authGuard: CanActivateFn = (route, state) => {
             return resolve(false);
          }
 
-         const snap = await getDoc(doc(db, 'users', user.uid));
-
-         if (!snap.exists()) {
-            router.navigate(['/auth/login']);
-            return resolve(false);
-         }
-
-         const role = snap.data()?.['role'];
+         const idTokenResult = await user.getIdTokenResult(false);
+         const roleClaim = idTokenResult.claims['role'];
+         const role = typeof roleClaim === 'string' ? roleClaim : '';
 
          if (allowedRoles.length === 0 || allowedRoles.includes(role)) {
             return resolve(true);

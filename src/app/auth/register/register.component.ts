@@ -2,7 +2,6 @@ import {CommonModule} from '@angular/common';
 import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import {FormsModule, NgForm} from '@angular/forms';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {doc, Firestore, setDoc} from '@angular/fire/firestore';
 import {Organization, OrganizationRequest, OrganizationDto} from '../../models/organization';
 import {OrganizationType} from '../../models/organization-type';
 import {OrganizationTypeService} from '../../services/shared/organization-type.service';
@@ -23,7 +22,6 @@ import { AuthService } from '../services/auth.service';
    styleUrl: './register.component.scss'
 })
 export class RegisterComponent implements OnInit {
-   private firestore = inject(Firestore);
    private router = inject(Router);
    private orgService = inject(OrganizationService);
    private organizationTypeService = inject(OrganizationTypeService);
@@ -196,12 +194,6 @@ export class RegisterComponent implements OnInit {
    }
 
    private async completeRegistration(uid: string, email: string, role: string): Promise<void> {
-      await setDoc(doc(this.firestore, 'users', uid), {
-         email,
-         role,
-         createdAt: new Date()
-      });
-
       const orgDto: OrganizationDto = {
          id: this.organizationId ?? '',
          firebaseUid: uid,
@@ -210,6 +202,7 @@ export class RegisterComponent implements OnInit {
       };
 
       const data = await firstValueFrom(this.orgService.registerOrganization(orgDto));
+      await this.authService.getCurrentUserIdToken(true);
       this.orgContext.setOrganization(data);
       this.toast.success(
          this.translate.instant('auth.register.toastCreated'),

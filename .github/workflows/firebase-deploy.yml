@@ -8,9 +8,41 @@ on:
       - completed
 
 jobs:
-  deploy:
+  deploy-staging:
     if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' }}
     runs-on: ubuntu-latest
+    environment:
+      name: Staging
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.11.1'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular app
+        run: npm run build:staging
+
+      - name: Deploy to Firebase Hosting (staging)
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting --project staging
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+  deploy-prod:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' }}
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    environment:
+      name: Production
 
     steps:
       - name: Checkout code
@@ -28,9 +60,9 @@ jobs:
       - name: Build Angular app
         run: npm run build:prod
 
-      - name: Deploy to Firebase Hosting
+      - name: Deploy to Firebase Hosting (prod)
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only hosting
+          args: deploy --only hosting --project prod
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

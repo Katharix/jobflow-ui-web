@@ -82,6 +82,31 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "staging": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "6mb",
+                  "maximumError": "12mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2mb",
+                  "maximumError": "4mb"
+                }
+              ],
+              "optimization": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "sourceMap": false,
+              "outputHashing": "all"
             }
           },
           "defaultConfiguration": "production"
@@ -94,6 +119,9 @@
             },
             "development": {
               "buildTarget": "jobflow-ui-web:build:development"
+            },
+            "staging": {
+              "buildTarget": "jobflow-ui-web:build:staging"
             }
           },
           "defaultConfiguration": "development"

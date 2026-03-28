@@ -1,7 +1,7 @@
 export const environment = {
-   production: false,
-   apiUrl: 'https://localhost:44398/api',
-   baseUrl: 'https://localhost:44398',
+   production: true,
+   apiUrl: 'https://jobflow-api-staging.azurewebsites.net/api',
+   baseUrl: 'https://jobflow-api-staging.azurewebsites.net',
    firebase: {
       apiKey: 'AIzaSyCyQtD7ukgjwfONtjeemVtvFa2OKTtq1d4',
       authDomain: 'jobflow-ui-web-staging.firebaseapp.com',
@@ -18,8 +18,8 @@ export const environment = {
       flowYearlyPrice: 'price_1Soc2wPJ5wQELwxdhxwiRboy',
       maxMonthlyPrice: 'price_1SocGCPJ5wQELwxduGNSAkFW',
       maxYearlyPrice: 'price_1SocGCPJ5wQELwxdLOPsoKHv',
-      cancelUrl: 'http://localhost:4200/auth/register',
-      successUrl: 'http://localhost:4200/auth/register',
+      cancelUrl: 'https://jobflow-ui-web-staging.web.app/auth/register',
+      successUrl: 'https://jobflow-ui-web-staging.web.app/auth/register',
    },
    stripePublicKey: 'pk_test_51SobefPJ5wQELwxdrEqMzIyiPmxISvVrNua4BX7UgY5iQsx1Xasl7655KSERJ8K8GPw2CQVGFz2AjflvYGjztJlO00s8bwhu2S',
    turnstileSiteKey: '0x4AAAAAACs7ehVs9_8KtriE'
