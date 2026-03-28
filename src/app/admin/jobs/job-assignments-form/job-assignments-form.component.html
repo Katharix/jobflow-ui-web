@@ -45,13 +45,13 @@
 
 <div class="mb-3">
   <label class="form-label fw-semibold text-muted" for="scheduledStart">Start</label>
-  <p-datepicker inputId="scheduledStart" formControlName="scheduledStart" [showTime]="true" [fluid]="true" />
+  <p-datepicker inputId="scheduledStart" formControlName="scheduledStart" [showTime]="true" hourFormat="12" [fluid]="true" />
   <small class="text-muted d-block mt-1">Drag on the calendar for faster scheduling.</small>
 </div>
 
 <div class="mb-3">
   <label class="form-label fw-semibold text-muted" for="scheduledEnd">End</label>
-  <p-datepicker inputId="scheduledEnd" formControlName="scheduledEnd" [showTime]="true" [fluid]="true" />
+  <p-datepicker inputId="scheduledEnd" formControlName="scheduledEnd" [showTime]="true" hourFormat="12" [fluid]="true" />
   @if (form.get('scheduledEnd')?.touched && form.get('scheduledEnd')?.errors) {
     <div class="text-danger small">
       End time must be after start.

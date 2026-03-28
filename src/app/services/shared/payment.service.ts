@@ -55,6 +55,10 @@ export class PaymentService {
       return this.api.post<{ linked: boolean }>(`${this.paymentUrl}link-connected-account`, request);
    }
 
+   disconnectSquare(): Observable<{ disconnected: boolean }> {
+      return this.api.delete<{ disconnected: boolean }>(`${this.paymentUrl}square/disconnect`);
+   }
+
    createInvoicePaymentIntent(paymentSessionRequest: PaymentSessionRequest) {
       return this.api.post<CheckoutPaymentResponse>(
          `${this.paymentUrl}checkout`,

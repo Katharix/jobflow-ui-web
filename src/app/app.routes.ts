@@ -114,7 +114,7 @@ export const routes: Routes = [
             path: 'onboarding/quick-start',
             component: OnboardingQuickStartComponent,
             canActivate: [subscriptionGuard],
-            data: { minPlan: 'Flow' }
+            data: { minPlan: 'Go' }
          },
          {
             path: 'billing-payments',

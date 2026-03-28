@@ -1,5 +1,6 @@
 // job-schedule.component.ts
 import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 import { PageHeaderComponent } from '../../dashboard/page-header/page-header.component';
 import { JobflowCalendarComponent } from '../../../common/jobflow-calendar/jobflow-calendar.component';
@@ -20,11 +21,12 @@ import { RecurrenceRulesService } from '../services/recurrence-rules.service';
 import { ScheduleSettingsService } from '../../settings/services/schedule-settings.service';
 import { ScheduleSettingsDto } from '../../settings/models/schedule-settings';
 import { ToastService } from '../../../common/toast/toast.service';
+import { Job, JobLifecycleStatus } from '../models/job';
 
 @Component({
   selector: 'app-job-schedule',
   standalone: true,
-  imports: [PageHeaderComponent, JobflowCalendarComponent, JobAssignmentFormComponent, JobflowDrawerComponent],
+  imports: [CommonModule, PageHeaderComponent, JobflowCalendarComponent, JobAssignmentFormComponent, JobflowDrawerComponent],
   templateUrl: './job-schedule.component.html',
   styleUrls: ['./job-schedule.component.scss']
 })
@@ -47,7 +49,7 @@ export class JobScheduleComponent implements OnInit {
 
   calendarEvents = { dataSource: [] as CalendarEvent[] };
   selectedDate = new Date();
-  currentJobId!: string;
+  currentJobId: string | null = null;
   jobTitle = '';
   clientName = '';
   showAssignmentModal = false;
@@ -64,22 +66,29 @@ export class JobScheduleComponent implements OnInit {
   locationUnavailable = false;
   isWeatherLoading = false;
   scheduleSettings: ScheduleSettingsDto | null = null;
+  unassignedJobs: Job[] = [];
+  loadingUnassignedJobs = false;
+
+  get isJobScoped(): boolean {
+    return !!this.currentJobId;
+  }
 
   ngOnInit(): void {
-    this.currentJobId = this.route.snapshot.paramMap.get('jobId')!;
     this.returnToCommandCenter = this.route.snapshot.queryParamMap.get('returnTo') === 'dashboard-command-center';
 
-    this.jobs.getById(this.currentJobId).subscribe((job) => {
-      this.jobTitle = job.title;
-      this.clientName = [job.organizationClient?.firstName, job.organizationClient?.lastName]
-        .filter(Boolean)
-        .join(' ');
-      this.jobAddress = this.buildJobAddress(job);
-      this.addressMissing = !this.jobAddress;
-      this.loadWeatherForecast();
+    this.route.paramMap.subscribe((params) => {
+      const routeJobId = params.get('jobId') ?? this.route.snapshot.queryParamMap.get('jobId');
+      this.applyRouteJobContext(routeJobId);
     });
+
+    this.route.queryParamMap.subscribe((queryParams) => {
+      const routeJobId = this.route.snapshot.paramMap.get('jobId') ?? queryParams.get('jobId');
+      this.applyRouteJobContext(routeJobId);
+    });
+
     this.loadScheduleSettings();
     this.loadAssignments();
+    this.loadUnassignedJobs();
   }
 
   onCalendarDateChange(date: Date): void {
@@ -93,9 +102,11 @@ export class JobScheduleComponent implements OnInit {
     const end = endOfWeek(this.selectedDate);
 
     this.assignments.getAssignments(start, end).subscribe((assignments) => {
-      const jobAssignments = assignments.filter((assignment) => assignment.jobId === this.currentJobId);
+      const jobAssignments = this.currentJobId
+        ? assignments.filter((assignment) => assignment.jobId === this.currentJobId)
+        : assignments;
       const clientJobInfo = jobAssignments[0];
-      if (clientJobInfo) {
+      if (this.currentJobId && clientJobInfo) {
         this.jobTitle = clientJobInfo.jobTitle;
         this.clientName = clientJobInfo.clientName;
       }
@@ -111,6 +122,11 @@ export class JobScheduleComponent implements OnInit {
   }
 
   onCalendarEventCreate(e: CalendarEvent): void {
+    if (!this.currentJobId) {
+      this.toast.info('Select a job from Suggested jobs before creating a schedule block.');
+      return;
+    }
+
     this.draftEvent = e;
     this.selectedDate = e.StartTime;
     this.updateSelectedDayForecast();
@@ -135,6 +151,7 @@ export class JobScheduleComponent implements OnInit {
         next: () => {
           this.showAssignmentModal = false;
           this.draftEvent = null;
+          this.loadUnassignedJobs();
           if (this.returnToCommandCenter) {
             this.router.navigate(['/admin'], { fragment: 'dashboard-command-center' });
             return;
@@ -156,6 +173,7 @@ export class JobScheduleComponent implements OnInit {
           next: () => {
             this.showAssignmentModal = false;
             this.draftEvent = null;
+            this.loadUnassignedJobs();
             if (this.returnToCommandCenter) {
               this.router.navigate(['/admin'], { fragment: 'dashboard-command-center' });
               return;
@@ -212,6 +230,165 @@ export class JobScheduleComponent implements OnInit {
         this.scheduleSettings = null;
       }
     });
+  }
+
+  selectSuggestedJob(job: Job): void {
+    this.currentJobId = job.id;
+    this.jobTitle = job.title;
+    this.clientName = [job.organizationClient?.firstName, job.organizationClient?.lastName]
+      .filter(Boolean)
+      .join(' ');
+    this.jobAddress = this.buildJobAddress(job);
+    this.addressMissing = !this.jobAddress;
+    this.loadWeatherForecast();
+    this.loadAssignments();
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { jobId: job.id },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  private loadUnassignedJobs(): void {
+    this.loadingUnassignedJobs = true;
+    this.jobs.getAllJobs().subscribe({
+      next: (jobs) => {
+        this.unassignedJobs = jobs
+          .filter(job => !job.hasAssignments)
+          .filter(job => !this.isClosedStatus(job.lifecycleStatus))
+          .sort((a, b) => this.compareJobsByUrgency(a, b));
+        this.loadingUnassignedJobs = false;
+      },
+      error: () => {
+        this.unassignedJobs = [];
+        this.loadingUnassignedJobs = false;
+      }
+    });
+  }
+
+  private loadActiveJob(jobId: string): void {
+    this.jobs.getById(jobId).subscribe({
+      next: (job) => {
+        this.jobTitle = job.title;
+        this.clientName = [job.organizationClient?.firstName, job.organizationClient?.lastName]
+          .filter(Boolean)
+          .join(' ');
+        this.jobAddress = this.buildJobAddress(job);
+        this.addressMissing = !this.jobAddress;
+        this.loadWeatherForecast();
+      },
+      error: () => {
+        this.applyPlannerContext();
+        this.router.navigate(['/admin/scheduling-jobs']);
+      }
+    });
+  }
+
+  private applyRouteJobContext(routeJobId: string | null): void {
+    if (!this.isValidGuid(routeJobId)) {
+      this.applyPlannerContext();
+      return;
+    }
+
+    const normalizedJobId = routeJobId!;
+    this.currentJobId = normalizedJobId;
+
+    const matchingSuggested = this.unassignedJobs.find(job => job.id === normalizedJobId);
+    if (matchingSuggested) {
+      this.jobTitle = matchingSuggested.title;
+      this.clientName = [matchingSuggested.organizationClient?.firstName, matchingSuggested.organizationClient?.lastName]
+        .filter(Boolean)
+        .join(' ');
+      this.jobAddress = this.buildJobAddress(matchingSuggested);
+      this.addressMissing = !this.jobAddress;
+      this.loadWeatherForecast();
+      this.loadAssignments();
+      return;
+    }
+
+    this.loadActiveJob(normalizedJobId);
+  }
+
+  private applyPlannerContext(): void {
+    this.currentJobId = null;
+    this.jobTitle = 'Schedule jobs';
+    this.clientName = 'Select a suggested job to start scheduling.';
+    this.addressMissing = true;
+    this.locationUnavailable = true;
+    this.weatherConditionText = 'Select a job to view forecast';
+    this.weatherIconClass = 'pi pi-calendar';
+    this.selectedDayForecast = null;
+    this.loadAssignments();
+  }
+
+  private isValidGuid(value: string | null): boolean {
+    if (!value) {
+      return false;
+    }
+
+    return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(value);
+  }
+
+  private isClosedStatus(status: JobLifecycleStatus): boolean {
+    return status === JobLifecycleStatus.Completed
+      || status === JobLifecycleStatus.Cancelled
+      || status === JobLifecycleStatus.Failed;
+  }
+
+  private compareJobsByUrgency(a: Job, b: Job): number {
+    const aHasDate = this.hasValidScheduledStart(a);
+    const bHasDate = this.hasValidScheduledStart(b);
+
+    // Jobs with a valid scheduled start date are most urgent.
+    if (aHasDate !== bHasDate) {
+      return aHasDate ? -1 : 1;
+    }
+
+    if (aHasDate && bHasDate) {
+      const aTime = this.toScheduledTime(a);
+      const bTime = this.toScheduledTime(b);
+      if (aTime !== bTime) {
+        return aTime - bTime;
+      }
+    }
+
+    const statusRankDiff = this.getUrgencyStatusRank(a.lifecycleStatus) - this.getUrgencyStatusRank(b.lifecycleStatus);
+    if (statusRankDiff !== 0) {
+      return statusRankDiff;
+    }
+
+    return a.title.localeCompare(b.title);
+  }
+
+  private getUrgencyStatusRank(status: JobLifecycleStatus): number {
+    switch (status) {
+      case JobLifecycleStatus.Approved:
+        return 0;
+      case JobLifecycleStatus.InProgress:
+        return 1;
+      case JobLifecycleStatus.Draft:
+        return 2;
+      default:
+        return 3;
+    }
+  }
+
+  private hasValidScheduledStart(job: Job): boolean {
+    if (!job.scheduledStart) {
+      return false;
+    }
+
+    return Number.isFinite(this.toScheduledTime(job));
+  }
+
+  private toScheduledTime(job: Job): number {
+    if (!job.scheduledStart) {
+      return Number.POSITIVE_INFINITY;
+    }
+
+    const value = new Date(job.scheduledStart as unknown as string).getTime();
+    return Number.isFinite(value) ? value : Number.POSITIVE_INFINITY;
   }
 
   private loadWeatherForecast(): void {

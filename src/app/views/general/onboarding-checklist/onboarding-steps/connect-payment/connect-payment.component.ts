@@ -27,6 +27,7 @@ export class ConnectPaymentComponent implements OnInit {
   callbackMessage = '';
   callbackProvider: 'Stripe' | 'Square' | null = null;
   selectedProvider: 'Stripe' | 'Square' | null = null;
+  isDisconnectingSquare = false;
   private currentOrg: OrganizationDto | null = null;
 
   ngOnInit(): void {
@@ -42,15 +43,28 @@ export class ConnectPaymentComponent implements OnInit {
     });
   }
 
-  private setSelectedProviderFromOrg(org: { paymentProvider?: PaymentProvider; stripeConnectedAccountId?: string; stripeConnectAccountId?: string }) {
-    if (org.paymentProvider === PaymentProvider.Square) {
+  private setSelectedProviderFromOrg(org: {
+    paymentProvider?: PaymentProvider;
+    stripeConnectedAccountId?: string;
+    stripeConnectAccountId?: string;
+    isStripeConnected?: boolean;
+    isSquareConnected?: boolean;
+    squareMerchantId?: string;
+  }) {
+    const isSquareConnected = !!(org.isSquareConnected && org.squareMerchantId);
+    const isStripeConnected = !!(org.isStripeConnected || org.stripeConnectedAccountId || org.stripeConnectAccountId);
+
+    if (isSquareConnected) {
       this.selectedProvider = 'Square';
       return;
     }
 
-    if (org.paymentProvider === PaymentProvider.Stripe || org.stripeConnectedAccountId || org.stripeConnectAccountId) {
+    if (isStripeConnected) {
       this.selectedProvider = 'Stripe';
+      return;
     }
+
+    this.selectedProvider = null;
   }
 
   private handleProviderCallback() {
@@ -152,6 +166,49 @@ export class ConnectPaymentComponent implements OnInit {
 
   isProviderSelected(provider: 'Stripe' | 'Square'): boolean {
     return this.selectedProvider === provider;
+  }
+
+  disconnectSquare() {
+    if (this.isDisconnectingSquare || !this.currentOrg) {
+      return;
+    }
+
+    const currentOrg = this.currentOrg;
+
+    this.isDisconnectingSquare = true;
+    this.callbackProvider = 'Square';
+    this.callbackStatus = 'processing';
+    this.callbackMessage = 'Disconnecting Square account...';
+
+    this.paymentService.disconnectSquare().subscribe({
+      next: () => {
+        this.isDisconnectingSquare = false;
+        this.callbackStatus = 'success';
+        this.callbackMessage = 'Square account disconnected. You can reconnect anytime.';
+
+        const hasStripeConnection = !!(
+          this.currentOrg?.isStripeConnected ||
+          this.currentOrg?.stripeConnectedAccountId ||
+          this.currentOrg?.stripeConnectAccountId
+        );
+
+        this.selectedProvider = hasStripeConnection ? 'Stripe' : null;
+        this.orgContext.setOrganization({
+          ...currentOrg,
+          isSquareConnected: false,
+          squareMerchantId: undefined,
+          canAcceptPayments: hasStripeConnection,
+          paymentProvider: hasStripeConnection
+            ? PaymentProvider.Stripe
+            : currentOrg.paymentProvider
+        });
+      },
+      error: () => {
+        this.isDisconnectingSquare = false;
+        this.callbackStatus = 'error';
+        this.callbackMessage = 'Unable to disconnect Square right now. Please try again.';
+      }
+    });
   }
 
   private updateOrgProvider(provider: PaymentProvider) {

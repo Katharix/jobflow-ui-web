@@ -68,6 +68,15 @@
               >
                 {{ isProviderSelected(provider.provider) ? 'Connected via ' + provider.provider : 'Connect ' + provider.provider }}
               </button>
+              @if (provider.provider === 'Square' && isProviderSelected('Square')) {
+                <button
+                  class="btn btn-outline-danger"
+                  (click)="disconnectSquare()"
+                  [disabled]="isDisconnectingSquare"
+                >
+                  {{ isDisconnectingSquare ? 'Disconnecting...' : 'Disconnect Square' }}
+                </button>
+              }
               <p class="small-text">
                 {{ isProviderSelected(provider.provider) ? 'This provider is active for your account.' : 'You will be redirected to authorize and return here.' }}
               </p>

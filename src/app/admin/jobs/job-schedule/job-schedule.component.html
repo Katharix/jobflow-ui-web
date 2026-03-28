@@ -1,18 +1,70 @@
 <app-page-header
   [title]="'Job Assignments'"
-  [subtitle]="jobTitle ? 'Schedule and manage assignments for ' + jobTitle : 'Schedule and manage assignments'"
+  [subtitle]="isJobScoped ? ('Schedule and manage assignments for ' + jobTitle) : 'Plan the week and choose a job to schedule'"
 ></app-page-header>
 
-<div class="mt-3">
-  <app-jobflow-calendar
-    [(selectedDate)]="selectedDate"
-    [eventSettings]="calendarEvents"
-    (selectedDateChange)="onCalendarDateChange($event)"
-    (eventCreate)="onCalendarEventCreate($event)"
-    (eventChange)="onCalendarEventUpdate($event)"
-  >
-  </app-jobflow-calendar>
-</div>
+<section class="schedule-shell mt-3">
+  <aside class="suggestions-card">
+    <div class="suggestions-card__head">
+      <h3>Suggested jobs</h3>
+      <p>Jobs with no assignments yet.</p>
+    </div>
+
+    @if (loadingUnassignedJobs) {
+      <p class="suggestions-card__state">Loading jobs...</p>
+    }
+
+    @if (!loadingUnassignedJobs && !unassignedJobs.length) {
+      <p class="suggestions-card__state">Everything is already assigned for now.</p>
+    }
+
+    @if (!loadingUnassignedJobs && unassignedJobs.length) {
+      <ul class="suggestions-list">
+        @for (job of unassignedJobs; track job.id) {
+          <li>
+            <button
+              type="button"
+              class="suggestions-list__item"
+              [class.suggestions-list__item--active]="job.id === currentJobId"
+              (click)="selectSuggestedJob(job)"
+            >
+              <strong>{{ job.title }}</strong>
+              <span>
+                {{ job.organizationClient.firstName }} {{ job.organizationClient.lastName }}
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </aside>
+
+  <div class="calendar-panel">
+    <div class="planner-banner" [class.planner-banner--scoped]="isJobScoped">
+      <div>
+        <h3>{{ isJobScoped ? jobTitle : 'Weekly planner' }}</h3>
+        <p>
+          {{ isJobScoped ? (clientName || 'Selected client') : 'Use Suggested jobs to pick work and drop it onto the calendar.' }}
+        </p>
+      </div>
+    </div>
+
+    <app-jobflow-calendar
+      [(selectedDate)]="selectedDate"
+      [eventSettings]="calendarEvents"
+      (selectedDateChange)="onCalendarDateChange($event)"
+      (eventCreate)="onCalendarEventCreate($event)"
+      (eventChange)="onCalendarEventUpdate($event)"
+    >
+    </app-jobflow-calendar>
+  </div>
+</section>
+
+@if (!isJobScoped) {
+  <div class="schedule-hint">
+    Pick a suggested job to open its scheduling drawer and weather details.
+  </div>
+}
 
 <app-jobflow-drawer
   [open]="showAssignmentModal"
@@ -21,7 +73,7 @@
 >
   <app-job-assignment-form
     #assignmentForm
-    [jobId]="currentJobId"
+    [jobId]="currentJobId ?? ''"
     [scheduledStart]="draftEvent?.StartTime ?? selectedDate"
     [scheduledEnd]="draftEvent?.EndTime ?? addThirtyMinutes(selectedDate)"
     [scheduleSettings]="scheduleSettings"

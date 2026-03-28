@@ -1,25 +1,22 @@
-<div class="main-wrapper">
-  <div class="page-wrapper full-page">
-    <div class="page-content container-xxl d-flex align-items-center justify-content-center">
+<section class="error-shell" aria-live="polite">
+  <div class="error-card">
+    <div class="error-pill">{{ type }}</div>
 
-      <div class="row w-100 mx-0 auth-page">
-        <div class="col-md-8 col-xl-6 mx-auto d-flex flex-column align-items-center">
-          <img src="images/others/404.svg" class="img-fluid mb-2" alt="404">
-          <h1 class="fw-bolder mb-22 mt-2 tx-80 text-secondary">{{type}}</h1>
-          <h4 class="mb-2">{{title}}</h4>
-          <h6 class="text-secondary mb-3 text-center">
-            @for (line of descLines; track line; let last = $last) {
-              <span>
-                {{ line }}@if (!last) {
-                <br />
-              }
-            </span>
-          }
-        </h6>
-        <a routerLink="">Back to home</a>
-      </div>
-    </div>
+    <h1>{{ title }}</h1>
 
+    <p class="error-copy">
+      @for (line of descLines; track line; let last = $last) {
+        <span>
+          {{ line }}@if (!last) {
+          <br />
+        }
+      </span>
+    }
+  </p>
+
+  <div class="error-actions">
+    <a class="btn btn-primary" routerLink="/">Back to home</a>
+    <a class="btn btn-outline-secondary" routerLink="/auth/login">Go to login</a>
   </div>
-</div>
-</div>
+  </div>
+</section>
