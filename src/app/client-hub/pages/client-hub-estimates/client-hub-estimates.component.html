@@ -1,0 +1,68 @@
+<section class="client-page">
+  <header class="client-page-head">
+    <div>
+      <h1>My Estimates</h1>
+      <p class="client-page-subtitle">Review estimate dates, totals, and current status at a glance.</p>
+    </div>
+  </header>
+
+  @if (isLoading) {
+    <div class="alert alert-info">Loading estimates...</div>
+  }
+
+  @if (error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+
+  @if (!isLoading && !error) {
+    <div class="client-surface overflow-hidden">
+      <div class="table-responsive">
+        <table class="table client-table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Estimate #</th>
+              <th>Date</th>
+              <th>Expires</th>
+              <th class="text-end">Total</th>
+              <th>Status</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (estimate of items; track estimate.id) {
+              <tr>
+                <td>
+                  <a class="client-record-link fw-semibold" [routerLink]="['/client-hub/estimates', estimate.id]">
+                    {{ estimate.estimateNumber }}
+                  </a>
+                </td>
+                <td>{{ formatDate(estimate.estimateDate ?? estimate.createdAt) }}</td>
+                <td>{{ formatDate(estimate.expirationDate) }}</td>
+                <td class="text-end fw-semibold">{{ formatCurrency(estimate.total) }}</td>
+                <td>
+                  <span class="badge rounded-pill estimate-status" [class]="'badge rounded-pill estimate-status ' + statusClass(estimate.status)">
+                    {{ statusLabel(estimate.status) }}
+                  </span>
+                </td>
+                <td class="text-end">
+                  <a
+                    class="btn btn-sm btn-outline-primary client-view-btn"
+                    [routerLink]="['/client-hub/estimates', estimate.id]"
+                  >
+                    View Estimate
+                  </a>
+                </td>
+              </tr>
+            }
+
+            @if (items.length === 0) {
+              <tr>
+                <td class="text-center py-4 text-muted" colspan="6">No estimates available yet.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</section>

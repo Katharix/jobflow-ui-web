@@ -1,0 +1,58 @@
+<div class="main-wrapper client-hub-shell">
+  <header class="client-hub-header">
+    <div class="client-hub-header-inner">
+      <div class="client-hub-brand-block">
+        <a class="client-hub-brand" routerLink="/client-hub" aria-label="JobFlow Client Hub Home">
+          <img src="/assets/public/images/Asset%201.png" alt="JobFlow" class="client-hub-logo" />
+        </a>
+        <span class="client-hub-tagline">Client Portal</span>
+      </div>
+
+      <nav class="client-hub-nav d-none d-lg-flex">
+        @for (item of navItems; track item.route) {
+          <a
+            class="client-hub-nav-link"
+            [routerLink]="item.route"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: item.route.endsWith('overview') }"
+          >
+            {{ item.label }}
+          </a>
+        }
+      </nav>
+
+      <div class="client-hub-header-actions">
+        <button class="btn btn-sm btn-outline-secondary d-lg-none" type="button" (click)="toggleMenu()">
+          Menu
+        </button>
+        <button class="btn btn-sm btn-outline-secondary" type="button" (click)="logout()">Sign Out</button>
+      </div>
+    </div>
+
+    <nav class="client-hub-mobile-nav d-lg-none" [class.open]="isMenuOpen">
+      @for (item of navItems; track item.route) {
+        <a
+          class="client-hub-mobile-nav-link"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.route.endsWith('overview') }"
+          (click)="closeMenu()"
+        >
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+  </header>
+
+  <main class="client-hub-main">
+    <div class="client-hub-container">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
+  <footer class="client-hub-footer">
+    <div class="client-hub-container py-2 small text-muted">
+      &copy; {{ year }} JobFlow. All rights reserved.
+    </div>
+  </footer>
+</div>

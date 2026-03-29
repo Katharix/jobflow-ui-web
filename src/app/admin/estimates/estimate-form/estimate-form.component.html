@@ -1,0 +1,163 @@
+<form [formGroup]="form" (ngSubmit)="save()" class="estimate-form">
+
+  @if (error) {
+    <div class="alert alert-danger mb-4">{{ error }}</div>
+  }
+
+  <!-- Client -->
+  <div class="mb-4">
+    <label class="estimate-form__label" for="estimateClient">Client <span class="text-danger">*</span></label>
+    <p-select
+      id="estimateClient"
+      formControlName="organizationClientId"
+      [options]="customers"
+      optionLabel="displayName"
+      optionValue="id"
+      placeholder="Select a client"
+      [filter]="true"
+      filterBy="displayName"
+      appendTo="body"
+      size="small"
+      [fluid]="true" />
+      @if (form.get('organizationClientId')?.invalid && form.get('organizationClientId')?.touched) {
+        <div
+          class="estimate-form__field-error">
+          Client is required.
+        </div>
+      }
+    </div>
+
+    <!-- Dates -->
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-md-6">
+        <label class="estimate-form__label" for="estimateDate">Estimate Date <span class="text-danger">*</span></label>
+        <input
+          id="estimateDate"
+          type="date"
+          pInputText
+          formControlName="estimateDate"
+          class="form-control" />
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="estimate-form__label" for="estimateExpiration">Expiration Date</label>
+          <input
+            id="estimateExpiration"
+            type="date"
+            pInputText
+            formControlName="expirationDate"
+            class="form-control" />
+          </div>
+        </div>
+
+        <!-- Line Items -->
+        <div class="mb-4">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="estimate-form__section-heading">Line Items</span>
+            <button type="button" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1" (click)="addLine()">
+              <i class="pi pi-plus"></i> Add Line
+            </button>
+          </div>
+
+          <div class="estimate-form__line-header d-none d-md-grid">
+            <span>Name</span>
+            <span>Description</span>
+            <span>Qty</span>
+            <span>Unit Price</span>
+            <span class="text-end">Total</span>
+            <span></span>
+          </div>
+
+          <div formArrayName="lineItems">
+            @for (ctrl of lineItems.controls; track ctrl; let i = $index) {
+              <div
+                [formGroupName]="i"
+                class="estimate-form__line-row">
+                <div class="estimate-form__line-desc">
+                  <input
+                    pInputText
+                    formControlName="name"
+                    placeholder="Line item name"
+                    class="w-100" />
+                  </div>
+                  <div class="estimate-form__line-desc">
+                    <input
+                      pInputText
+                      formControlName="description"
+                      placeholder="Description"
+                      class="w-100" />
+                    </div>
+                    <div>
+                      <p-inputNumber
+                        formControlName="quantity"
+                        [min]="0.001"
+                        [minFractionDigits]="0"
+                        [maxFractionDigits]="3"
+                        inputStyleClass="w-100"
+                        styleClass="w-100">
+                      </p-inputNumber>
+                    </div>
+                    <div>
+                      <p-inputNumber
+                        formControlName="unitPrice"
+                        mode="currency"
+                        currency="USD"
+                        locale="en-US"
+                        [min]="0"
+                        inputStyleClass="w-100"
+                        styleClass="w-100">
+                      </p-inputNumber>
+                    </div>
+                    <div class="estimate-form__line-total">
+                      {{ formatCurrency(lineTotal(i)) }}
+                    </div>
+                    <div class="text-center">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-link text-danger p-0"
+                        (click)="removeLine(i)"
+                        [disabled]="lineItems.length === 1"
+                        title="Remove line">
+                        <i class="pi pi-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <div class="estimate-form__total-row">
+                <span class="text-muted">Estimated Total</span>
+                <strong>{{ formatCurrency(total) }}</strong>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="mb-4">
+              <label class="estimate-form__label" for="estimateNotes">Notes / Terms</label>
+              <textarea
+                id="estimateNotes"
+                pTextarea
+                formControlName="notes"
+                rows="3"
+                placeholder="Any additional notes or terms for this estimate…"
+                class="form-control">
+              </textarea>
+            </div>
+
+            <!-- Actions -->
+            <div class="d-flex justify-content-end gap-2 pt-2">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="cancel()"
+                [disabled]="saving">
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="saving || form.invalid">
+                {{ saving ? 'Saving…' : (estimate ? 'Update Estimate' : 'Create & Send') }}
+              </button>
+            </div>
+
+          </form>

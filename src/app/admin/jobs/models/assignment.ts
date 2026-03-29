@@ -20,6 +20,16 @@
    zipCode?: string;
 
    notes?: string;
+
+   jobLifecycleStatus?: number;
+   statusLabel?: string;
+   assignees?: AssignmentAssigneeDto[];
+}
+
+export interface AssignmentAssigneeDto {
+   employeeId: string;
+   employeeName?: string;
+   isLead: boolean;
 }
 
 export enum ScheduleType {
@@ -52,7 +62,7 @@ export interface UpdateAssignmentScheduleRequestDto {
    scheduledStart: Date;
    scheduledEnd?: Date;
 
-   scheduleType: 'Exact' | 'Window';
+   scheduleType: ScheduleType;
 }
 
 export interface UpdateAssignmentStatusRequestDto {

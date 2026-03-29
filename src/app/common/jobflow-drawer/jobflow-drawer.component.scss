@@ -1,51 +1,22 @@
-.drawer-backdrop {
-   position: fixed;
-   inset: 0;
-   background: rgba(0, 0, 0, 0.35);
-   z-index: 1040;
+:host {
+   display: contents;
 }
 
-.drawer {
-   position: fixed;
-   top: 0;
-   right: 0;
-   height: 100vh;
-   background: #fff;
-   box-shadow: -8px 0 24px rgba(0, 0, 0, 0.12);
-   transform: translateX(100%);
-   transition: transform 0.25s ease;
-   z-index: 1050;
-   display: flex;
-   flex-direction: column;
+:host ::ng-deep .jobflow-prime-drawer {
+   border-left: 1px solid #e5e7eb;
+   box-shadow: -18px 0 36px rgba(15, 23, 42, 0.12);
 }
 
-.drawer.open {
-   transform: translateX(0);
-}
-
-.drawer-header {
+:host ::ng-deep .jobflow-prime-drawer .p-drawer-header {
    padding: 1rem 1.25rem;
    border-bottom: 1px solid #e5e7eb;
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
 }
 
-.drawer-title {
-   margin: 0;
-   font-size: 1.1rem;
+:host ::ng-deep .jobflow-prime-drawer .p-drawer-title {
+   font-size: 1.05rem;
    font-weight: 600;
 }
 
-.drawer-close {
-   border: none;
-   background: transparent;
-   font-size: 1.5rem;
-   cursor: pointer;
-}
-
-.drawer-body {
+:host ::ng-deep .jobflow-prime-drawer .p-drawer-content {
    padding: 1.25rem;
-   overflow-y: auto;
-   flex: 1;
 }

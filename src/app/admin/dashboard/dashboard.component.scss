@@ -1,0 +1,332 @@
+.dashboard-page {
+   display: grid;
+   gap: 1rem;
+}
+
+.dashboard-page--gentelella {
+   --dashboard-surface: #ffffff;
+   --dashboard-border: #e1e5ee;
+   --dashboard-muted: #6c7a89;
+   --dashboard-accent: #1c86ff;
+   padding: 0.5rem 0 1.5rem;
+}
+
+.dashboard-welcome {
+   border: 1px solid var(--dashboard-border);
+   border-radius: 0.5rem;
+   background: var(--dashboard-surface);
+   padding: 1rem 1.25rem;
+   display: flex;
+   justify-content: space-between;
+   align-items: flex-start;
+   gap: 1rem;
+   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-welcome__message {
+   h1 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #2a3f54;
+   }
+
+   p {
+      margin: 0.3rem 0 0;
+      color: var(--dashboard-muted);
+      font-size: 0.82rem;
+   }
+}
+
+.dashboard-welcome__meta {
+   display: grid;
+   justify-items: end;
+   gap: 0.2rem;
+   text-align: right;
+
+   strong {
+      font-size: 0.84rem;
+      color: #2a3f54;
+      font-weight: 700;
+      white-space: nowrap;
+   }
+
+}
+
+.dashboard-weather {
+   display: inline-flex;
+   align-items: center;
+   gap: 0.4rem;
+   color: var(--bs-secondary-color);
+   font-size: 0.78rem;
+   white-space: nowrap;
+
+   i {
+      color: var(--bs-primary);
+      font-size: 0.78rem;
+   }
+}
+
+.dashboard-weather__action {
+   border: 0;
+   background: transparent;
+   padding: 0;
+   color: var(--bs-primary);
+   font-size: 0.74rem;
+   font-weight: 600;
+   text-decoration: underline;
+   justify-self: end;
+}
+
+.dashboard-mini-tiles {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+   gap: 0.9rem;
+}
+
+.mini-tile {
+   border: 1px solid var(--dashboard-border);
+   background: var(--dashboard-surface);
+   border-radius: 0.45rem;
+   padding: 0.8rem 0.9rem;
+   display: grid;
+   gap: 0.35rem;
+   position: relative;
+   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+
+   p {
+      margin: 0;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--dashboard-muted);
+   }
+
+   strong {
+      font-size: 1.1rem;
+      color: #2a3f54;
+   }
+
+   span {
+      font-size: 0.72rem;
+      color: var(--dashboard-muted);
+   }
+
+   a {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--dashboard-accent);
+      text-decoration: none;
+   }
+}
+
+.mini-tile::before {
+   content: '';
+   position: absolute;
+   left: 0;
+   top: 0;
+   height: 100%;
+   width: 0.2rem;
+   background: var(--dashboard-accent);
+   border-radius: 0.45rem 0 0 0.45rem;
+}
+
+.mini-tile--success::before {
+   background: #1abb9c;
+}
+
+.mini-tile--warning::before {
+   background: #f0ad4e;
+}
+
+.mini-tile--danger::before {
+   background: #d9534f;
+}
+
+.mini-tile--info::before {
+   background: #5bc0de;
+}
+
+.dashboard-grid {
+   display: grid;
+   grid-template-columns: repeat(12, minmax(0, 1fr));
+   gap: 1rem;
+}
+
+.dashboard-panel {
+   border: 1px solid var(--dashboard-border);
+   border-radius: 0.55rem;
+   background: var(--dashboard-surface);
+   padding: 0.85rem;
+   display: grid;
+   gap: 0.7rem;
+   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-panel--onboarding {
+   grid-column: span 8;
+}
+
+.dashboard-panel--weather {
+   grid-column: 1 / -1;
+}
+
+.dashboard-panel--activity {
+   grid-column: span 4;
+}
+
+.dashboard-panel--activity-full {
+   grid-column: 1 / -1;
+}
+
+.dashboard-secondary {
+   margin-top: 1rem;
+   opacity: 0.85;
+}
+
+.dashboard-panel__header {
+   display: flex;
+   align-items: baseline;
+   justify-content: space-between;
+   gap: 0.5rem;
+   padding: 0.2rem 0.2rem 0.6rem;
+   border-bottom: 1px solid var(--dashboard-border);
+
+   h2 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #2a3f54;
+   }
+
+   span {
+      color: var(--dashboard-muted);
+      font-size: 0.76rem;
+      white-space: nowrap;
+   }
+}
+
+
+.dashboard-activity-list {
+   list-style: none;
+   margin: 0;
+   padding: 0;
+   display: grid;
+   grid-template-columns: repeat(2, minmax(0, 1fr));
+   gap: 0.7rem;
+}
+
+.dashboard-activity-item {
+   border: 1px solid var(--dashboard-border);
+   border-left: 3px solid rgba(28, 134, 255, 0.45);
+   border-radius: 0.45rem;
+   padding: 0.6rem 0.7rem;
+   background: var(--dashboard-surface);
+   display: grid;
+   gap: 0.35rem;
+
+   p {
+      margin: 0;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #2a3f54;
+   }
+
+   small {
+      color: var(--dashboard-muted);
+      font-size: 0.75rem;
+   }
+
+   a {
+      justify-self: start;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--dashboard-accent);
+      text-decoration: none;
+   }
+}
+
+.dashboard-activity-item__top {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: 0.5rem;
+
+   time {
+      color: var(--dashboard-muted);
+      font-size: 0.72rem;
+      white-space: nowrap;
+   }
+}
+
+.dashboard-activity-badge {
+   font-size: 0.62rem;
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+   font-weight: 700;
+   padding: 0.14rem 0.36rem;
+   border-radius: 0.35rem;
+}
+
+.dashboard-activity-badge.is-success {
+   color: #1abb9c;
+   background: rgba(26, 187, 156, 0.15);
+}
+
+.dashboard-activity-badge.is-danger {
+   color: #d9534f;
+   background: rgba(217, 83, 79, 0.12);
+}
+
+.dashboard-activity-badge.is-primary {
+   color: var(--dashboard-accent);
+   background: rgba(28, 134, 255, 0.12);
+}
+
+.dashboard-activity-badge.is-info {
+   color: #5bc0de;
+   background: rgba(91, 192, 222, 0.15);
+}
+
+.dashboard-empty-state {
+   color: var(--dashboard-muted);
+   font-size: 0.82rem;
+}
+
+@media (max-width: 991px) {
+   .dashboard-welcome {
+      flex-direction: column;
+      align-items: flex-start;
+   }
+
+   .dashboard-welcome__meta {
+      justify-items: start;
+      text-align: left;
+   }
+
+   .dashboard-weather__action {
+      justify-self: start;
+   }
+
+   .dashboard-grid {
+      grid-template-columns: 1fr;
+   }
+
+   .dashboard-panel--weather,
+   .dashboard-command-center,
+   .dashboard-panel--onboarding,
+   .dashboard-panel--activity,
+   .dashboard-panel--activity-full {
+      grid-column: span 1;
+   }
+
+   .dashboard-panel__header {
+      flex-direction: column;
+      align-items: flex-start;
+   }
+
+   .dashboard-activity-list {
+      grid-template-columns: 1fr;
+   }
+
+}

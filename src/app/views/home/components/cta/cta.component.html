@@ -1,43 +1,62 @@
-<section class="section-sm bg-dark bg-shape">
+<section class="section-sm jf-cta">
   <div class="container">
-    <div class="row justify-content-center">
+    <div class="row align-items-center g-4">
       <div class="col-lg-6">
-        <div class="title text-white text-center mb-4">
-          <img src="assets/public/images/gmail.png" alt="" class="img-fluid mb-4">
-          <h3>Subscribe</h3>
-          <p class="text-white-50 mb-0">Subscribe to our newsletter & stay update</p>
+        <p class="jf-eyebrow text-white">Stay in the loop</p>
+        <h2 class="text-white jf-section-title">Get product updates that help you run smoother jobs.</h2>
+        <p class="text-white-50 jf-section-lead">
+          Short, practical updates on dispatch, client communication, and getting paid faster.
+        </p>
+        <div class="jf-cta__points">
+          <span><i class="ti ti-check text-success me-2"></i>New feature highlights</span>
+          <span><i class="ti ti-check text-success me-2"></i>Workflow playbooks</span>
+          <span><i class="ti ti-check text-success me-2"></i>Customer success tips</span>
         </div>
-
-        <div class="subscribe">
-          <form (ngSubmit)="onSubmit()">
-            <div class="row justify-content-center align-items-center g-2">
-              <div class="col-md-8">
-                <div class="">
-                  <input type="text" class="form-control rounded-pill"[(ngModel)]="email" name="email" placeholder="Enter your E-mail address">
+      </div>
+      <div class="col-lg-6">
+        <div class="jf-cta__panel">
+          <img
+            src="/assets/public/images/creative.svg"
+            alt="Job Flow creative pattern"
+            class="jf-cta__image"
+            />
+            <div class="subscribe">
+              <form (ngSubmit)="onSubmit()">
+                <div class="row g-2">
+                  <div class="col-md-7">
+                    <input type="text" class="form-control" [(ngModel)]="email" name="email" placeholder="Enter your work email">
+                  </div>
+                  <div class="col-md-5">
+                    <button type="submit" class="btn btn-primary w-100" [disabled]="!captchaToken || isSubmitting">
+                      {{ isSubmitting ? 'Subscribing...' : 'Subscribe' }}
+                    </button>
+                  </div>
                 </div>
-              </div>  
-              <div class="col-md-4">
-                <div>
-                  <button type="submit" class="btn btn-primary w-100" [disabled]="isSubmitting">
-                    {{ isSubmitting ? 'Subscribing...' : 'Subscribe' }}
-                  </button>
+                <div class="mt-3">
+                  <app-jobflow-turnstile
+                    [siteKey]="turnstileSiteKey"
+                    action="newsletter-subscribe"
+                    (resolved)="onCaptchaResolved($event)"
+                    (expired)="onCaptchaExpired()"
+                    (errored)="onCaptchaError()">
+                  </app-jobflow-turnstile>
                 </div>
-              </div>
+                <div class="mt-3">
+                  @if (success) {
+                    <div class="alert alert-success py-2 px-3 mb-0">
+                      ✅ Thanks for subscribing!
+                    </div>
+                  }
+                  @if (error) {
+                    <div class="alert alert-danger py-2 px-3 mb-0">
+                      ❌ Something went wrong. Please try again.
+                    </div>
+                  }
+                </div>
+              </form>
             </div>
-            <div class="row">
-              <div class="mt-3 text-center">
-                <div *ngIf="success" class="alert alert-success py-2 px-4 d-inline-block">
-                  ✅ Thanks for subscribing!
-                </div>
-              
-                <div *ngIf="error" class="alert alert-danger py-2 px-4 d-inline-block">
-                  ❌ Something went wrong. Please try again.
-                </div>
-              </div>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>

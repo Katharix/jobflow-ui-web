@@ -1,15 +1,14 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {InvoiceService} from '../../../services/invoice.service';
-import {ActivatedRoute} from '@angular/router';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import {InvoiceService} from '../../../admin/invoices/services/invoice.service';
+import {ActivatedRoute, Router} from '@angular/router';
 import {CommonModule} from '@angular/common';
 import {Invoice, InvoiceStatus} from '../../../models/invoice';
+import {PaymentProvider} from '../../../models/customer-payment-profile';
 import {LucideAngularModule} from 'lucide-angular';
-import {LoadingService} from '../../../services/loading-service.service';
-import {PaymentService} from "../../../services/payment.service";
+import {LoadingService} from '../../../services/shared/loading-service.service';
+import {PaymentService} from "../../../services/shared/payment.service";
 import {firstValueFrom} from "rxjs";
 import {loadStripe, Stripe, StripeElements} from "@stripe/stripe-js";
-import {OrganizationContextService} from "../../../services/shared/organization-context.service";
-import {OrganizationDto} from "../../../models/organization";
 import {PaymentSessionRequest} from "../../../models/payment-session-request";
 import {environment} from "../../../../environments/environment";
 
@@ -21,28 +20,27 @@ import {environment} from "../../../../environments/environment";
    styleUrls: ['./invoice.component.scss']
 })
 export class InvoiceComponent implements OnInit {
+   private invoiceService = inject(InvoiceService);
+   private loadingService = inject(LoadingService);
+   private route = inject(ActivatedRoute);
+   private paymentService = inject(PaymentService);
+   private router = inject(Router);
+
    InvoiceStatus = InvoiceStatus;
+   PaymentProvider = PaymentProvider;
    invoice?: Invoice;
    loading = false;
    error: string | null = null;
    stripe!: Stripe;
    elements!: StripeElements;
    showPaymentForm = false;
+   private returnToCommandCenter = false;
    organizationId: string | null = null;
-   org: OrganizationDto;
    @ViewChild('paymentElementContainer') paymentElementContainer!: ElementRef;
-
-
-   constructor(
-      private invoiceService: InvoiceService,
-      private loadingService: LoadingService,
-      private route: ActivatedRoute,
-      private paymentService: PaymentService,
-   ) {
-   }
 
    ngOnInit(): void {
       const invoiceId = this.route.snapshot.paramMap.get('id');
+      this.returnToCommandCenter = this.route.snapshot.queryParamMap.get('returnTo') === 'dashboard-command-center';
 
       if (invoiceId) {
          this.invoiceService.getInvoice(invoiceId).subscribe({
@@ -81,6 +79,20 @@ export class InvoiceComponent implements OnInit {
       return this.total - (this.invoice?.amountPaid || 0);
    }
 
+   get paymentProvider(): PaymentProvider {
+      return this.invoice?.paymentProvider ?? PaymentProvider.Stripe;
+   }
+
+   get paymentProviderLabel(): string {
+      return this.paymentProvider === PaymentProvider.Square ? 'Square' : 'Stripe';
+   }
+
+   get payButtonLabel(): string {
+      return this.paymentProvider === PaymentProvider.Square
+         ? 'Pay with Square'
+         : 'Pay Invoice';
+   }
+
    async payInvoice(): Promise<void> {
       if (!this.invoice?.id) return;
 
@@ -97,6 +109,16 @@ export class InvoiceComponent implements OnInit {
          const res = await firstValueFrom(
             this.paymentService.createInvoicePaymentIntent(paymentSessionRequest)
          );
+
+         if (res.url && !res.clientSecret) {
+            window.location.href = res.url;
+            return;
+         }
+
+         if (!res.clientSecret) {
+            this.error = 'Unable to initialize payment.';
+            return;
+         }
 
          // 2. Load Stripe
          this.stripe = await loadStripe(environment.stripePublicKey) as Stripe;
@@ -138,10 +160,22 @@ export class InvoiceComponent implements OnInit {
       }
 
       if (result.paymentIntent?.status === 'succeeded') {
-         // UI cleanup will go here next
+         if (this.returnToCommandCenter) {
+            await this.router.navigate(['/admin'], {fragment: 'dashboard-command-center'});
+            return;
+         }
       }
 
       this.loading = false;
+   }
+
+   cancelPayment(): void {
+      if (this.returnToCommandCenter) {
+         this.router.navigate(['/admin'], {fragment: 'dashboard-command-center'});
+         return;
+      }
+
+      this.showPaymentForm = false;
    }
 
 }

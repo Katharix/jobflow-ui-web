@@ -1,0 +1,120 @@
+@import "admin/admin-styles";
+
+.support-auth-shell {
+  min-height: 100vh;
+  padding: 140px 0 90px;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 55%, #f1f5f9 100%);
+}
+
+.support-auth-shell .row {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.support-auth-shell .col-lg-6 {
+  flex: 0 0 50%;
+  max-width: 50%;
+}
+
+.support-auth-hero {
+  max-width: 520px;
+}
+
+.support-auth-hero__logo img {
+  height: 36px;
+  margin-bottom: 1.5rem;
+}
+
+.support-auth-hero__eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--jf-accent);
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+
+.support-auth-hero h1 {
+  font-size: clamp(2.2rem, 3.4vw, 3.2rem);
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.support-auth-hero__lead {
+  font-size: 1.02rem;
+  color: var(--jf-muted);
+  margin-bottom: 1.6rem;
+}
+
+.support-auth-hero__checks {
+  display: grid;
+  gap: 0.6rem;
+  font-size: 0.95rem;
+  color: var(--jf-muted);
+  margin-bottom: 1.2rem;
+}
+
+.support-auth-hero__checks span {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.support-auth-card {
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 20px;
+  padding: 2.4rem 2.6rem;
+  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.12);
+}
+
+@media (max-width: 991px) {
+  .support-auth-shell {
+    padding: 120px 0 80px;
+  }
+
+  .support-auth-shell .row {
+    flex-wrap: wrap;
+  }
+
+  .support-auth-shell .col-lg-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .support-auth-card {
+    padding: 2rem 1.8rem;
+  }
+}
+
+.support-auth-shell .support-muted {
+  color: var(--jf-muted);
+}
+
+.support-auth-shell .support-error {
+  color: #b91c1c;
+}
+
+.support-auth-shell .support-mb-0 {
+  margin-bottom: 0;
+}
+
+.support-auth-shell .support-mb-1 {
+  margin-bottom: 0.25rem;
+}
+
+.support-auth-shell .support-mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.support-auth-shell .support-mb-3 {
+  margin-bottom: 1rem;
+}
+
+.support-auth-shell .support-mt-1 {
+  margin-top: 0.25rem;
+}
+
+.support-auth-shell .support-w-100 {
+  width: 100%;
+}

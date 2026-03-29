@@ -1,0 +1,84 @@
+<section class="dashboard-page dashboard-page--gentelella">
+  <section class="dashboard-welcome">
+    <div class="dashboard-welcome__message">
+      <h1>{{ 'dashboard.welcomeTitle' | translate:{ organization: organizationName } }}</h1>
+      <p>{{ 'dashboard.welcomeSubtitle' | translate }}</p>
+    </div>
+
+    <div class="dashboard-welcome__meta">
+      <strong>{{ currentDateTime }}</strong>
+    </div>
+  </section>
+
+  <section class="dashboard-mini-tiles">
+    @for (tile of miniTiles; track tile) {
+      <article
+        class="mini-tile"
+        [ngClass]="tile.tone ? 'mini-tile--' + tile.tone : ''"
+        >
+        <p>{{ tile.label }}</p>
+        <strong>{{ tile.value }}</strong>
+        <span>{{ tile.detail }}</span>
+        @if (tile.route) {
+          <a [routerLink]="tile.route">{{ 'dashboard.view' | translate }}</a>
+        }
+      </article>
+    }
+  </section>
+
+  <section class="dashboard-grid">
+
+    @if (showOnboardingChecklist) {
+      <article class="dashboard-panel dashboard-panel--onboarding">
+        <div class="dashboard-panel__header">
+          <h2>{{ 'dashboard.onboardingTitle' | translate }}</h2>
+          <span>{{ 'dashboard.onboardingSubtitle' | translate }}</span>
+        </div>
+        <app-jobflow-onboarding-checklist
+          [organizationId]="organizationId"
+          (allCompleted)="onChecklistCompleted()"
+        ></app-jobflow-onboarding-checklist>
+      </article>
+    }
+
+    <article
+      class="dashboard-panel dashboard-panel--activity"
+      [ngClass]="{ 'dashboard-panel--activity-full': !showOnboardingChecklist }"
+      >
+      <div class="dashboard-panel__header">
+        <h2>{{ 'dashboard.clientActivityTitle' | translate }}</h2>
+        <span>{{ 'dashboard.clientActivitySubtitle' | translate }}</span>
+      </div>
+
+      @if (clientActivity.length) {
+        <ul class="dashboard-activity-list">
+          @for (activity of clientActivity; track activity) {
+            <li class="dashboard-activity-item">
+              <div class="dashboard-activity-item__top">
+                <span class="dashboard-activity-badge" [ngClass]="getActivityClass(activity.type)">
+                  {{ getActivityLabel(activity.type) }}
+                </span>
+                <time>{{ formatActivityDate(activity.occurredAt) }}</time>
+              </div>
+              <p>{{ activity.title }}</p>
+              <small>{{ activity.detail }}</small>
+              <a [routerLink]="activity.route">{{ 'dashboard.open' | translate }}</a>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="dashboard-empty-state mb-0">{{ 'dashboard.clientActivityEmpty' | translate }}</p>
+      }
+
+    </article>
+
+  </section>
+
+  <section class="dashboard-secondary" id="dashboard-command-center">
+    <app-jobflow-command-center
+      [primaryActions]="primaryActions"
+      [flowSteps]="flowSteps"
+    ></app-jobflow-command-center>
+  </section>
+</section>
+

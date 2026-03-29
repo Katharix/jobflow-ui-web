@@ -1,8 +1,15 @@
 export const environment = {
    production: true,
-   syncFusionKey: 'Ngo9BigBOggjHTQxAR8/V1JEaF5cXmRCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXlcdnVSQmlcVEZxXkJWYEk=',
    apiUrl: 'https://api.gojobflow.com/api',
    baseUrl: 'https://api.gojobflow.com',
+   firebase: {
+      apiKey: 'AIzaSyDr_AJGaGli7yC5Ex_RKW3HidgypZOr17U',
+      authDomain: 'jobflow-ui-web.firebaseapp.com',
+      projectId: 'jobflow-ui-web',
+      storageBucket: 'jobflow-ui-web.firebasestorage.app',
+      messagingSenderId: '193517135834',
+      appId: '1:193517135834:web:e6490d115528e3c585c2e3'
+   },
    stripeSettings: {
       goMonthlyPrice: 'price_1T3OPGAKhSZtrups36OXQ7pg',
       goYearlyPrice: 'price_1T3OPGAKhSZtrupsIUUkqabJ',
@@ -14,5 +21,5 @@ export const environment = {
       successUrl: '',
    },
    stripePublicKey: 'pk_live_51SobeYAKhSZtrupsOaGkJhdEQHAXF2pCqHqpffPXxQlkbc0qzHufQKh1oNOd8Q306ykzlMuooPmnmjnp9pvFrEsM00EHQ4b9AE',
-   reCAPTCHASecretKey: '6LcrDQErAAAAAFWv5_LazDZOsSICxGZI9Cs_UlBl'
+   turnstileSiteKey: '0x4AAAAAACs7ehVs9_8KtriE'
 };

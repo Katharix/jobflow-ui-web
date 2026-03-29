@@ -1,23 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ContactFormRequest } from '../../../../models/contact-form-request';
 import { FormsModule } from '@angular/forms';
-import { EmailService } from '../../../../services/email.service';
-import { RecaptchaModule } from 'ng-recaptcha';
+import { EmailService } from '../../services/email.service';
 import { environment } from '../../../../../environments/environment';
-import { CommonModule } from '@angular/common';
+
+import { TurnstileWidgetComponent } from '../../../../common/turnstile/turnstile-widget.component';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
   imports: [
-    FormsModule, 
-    CommonModule,
-    RecaptchaModule
-  ],
+    FormsModule,
+    TurnstileWidgetComponent
+],
   templateUrl: './contact.component.html',
   styleUrl: './contact.component.scss'
 })
 export class ContactComponent {
+  private emailService = inject(EmailService);
+
   model: ContactFormRequest = {
     name: '',
     email: '',
@@ -30,17 +31,23 @@ export class ContactComponent {
   success = false;
   error = false;
   captchaToken: string | null = null;
-  reCAPTCHAKey = environment.reCAPTCHASecretKey;
-
-  constructor(private emailService: EmailService)
-  {}
+  turnstileSiteKey = environment.turnstileSiteKey;
   
 
   onCaptchaResolved(token: string | null) {
     this.captchaToken = token;
   }
+
+  onCaptchaExpired() {
+    this.captchaToken = null;
+  }
+
+  onCaptchaError() {
+    this.captchaToken = null;
+  }
+
   onSubmit() {
-    if (!this.captchaToken) return;
+    if (!this.turnstileSiteKey || !this.captchaToken) return;
     this.model.captchaToken = this.captchaToken;
     this.isSubmitting = true;
     this.emailService.sendContactForm(this.model).subscribe({

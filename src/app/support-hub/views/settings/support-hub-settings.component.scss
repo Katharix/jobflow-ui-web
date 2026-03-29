@@ -1,0 +1,15 @@
+.support-settings {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.support-settings__card {
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 16px;
+  padding: 1.3rem;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+  display: grid;
+  gap: 0.8rem;
+}

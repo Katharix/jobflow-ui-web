@@ -1,13 +1,15 @@
+export type SubscriptionPlan = 'Go' | 'Flow' | 'Max';
 
 export interface MenuItem {
-    id?: number;
-    label?: string;
-    icon?: string;
-    link?: string;
-    expanded?: boolean;
-    subItems?: any;
-    isTitle?: boolean;
-    badge?: any;
-    parentId?: number;
-  }
-  
+  label: string;
+  labelKey?: string;
+  icon?: string;
+  link?: string;
+  subItems?: MenuItem[];
+  minPlan?: SubscriptionPlan;
+  isTitle?: boolean;
+  badge?: {
+    variant: string;
+    text: string;
+  };
+}

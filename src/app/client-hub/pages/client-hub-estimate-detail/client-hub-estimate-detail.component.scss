@@ -1,0 +1,85 @@
+.estimate-detail {
+  .detail-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  h2 {
+    color: #0d2438;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .estimate-status {
+    border: 1px solid #d6dee7;
+    background-color: #f6f8fb;
+    color: #2f4457;
+    font-weight: 600;
+    padding: 0.45rem 0.75rem;
+  }
+
+  .estimate-status.is-sent {
+    background-color: #e8f1fd;
+    border-color: #c5ddfb;
+    color: #1f4f86;
+  }
+
+  .estimate-status.is-accepted {
+    background-color: #e8f8ef;
+    border-color: #c9ebd7;
+    color: #1f6a3d;
+  }
+
+  .estimate-status.is-declined {
+    background-color: #fdeeee;
+    border-color: #f7d2d2;
+    color: #8f2b2b;
+  }
+
+  .estimate-status.is-cancelled {
+    background-color: #f1f4f7;
+    border-color: #d9e1ea;
+    color: #41515f;
+  }
+
+  .estimate-status.is-expired {
+    background-color: #f6f2fb;
+    border-color: #ddd3ef;
+    color: #5f4b83;
+  }
+
+  .estimate-status.is-revision-requested {
+    background-color: #e8f1fd;
+    border-color: #c5ddfb;
+    color: #1f4f86;
+  }
+
+  .estimate-notes {
+    border: 1px solid #e1e8f0;
+    border-radius: 0.5rem;
+    background-color: #fbfcfd;
+    padding: 0.85rem;
+
+    h3 {
+      margin: 0 0 0.35rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #203244;
+    }
+
+    p {
+      color: #5a6f7d;
+      line-height: 1.5;
+    }
+  }
+
+  .detail-actions {
+    display: flex;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+  }
+}

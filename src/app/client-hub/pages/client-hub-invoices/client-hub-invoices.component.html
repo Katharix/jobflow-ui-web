@@ -1,0 +1,70 @@
+<section class="client-page">
+  <header class="client-page-head">
+    <div>
+      <h1>My Invoices</h1>
+      <p class="client-page-subtitle">Track invoice dates, balances due, and payment progress clearly.</p>
+    </div>
+  </header>
+
+  @if (isLoading) {
+    <div class="alert alert-info">Loading invoices...</div>
+  }
+
+  @if (error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+
+  @if (!isLoading && !error) {
+    <div class="client-surface overflow-hidden">
+      <div class="table-responsive">
+        <table class="table client-table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Invoice #</th>
+              <th>Invoice Date</th>
+              <th>Due Date</th>
+              <th class="text-end">Total</th>
+              <th class="text-end">Balance Due</th>
+              <th>Status</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (invoice of items; track invoice.id) {
+              <tr>
+                <td>
+                  <a class="client-record-link fw-semibold" [routerLink]="['/client-hub/invoices', invoice.id]">
+                    {{ invoice.invoiceNumber }}
+                  </a>
+                </td>
+                <td>{{ formatDate(invoice.invoiceDate) }}</td>
+                <td>{{ formatDate(invoice.dueDate) }}</td>
+                <td class="text-end fw-semibold">{{ formatCurrency(invoice.totalAmount) }}</td>
+                <td class="text-end fw-semibold">{{ formatCurrency(invoice.balanceDue) }}</td>
+                <td>
+                  <span class="badge rounded-pill invoice-status" [class]="'badge rounded-pill invoice-status ' + statusClass(invoice.status)">
+                    {{ statusLabel(invoice.status) }}
+                  </span>
+                </td>
+                <td class="text-end">
+                  <a
+                    class="btn btn-sm btn-outline-primary client-view-btn"
+                    [routerLink]="['/client-hub/invoices', invoice.id]"
+                  >
+                    View Invoice
+                  </a>
+                </td>
+              </tr>
+            }
+
+            @if (items.length === 0) {
+              <tr>
+                <td class="text-center py-4 text-muted" colspan="7">No invoices available yet.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</section>

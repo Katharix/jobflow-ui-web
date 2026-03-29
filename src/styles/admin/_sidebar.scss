@@ -6,13 +6,13 @@
   position: fixed;
   left: 0;
   top: 0;
-  -webkit-transition: width .1s ease, margin .1s ease-out;
-  transition: width .1s ease, margin .1s ease-out;
+  -webkit-transition: width .2s ease, margin .2s ease-out, transform .2s ease, opacity .2s ease;
+  transition: width .2s ease, margin .2s ease-out, transform .2s ease, opacity .2s ease;
   z-index: $zindex-sidebar;
 
   .sidebar-header {
     background: $primary;
-    border-top-right-radius: 25px;
+    border-top-right-radius: 1rem;
     border-bottom: 1px solid #8595D1;
     height: $navbar-height;
     display: flex;
@@ -35,7 +35,7 @@
       -webkit-transition: opacity .5s ease;
       transition: opacity .5s ease;
       font-weight: 700;
-      font-size: 25px;
+      font-size: 1.5rem;
       color: darken($primary, 50%);
       direction: ltr#{'/*rtl:ignore*/'};
 
@@ -52,6 +52,13 @@
     .sidebar-toggler {
       cursor: pointer;
       width: 18px;
+      border-radius: .5rem;
+      padding: .2rem;
+
+      &:focus-visible {
+        outline: 2px solid rgba($white, .9);
+        outline-offset: 2px;
+      }
 
       span {
         display: block;
@@ -103,7 +110,7 @@
 
     .sidebar-nav {
       list-style: none;
-      padding: 25px 25px 50px 25px;
+      padding: 1rem .85rem 2rem;
 
       .nav-item {
         position: relative;
@@ -111,10 +118,11 @@
         >.nav-link {
           display: flex;
           align-items: center;
-          height: 38px;
+          min-height: 2.4rem;
           white-space: nowrap;
           color: var(--#{$prefix}sidebar-color);
-          padding-left: 14px !important;
+          padding: .45rem .75rem !important;
+          border-radius: .55rem;
 
           .link-icon {
             width: 16px;
@@ -125,8 +133,9 @@
           }
 
           .link-title {
-            margin-left: 30px;
-            font-size: 16px;
+            margin-left: 1.8rem;
+            font-size: .95rem;
+            font-weight: 500;
             transition: all .2s ease-in-out;
             color: $white;
           }
@@ -152,10 +161,10 @@
           &:hover {
             color: $sidebar-nav-link-hover-color;
             background-color: $white;
-            border-radius: 5px;
+            transform: translateX(2px);
 
             .link-title {
-              margin-left: 31px;
+              margin-left: 1.85rem;
               color: $dark;
             }
 
@@ -167,6 +176,12 @@
               color: $dark;
               fill: rgba($sidebar-nav-link-hover-color, .1);
             }
+          }
+
+          &:focus-visible {
+            outline: 2px solid rgba($white, .95);
+            outline-offset: 2px;
+            background-color: rgba($white, .14);
           }
         }
 
@@ -184,11 +199,15 @@
           }
         }
 
-        &.mm-active>.nav-link {
-          color: $sidebar-nav-link-active-color;
+        &.mm-active>.nav-link,
+        >.nav-link.mm-active {
+          color: $white;
+          background-color: transparent;
+          font-weight: 600;
 
           .link-arrow {
             transform: rotate(180deg);
+            color: $white;
           }
 
           &::before {
@@ -197,11 +216,15 @@
             height: 26px;
             background: $sidebar-nav-link-active-color;
             position: absolute;
-            left: -25px;
+            left: -.85rem;
           }
 
           .link-icon {
-            fill: rgba($sidebar-nav-link-active-color, .1);
+            fill: rgba($white, .14);
+            color: $white;
+          }
+
+          .link-title {
             color: $white;
           }
         }
@@ -224,16 +247,18 @@
       }
 
       &.sub-menu {
-        padding: 0 0 0 33px;
+        padding: .2rem 0 .15rem 1.9rem;
 
         .nav-item {
           position: relative;
 
           .nav-link {
-            height: 32px;
+            min-height: 2rem;
             color: $white;
-            font-size: 16px;
+            font-size: .9rem;
             transition: all .3s ease-in-out;
+            border-radius: .45rem;
+            padding: .35rem .5rem;
 
             &::before {
 
@@ -243,13 +268,15 @@
               background: transparent;
               border: 1px solid rgba(var(--#{$prefix}sidebar-color-rgb), .5);
               position: absolute;
-              left: -29px;
+              left: -1rem;
               top: 10px;
               transition: all .4s ease-in-out;
             }
 
             &.mm-active {
-              color: $sidebar-nav-link-active-color;
+              color: $white;
+              background-color: transparent;
+              font-weight: 600;
 
               &::before {
                 border: 1px solid $sidebar-nav-link-active-color;
@@ -263,12 +290,19 @@
 
             &:hover {
               color: $dark;
-              margin-left: 3px;
+              margin-left: 2px;
+              background-color: rgba($white, .95);
 
               &::before {
                 border: 1px solid $white;
                 background: $white;
               }
+            }
+
+            &:focus-visible {
+              outline: 2px solid rgba($white, .95);
+              outline-offset: 2px;
+              background-color: rgba($white, .12);
             }
           }
 
@@ -277,10 +311,12 @@
 
             .nav-item {
               .nav-link {
+                padding-left: .6rem;
+
                 &::before {
                   width: 5px;
                   height: 5px;
-                  left: -24px;
+                  left: -.75rem;
                 }
               }
             }
@@ -291,15 +327,25 @@
   }
 
   @media(max-width: 991px) {
+    width: min(19rem, 86vw);
     right: 0;
     left: unset;
     z-index: $zindex-sidebar;
-    margin-right: -#{$sidebar-width-lg};
+    margin-right: 0;
+    transform: translateX(100%);
     visibility: hidden;
+    opacity: 0;
+
+    .sidebar-header {
+      width: 100%;
+      border-top-right-radius: 0;
+      border-top-left-radius: 1rem;
+    }
 
     .sidebar-open & {
-      margin-right: 0;
+      transform: translateX(0);
       visibility: visible;
+      opacity: 1;
     }
   }
 }
@@ -413,21 +459,80 @@
   .sidebar-footer {
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     background: $primary;
+    padding: .7rem;
+
+    .sidebar-footer-nav {
+      display: grid;
+      gap: .35rem;
+    }
+
+    .sidebar-nav-item {
+      margin: 0 !important;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: .45rem;
+      min-height: 2.5rem;
+      border-radius: .6rem;
+      padding: .55rem .7rem !important;
+      color: $white;
+      background-color: rgba($white, .06);
+      position: relative;
+      transition: background-color .2s ease, color .2s ease;
+
+      &:hover {
+        color: $white;
+        background-color: rgba($white, .12);
+      }
+
+      &:focus-visible {
+        outline: 2px solid rgba($white, .95);
+        outline-offset: 2px;
+      }
+    }
+
+    .nav-link.mm-active {
+      background-color: rgba($white, .2);
+      border-radius: .55rem;
+      border: 1px solid rgba($white, .34);
+      box-shadow: inset 0 0 0 1px rgba($white, .08);
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: .3rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: .2rem;
+        height: 1.2rem;
+        border-radius: 999rem;
+        background: $white;
+      }
+
+      .sidebar-link-icon,
+      .sidebar-link-title {
+        color: $white;
+        font-weight: 600;
+      }
+    }
   }
 
   .pl-8{
-    padding-left: -19px !important;
+    padding-left: .45rem !important;
   }
 
   .sidebar-footer-link {
     color: $white;
     text-decoration: none;
     background-color: #315BD8;
-    padding: 15px !important;
-    margin: 5px;
+    padding: .8rem .9rem !important;
+    margin: .25rem;
     border-radius: 8px;
-    height: 55px;
-    font-size: 16px;
+    min-height: 3rem;
+    font-size: .9rem;
 
     &:hover {
       background-color: $primary;
@@ -437,81 +542,104 @@
 }
 
 .sidebar-footer-btn {
-  padding: 10px 12px;
+  padding: .6rem .75rem;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: .92rem;
+  font-weight: 600;
   width: 100%;
   text-align: left;
-  background-color: #315BD8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .4rem;
+  border: 1px solid rgba($white, .16);
+  background-color: rgba($white, .08);
   color: $white;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  box-shadow: none;
 
   &:hover {
-    background-color: darken(#315BD8, 5%);
+    background-color: rgba($white, .14);
+    border-color: rgba($white, .24);
+  }
+
+  &.show,
+  &:active {
+    background-color: rgba($white, .16);
+    border-color: rgba($white, .3);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba($white, .95);
+    outline-offset: 2px;
   }
 }
 
 .sidebar-drop-menu {
   width: 220px;
   min-height: 150px;
-  margin-bottom: 10px !important;
+  margin-bottom: .6rem !important;
+  border: 1px solid rgba($black, .06) !important;
+  border-radius: .75rem !important;
 }
 
 .drop-menu-header {
-  min-height: 60px;
+  min-height: 3.2rem;
   background-color: $gray-100;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: .9rem;
+  font-weight: 600;
 }
 
 .drop-menu-item {
-  min-height: 60px;
+  min-height: 3rem;
+  display: block;
+  padding: 0;
+  transition: background-color .2s ease-in-out;
+}
+
+.sidebar-drop-menu .dropdown-item {
+  font-size: .9rem !important;
+}
+
+.sidebar-drop-menu .drop-menu-item > a.dropdown-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-
-    &:hover {
-      background-color: $primary;
-      color: $white !important;
-    }
+  width: 100%;
+  min-height: 3rem;
+  margin: 0;
+  padding: .65rem .9rem;
+  border-radius: 0;
+  background: transparent !important;
 }
 
-.dropdown-item {
-  font-size: 16px !important;
-
-    &:hover {
-      background-color: $primary;
-      color: $white !important;
-    }
+.sidebar-drop-menu .drop-menu-item:hover,
+.sidebar-drop-menu .drop-menu-item:focus-within {
+  background-color: $app-blue !important;
 }
 
-.drop-menu-item {
-  position: relative; /* ensures a reference for absolute sizing if needed */
-  padding: 0; /* remove padding if any */
-}
-
-.drop-menu-item > a.dropdown-item {
-  display: block;       /* ensures it takes full width */
-  width: 100%;          /* fills horizontal space */
-  height: 100%;         /* fills vertical space */
-  padding: 0.75rem 1rem; /* optional: controls clickable padding inside */
-  line-height: inherit; /* match li height */
-}
-
-
-.dropdown-item:hover,
-.dropdown-item:active,
-.dropdown-item.active {
+.sidebar-drop-menu .drop-menu-item:hover > .dropdown-item,
+.sidebar-drop-menu .drop-menu-item:focus-within > .dropdown-item,
+.sidebar-drop-menu .drop-menu-item > .dropdown-item:hover,
+.sidebar-drop-menu .drop-menu-item > .dropdown-item:active,
+.sidebar-drop-menu .drop-menu-item > .dropdown-item.active {
   background-color: transparent !important;
-   color: $white !important;
+  color: $white !important;
+}
+
+.sidebar-drop-menu .drop-menu-item > .dropdown-item:focus-visible {
+  outline: 2px solid rgba($white, .95);
+  outline-offset: -2px;
+  background-color: transparent !important;
+  color: $white !important;
 }
 
 .sidebar-nav-item{
- margin: 20px !important;
+ margin: .35rem 0 !important;
 }
 
 .sidebar-footer-nav{
@@ -521,11 +649,52 @@
 }
 
 .sidebar-link-title{
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.2;
   color: $white;
-  font-size: 16px !important;
+  font-size: .9rem !important;
 }
 .sidebar-link-icon{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 1rem;
   color: $white;
   width: 16px !important;
- height: 16px !important;
+  height: 16px !important;
+  margin-right: 0 !important;
+}
+
+@media (max-width: 575px) {
+  .sidebar {
+    width: 100vw;
+
+    .sidebar-body {
+      max-height: calc(100dvh - #{$navbar-height});
+    }
+  }
+
+  .sidebar-drop-menu {
+    width: 16.5rem;
+    max-width: calc(100vw - 1.25rem);
+  }
+
+  .sidebar-footer {
+    padding: .6rem;
+  }
+
+  .sidebar-footer-btn,
+  .sidebar .sidebar-footer .nav-link {
+    min-height: 2.4rem;
+    padding: .5rem .65rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar * {
+    transition: none !important;
+    animation: none !important;
+  }
 }

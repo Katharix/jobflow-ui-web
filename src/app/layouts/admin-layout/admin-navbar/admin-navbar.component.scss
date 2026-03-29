@@ -46,3 +46,17 @@
 .border-bottom-nav.active {
   border-bottom: .233em solid #0d6efd;
 }
+
+.navbar-actions {
+  flex-shrink: 0;
+}
+
+.navbar-weather {
+  display: block;
+}
+
+@media (max-width: 991px) {
+  .navbar-weather {
+    display: none;
+  }
+}

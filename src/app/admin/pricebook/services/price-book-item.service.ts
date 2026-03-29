@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
-import {BaseApiService} from '../../../services/base-api.service';
+import {BaseApiService} from '../../../services/shared/base-api.service';
 
 
 export enum PriceBookItemType {
@@ -29,18 +29,15 @@ export interface PriceBookCategory {
    name?: string;
 }
 
-export interface CreatePriceBookItemRequest extends Omit<PriceBookItemDto, 'id' | 'createdAt'> {
-}
+export type CreatePriceBookItemRequest = Omit<PriceBookItemDto, 'id' | 'createdAt'>;
 
-export interface UpdatePriceBookItemRequest extends PriceBookItemDto {
-}
+export type UpdatePriceBookItemRequest = PriceBookItemDto;
 
 @Injectable({providedIn: 'root'})
 export class PriceBookItemService {
-   private baseUrl = 'pricebook'; // matches [Route("api/pricebook")]
+   private api = inject(BaseApiService);
 
-   constructor(private api: BaseApiService) {
-   }
+   private baseUrl = 'pricebook';
 
    get(id: string): Observable<PriceBookItemDto> {
       return this.api.get<PriceBookItemDto>(`${this.baseUrl}/${id}`);

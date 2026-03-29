@@ -1,0 +1,28 @@
+import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { LucideAngularModule } from 'lucide-angular';
+
+@Component({
+  selector: 'app-page-header',
+  standalone: true,
+  imports: [LucideAngularModule, CommonModule],
+  templateUrl: './page-header.component.html',
+})
+export class PageHeaderComponent {
+  @Input() title!: string;
+  @Input() subtitle?: string;
+  @Input() actions?: {
+    label: string;
+    icon?: string;
+    class: string;
+    click?: () => void;
+  }[];
+
+  normalizeActionClass(value?: string): string {
+    if (!value) return '';
+    return value
+      .split(/\s+/)
+      .filter(token => token && token !== 'btn')
+      .join(' ');
+  }
+}

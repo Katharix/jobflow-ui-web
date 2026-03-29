@@ -1,44 +1,42 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {NavigationEnd, Router, RouterLink, RouterModule} from '@angular/router';
 import {NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
 import {OrganizationContextService} from '../../../services/shared/organization-context.service';
 import {OrganizationDto} from '../../../models/organization';
-import {CommonModule} from '@angular/common';
+
 import {NavItem} from '../../../models/nav-item';
 import {filter} from 'rxjs/operators';
 import {NavService} from "../services/nav.service";
+import { WeatherWidgetComponent } from '../../../admin/dashboard/weather-widget/weather-widget.component';
 
 
 @Component({
    selector: 'app-admin-navbar',
    standalone: true,
    imports: [
-      NgbDropdownModule,
-      RouterLink,
-      CommonModule,
-      RouterModule
-   ],
+    NgbDropdownModule,
+    RouterLink,
+    RouterModule,
+    WeatherWidgetComponent
+],
    templateUrl: './admin-navbar.component.html',
-   styleUrl: './admin-navbar.component.scss'
+   styleUrl: './admin-navbar.component.scss',
 })
 export class AdminNavbarComponent implements OnInit {
+   private router = inject(Router);
+   private orgContext = inject(OrganizationContextService);
+   private navService = inject(NavService);
+
    // currentTheme: string;
    navItems: NavItem[] = [];
    showNavbar = true;
 
    private hideNavbarRoutes: string[] = [
-      '/admin/scheduling-jobs'
+      
    ];
 
 
    org: OrganizationDto
-
-   constructor(
-      private router: Router,
-      private orgContext: OrganizationContextService,
-      private navService: NavService
-   ) {
-   }
 
    ngOnInit(): void {
       const initialUrl = this.router.url;
@@ -95,15 +93,6 @@ export class AdminNavbarComponent implements OnInit {
       const newTheme: string = checkbox.checked ? 'dark' : 'light';
       //this.themeModeService.toggleTheme(newTheme);
       this.showActiveTheme(newTheme);
-   }
-
-   /**
-    * Toggle the sidebar when the hamburger button is clicked
-    */
-   toggleSidebar(e: Event) {
-      e.preventDefault();
-      document.body.classList.add('sidebar-open');
-      document.querySelector('.sidebar .sidebar-toggler')?.classList.add('active');
    }
 
    /**

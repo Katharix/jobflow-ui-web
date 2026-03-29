@@ -1,0 +1,157 @@
+<section class="legal-hero">
+  <div class="container">
+    <div class="legal-hero__inner">
+      <p class="legal-eyebrow">Legal</p>
+      <h1>Terms & Conditions</h1>
+      <p class="legal-hero__lead">
+        These Terms govern your use of {{ companyName }} and our services provided by {{ legalEntity }}.
+      </p>
+      <div class="legal-meta">
+        <span>Last updated: {{ lastUpdated }}</span>
+        <span>Questions? <a [href]="'mailto:' + contactEmail">{{ contactEmail }}</a></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="legal-content">
+  <div class="container">
+    <div class="legal-card">
+      <h2>1. Agreement to Terms</h2>
+      <p>
+        By accessing or using {{ companyName }}, you agree to these Terms and any policies referenced here. If you do not agree,
+        do not use the service.
+      </p>
+
+      <h2>2. Company Information</h2>
+      <p>
+        {{ companyName }} is an app built by {{ legalEntity }} in {{ jurisdiction }}. Business address: {{ businessAddress }}.
+      </p>
+
+      <h2>3. The Service</h2>
+      <p>
+        {{ companyName }} provides tools for scheduling, dispatch, estimating, invoicing, and payments for service businesses.
+        We may add, remove, or change features to improve the service.
+      </p>
+
+      <h2>4. Service Availability</h2>
+      <p>
+        We aim to keep {{ companyName }} available and reliable, but we do not guarantee uninterrupted service. Scheduled
+        maintenance, updates, and unexpected outages may occur.
+      </p>
+
+      <h2>5. Data Export and Portability</h2>
+      <p>
+        You can request an export of your account data in a commonly used format. We will make commercially reasonable efforts
+        to provide exports within a reasonable timeframe.
+      </p>
+
+      <h2>6. Beta and Experimental Features</h2>
+      <p>
+        Some features may be labeled beta or experimental. These features are provided "as is" and may change or be removed
+        at any time.
+      </p>
+
+      <h2>7. Support</h2>
+      <p>
+        Support response times may vary based on plan, volume, and issue complexity. We will make commercially reasonable efforts
+        to respond and resolve issues.
+      </p>
+
+      <h2>8. Eligibility and Accounts</h2>
+      <ul>
+        <li>You must provide accurate information and keep it current.</li>
+        <li>You are responsible for all activity under your account and for keeping credentials secure.</li>
+        <li>You must comply with applicable laws and regulations when using the service.</li>
+      </ul>
+
+      <h2>9. Customer Content</h2>
+      <p>
+        You retain ownership of content you upload or enter into the service. You grant {{ legalEntity }} a limited right to host,
+        process, and display your content to provide the service.
+      </p>
+
+      <h2>10. Acceptable Use</h2>
+      <ul>
+        <li>Do not misuse the service, attempt to disrupt it, or access it without authorization.</li>
+        <li>Do not upload unlawful, harmful, or infringing content.</li>
+        <li>Do not reverse engineer, copy, or resell the service or its content.</li>
+      </ul>
+
+      <h2>11. Subscriptions, Billing, and Refunds</h2>
+      <p>
+        Subscription terms, billing cycles, fees, and trial periods are presented at checkout and in your account settings.
+        Payments are processed through third-party providers, including Stripe and Square.
+      </p>
+      <p>
+        Refunds are evaluated on a case-by-case basis. To request a refund, contact us at
+        <a [href]="'mailto:' + contactEmail">{{ contactEmail }}</a>.
+      </p>
+
+      <h2>12. Third-Party Services</h2>
+      <p>
+        The service may integrate with third-party providers such as Stripe, Square, and Twilio. Your use of those services is
+        governed by their terms and policies.
+      </p>
+
+      <h2>13. Data & Privacy</h2>
+      <p>
+        Our Privacy Policy explains how we collect, use, and protect information. By using the service, you agree to those practices.
+      </p>
+
+      <h2>14. Security Standards</h2>
+      <p>
+        We are committed to compliance with OWASP guidance, SOC 2 Type II controls, and PCI DSS requirements where applicable.
+        We may still be in progress toward formal certification, and we will only state certification in writing once achieved.
+      </p>
+
+      <h2>15. Intellectual Property</h2>
+      <p>
+        {{ companyName }} and its content are owned by {{ legalEntity }} and protected by intellectual property laws. You may not
+        use our branding without permission.
+      </p>
+
+      <h2>16. Suspension and Termination</h2>
+      <p>
+        You may cancel your account at any time. We may suspend or terminate accounts for violations of these Terms or misuse of
+        the service.
+      </p>
+
+      <h2>17. Disclaimers</h2>
+      <p>
+        The service is provided "as is" without warranties of any kind, to the fullest extent permitted by law.
+      </p>
+
+      <h2>18. Limitation of Liability</h2>
+      <p>
+        To the fullest extent permitted by law, {{ legalEntity }} is not liable for indirect, incidental, or consequential damages
+        arising from your use of the service.
+      </p>
+
+      <h2>19. Arbitration and Class Action Waiver</h2>
+      <p>
+        Any dispute, claim, or controversy arising out of or relating to these Terms or the service will be resolved by binding
+        arbitration on an individual basis and not in a class, consolidated, or representative action.
+      </p>
+      <p>
+        You and {{ legalEntity }} each waive any right to a jury trial or to participate in a class action. Arbitration will be
+        conducted in {{ jurisdiction }}, unless the parties agree otherwise.
+      </p>
+
+      <h2>20. Changes to Terms</h2>
+      <p>
+        We may update these Terms from time to time. We will post updates here and revise the "Last updated" date.
+      </p>
+
+      <h2>21. Contact</h2>
+      <p>
+        For questions about these Terms, contact us at <a [href]="'mailto:' + contactEmail">{{ contactEmail }}</a>.
+      </p>
+
+      <div class="legal-footer">
+        <a routerLink="/privacy">Read our Privacy Policy</a>
+        <a routerLink="/">Back to Home</a>
+      </div>
+    </div>
+  </div>
+</section>

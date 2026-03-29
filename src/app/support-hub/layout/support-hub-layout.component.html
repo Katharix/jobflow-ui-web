@@ -1,0 +1,49 @@
+<div class="support-hub">
+  <aside class="support-hub__sidebar">
+    <div class="support-hub__brand">
+      <img src="/assets/public/images/Asset 1.png" alt="JobFlow" />
+      <div>
+        <span class="support-hub__brand-title">Support Hub</span>
+        <span class="support-hub__brand-subtitle">Katharix Console</span>
+      </div>
+    </div>
+
+    <nav class="support-hub__nav">
+      @for (item of navItems; track item.route) {
+        <a
+          class="support-hub__nav-link"
+          [routerLink]="item.route"
+          routerLinkActive="is-active"
+          >
+          <i [class]="item.icon"></i>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="support-hub__sidebar-footer">
+      <span class="support-hub__status">Master system online</span>
+      <small>JobFlow Support Hub {{ year }}</small>
+    </div>
+  </aside>
+
+  <div class="support-hub__main">
+    <header class="support-hub__topbar">
+      <div>
+        <p class="support-hub__eyebrow">Support operations</p>
+        <h1>Assist customers and organizations in real time.</h1>
+      </div>
+      <div class="support-hub__profile">
+        <div class="support-hub__avatar">KH</div>
+        <div>
+          <span class="support-hub__profile-name">Katharix Staff</span>
+          <span class="support-hub__profile-role">Internal access</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="support-hub__content container-xxl">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

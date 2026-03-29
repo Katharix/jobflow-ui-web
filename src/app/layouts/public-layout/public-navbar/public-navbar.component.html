@@ -2,7 +2,7 @@
   [ngClass]="navbarLight ? 'navbar-light' : 'navbar-dark'" id="navbar-sticky">
   <div class="container">
 
-    <a class="logo text-uppercase" href="index.html">
+    <a class="logo text-uppercase" routerLink="/" (click)="isCollapsed = true">
       <img src="/assets/public/images/Asset 1.png" alt="" class="logo-light" style="height: 30px;" />
       <img src="/assets/public/images/Asset 1.png" alt="" class="logo-dark" style="height: 30px;" />
     </a>
@@ -18,17 +18,18 @@
         @for (item of navLinks; track $index) {
         <li class="nav-item">
           <a
-            [routerLink]="item === 'login' ? '/admin' : null"
-            [href]="item !== 'login' ? '#' + item : null"
+            [attr.href]="'/' + '#' + item"
             class="nav-link"
-            (click)="item !== 'login' && scrollToSection(item); isCollapsed = true"
+            (click)="$event.preventDefault(); navigateToSection(item)"
             [class.active]="isActiveSection(item)">
-            {{ item | titlecase }}
+            {{ ('landing.nav.' + item) | translate }}
           </a>
         </li>
         }
       </ul>
-      <button class="btn btn-sm btn-primary ms-4" routerLink="/auth/login">Login</button>
+      <div class="navbar-actions">
+        <button class="btn btn-sm btn-primary" routerLink="/auth/login">{{ 'landing.nav.login' | translate }}</button>
+      </div>
     </div>
   </div>
 </nav>

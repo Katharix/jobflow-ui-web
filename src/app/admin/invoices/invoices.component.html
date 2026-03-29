@@ -1,0 +1,325 @@
+<app-page-header
+  [title]="'admin.invoices.title' | translate"
+  [subtitle]="'admin.invoices.subtitle' | translate"
+></app-page-header>
+
+@if (error) {
+  <div class="alert alert-danger mb-3">
+    {{ error }}
+  </div>
+}
+
+<section class="invoices-overview">
+  <div class="invoices-overview__metrics">
+    <article class="invoices-card">
+      <p class="invoices-card__label">{{ 'admin.invoices.metrics.total' | translate }}</p>
+      <h3>{{ summary.total }}</h3>
+      <p class="invoices-card__note">{{ 'admin.invoices.metrics.totalNote' | translate }}</p>
+    </article>
+    <article class="invoices-card">
+      <p class="invoices-card__label">{{ 'admin.invoices.metrics.sent' | translate }}</p>
+      <h3>{{ summary.sent }}</h3>
+      <p class="invoices-card__note">{{ 'admin.invoices.metrics.sentNote' | translate }}</p>
+    </article>
+    <article class="invoices-card">
+      <p class="invoices-card__label">{{ 'admin.invoices.metrics.overdue' | translate }}</p>
+      <h3>{{ summary.overdue }}</h3>
+      <p class="invoices-card__note">{{ 'admin.invoices.metrics.overdueNote' | translate }}</p>
+    </article>
+    <article class="invoices-card">
+      <p class="invoices-card__label">{{ 'admin.invoices.metrics.totalBilled' | translate }}</p>
+      <h3>{{ formatMoney(summary.totalBilled) }}</h3>
+      <p class="invoices-card__note">{{ 'admin.invoices.metrics.totalBilledNote' | translate }}</p>
+    </article>
+    <article class="invoices-card invoices-card--accent">
+      <p class="invoices-card__label">{{ 'admin.invoices.metrics.outstanding' | translate }}</p>
+      <h3>{{ formatMoney(summary.balanceDue) }}</h3>
+      <p class="invoices-card__note">{{ 'admin.invoices.metrics.outstandingNote' | translate }}</p>
+    </article>
+  </div>
+  <div class="invoices-cta">
+    <div>
+      <p class="invoices-cta__eyebrow">{{ 'admin.invoices.cta.eyebrow' | translate }}</p>
+      <h3>{{ 'admin.invoices.cta.title' | translate }}</h3>
+      <p>{{ 'admin.invoices.cta.subtitle' | translate }}</p>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="openCreateInvoiceDrawer()">
+      {{ 'admin.invoices.cta.button' | translate }}
+    </button>
+  </div>
+</section>
+
+<section class="invoices-filters" aria-label="Invoice filters">
+  <div class="invoices-filters__group">
+    @for (filter of statusFilters; track filter.key) {
+      <button
+        type="button"
+        class="invoices-filter"
+        [class.invoices-filter--active]="selectedStatusFilter === filter.key"
+        (click)="setStatusFilter(filter.key)">
+        {{ filter.label }}
+        <span class="invoices-filter__count">{{ getFilterCount(filter.key) }}</span>
+      </button>
+    }
+  </div>
+</section>
+
+<ng-template #clientTemplate let-invoice>
+  <div class="invoice-client-cell">
+    <div class="invoice-client-name">{{ getClientName(invoice) }}</div>
+    <div class="invoice-client-email">{{ getClientEmail(invoice) }}</div>
+  </div>
+</ng-template>
+
+<ng-template #statusTemplate let-invoice>
+  <span class="invoice-status-chip" [ngClass]="getStatusClass(invoice)">
+    {{ getStatusLabel(invoice) }}
+  </span>
+</ng-template>
+
+<ng-template #actionsTemplate let-invoice>
+  <button
+    type="button"
+    class="btn btn-sm btn-link"
+    (click)="openInvoice(invoice)">
+    {{ 'admin.invoices.actions.view' | translate }}
+  </button>
+</ng-template>
+
+<app-jobflow-grid
+  [data]="filteredItems"
+  [columns]="columns"
+  [pageSettings]="pageSettings"
+  [showSearchBar]="true"
+></app-jobflow-grid>
+
+<app-jobflow-drawer
+  [open]="isCreateDrawerOpen"
+  [title]="selectedJob ? ('admin.invoices.drawer.createTitle' | translate) : ('admin.invoices.drawer.selectTitle' | translate)"
+  [width]="760"
+  (closed)="onCreateDrawerClosed()"
+  >
+  <div class="invoice-drawer">
+    @if (!selectedJob) {
+      <div class="invoice-drawer__intro">
+        <p class="invoice-drawer__eyebrow">
+          {{ isInvoiceOnboardingFlow ? ('admin.invoices.drawer.onboardingStep' | translate) : ('admin.invoices.drawer.createTitle' | translate) }}
+        </p>
+        <h3>{{ 'admin.invoices.drawer.pickJobTitle' | translate }}</h3>
+        <p>{{ 'admin.invoices.drawer.pickJobSubtitle' | translate }}</p>
+        <div class="invoice-drawer__intro-tags">
+          <span>{{ 'admin.invoices.drawer.tags.recent' | translate }}</span>
+          <span>{{ 'admin.invoices.drawer.tags.search' | translate }}</span>
+          <span>{{ 'admin.invoices.drawer.tags.fast' | translate }}</span>
+        </div>
+      </div>
+      <section class="invoice-drawer__picker" [class.invoice-drawer__picker--onboarding]="isInvoiceOnboardingFlow">
+        <div class="invoice-drawer__picker-header">
+          <h3>{{ 'admin.invoices.drawer.chooseJobTitle' | translate }}</h3>
+          <p>{{ 'admin.invoices.drawer.chooseJobSubtitle' | translate }}</p>
+        </div>
+        <input
+          type="search"
+          class="form-control"
+          [placeholder]="'admin.invoices.drawer.searchPlaceholder' | translate"
+          [(ngModel)]="jobSearchText"
+          />
+          @if (jobPickerError) {
+            <div class="alert alert-warning mb-0">
+              {{ jobPickerError }}
+            </div>
+          }
+          @if (!jobPickerError && filteredRecentJobs.length) {
+            <div class="invoice-drawer__job-list">
+              @for (job of filteredRecentJobs; track trackByJobId($index, job)) {
+                <article class="invoice-drawer__job-card">
+                  <div>
+                    <h4>{{ job.title || ('admin.invoices.drawer.untitledJob' | translate) }}</h4>
+                    <p>{{ getJobClientName(job) }} • {{ formatJobDate(job.scheduledStart) }}</p>
+                  </div>
+                  <div class="invoice-drawer__job-card-actions">
+                    <span class="job-status-chip" [ngClass]="getJobStatusClass(job)">
+                      {{ getJobStatusLabel(job) }}
+                    </span>
+                    <button
+                      type="button"
+                      class="btn btn-primary btn-sm"
+                      (click)="selectJobForInvoice(job)"
+                      >
+                      {{ 'admin.invoices.drawer.selectJob' | translate }}
+                    </button>
+                  </div>
+                </article>
+              }
+            </div>
+          } @else {
+            <div class="invoice-drawer__empty-state">
+              <h4>{{ jobSearchText.trim() ? ('admin.invoices.drawer.noMatches' | translate) : ('admin.invoices.drawer.noJobs' | translate) }}</h4>
+              @if (jobSearchText.trim()) {
+                <p>{{ 'admin.invoices.drawer.noMatchesHint' | translate }}</p>
+              } @else {
+                {{ 'admin.invoices.drawer.noJobsHint' | translate }}
+              }
+              <a
+                class="btn btn-outline-primary btn-sm"
+                [routerLink]="['/admin/jobs']"
+               [queryParams]="returnToCommandCenter
+                  ? { onboardingAction: 'open-job-drawer', returnTo: 'dashboard-command-center' }
+                  : { onboardingAction: 'open-job-drawer' }"
+                >
+                {{ 'admin.invoices.drawer.createJob' | translate }}
+              </a>
+            </div>
+          }
+        </section>
+      } @else {
+        <form [formGroup]="invoiceForm" (ngSubmit)="createInvoice()" class="invoice-form">
+          <div class="invoice-form__intro">
+            <p class="invoice-drawer__eyebrow">{{ 'admin.invoices.drawer.detailsEyebrow' | translate }}</p>
+            <h3>{{ 'admin.invoices.drawer.detailsTitle' | translate }}</h3>
+            <p>{{ 'admin.invoices.drawer.detailsSubtitle' | translate }}</p>
+          </div>
+          <div class="invoice-form__job-summary">
+            <button type="button" class="btn btn-sm btn-link px-0" (click)="backToJobPicker()">
+              <i class="pi pi-arrow-left me-1"></i>
+              {{ 'admin.invoices.drawer.backToJobs' | translate }}
+            </button>
+            <h4>{{ selectedJob.title || ('admin.invoices.drawer.untitledJob' | translate) }}</h4>
+            <p>{{ getJobClientName(selectedJob) }} • {{ formatJobDate(selectedJob.scheduledStart) }}</p>
+            <span class="job-status-chip" [ngClass]="getJobStatusClass(selectedJob)">
+              {{ getJobStatusLabel(selectedJob) }}
+            </span>
+          </div>
+          @if (prefillEstimate) {
+            <div class="alert alert-info mb-4">
+              {{ 'admin.invoices.drawer.prefill' | translate }}
+              <strong>#{{ prefillEstimate.estimateNumber }}</strong>.
+              {{ 'admin.invoices.drawer.prefillHint' | translate }}
+            </div>
+          }
+          @if (createInvoiceError) {
+            <div class="alert alert-danger mb-4">
+              {{ createInvoiceError }}
+            </div>
+          }
+          <div class="row g-3 mb-4">
+            <div class="col-12 col-md-6">
+              <label class="invoice-form__label" for="invoiceDate">{{ 'admin.invoices.form.invoiceDate' | translate }} <span class="text-danger">*</span></label>
+              <input
+                id="invoiceDate"
+                type="date"
+                pInputText
+                formControlName="invoiceDate"
+                class="form-control"
+                />
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="invoice-form__label" for="invoiceDueDate">{{ 'admin.invoices.form.dueDate' | translate }} <span class="text-danger">*</span></label>
+                <input
+                  id="invoiceDueDate"
+                  type="date"
+                  pInputText
+                  formControlName="dueDate"
+                  class="form-control"
+                  />
+                </div>
+              </div>
+              <div class="mb-4">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <span class="invoice-form__section-heading">{{ 'admin.invoices.form.lineItems' | translate }}</span>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+                    (click)="addInvoiceLine()"
+                    >
+                    <i class="pi pi-plus"></i>
+                    {{ 'admin.invoices.form.addLine' | translate }}
+                  </button>
+                </div>
+                <div class="invoice-form__line-header d-none d-md-grid">
+                  <span>{{ 'admin.invoices.form.description' | translate }}</span>
+                  <span>{{ 'admin.invoices.form.quantity' | translate }}</span>
+                  <span>{{ 'admin.invoices.form.unitPrice' | translate }}</span>
+                  <span class="text-end">{{ 'admin.invoices.form.total' | translate }}</span>
+                  <span></span>
+                </div>
+                <div formArrayName="lineItems">
+                  @for (line of invoiceLineItems.controls; track line; let i = $index) {
+                    <div
+                      [formGroupName]="i"
+                      class="invoice-form__line-row"
+                      >
+                      <div class="invoice-form__line-description">
+                        <input
+                          pInputText
+                          formControlName="description"
+                          [placeholder]="'admin.invoices.form.descriptionPlaceholder' | translate"
+                          class="w-100"
+                          />
+                        </div>
+                        <div>
+                          <p-inputNumber
+                            formControlName="quantity"
+                            [min]="0.001"
+                            [minFractionDigits]="0"
+                            [maxFractionDigits]="3"
+                            inputStyleClass="w-100"
+                            styleClass="w-100"
+                          ></p-inputNumber>
+                        </div>
+                        <div>
+                          <p-inputNumber
+                            formControlName="unitPrice"
+                            mode="currency"
+                            currency="USD"
+                            locale="en-US"
+                            [min]="0"
+                            inputStyleClass="w-100"
+                            styleClass="w-100"
+                          ></p-inputNumber>
+                        </div>
+                        <div class="invoice-form__line-total">
+                          {{ formatMoney(invoiceLineTotal(i)) }}
+                        </div>
+                        <div class="text-center">
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-link text-danger p-0"
+                            (click)="removeInvoiceLine(i)"
+                            [disabled]="invoiceLineItems.length === 1"
+                            [title]="'admin.invoices.form.removeLine' | translate"
+                            >
+                            <i class="pi pi-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                  <div class="invoice-form__total-row">
+                    <span class="text-muted">{{ 'admin.invoices.form.invoiceTotal' | translate }}</span>
+                    <strong>{{ formatMoney(invoiceTotal) }}</strong>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-end gap-2 pt-2">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    (click)="closeCreateInvoiceDrawer({ navigateToCommandCenter: true })"
+                    [disabled]="creatingInvoice"
+                    >
+                    {{ 'admin.invoices.form.cancel' | translate }}
+                  </button>
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    [disabled]="creatingInvoice || invoiceForm.invalid"
+                    >
+                    {{ creatingInvoice ? ('admin.invoices.form.creating' | translate) : ('admin.invoices.form.create' | translate) }}
+                  </button>
+                </div>
+              </form>
+            }
+
+
+          </div>
+        </app-jobflow-drawer>

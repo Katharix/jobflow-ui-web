@@ -1,0 +1,63 @@
+.client-page {
+  .client-record-link {
+    color: #1f4f86;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  .client-record-link:hover {
+    color: #133b66;
+    border-bottom-color: #c6dbf5;
+  }
+
+  .client-view-btn {
+    border-radius: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.32rem 0.58rem;
+  }
+
+  .estimate-status {
+    border: 1px solid #d6dee7;
+    background-color: #f6f8fb;
+    color: #2f4457;
+    font-weight: 600;
+    padding: 0.45rem 0.7rem;
+  }
+
+  .estimate-status.is-sent {
+    background-color: #e8f1fd;
+    border-color: #c5ddfb;
+    color: #1f4f86;
+  }
+
+  .estimate-status.is-accepted {
+    background-color: #e8f8ef;
+    border-color: #c9ebd7;
+    color: #1f6a3d;
+  }
+
+  .estimate-status.is-declined {
+    background-color: #fdeeee;
+    border-color: #f7d2d2;
+    color: #8f2b2b;
+  }
+
+  .estimate-status.is-cancelled {
+    background-color: #f1f4f7;
+    border-color: #d9e1ea;
+    color: #41515f;
+  }
+
+  .estimate-status.is-expired {
+    background-color: #f6f2fb;
+    border-color: #ddd3ef;
+    color: #5f4b83;
+  }
+
+  .estimate-status.is-revision-requested {
+    background-color: #e8f1fd;
+    border-color: #c5ddfb;
+    color: #1f4f86;
+  }
+}

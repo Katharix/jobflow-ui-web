@@ -5,24 +5,27 @@
 
 
 .navbar-custom {
-  padding: 20px 0px;
+  padding: 16px 0px;
   width: 100%;
   border-radius: 0px;
   z-index: 999;
   margin-bottom: 0px;
-  transition: all 0.5s ease-in-out;
+  transition: all 0.3s ease-in-out;
   font-family: $font-secondary;
+  background-color: rgba($white, 0.9);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba($gray-200, 0.7);
   .navbar-nav {
       li {
           a {
               line-height: 26px;
-              color: $white;
+              color: $gray-800;
               font-size: 16px;
-              transition: all 0.5s;
+              transition: color 0.2s ease;
               background-color: transparent !important;
               padding: 6px 0;
               margin: 0 15px;
-              font-weight: 500;
+              font-weight: 600;
               &:hover, &.active {
                   color: $primary !important;
               }
@@ -61,7 +64,7 @@
   font-size: 24px;
   margin-top: 5px;
   margin-bottom: 0px;
-  color: $white;
+    color: $dark;
   &:focus{
       outline: none;
   }
@@ -71,10 +74,10 @@
   margin: 0 15px;
   font-size: 12px;
   border-color: transparent;
-  transition: all 0.5s;
-  font-weight: 500;
+    transition: all 0.2s;
+    font-weight: 600;
   letter-spacing: 1px;
-  text-transform: uppercase;
+    text-transform: none;
   &:hover{
       color: $white;
   }
@@ -96,8 +99,9 @@
   &.navbar-custom {
       margin-top: 0px;
       background-color: $white;
-      box-shadow: 0 0 7px 0 rgba($black, 0.2);
+      box-shadow: 0 6px 20px rgba($black, 0.08);
       color: $dark !important;
+      border-bottom: 1px solid rgba($gray-200, 0.9);
       .navbar-nav {
           margin-top: 0px;
           li {

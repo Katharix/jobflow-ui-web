@@ -1,18 +1,17 @@
-﻿import {Injectable} from '@angular/core';
+﻿import { Injectable, inject } from '@angular/core';
 import {HttpParams} from '@angular/common/http';
-import {BaseApiService} from '../../../services/base-api.service';
+import {BaseApiService} from '../../../services/shared/base-api.service';
 import {
    AssignmentDto,
    CreateAssignmentRequestDto, ScheduleType,
-   UpdateAssignmentScheduleRequestDto,
    UpdateAssignmentStatusRequestDto
 } from "../models/assignment";
 
 
 @Injectable({providedIn: 'root'})
 export class AssignmentsService {
-   constructor(private api: BaseApiService) {
-   }
+   private api = inject(BaseApiService);
+
 
    getAssignments(start: Date, end: Date) {
       const params = new HttpParams()
@@ -59,6 +58,26 @@ export class AssignmentsService {
    ) {
       return this.api.put<AssignmentDto>(
          `assignment/${assignmentId}/status`,
+         dto
+      );
+   }
+
+   updateAssignmentAssignees(
+      assignmentId: string,
+      dto: { employeeIds: string[]; leadEmployeeId?: string | null }
+   ) {
+      return this.api.put<AssignmentDto>(
+         `assignment/${assignmentId}/assignees`,
+         dto
+      );
+   }
+
+   updateAssignmentNotes(
+      assignmentId: string,
+      dto: { notes?: string | null }
+   ) {
+      return this.api.put<AssignmentDto>(
+         `assignment/${assignmentId}/notes`,
          dto
       );
    }

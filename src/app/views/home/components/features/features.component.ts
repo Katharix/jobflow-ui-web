@@ -11,16 +11,16 @@ import type { Feature } from '../types';
 })
 export class FeaturesComponent {
   featuresRow1: Feature[] = [
-    { title: 'Client & Crew Management', imgSrc: '/assets/public/images/features/fea-1.png' },
-    { title: 'Reporting', imgSrc: '/assets/public/images/features/fea-2.png' },
-    { title: 'Client & Crew Communication', imgSrc: '/assets/public/images/features/fea-3.png' },
-    { title: 'Email & Text Nofications', imgSrc: '/assets/public/images/features/fea-4.png' }
+    { title: 'Job Scheduling & Dispatch', imgSrc: '/assets/public/images/features/fea-1.png' },
+    { title: 'Estimates & Approvals', imgSrc: '/assets/public/images/features/fea-2.png' },
+    { title: 'Invoices & Online Payments', imgSrc: '/assets/public/images/features/fea-3.png' },
+    { title: 'Client Notifications', imgSrc: '/assets/public/images/features/fea-4.png' }
   ];
 
   featuresRow2: Feature[] = [
-    { title: 'Easy Customize', imgSrc: '/assets/public/images/features/fea-5.png' },
-    { title: 'Manage Workflow', imgSrc: '/assets/public/images/features/fea-6.png' },
-    { title: 'Scheduling', imgSrc: '/assets/public/images/features/fea-7.png' },
-    { title: 'Growth', imgSrc: '/assets/public/images/features/fea-8.png' }
+    { title: 'Crew Assignments', imgSrc: '/assets/public/images/features/fea-5.png' },
+    { title: 'Pricebook & Services', imgSrc: '/assets/public/images/features/fea-6.png' },
+    { title: 'Calendar Workflow', imgSrc: '/assets/public/images/features/fea-7.png' },
+    { title: 'Business Insights', imgSrc: '/assets/public/images/features/fea-8.png' }
   ];
 }

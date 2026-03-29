@@ -1,4 +1,5 @@
 import {OrganizationDto} from "./organization";
+import {PaymentProvider} from "./customer-payment-profile";
 
 export interface Invoice {
    id: string;
@@ -12,6 +13,9 @@ export interface Invoice {
    amountPaid: number;
    balanceDue: number;
    stripeInvoiceId?: string;
+   paymentProvider?: PaymentProvider;
+   externalPaymentId?: string;
+   paidAt?: string;
    organizationClient: OrganizationClient;
    lineItems: InvoiceLineItem[];
    status: InvoiceStatus;
@@ -47,4 +51,17 @@ export interface InvoiceLineItem {
    quantity: number;
    unitPrice: number;
    lineTotal: number;
+}
+
+export interface CreateInvoiceLineItemRequest {
+   description: string;
+   quantity: number;
+   unitPrice: number;
+}
+
+export interface CreateInvoiceRequest {
+   jobId: string;
+   invoiceDate?: string;
+   dueDate?: string;
+   lineItems: CreateInvoiceLineItemRequest[];
 }

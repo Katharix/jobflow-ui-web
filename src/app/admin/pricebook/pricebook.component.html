@@ -1,49 +1,64 @@
-<div class="container-fluid py-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-      <h2 class="mb-0">Materials</h2>
-      <p class="text-muted small">View and manage your categorized material items</p>
+<app-page-header
+  title="Price Book"
+  subtitle="Organize materials into categories and keep pricing tidy."
+></app-page-header>
+
+@if (error) {
+  <div class="alert alert-danger mb-3">{{ error }}</div>
+}
+
+<section class="pricebook-overview">
+  <div class="pricebook-overview__intro">
+    <span class="pricebook-overview__eyebrow">Material workspace</span>
+    <h2>Everything priced. Nothing missed.</h2>
+    <p>Group materials into categories, set costs and prices, then pull them into estimates and invoices.</p>
+  </div>
+  <div class="pricebook-overview__metrics">
+    <div class="pricebook-metric">
+      <span class="pricebook-metric__label">Categories</span>
+      <span class="pricebook-metric__value">{{ materialCategories.length }}</span>
     </div>
-    <button class="btn btn-primary" (click)="openAddMaterialDialog()">
-      <lucide-icon name="plus" class="me-1"></lucide-icon>
+  </div>
+  <div class="pricebook-cta">
+    <div>
+      <p class="pricebook-cta__eyebrow">Quick action</p>
+      <h3>Create a new category</h3>
+      <p>Organize your materials into categories to keep pricing tidy.</p>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="openAddMaterialDialog()">
       New Category
     </button>
   </div>
+</section>
 
-  <div class="row">
-    <div class="col-md-4 mb-4" *ngFor="let category of materialCategories">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-body d-flex flex-column justify-content-between">
-          <div class="d-flex align-items-center mb-2">
-            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-3"
-              style="width: 48px; height: 48px;">
-              <lucide-icon name="settings" size="20"></lucide-icon>
-            </div>
-            <div class="flex-grow-1">
-              <h5 class="card-title mb-0">{{ category.name }}</h5>
-              <small class="text-muted">
-                {{ category?.itemCount || 0 }}
-                {{ (category?.itemCount || 0) === 1 ? 'item' : 'items' }}
-              </small>
-            </div>
-            <div class="dropdown ms-auto">
-              <button class="btn btn-icon p-1" data-bs-toggle="dropdown" aria-label="Category Actions">
-                <lucide-icon name="more-vertical" size="18"></lucide-icon>
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" (click)="editCategory(category)">Edit</a></li>
-                <li><a class="dropdown-item text-danger" (click)="deleteCategory(category)">Delete</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="mt-2">
-            <button class="btn btn-sm btn-outline-primary w-100"
-              [routerLink]="['/admin/pricebook/items/category', category.id]">
-              View Items
-            </button>
-          </div>
+<section class="pricebook-categories">
+  @for (category of materialCategories; track category) {
+    <div class="pricebook-card">
+      <div class="pricebook-card__header">
+        <div class="pricebook-card__icon">
+          <lucide-icon name="layers" size="20"></lucide-icon>
+        </div>
+        <div class="pricebook-card__info">
+          <h5>{{ category.name }}</h5>
+          <small>
+            {{ category?.itemCount || 0 }}
+            {{ (category?.itemCount || 0) === 1 ? 'item' : 'items' }}
+          </small>
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-icon p-1" data-bs-toggle="dropdown" aria-label="Category Actions">
+            <lucide-icon name="more-vertical" size="18"></lucide-icon>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><button type="button" class="dropdown-item" (click)="editCategory(category)">Edit</button></li>
+            <li><button type="button" class="dropdown-item text-danger" (click)="deleteCategory(category)">Delete</button></li>
+          </ul>
         </div>
       </div>
+      <button class="btn btn-sm btn-outline-primary w-100"
+        [routerLink]="['/admin/pricebook/items/category', category.id]">
+        View Items
+      </button>
     </div>
-  </div>
-</div>
+  }
+</section>

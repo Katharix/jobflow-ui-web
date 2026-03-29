@@ -19218,26 +19218,6 @@ th[sortable].desc:before {
   font-weight: 700;
 }
 
-aw-wizard-navigation-bar ul.steps-indicator li a .label {
-  color: #7987a1;
-}
-
-aw-wizard-navigation-bar.horizontal.small ul.steps-indicator li .step-indicator {
-  background-color: var(--bs-border-color);
-}
-
-aw-wizard-navigation-bar.horizontal.small ul.steps-indicator li.current .step-indicator {
-  background-color: #6571ff;
-}
-
-aw-wizard-navigation-bar.horizontal.small ul.steps-indicator li.done .step-indicator {
-  background-color: #05a34a;
-}
-
-aw-wizard-navigation-bar.horizontal.small ul.steps-indicator li:not(:last-child):after {
-  background-color: var(--bs-border-color);
-}
-
 div.apexcharts-canvas .apexcharts-menu {
   background: var(--bs-body-bg) !important;
   color: var(--bs-body-color);

@@ -6,8 +6,11 @@ export interface CalendarEvent {
    StartTime: Date;
    EndTime: Date;
    IsReadonly?: boolean;
+   CssClass?: string;
 
    // JobFlow extensions
    EntityType?: ScheduleType;
    EntityId?: string;
+   JobId?: string;
+   StatusLabel?: string;
 }

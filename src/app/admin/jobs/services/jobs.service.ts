@@ -1,26 +1,42 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
-import {BaseApiService} from '../../../services/base-api.service';
-import {Job} from "../models/job";
+import {BaseApiService} from '../../../services/shared/base-api.service';
+import {Job, JobLifecycleStatus, InvoicingWorkflow} from "../models/job";
 
 export interface CreateJobRequest {
    organizationClientId: string;
    title: string;
+   invoicingWorkflow?: InvoicingWorkflow | null;
+}
+
+export interface JobUpsertRequest {
+   id?: string;
+   organizationClientId: string;
+   title: string;
+   comments?: string;
+   lifecycleStatus?: JobLifecycleStatus;
+   invoicingWorkflow?: InvoicingWorkflow | null;
 }
 
 @Injectable({providedIn: 'root'})
 export class JobsService {
+   private api = inject(BaseApiService);
+
    private apiUrl = 'job/';
 
-   constructor(private api: BaseApiService) {
-   }
-
    upsertJob(
-      payload: CreateJobRequest
+      payload: CreateJobRequest | JobUpsertRequest
    ): Observable<Job> {
       return this.api.post(
          `${this.apiUrl}upsert`,
          payload
+      );
+   }
+
+   updateJobStatus(jobId: string, status: JobLifecycleStatus): Observable<Job> {
+      return this.api.put(
+         `${this.apiUrl}${jobId}/status`,
+         { status }
       );
    }
 
@@ -37,14 +53,18 @@ export class JobsService {
       );
    }
 
+   getById(id: string): Observable<Job> {
+      return this.api.get<Job>(`${this.apiUrl}${id}`);
+   }
+
    getAllJobs(): Observable<Job[]> {
-      return this.api.get<any>(
+      return this.api.get<Job[]>(
          `${this.apiUrl}all`
       )
    }
 
-   getScheduledJobs(start: Date, end: Date) {
-      return this.api.get<any[]>(
+   getScheduledJobs(start: Date, end: Date): Observable<Job[]> {
+      return this.api.get<Job[]>(
          `${this.apiUrl}scheduled`,
          {start, end}
       );

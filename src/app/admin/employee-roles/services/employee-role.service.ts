@@ -1,17 +1,16 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
-import {BaseApiService} from '../../../services/base-api.service';
-import {EmployeeRole} from '../models/employee-role';
+import {BaseApiService} from '../../../services/shared/base-api.service';
+import {EmployeeRole, EmployeeRoleUsage} from '../models/employee-role';
 
 
 @Injectable({
    providedIn: 'root'
 })
 export class EmployeeRoleService {
-   private apiUrl = 'employeeroles';
+   private api = inject(BaseApiService);
 
-   constructor(private api: BaseApiService) {
-   }
+   private apiUrl = 'employeeroles';
 
    getByOrganization(): Observable<EmployeeRole[]> {
       return this.api.get<EmployeeRole[]>(`${this.apiUrl}/organization`);
@@ -19,6 +18,10 @@ export class EmployeeRoleService {
 
    getById(id: string): Observable<EmployeeRole> {
       return this.api.get<EmployeeRole>(`${this.apiUrl}/${id}`);
+   }
+
+   getUsageByOrganization(): Observable<EmployeeRoleUsage[]> {
+      return this.api.get<EmployeeRoleUsage[]>(`${this.apiUrl}/organization/usage`);
    }
 
    create(payload: Partial<EmployeeRole>): Observable<EmployeeRole> {

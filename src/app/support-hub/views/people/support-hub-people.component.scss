@@ -1,0 +1,45 @@
+.support-people {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.support-people__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 16px;
+  padding: 1.2rem 1.5rem;
+}
+
+.support-people__invite {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.support-people__invite-list {
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 16px;
+  padding: 1.1rem 1.4rem;
+}
+
+.support-people__grid {
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 16px;
+  padding: 1.2rem;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+}
+
+.support-people__status {
+  background: rgba(16, 185, 129, 0.18);
+  color: #047857;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}

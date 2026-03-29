@@ -1,0 +1,40 @@
+<section class="command-center">
+  <header class="command-center__header">
+    <div>
+      <p class="command-center__eyebrow">Command center</p>
+      <h2>Quick actions with the workflow in view.</h2>
+      <p>Launch the next step and keep the flow moving without digging through menus.</p>
+    </div>
+    <div class="command-center__status">
+      <span class="status-pill">Secondary</span>
+      <span class="status-detail">Live updates enabled</span>
+    </div>
+  </header>
+
+  <div class="command-center__grid">
+    <section class="command-center__actions">
+      <h3>Launchers</h3>
+      <div class="action-list">
+        @for (action of primaryActions; track action) {
+          <a
+            class="action-card"
+            [routerLink]="action.route"
+            [queryParams]="action.queryParams || null"
+            >
+            <div class="action-card__icon">
+              <i [class]="action.icon"></i>
+            </div>
+            <div>
+              <strong>{{ action.label }}</strong>
+              <p>{{ action.description }}</p>
+            </div>
+          </a>
+        }
+      </div>
+    </section>
+
+    <section class="command-center__workflow">
+      <app-dashboard-comprehensive-workflow [flowSteps]="flowSteps"></app-dashboard-comprehensive-workflow>
+    </section>
+  </div>
+</section>

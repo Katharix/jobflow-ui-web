@@ -1,0 +1,144 @@
+.invoice-detail {
+  .detail-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #6b7280;
+    margin-bottom: 0.35rem;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    color: #64748b;
+    font-size: 0.9rem;
+  }
+
+  h2 {
+    color: #0d2438;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .summary-grid {
+    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+
+  .summary-card {
+    background: #f8fafc;
+    border: 1px solid #e1e8f0;
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    span {
+      color: #6b7280;
+      font-size: 0.85rem;
+    }
+
+    strong {
+      font-size: 1rem;
+      color: #1f2937;
+    }
+  }
+
+  .invoice-status {
+    border: 1px solid #d6dee7;
+    background-color: #f6f8fb;
+    color: #2f4457;
+    font-weight: 600;
+    padding: 0.45rem 0.75rem;
+  }
+
+  .invoice-status.is-sent {
+    background-color: #e8f1fd;
+    border-color: #c5ddfb;
+    color: #1f4f86;
+  }
+
+  .invoice-status.is-paid {
+    background-color: #e8f8ef;
+    border-color: #c9ebd7;
+    color: #1f6a3d;
+  }
+
+  .invoice-status.is-overdue {
+    background-color: #fdeeee;
+    border-color: #f7d2d2;
+    color: #8f2b2b;
+  }
+
+  .invoice-status.is-unpaid {
+    background-color: #fff4e8;
+    border-color: #f5ddc2;
+    color: #8b5320;
+  }
+
+  .invoice-totals {
+    border-top: 1px solid #e1e8f0;
+    padding-top: 0.9rem;
+    display: grid;
+    gap: 0.45rem;
+
+    > div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+
+      span {
+        color: #5a6f7d;
+        font-size: 0.9rem;
+      }
+
+      strong {
+        color: #1a2332;
+        font-size: 0.95rem;
+      }
+    }
+  }
+
+  .amount-positive {
+    color: #1f6a3d;
+  }
+
+  .amount-negative {
+    color: #b42318;
+  }
+
+  .detail-actions {
+    display: flex;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+  }
+
+  .payment-surface {
+    border: 1px solid #e1e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    background: #f8fafc;
+  }
+
+  .payment-element {
+    background: #ffffff;
+    border: 1px solid #e1e8f0;
+    border-radius: 10px;
+    padding: 0.75rem;
+  }
+}

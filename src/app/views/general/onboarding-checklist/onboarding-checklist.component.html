@@ -1,25 +1,52 @@
-<section class="onboarding-checklist">
-   <h3>Getting started</h3>
-   <p class="subtitle">
-      Complete these steps to start scheduling jobs and getting paid.
-   </p>
-
-   <ul>
-      <li *ngFor="let step of steps"
-          [class.completed]="step.isCompleted"
-          [class.active]="step === nextStep">
-
-      <span class="status">
-        {{ step.isCompleted ? '✔' : '○' }}
-      </span>
-
-         <span class="title">
-        {{ step.title }}
-            <small *ngIf="step === nextStep && !step.isCompleted">
-          (recommended next step)
-        </small>
-      </span>
-
-      </li>
-   </ul>
-</section>
+@if (!allStepsCompleted) {
+  <section class="onboarding-checklist">
+    <div class="onboarding-checklist__header">
+      <div>
+        <h3>{{ 'onboarding.title' | translate }}</h3>
+        <p class="subtitle">{{ 'onboarding.subtitle' | translate }}</p>
+      </div>
+      @if (steps.length) {
+        <div class="onboarding-checklist__summary">
+          {{ 'onboarding.summary' | translate:{ completed: completedCount, total: steps.length } }}
+        </div>
+      }
+    </div>
+    @if (!steps.length) {
+      <div class="onboarding-checklist__empty">
+        {{ 'onboarding.empty' | translate }}
+      </div>
+    }
+    @if (steps.length) {
+      <div class="onboarding-checklist__timeline">
+        <p-timeline
+          [value]="steps"
+          layout="horizontal"
+          align="top"
+          styleClass="jobflow-onboarding-timeline"
+          >
+          <ng-template pTemplate="marker" let-step>
+            <span class="timeline-marker" [ngClass]="'timeline-marker--' + getStepState(step)">
+              <i [class]="getMarkerIcon(step)"></i>
+            </span>
+          </ng-template>
+          <ng-template pTemplate="content" let-step>
+            <article class="timeline-card" [ngClass]="'timeline-card--' + getStepState(step)">
+              <h4 class="timeline-card__title">{{ step.title }}</h4>
+              <p class="timeline-card__description">{{ getStepDescriptionKey(step) | translate }}</p>
+              <button
+                type="button"
+                class="timeline-card__action"
+                [ngClass]="{ 'timeline-card__action--completed': step.isCompleted }"
+                [disabled]="!canOpenStep(step)"
+                (click)="onStepClick(step)"
+                [title]="getStepActionTitleKey(step) | translate"
+                >
+                {{ getStepActionLabelKey(step) | translate }}
+              </button>
+            </article>
+          </ng-template>
+        </p-timeline>
+      </div>
+    }
+  </section>
+}

@@ -1,0 +1,92 @@
+<app-page-header
+  title="Quick-start setup"
+  subtitle="Pick an onboarding track and industry preset to load suggested services and workflow labels."
+></app-page-header>
+
+<section class="quick-start">
+  <div class="quick-start__notice">
+    Quick-start presets are available on the Go plan and above.
+  </div>
+
+  @if (loading) {
+    <p class="quick-start__state">Loading quick-start options...</p>
+  }
+  @if (error) {
+    <p class="quick-start__state quick-start__state--error">{{ error }}</p>
+  }
+
+  @if (!loading && !error && state) {
+    <section class="quick-start__section">
+      <div class="quick-start__section-header">
+        <div>
+          <h3>Choose your onboarding track</h3>
+          <p>Decide if you want to prioritize billing or operational setup first.</p>
+        </div>
+      </div>
+      <div class="quick-start__grid">
+        @for (track of tracks; track track) {
+          <button
+            type="button"
+            class="quick-start__card"
+            [class.quick-start__card--selected]="isTrackSelected(track)"
+            (click)="selectTrack(track)"
+            >
+            <h4>{{ track.title }}</h4>
+            <p>{{ track.description }}</p>
+            @if (isTrackSelected(track)) {
+              <span>Selected</span>
+            }
+          </button>
+        }
+      </div>
+    </section>
+    <section class="quick-start__section">
+      <div class="quick-start__section-header">
+        <div>
+          <h3>Select your industry preset</h3>
+          <p>We will add default services and suggested workflow labels based on your industry.</p>
+        </div>
+      </div>
+      <div class="quick-start__grid">
+        @for (preset of presets; track preset) {
+          <button
+            type="button"
+            class="quick-start__card quick-start__card--preset"
+            [class.quick-start__card--selected]="isPresetSelected(preset)"
+            (click)="selectPreset(preset)"
+            >
+            <div class="quick-start__card-top">
+              <h4>{{ preset.title }}</h4>
+              <p>{{ preset.description }}</p>
+            </div>
+            <ul class="quick-start__services">
+              @for (service of preset.defaultServices; track service) {
+                <li>
+                  <strong>{{ service.name }}</strong>
+                  <span>{{ service.unit }} · {{ service.price | currency }}</span>
+                </li>
+              }
+            </ul>
+            @if (isPresetSelected(preset)) {
+              <span>Selected</span>
+            }
+          </button>
+        }
+      </div>
+    </section>
+    <div class="quick-start__footer">
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="!canApply"
+        (click)="applyQuickStart()"
+        >
+        {{ applying ? 'Applying...' : 'Apply quick-start' }}
+      </button>
+      <a class="btn btn-outline-secondary" routerLink="/admin">Back to dashboard</a>
+    </div>
+    <p class="quick-start__note">
+      Applying quick-start will add services to Pricebook and update workflow labels. You can adjust them later.
+    </p>
+  }
+</section>

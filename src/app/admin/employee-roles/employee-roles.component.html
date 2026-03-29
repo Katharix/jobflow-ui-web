@@ -1,23 +1,299 @@
 <app-page-header
   title="Roles"
-  subtitle="Manage your team roles"
-  [actions]="headerActions"
+  subtitle="Team roles for scheduling and assignments"
 ></app-page-header>
 
-<div class="card shadow-sm p-3">
-  <ejs-grid
-    #grid
-    id="employeeRolesGrid"
-    [dataSource]="roles"
-    [allowPaging]="true"
-    [editSettings]="editSettings"
-    (actionBegin)="actionBegin($event)"
-  >
-    <e-columns>
-      <e-column field="name" headerText="Role Name" width="250" textAlign="Left"
-        [validationRules]="{ required: true }"></e-column>
-      <e-column field="id" headerText="ID" width="250" isPrimaryKey="true"
-        textAlign="Left" [isIdentity]="true" [visible]="false"></e-column>
-    </e-columns>
-  </ejs-grid>
+<section class="roles-overview">
+  <div class="roles-overview__metrics">
+    <article class="roles-card">
+      <p class="roles-card__label">Total roles</p>
+      <h3>{{ roles.length }}</h3>
+      <p class="roles-card__note">Active role definitions</p>
+    </article>
+    <article class="roles-card roles-card--accent">
+      <p class="roles-card__label">Best practice</p>
+      <h3>4-8</h3>
+      <p class="roles-card__note">Keep roles clear and focused</p>
+    </article>
+  </div>
+  <div class="roles-cta">
+    <div>
+      <p class="roles-cta__eyebrow">Quick action</p>
+      <h3>Create a new role</h3>
+      <p>Define responsibilities once and reuse them across your team.</p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="onAddRoleClick()"
+      [disabled]="!canManageRoles"
+      [title]="!canManageRoles ? 'Flow or higher required' : 'Add role'">
+      Add Role
+    </button>
+  </div>
+</section>
+
+<section class="roles-settings">
+  <div>
+    <p class="roles-settings__eyebrow">Industry preset</p>
+    <h3>Choose your industry</h3>
+    <p>We use this to suggest role presets that match your workflows.</p>
+  </div>
+  <div class="roles-settings__field">
+    <label class="roles-settings__label" for="roleIndustry">Industry</label>
+    <select
+      id="roleIndustry"
+      class="form-select"
+      [value]="industryKey"
+      (change)="onIndustryChange(industrySelect.value)"
+      [disabled]="!canManageRoles"
+      #industrySelect>
+      <option value="">Select industry</option>
+      @for (option of industryOptions; track option.key) {
+        <option [value]="option.key">{{ option.label }}</option>
+      }
+    </select>
+  </div>
+</section>
+
+<div class="roles-grid">
+  <div class="roles-filters">
+    <div class="roles-filters__field">
+      <label class="roles-filters__label" for="rolesSearch">Search roles</label>
+      <input
+        id="rolesSearch"
+        type="search"
+        class="form-control"
+        placeholder="Search by role name or description"
+        [(ngModel)]="filterText" />
+    </div>
+    <div class="roles-filters__actions">
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="clearFilter()"
+        [disabled]="!filterText.trim()">
+        Clear
+      </button>
+    </div>
+  </div>
+  <ng-template #actionsTemplate let-role>
+    <div class="roles-actions">
+      <button type="button" class="btn btn-sm btn-link" (click)="editRole(role)">Edit</button>
+      <button
+        type="button"
+        class="btn btn-sm btn-link text-danger"
+        (click)="deleteRole(role)"
+        [disabled]="getUsageCount(role.id) > 0"
+        [title]="getUsageCount(role.id) > 0 ? 'Reassign employees before deleting' : 'Delete role'">
+        Delete
+      </button>
+    </div>
+  </ng-template>
+
+  <app-jobflow-grid
+    [data]="filteredRoles"
+    [columns]="columns"
+    [pageSettings]="pageSettings"
+    [allowFiltering]="false"
+    [showSearchBar]="false"
+  ></app-jobflow-grid>
 </div>
+
+<section class="roles-presets">
+  <div class="roles-presets__header">
+    <div>
+      <p class="roles-presets__eyebrow">Preset packs</p>
+      <h3>Role presets</h3>
+      <p>Create reusable role packs for faster onboarding.</p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-outline-primary"
+      (click)="onAddPresetClick()"
+      [disabled]="!canManageRoles"
+      [title]="!canManageRoles ? 'Flow or higher required' : 'Add preset'">
+      Add preset
+    </button>
+  </div>
+  <div class="roles-presets__list">
+    @for (preset of presets; track preset.id) {
+      <article class="roles-preset-card">
+        <div>
+          <div class="roles-preset-card__meta">
+            <span class="roles-preset-card__tag">{{ preset.isSystem ? 'System' : 'Custom' }}</span>
+            @if (preset.industryKey) {
+              <span class="roles-preset-card__industry">{{ preset.industryKey }}</span>
+            }
+          </div>
+          <h4>{{ preset.name }}</h4>
+          <p>{{ preset.description || 'Preset roles for your team.' }}</p>
+          <div class="roles-preset-card__chips">
+            @for (item of preset.items; track item.name) {
+              <span class="roles-preset-card__chip">{{ item.name }}</span>
+            }
+          </div>
+        </div>
+        <div class="roles-preset-card__actions">
+          <button
+            type="button"
+            class="btn btn-sm btn-primary"
+            (click)="applyPreset(preset)"
+            [disabled]="presetLoading || !canManageRoles">
+            Apply
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary"
+            (click)="editPreset(preset)"
+            [disabled]="preset.isSystem">
+            Edit
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger"
+            (click)="deletePreset(preset)"
+            [disabled]="preset.isSystem">
+            Delete
+          </button>
+        </div>
+      </article>
+    } @empty {
+      <div class="roles-presets__empty">
+        <h4>No presets yet</h4>
+        <p>Create a preset pack or select an industry above.</p>
+      </div>
+    }
+  </div>
+</section>
+
+@if (showRoleDrawer) {
+  <app-jobflow-drawer
+    [open]="showRoleDrawer"
+    [title]="editingRoleId ? 'Edit Role' : 'Add Role'"
+    [width]="460"
+    (closed)="closeRoleModal()">
+    <div class="role-drawer">
+      <div class="role-drawer__intro">
+        <p class="role-drawer__eyebrow">{{ editingRoleId ? 'Update role' : 'New role' }}</p>
+        <h3>{{ editingRoleId ? 'Refine role details' : 'Create a role' }}</h3>
+        <p>Use concise labels that match how you assign work in JobFlow.</p>
+      </div>
+      <div [formGroup]="roleForm" class="role-drawer__form">
+        <label class="form-label fw-semibold" for="roleName">Role Name</label>
+        <input pInputText pSize="small" id="roleName" type="text" formControlName="name" placeholder="Enter role name" class="w-100" />
+        @if (roleForm.controls.name.touched && roleForm.controls.name.invalid) {
+          <div class="text-danger small mt-2">
+            Role name is required.
+          </div>
+        }
+        <label class="form-label fw-semibold" for="roleDescription">Description</label>
+        <textarea
+          id="roleDescription"
+          rows="3"
+          class="form-control"
+          formControlName="description"
+          placeholder="Optional details about this role"></textarea>
+      </div>
+      <div class="role-drawer__actions">
+        <button type="button" class="btn btn-outline-secondary" (click)="closeRoleModal()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveRole()">
+          {{ editingRoleId ? 'Save Changes' : 'Create Role' }}
+        </button>
+      </div>
+    </div>
+  </app-jobflow-drawer>
+}
+
+@if (showPresetDrawer) {
+  <app-jobflow-drawer
+    [open]="showPresetDrawer"
+    [title]="editingPresetId ? 'Edit Preset' : 'Add Preset'"
+    [width]="560"
+    (closed)="closePresetDrawer()">
+    <div class="preset-drawer">
+      <div class="role-drawer__intro">
+        <p class="role-drawer__eyebrow">{{ editingPresetId ? 'Update preset' : 'New preset' }}</p>
+        <h3>{{ editingPresetId ? 'Refine the preset pack' : 'Create a preset pack' }}</h3>
+        <p>Group roles so new teams can be set up quickly.</p>
+      </div>
+      <div [formGroup]="presetForm" class="preset-drawer__form">
+        <label class="form-label fw-semibold" for="presetName">Preset name</label>
+        <input
+          pInputText
+          pSize="small"
+          id="presetName"
+          type="text"
+          formControlName="name"
+          placeholder="Enter preset name"
+          class="w-100" />
+        @if (presetForm.controls.name.touched && presetForm.controls.name.invalid) {
+          <div class="text-danger small mt-2">Preset name is required.</div>
+        }
+        <label class="form-label fw-semibold" for="presetDescription">Description</label>
+        <textarea
+          id="presetDescription"
+          rows="2"
+          class="form-control"
+          formControlName="description"
+          placeholder="Optional summary"></textarea>
+        <label class="form-label fw-semibold" for="presetIndustry">Industry</label>
+        <select id="presetIndustry" class="form-select" formControlName="industryKey">
+          <option value="">All industries</option>
+          @for (option of industryOptions; track option.key) {
+            <option [value]="option.key">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+      <div class="preset-drawer__items">
+        <div class="preset-drawer__items-header">
+          <div>
+            <p class="role-drawer__eyebrow">Preset roles</p>
+            <h4>Roles in this preset</h4>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-primary" (click)="addPresetItem()">
+            Add role
+          </button>
+        </div>
+        <div class="preset-drawer__items-list" formArrayName="items">
+          @for (ctrl of presetItems.controls; track ctrl; let i = $index) {
+            <div class="preset-drawer__item" [formGroupName]="i">
+              <input
+                pInputText
+                pSize="small"
+                type="text"
+                formControlName="name"
+                placeholder="Role name"
+                class="w-100" />
+              <input
+                pInputText
+                pSize="small"
+                type="text"
+                formControlName="description"
+                placeholder="Description"
+                class="w-100" />
+              <button
+                type="button"
+                class="btn btn-sm btn-link text-danger"
+                (click)="removePresetItem(i)"
+                [disabled]="presetItems.length === 1">
+                Remove
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="role-drawer__actions">
+        <button type="button" class="btn btn-outline-secondary" (click)="closePresetDrawer()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="savePreset()">
+          {{ editingPresetId ? 'Save preset' : 'Create preset' }}
+        </button>
+      </div>
+    </div>
+  </app-jobflow-drawer>
+}
+

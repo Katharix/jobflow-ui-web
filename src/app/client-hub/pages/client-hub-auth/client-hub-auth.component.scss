@@ -1,0 +1,231 @@
+@import "admin/admin-styles";
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+.client-auth-shell {
+  min-height: 100vh;
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
+  color: #1a2332;
+  background-color: #fafbfc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.client-auth-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  max-width: 1100px;
+  width: 100%;
+}
+
+.client-auth-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.client-auth-header {
+  margin-bottom: 2rem;
+}
+
+.client-auth-brand {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 1.1rem;
+}
+
+.client-auth-logo {
+  height: 2.1rem;
+  width: auto;
+  display: block;
+}
+
+.client-auth-title {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+  color: #0d2438;
+  letter-spacing: -0.01em;
+}
+
+.client-auth-subtitle {
+  font-size: 1.05rem;
+  color: #5a6f7d;
+  margin: 0;
+  max-width: 45ch;
+  line-height: 1.5;
+}
+
+.client-auth-form-section {
+  background: #ffffff;
+  border: 1px solid #e1e8f0;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.client-auth-form-section .form-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a2332;
+  margin-bottom: 0.5rem;
+}
+
+.client-auth-form-section .form-control {
+  border-radius: 0.375rem;
+  border: 1px solid #d5dce5;
+  padding: 0.75rem 0.875rem;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.client-auth-form-section .form-control:focus {
+  border-color: #4b8ad8;
+  box-shadow: 0 0 0 3px rgba(75, 138, 216, 0.1);
+}
+
+.client-auth-form-section .btn {
+  border-radius: 0.375rem;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+}
+
+.client-org-selection {
+  border-top: 1px solid #e1e8f0;
+  padding-top: 1rem;
+
+  h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1a2332;
+  }
+
+  p {
+    margin: 0.35rem 0 0;
+    font-size: 0.86rem;
+    color: #5a6f7d;
+  }
+}
+
+.client-org-list {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.9rem;
+}
+
+.client-org-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  border: 1px solid #d5dce5;
+  border-radius: 0.45rem;
+  padding: 0.65rem 0.7rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+
+  input {
+    margin-top: 0.2rem;
+  }
+
+  strong {
+    display: block;
+    font-size: 0.9rem;
+    color: #1a2332;
+    line-height: 1.35;
+  }
+
+  span {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.8rem;
+    color: #6b7a88;
+  }
+}
+
+.client-org-item.is-selected {
+  border-color: #4b8ad8;
+  background-color: #f4f8fe;
+}
+
+.client-auth-footer {
+  font-size: 0.9rem;
+  color: #6b7a88;
+  text-align: center;
+}
+
+.client-auth-footer p {
+  margin: 0;
+}
+
+.client-auth-benefits {
+  padding: 0;
+}
+
+.client-auth-benefits h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0d2438;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.client-auth-benefits ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.client-auth-benefits li {
+  padding: 0;
+}
+
+.client-auth-benefits strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a2332;
+  margin-bottom: 0.25rem;
+}
+
+.client-auth-benefits span {
+  display: block;
+  font-size: 0.9rem;
+  color: #6b7a88;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .client-auth-shell {
+    padding: 1.5rem 1rem;
+  }
+
+  .client-auth-wrapper {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .client-auth-title {
+    font-size: 1.5rem;
+  }
+
+  .client-auth-logo {
+    height: 1.8rem;
+  }
+
+  .client-auth-subtitle {
+    font-size: 1rem;
+  }
+
+  .client-auth-benefits {
+    border-top: 1px solid #e1e8f0;
+    padding-top: 2rem;
+  }
+}

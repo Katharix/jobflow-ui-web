@@ -48,10 +48,10 @@
     padding: 10px;
     text-align: center;
     position: relative;
-    background-color: #fff;
+    background-color: $white;
     margin-top: 30px;
     box-shadow: 0 0 35px 0 rgba(154, 161, 171, 0.15);
-    border: 1px solid #eee;
+    border: 1px solid $gray-200;
     border-radius: 10px;
     overflow: hidden;
     transition: all 0.5s ease-in-out;
@@ -74,7 +74,7 @@
   .demo-box img {
     width: 100%;
     height: auto;
-    background-color: #fff;
+    background-color: $white;
     position: relative;
     top: 0;
   }
@@ -86,12 +86,12 @@
   .demo-box-title {
     margin-top: 20px;
     font-size: 20px;
-    color: #000000;
+    color: $gray-800;
   }
   
   .sub-title {
     font-size: 13px;
-    color: #7a7d84;
+    color: $gray-500;
   }
 
   .demo-overlay {

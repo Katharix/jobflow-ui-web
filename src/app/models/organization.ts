@@ -1,3 +1,5 @@
+import { PaymentProvider } from './customer-payment-profile';
+
 export interface OrganizationDto {
     id?: string;
     organizationName?: string;
@@ -5,6 +7,7 @@ export interface OrganizationDto {
     organizationTypeId?: string;
     userRole?: string;
     emailAddress?: string;
+  industryKey?: string;
     address1?: string;
     address2?: string;
     city?: string;
@@ -14,6 +17,14 @@ export interface OrganizationDto {
     defaultTaxRate?: number;
     subscriptionStatus?: string;
     onboardingComplete?: boolean;
+    subscriptionPlanName?: string;
+    stripeConnectedAccountId?: string;
+    stripeConnectAccountId?: string;
+    paymentProvider?: PaymentProvider;
+    squareMerchantId?: string;
+    isSquareConnected?: boolean;
+    isStripeConnected?: boolean;
+    canAcceptPayments?: boolean;
 }
 
 export interface Organization {
@@ -21,6 +32,10 @@ export interface Organization {
     organizationTypeId: string;
     stripeCustomerId?: string;
     stripeConnectedAccountId?: string;
+    stripeConnectAccountId?: string;
+    squareMerchantId?: string;
+    isSquareConnected?: boolean;
+    isStripeConnected?: boolean;
     zipCode?: string;
     organizationName?: string;
     address1?: string;

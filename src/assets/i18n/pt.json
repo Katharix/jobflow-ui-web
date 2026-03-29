@@ -1,0 +1,947 @@
+{
+  "languages": {
+    "english": "Ingles",
+    "spanish": "Espanhol",
+    "french": "Frances",
+    "portuguese": "Portugues",
+    "german": "Alemao",
+    "italian": "Italiano"
+  },
+  "profile": {
+    "title": "Perfil do usuario",
+    "subtitle": "Gerencie seu contato e preferencias de idioma.",
+    "loading": "Carregando seu perfil...",
+    "email": "Email",
+    "emailError": "Digite um email valido.",
+    "phone": "Telefone",
+    "language": "Idioma",
+    "languageError": "Selecione um idioma.",
+    "save": "Salvar alteracoes",
+    "saving": "Salvando..."
+  },
+  "nav": {
+    "home": "Inicio",
+    "company": "Empresa",
+    "jobs": "Trabalhos",
+    "invoicing": "Faturamento",
+    "estimates": "Orcamentos",
+    "tracking": "Rastreamento",
+    "settings": "Configuracoes",
+    "dispatch": "Despacho",
+    "messaging": "Mensagens",
+    "clients": "Clientes",
+    "employees": "Funcionarios",
+    "priceBook": "Tabela de precos",
+    "billingPayments": "Faturamento e pagamentos",
+    "reporting": "Relatorios",
+    "help": "Ajuda",
+    "organization": "Organizacao",
+    "logout": "Sair",
+    "userProfile": "Perfil do usuario",
+    "confirmLogout": "Confirmar saida",
+    "confirmLogoutMessage": "Tem certeza de que deseja sair?",
+    "cancel": "Cancelar"
+  },
+  "onboarding": {
+    "title": "Primeiros passos",
+    "subtitle": "Conclua estas etapas para programar trabalhos e receber pagamentos.",
+    "summary": "{{completed}}/{{total}} concluidos",
+    "empty": "Suas etapas de onboarding aparecerao aqui quando estiverem disponiveis.",
+    "action": {
+      "completed": "Tarefa concluida",
+      "complete": "Concluir etapa"
+    },
+    "stepCompletedTitle": "Etapa ja concluida",
+    "stepLockedTitle": "Conclua a etapa anterior primeiro",
+    "stepOpenTitle": "Abrir etapa",
+    "stepNoRouteTitle": "Nenhuma rota configurada para esta etapa",
+    "description": {
+      "track": "Escolha o caminho de onboarding que corresponde as suas prioridades.",
+      "quickStart": "Selecione um preset de industria para carregar servicos sugeridos.",
+      "payment": "Conecte seu provedor de pagamento para receber pagamentos.",
+      "branding": "Envie seu logo e defina os detalhes da marca.",
+      "company": "Adicione o perfil e as informacoes da empresa.",
+      "roles": "Defina funcoes para controlar permissoes da equipe.",
+      "employees": "Adicione membros da equipe para agendar e concluir trabalhos.",
+      "pricebook": "Crie servicos e precos usados nos trabalhos.",
+      "customer": "Crie seu primeiro cliente para comecar.",
+      "job": "Crie e agende seu primeiro trabalho.",
+      "invoice": "Gere sua primeira fatura e prepare-se para receber.",
+      "default": "Conclua esta etapa para continuar o onboarding."
+    }
+  },
+  "dashboard": {
+    "welcomeTitle": "Bem-vindo, {{organization}}",
+    "welcomeSubtitle": "Este e seu centro de comando para hoje, comece pelo que importa.",
+    "view": "Ver",
+    "onboardingTitle": "Checklist de onboarding",
+    "onboardingSubtitle": "Complete a configuracao uma vez para um fluxo diario mais suave",
+    "clientActivityTitle": "Atividade do cliente",
+    "clientActivitySubtitle": "Decisoes de orcamento, revisoes e pagamentos de faturas",
+    "open": "Abrir",
+    "clientActivityEmpty": "Ainda nao ha atividade recente de clientes."
+  },
+  "landing": {
+    "nav": {
+      "home": "Inicio",
+      "about": "Sobre",
+      "features": "Funcionalidades",
+      "pricing": "Precos",
+      "contact": "Contato",
+      "login": "Entrar"
+    }
+  },
+  "auth": {
+    "login": {
+      "eyebrow": "Bem-vindo de volta",
+      "headline": "Gerencie cada trabalho do pedido ao pagamento.",
+      "lead": "Entre para agendar equipes, enviar orcamentos e receber mais rapido.",
+      "checks": {
+        "dispatch": "Calendario pronto para despacho",
+        "estimate": "Orcamento para fatura imediato",
+        "payment": "Links de pagamento modernos"
+      },
+      "title": "Entrar",
+      "subtitle": "Use sua conta JobFlow para continuar.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "voce@empresa.com",
+      "passwordLabel": "Senha",
+      "passwordPlaceholder": "Sua senha",
+      "submit": "Entrar",
+      "footer": {
+        "prefix": "Ao continuar, voce concorda com nossos",
+        "terms": "Termos",
+        "and": "e",
+        "privacy": "Politica de privacidade"
+      },
+      "validation": {
+        "emailRequired": "Email obrigatorio.",
+        "emailInvalid": "Informe um email valido.",
+        "passwordRequired": "Senha obrigatoria.",
+        "passwordMin": "A senha deve ter pelo menos 6 caracteres.",
+        "formInvalid": "Corrija os campos destacados e tente novamente."
+      },
+      "errors": {
+        "invalidEmail": "Informe um email valido.",
+        "invalidCredentials": "Email ou senha incorretos.",
+        "userDisabled": "Esta conta esta desativada. Contate o suporte.",
+        "tooManyRequests": "Muitas tentativas. Aguarde e tente novamente.",
+        "network": "Erro de rede. Verifique sua conexao.",
+        "notEnabled": "Login com email/senha nao esta habilitado.",
+        "unauthorizedDomain": "Este dominio nao esta autorizado.",
+        "popupClosed": "Google sign-in was canceled.",
+        "popupBlocked": "Your browser blocked the Google sign-in popup. Please allow popups and try again.",
+        "popupCancelled": "Another sign-in request is already in progress.",
+        "accountExistsDifferentCredential": "An account already exists with this email using a different sign-in method."
+      },
+      "errorCode": "(codigo: {{code}})",
+      "errorGeneric": "Algo deu errado. Tente novamente.",
+      "serverError": "Falha ao entrar no servidor. Tente novamente.",
+      "toastFailed": "Falha ao entrar. Tente novamente.",
+      "submitting": "Signing in...",
+      "orContinueWith": "Or continue with",
+      "googleSignIn": "Continue with Google",
+      "googleSubmitting": "Connecting Google account..."
+    },
+    "register": {
+      "eyebrow": "Junte-se ao JobFlow",
+      "headline": "Transforme novos leads em trabalhos pagos mais rapido.",
+      "lead": "Configure sua conta para agendar equipes, enviar orcamentos e receber pagamentos.",
+      "checks": {
+        "access": "Acesso instantaneo ao seu espaco",
+        "secure": "Login seguro com Firebase",
+        "billing": "Pronto para ativar cobranca"
+      },
+      "steps": {
+        "subscription": "1. Assinatura",
+        "account": "2. Criar conta"
+      },
+      "title": "Crie sua conta",
+      "subtitle": "Finalize seus dados para lancar o JobFlow.",
+      "companyName": "Nome da empresa",
+      "companyNamePlaceholder": "Nome da empresa",
+      "workEmail": "Email de trabalho",
+      "emailPlaceholder": "voce@empresa.com",
+      "billingEmailHint": "Este e o email de cobranca que voce informou.",
+      "passwordLabel": "Senha",
+      "passwordPlaceholder": "Crie uma senha",
+      "passwordHint": "Use 8 caracteres com maiusculas, minusculas, numero e simbolo.",
+      "confirmPasswordLabel": "Confirmar senha",
+      "confirmPasswordPlaceholder": "Confirmar senha",
+      "submit": "Criar conta",
+      "submitting": "Criando conta...",
+      "footer": {
+        "prefix": "Ao continuar, voce concorda com nossos",
+        "terms": "Termos",
+        "and": "e",
+        "privacy": "Politica de privacidade"
+      },
+      "validation": {
+        "formInvalid": "Corrija os campos destacados e tente novamente.",
+        "emailRequired": "Email obrigatorio.",
+        "emailInvalid": "Informe um email valido.",
+        "passwordRequired": "Senha obrigatoria.",
+        "passwordMin": "Minimo de 8 caracteres.",
+        "passwordPattern": "Deve incluir maiusculas, minusculas, numero e simbolo.",
+        "confirmPassword": "Confirme sua senha."
+      },
+      "errors": {
+        "passwordMismatch": "As senhas nao coincidem.",
+        "createFailed": "Falha ao criar a conta.",
+        "generic": "Algo deu errado. Tente novamente.",
+        "invalidEmail": "Informe um email valido.",
+        "emailInUse": "Esse email ja esta em uso. Tente entrar.",
+        "weakPassword": "Senha fraca. Use ao menos 8 caracteres.",
+        "tooManyRequests": "Muitas tentativas. Aguarde.",
+        "network": "Erro de rede. Verifique sua conexao.",
+        "notEnabled": "Cadastro com email/senha nao esta habilitado.",
+        "unauthorizedDomain": "Este dominio nao esta autorizado.",
+        "popupClosed": "Google sign-in was canceled.",
+        "popupBlocked": "Your browser blocked the Google sign-in popup. Please allow popups and try again.",
+        "popupCancelled": "Another sign-in request is already in progress.",
+        "accountExistsDifferentCredential": "An account already exists with this email using a different sign-in method.",
+        "googleEmailMismatch": "Please use the same email address used for your JobFlow subscription.",
+        "googleMissingEmail": "Your Google account did not provide an email address.",
+        "missingOrganization": "We could not find your organization setup. Please start from subscription checkout again.",
+        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again."
+      },
+      "errorCode": "(codigo: {{code}})",
+      "toastCreated": "Conta criada",
+      "toastWelcome": "Bem-vindo",
+      "googleSignUp": "Continue with Google",
+      "googleSubmitting": "Connecting Google account...",
+      "orCreateWithEmail": "Or create with email"
+    }
+  },
+  "subscribe": {
+    "eyebrow": "Comecar",
+    "headline": "Lance seu espaco JobFlow em minutos.",
+    "lead": "Informe os dados da empresa para ativar cobranca e desbloquear recursos.",
+    "checks": {
+      "access": "Acesso imediato apos o pagamento",
+      "secure": "Pagamentos seguros via Stripe",
+      "cancel": "Cancele quando quiser"
+    },
+    "steps": {
+      "subscription": "1. Assinatura",
+      "account": "2. Criar conta"
+    },
+    "title": "Comprar plano de assinatura",
+    "subtitle": "Complete os dados para continuar no checkout.",
+    "close": "Fechar",
+    "companyName": "Nome da empresa",
+    "companyType": "Tipo de empresa",
+    "workEmail": "Email de trabalho",
+    "phone": "Telefone",
+    "address": "Endereco da empresa",
+    "address2": "Endereco da empresa 2",
+    "city": "Cidade",
+    "state": "Estado",
+    "zip": "CEP",
+    "twilioConsent": "Concordo em receber SMS ou chamadas sobre minha assinatura.",
+    "twilioNote": "Podem haver cobrancas. Voce pode cancelar respondendo STOP.",
+    "submit": "Comprar",
+    "submitting": "Processando...",
+    "nextStep": "Proximo: depois do pagamento, voce criara seu login JobFlow.",
+    "redirecting": "Redirecionando para o Stripe...",
+    "placeholders": {
+      "companyName": "Nome da empresa",
+      "companyType": "Selecione o tipo de empresa",
+      "email": "voce@empresa.com",
+      "phone": "(555) 555-1234",
+      "address": "Endereco da empresa",
+      "address2": "Sala, unidade, etc.",
+      "city": "Cidade",
+      "state": "Selecione o estado",
+      "zip": "CEP"
+    },
+    "validation": {
+      "formInvalid": "Corrija os campos destacados e tente novamente.",
+      "companyRequired": "Nome da empresa obrigatorio.",
+      "companyMin": "Minimo 2 caracteres.",
+      "companyTypeRequired": "Selecione o tipo de empresa.",
+      "emailRequired": "Email obrigatorio.",
+      "emailInvalid": "Informe um email valido.",
+      "phoneRequired": "Telefone obrigatorio.",
+      "phoneInvalid": "Informe um telefone valido.",
+      "addressRequired": "Endereco obrigatorio.",
+      "cityRequired": "Cidade obrigatoria.",
+      "stateRequired": "Estado obrigatorio.",
+      "zipRequired": "CEP obrigatorio.",
+      "zipPattern": "CEP deve ter 5 digitos.",
+      "twilioConsent": "Voce deve dar consentimento para continuar."
+    },
+    "errors": {
+      "checkoutRedirect": "O checkout nao retornou uma URL de redirecionamento.",
+      "subscriptionFailed": "Falha ao criar a assinatura. Tente novamente.",
+      "organizationFailed": "Falha ao criar a organizacao. Tente novamente."
+    }
+  },
+  "support": {
+    "common": {
+      "organization": "Organizacao",
+      "unknownOrganization": "Desconhecida",
+      "selectOrganization": "Selecione organizacao",
+      "find": "Buscar",
+      "copyId": "Copiar ID",
+      "closeModal": "Fechar modal",
+      "close": "Fechar",
+      "searchOrganizations": "Buscar organizacoes"
+    },
+    "login": {
+      "title": "Bem-vindo de volta",
+      "subtitle": "Entre com suas credenciais do Support Hub.",
+      "formInvalid": "Corrija os campos destacados e tente novamente.",
+      "emailLabel": "Email de trabalho",
+      "emailPlaceholder": "voce@katharix.com",
+      "passwordLabel": "Senha",
+      "passwordPlaceholder": "Digite sua senha",
+      "submit": "Entrar",
+      "submitting": "Entrando...",
+      "registerLink": "Precisa de acesso? Registre-se",
+      "validation": {
+        "emailRequired": "Email obrigatorio.",
+        "emailInvalid": "Informe um email valido.",
+        "passwordRequired": "Senha obrigatoria."
+      },
+      "errors": {
+        "invalidEmail": "Informe um email valido.",
+        "userNotFound": "Nenhuma conta para este email.",
+        "wrongPassword": "Senha incorreta. Tente novamente.",
+        "tooManyRequests": "Muitas tentativas. Aguarde e tente novamente.",
+        "generic": "Algo deu errado. Tente novamente."
+      }
+    },
+    "tickets": {
+      "header": {
+        "title": "Tickets de suporte",
+        "subtitle": "Acompanhe solicitacoes de todas as organizacoes."
+      },
+      "priorityTitle": "Fila prioritaria",
+      "prioritySubtitle": "Escalone tickets urgentes ou atribua a um grupo.",
+      "seedDemo": "Semear dados demo",
+      "titleLabel": "Titulo",
+      "titlePlaceholder": "Titulo do ticket",
+      "summaryLabel": "Resumo",
+      "summaryPlaceholder": "Resumo curto",
+      "priorityLabel": "Prioridade",
+      "create": "Criar ticket",
+      "loading": "Carregando tickets...",
+      "columns": {
+        "title": "Titulo",
+        "organization": "Organizacao",
+        "opened": "Aberto",
+        "status": "Status",
+        "actions": "Acoes"
+      },
+      "status": {
+        "urgent": "Urgente",
+        "high": "Alta",
+        "normal": "Normal",
+        "low": "Baixa",
+        "resolved": "Resolvido"
+      },
+      "errors": {
+        "loadOrganizations": "Nao foi possivel carregar organizacoes.",
+        "loadTickets": "Nao foi possivel carregar tickets.",
+        "selectOrganization": "Selecione uma organizacao antes de criar o ticket.",
+        "titleRequired": "Titulo do ticket obrigatorio.",
+        "createTicket": "Nao foi possivel criar o ticket.",
+        "seedOrganization": "Selecione uma organizacao antes de semear.",
+        "seedDemo": "Nao foi possivel semear dados demo."
+      },
+      "actions": {
+        "created": "Ticket criado.",
+        "seeded": "{{tickets}} tickets e {{sessions}} sessoes criadas.",
+        "copied": "ID do ticket copiado."
+      }
+    },
+    "sessions": {
+      "header": {
+        "title": "Sessoes ao vivo",
+        "subtitle": "Monitore compartilhamentos de tela e sessoes assincronas."
+      },
+      "queueTitle": "Fila ativa",
+      "queueSubtitle": "Entre em uma sessao ou atribua um especialista.",
+      "startSession": "Iniciar nova sessao",
+      "agentLabel": "Agente",
+      "agentPlaceholder": "Nome do agente",
+      "assignMe": "Atribuir a mim",
+      "statusLabel": "Status",
+      "viewScreen": "Ver tela",
+      "loading": "Carregando sessoes...",
+      "columns": {
+        "organization": "Organizacao",
+        "agent": "Agente",
+        "status": "Status",
+        "actions": "Acoes"
+      },
+      "status": {
+        "live": "Ao vivo",
+        "queued": "Em fila",
+        "followup": "Acompanhamento",
+        "ended": "Encerrada"
+      },
+      "errors": {
+        "loadOrganizations": "Nao foi possivel carregar organizacoes.",
+        "loadSessions": "Nao foi possivel carregar sessoes.",
+        "startScreen": "Nao foi possivel iniciar a tela.",
+        "selectOrganization": "Selecione uma organizacao antes de criar a sessao.",
+        "agentRequired": "Nome do agente obrigatorio.",
+        "createSession": "Nao foi possivel criar a sessao."
+      },
+      "actions": {
+        "created": "Sessao criada.",
+        "copied": "ID da sessao copiado."
+      },
+      "defaultAgent": "Equipe Katharix"
+    }
+  },
+  "admin": {
+    "billing": {
+      "title": "Faturamento e pagamentos",
+      "subtitle": "Acompanhe trabalho nao faturado, faturas enviadas e saldos vencidos em um so lugar",
+      "summary": {
+        "outstanding": "Saldo em aberto",
+        "draft": "Rascunho (nao faturado)",
+        "sent": "Enviadas",
+        "overdue": "Vencidas"
+      },
+      "actions": {
+        "manageConnection": "Gerenciar conexao de pagamento",
+        "openInvoices": "Abrir faturas",
+        "preview": "Previa",
+        "sendInvoice": "Enviar fatura",
+        "collectNow": "Cobrar agora",
+        "sendReminder": "Enviar lembrete",
+        "view": "Ver"
+      },
+      "state": {
+        "loading": "Carregando detalhes de faturamento...",
+        "error": "Nao foi possivel carregar os detalhes de faturamento."
+      },
+      "sections": {
+        "draft": {
+          "title": "Faturas nao faturadas (rascunho)",
+          "subtitle": "Faturas criadas mas ainda nao enviadas."
+        },
+        "sent": {
+          "title": "Faturas enviadas",
+          "subtitle": "Faturas aguardando pagamento ou acompanhamento."
+        },
+        "overdue": {
+          "title": "Faturas vencidas",
+          "subtitle": "Faturas em atraso que precisam de atencao imediata."
+        },
+        "paid": {
+          "title": "Pagas recentemente",
+          "subtitle": "Faturas encerradas para referencia."
+        },
+        "total": "total"
+      },
+      "empty": {
+        "draft": "Nenhuma fatura em rascunho no momento.",
+        "sent": "Nenhuma fatura enviada no momento.",
+        "overdue": "Nenhuma fatura vencida no momento."
+      },
+      "table": {
+        "invoice": "Fatura",
+        "client": "Cliente",
+        "due": "Vencimento",
+        "paid": "Paga",
+        "total": "Total",
+        "balance": "Saldo",
+        "status": "Status",
+        "actions": "Acoes"
+      },
+      "status": {
+        "draft": "Rascunho",
+        "sent": "Enviada",
+        "paid": "Paga",
+        "overdue": "Vencida",
+        "unknown": "Desconhecido"
+      },
+      "toast": {
+        "invoiceSent": "Sua fatura foi enviada ao cliente.",
+        "invoiceSentTitle": "Fatura enviada",
+        "invoiceFailed": "Nao foi possivel enviar a fatura agora.",
+        "invoiceFailedTitle": "Falha ao enviar",
+        "reminderSent": "Um lembrete de pagamento foi enviado ao cliente.",
+        "reminderSentTitle": "Lembrete enviado",
+        "reminderFailed": "Nao foi possivel enviar o lembrete agora.",
+        "reminderFailedTitle": "Falha no lembrete"
+      }
+    },
+    "branding": {
+      "title": "Marca",
+      "subtitle": "Personalize sua aparencia e suas faturas",
+      "hero": {
+        "title": "Mantenha simples",
+        "subtitle": "Atualize logo, cores e texto da fatura. As alteracoes valem para documentos enviados."
+      },
+      "actions": {
+        "save": "Salvar marca"
+      },
+      "sections": {
+        "logo": {
+          "title": "1. Logo",
+          "cta": "Escolher logo",
+          "note": "PNG ou JPG funciona melhor",
+          "previewAlt": "Previa do logo"
+        },
+        "colors": {
+          "title": "2. Cores",
+          "primary": "Primaria",
+          "secondary": "Secundaria"
+        },
+        "text": {
+          "title": "3. Texto",
+          "businessName": "Nome da empresa",
+          "tagline": "Slogan",
+          "footerNote": "Nota de rodape da fatura"
+        }
+      },
+      "preview": {
+        "title": "Previa ao vivo da fatura",
+        "badge": "Exemplo",
+        "logoPlaceholder": "Logo",
+        "businessNameFallback": "Nome da sua empresa",
+        "taglineFallback": "Seu slogan aqui",
+        "invoiceNumber": "Fatura #",
+        "date": "Data",
+        "total": "Total",
+        "footerFallback": "Obrigado pela preferencia."
+      },
+      "toast": {
+        "logoUploadFailed": "Falha ao enviar o logo. Tente novamente.",
+        "saveSuccess": "Marca salva com sucesso.",
+        "saveFailed": "Nao foi possivel salvar a marca. Tente novamente."
+      }
+    },
+    "invoices": {
+      "title": "Faturas",
+      "subtitle": "Todas as faturas da sua organizacao",
+      "metrics": {
+        "total": "Total de faturas",
+        "totalNote": "De todos os clientes",
+        "sent": "Enviadas",
+        "sentNote": "Aguardando pagamento",
+        "overdue": "Vencidas",
+        "overdueNote": "Precisa de acompanhamento",
+        "totalBilled": "Total faturado",
+        "totalBilledNote": "Valor bruto das faturas",
+        "outstanding": "Em aberto",
+        "outstandingNote": "Saldo devido agora"
+      },
+      "cta": {
+        "eyebrow": "Acao rapida",
+        "title": "Criar e enviar uma fatura",
+        "subtitle": "Selecione o trabalho, revise itens e envie ao cliente.",
+        "button": "Criar fatura"
+      },
+      "filters": {
+        "all": "Todas",
+        "draft": "Rascunho",
+        "sent": "Enviadas",
+        "paid": "Pagas",
+        "overdue": "Vencidas",
+        "unpaid": "Em aberto"
+      },
+      "actions": {
+        "view": "Ver",
+        "create": "Criar fatura"
+      },
+      "drawer": {
+        "createTitle": "Criar fatura",
+        "selectTitle": "Selecionar trabalho para faturar",
+        "onboardingStep": "Etapa de onboarding 4",
+        "pickJobTitle": "Escolha o trabalho para faturar",
+        "pickJobSubtitle": "Encontre o trabalho, confirme o cliente e montaremos a fatura.",
+        "tags": {
+          "recent": "Trabalhos recentes primeiro",
+          "search": "Buscar por cliente",
+          "fast": "Configuracao rapida"
+        },
+        "chooseJobTitle": "Escolha o trabalho primeiro",
+        "chooseJobSubtitle": "Selecione o trabalho, confirme itens e crie a fatura. Os mais recentes primeiro.",
+        "searchPlaceholder": "Buscar por titulo do trabalho ou cliente",
+        "untitledJob": "Trabalho sem titulo",
+        "selectJob": "Selecionar",
+        "noMatches": "Nenhum trabalho encontrado",
+        "noJobs": "Nenhum trabalho ainda",
+        "noMatchesHint": "Tente outra busca.",
+        "noJobsHint": "Crie um trabalho e depois fature aqui.",
+        "createJob": "Criar trabalho",
+        "detailsEyebrow": "Detalhes da fatura",
+        "detailsTitle": "Montar a fatura",
+        "detailsSubtitle": "Ajuste datas, revise itens e crie a fatura.",
+        "backToJobs": "Escolher outro trabalho",
+        "prefill": "Pre-carregado do orcamento",
+        "prefillHint": "Ajuste itens antes de criar a fatura."
+      },
+      "form": {
+        "invoiceDate": "Data da fatura",
+        "dueDate": "Data de vencimento",
+        "lineItems": "Itens",
+        "addLine": "Adicionar linha",
+        "description": "Descricao",
+        "quantity": "Qtd.",
+        "unitPrice": "Preco unitario",
+        "total": "Total",
+        "descriptionPlaceholder": "Descricao do item",
+        "removeLine": "Remover linha",
+        "invoiceTotal": "Total da fatura",
+        "cancel": "Cancelar",
+        "creating": "Criando...",
+        "create": "Criar fatura",
+        "lineItemFallback": "Item"
+      },
+      "errors": {
+        "load": "Nao foi possivel carregar as faturas.",
+        "loadJobs": "Nao foi possivel carregar os trabalhos agora.",
+        "create": "Nao foi possivel criar a fatura. Revise os detalhes."
+      },
+      "toast": {
+        "loadFailed": "Falha ao carregar faturas",
+        "loadJobsFailed": "Falha ao carregar trabalhos para faturar",
+        "created": "Fatura criada com sucesso.",
+        "createFailed": "Falha ao criar a fatura."
+      },
+      "labels": {
+        "unknownClient": "Cliente desconhecido",
+        "unknown": "Desconhecido",
+        "noEmail": "Sem email",
+        "missing": "-"
+      },
+      "table": {
+        "invoiceNumber": "Fatura #",
+        "client": "Cliente",
+        "invoiceDate": "Data da fatura",
+        "dueDate": "Vencimento",
+        "total": "Total",
+        "balance": "Saldo",
+        "status": "Status",
+        "actions": "Acoes"
+      },
+      "status": {
+        "draft": "Rascunho",
+        "sent": "Enviada",
+        "paid": "Paga",
+        "overdue": "Vencida",
+        "unpaid": "Em aberto"
+      }
+    },
+    "estimates": {
+      "title": "Orcamentos",
+      "subtitle": "Gerencie orcamentos para seus clientes",
+      "metrics": {
+        "total": "Total de orcamentos",
+        "totalNote": "De todos os clientes",
+        "draft": "Rascunhos",
+        "draftNote": "Prontos para revisao",
+        "sent": "Enviados",
+        "sentNote": "Aguardando resposta",
+        "accepted": "Aceitos",
+        "acceptedNote": "Prontos para agendar",
+        "totalValue": "Valor total",
+        "totalValueNote": "Soma dos orcamentos"
+      },
+      "cta": {
+        "eyebrow": "Acao rapida",
+        "title": "Criar novo orcamento",
+        "subtitle": "Selecione o cliente, adicione itens e envie.",
+        "button": "Novo orcamento"
+      },
+      "actions": {
+        "edit": "Editar",
+        "send": "Enviar",
+        "delete": "Excluir",
+        "new": "Novo orcamento"
+      },
+      "filters": {
+        "all": "Todos",
+        "draft": "Rascunho",
+        "sent": "Enviados",
+        "accepted": "Aceitos",
+        "declined": "Recusados",
+        "expired": "Expirados"
+      },
+      "drawer": {
+        "editTitle": "Editar orcamento",
+        "newTitle": "Novo orcamento",
+        "updateEyebrow": "Atualizar orcamento",
+        "newEyebrow": "Novo orcamento",
+        "updateTitle": "Revisar e atualizar",
+        "newTitleMain": "Criar um novo orcamento",
+        "subtitle": "Selecione o cliente, adicione itens e envie."
+      },
+      "send": {
+        "title": "Enviar orcamento",
+        "intro": "Enviando orcamento",
+        "subtitle": "Confirme o email do destinatario e inclua uma mensagem opcional.",
+        "recipientEmail": "Email do destinatario",
+        "recipientPlaceholder": "cliente@exemplo.com",
+        "message": "Mensagem",
+        "optional": "opcional",
+        "messagePlaceholder": "Inclua uma nota pessoal...",
+        "cancel": "Cancelar",
+        "sending": "Enviando...",
+        "send": "Enviar orcamento"
+      },
+      "errors": {
+        "load": "Nao foi possivel carregar os orcamentos. Atualize.",
+        "send": "Nao foi possivel enviar o orcamento. Tente novamente."
+      },
+      "toast": {
+        "updated": "Orcamento atualizado.",
+        "createdMissingEmail": "Orcamento criado, mas sem email do cliente, nao foi enviado.",
+        "createdSent": "Orcamento criado e enviado.",
+        "createdSendFailed": "Orcamento criado, mas falha ao enviar.",
+        "sent": "Orcamento enviado.",
+        "deleted": "Orcamento excluido.",
+        "deleteFailed": "Nao foi possivel excluir o orcamento."
+      },
+      "confirm": {
+        "delete": "Excluir orcamento {{number}}? Esta acao nao pode ser desfeita."
+      },
+      "table": {
+        "estimateNumber": "Orcamento #",
+        "client": "Cliente",
+        "date": "Data",
+        "expires": "Expira",
+        "total": "Total",
+        "status": "Status",
+        "actions": "Acoes"
+      },
+      "status": {
+        "draft": "Rascunho",
+        "sent": "Enviado",
+        "accepted": "Aceito",
+        "declined": "Recusado",
+        "cancelled": "Cancelado",
+        "expired": "Expirado",
+        "revisionRequested": "Revisao solicitada"
+      },
+      "labels": {
+        "unknown": "Desconhecido",
+        "missing": "-"
+      }
+    },
+    "jobs": {
+      "title": "Trabalhos",
+      "subtitle": "Mantenha cada trabalho fluindo",
+      "drawer": {
+        "addTitle": "Adicionar trabalho"
+      },
+      "hero": {
+        "eyebrow": "Pulso do fluxo",
+        "subtitle": "Organize trabalhos nao agendados, destaque o que esta ativo e mude o status com um toque."
+      },
+      "metrics": {
+        "total": "Total de trabalhos",
+        "unscheduled": "Nao agendados",
+        "inProgress": "Em andamento",
+        "completed": "Concluidos"
+      },
+      "cta": {
+        "eyebrow": "Ação rápida",
+        "title": "Criar um novo trabalho",
+        "subtitle": "Adicione um trabalho, atribua uma equipe e acompanhe o progresso.",
+        "button": "Adicionar trabalho"
+      },
+      "filters": {
+        "status": "Status",
+        "allStatuses": "Todos os status",
+        "statusHint": "Ajuste o quadro aos rotulos da equipe.",
+        "client": "Cliente",
+        "allClients": "Todos os clientes",
+        "clientHint": "Foque em um cliente sem perder o contexto.",
+        "assignee": "Responsavel",
+        "allAssignees": "Todos os responsaveis",
+        "assigneeHint": "Identifique sobrecargas rapidamente.",
+        "clear": "Limpar filtros"
+      },
+      "lanes": {
+        "unscheduled": {
+          "title": "Fila nao agendada",
+          "subtitle": "Arraste para o despacho quando o dia abrir.",
+          "hint": "Tente limpar antes das equipes sairem.",
+          "count": "em espera"
+        },
+        "scheduled": {
+          "title": "Agendados nos proximos 7 dias",
+          "subtitle": "Trabalhos de alta velocidade que precisam de estabilidade.",
+          "hint": "Verifique lacunas e reequilibre cedo.",
+          "count": "agendados"
+        }
+      },
+      "empty": {
+        "unscheduled": {
+          "title": "Nenhum trabalho aguardando agendamento.",
+          "subtitle": "Novos trabalhos aparecerao aqui."
+        },
+        "scheduled": {
+          "title": "Nenhum trabalho agendado na proxima semana.",
+          "subtitle": "Use o despacho para adiantar trabalho."
+        }
+      },
+      "preview": {
+        "eyebrow": "Foco do trabalho",
+        "titleFallback": "Selecione um trabalho",
+        "subtitle": "Escolha um card para ver detalhes.",
+        "status": "Status",
+        "nextSchedule": "Proximo agendamento",
+        "quickAssign": "Atribuicao rapida",
+        "assignHint": "Agende o trabalho para atribuir equipe.",
+        "saving": "Salvando...",
+        "applyCrew": "Aplicar equipe",
+        "notes": "Notas",
+        "noNotes": "Sem notas."
+      },
+      "actions": {
+        "schedule": "Agendar",
+        "edit": "Editar trabalho",
+        "copyUpdates": "Copiar link de atualizacoes",
+        "openDispatch": "Abrir despacho",
+        "add": "Adicionar trabalho",
+        "delete": "Excluir"
+      },
+      "table": {
+        "title": "Todos os trabalhos",
+        "subtitle": "Pesquise e revise todos os trabalhos no seu workspace.",
+        "columns": {
+          "job": "Trabalho",
+          "status": "Status",
+          "phone": "Telefone",
+          "actions": "Acoes"
+        }
+      },
+      "labels": {
+        "untitled": "Trabalho sem titulo",
+        "missing": "-",
+        "clientTbd": "Cliente a definir"
+      },
+      "toast": {
+        "loadFailed": "Nao foi possivel carregar os trabalhos",
+        "statusFailed": "Nao foi possivel atualizar o status",
+        "linkCopied": "Link de atualizacoes copiado.",
+        "linkCopyFailed": "Nao foi possivel copiar o link.",
+        "assigneesFailed": "Nao foi possivel atualizar responsaveis",
+        "deleteUnavailable": "Exclusao indisponivel para {{title}}"
+      },
+      "status": {
+        "draft": "Rascunho",
+        "approved": "Aprovado",
+        "inprogress": "Em andamento",
+        "completed": "Concluido",
+        "cancelled": "Cancelado",
+        "failed": "Falhou"
+      }
+    },
+    "employees": {
+      "title": "Funcionarios",
+      "subtitle": "Gerencie equipe e funcoes",
+      "loading": {
+        "roles": "Verificando funcoes da organizacao..."
+      },
+      "empty": {
+        "rolesTitle": "Nenhuma funcao de funcionario encontrada.",
+        "rolesSubtitle": "Crie uma antes de adicionar funcionarios."
+      },
+      "actions": {
+        "goToRoles": "Ir para funcoes",
+        "invite": "Convidar",
+        "add": "Adicionar funcionario",
+        "edit": "Editar",
+        "delete": "Excluir",
+        "cancel": "Cancelar",
+        "save": "Salvar funcionario"
+      },
+      "metrics": {
+        "total": "Membros da equipe",
+        "totalNote": "Todos os funcionarios da org",
+        "active": "Ativos",
+        "activeNote": "Disponiveis para atribuicoes",
+        "inactive": "Inativos",
+        "inactiveNote": "Pausados ou em saida",
+        "roles": "Funcoes",
+        "rolesNote": "Definidas nas configuracoes"
+      },
+      "cta": {
+        "eyebrow": "Acao rapida",
+        "title": "Convidar ou adicionar funcionarios",
+        "subtitle": "Envie convites ou adicione diretamente."
+      },
+      "filters": {
+        "clear": "Limpar filtros",
+        "role": "Funcao",
+        "allRoles": "Todas as funcoes",
+        "all": "Todos",
+        "active": "Ativos",
+        "inactive": "Inativos"
+      },
+      "table": {
+        "name": "Nome",
+        "email": "Email",
+        "role": "Funcao",
+        "invite": "Convite",
+        "actions": "Acoes"
+      },
+      "invites": {
+        "eyebrow": "Convites pendentes",
+        "title": "Convites",
+        "subtitle": "Acompanhe convites enviados para sua organizacao.",
+        "send": "Enviar convite",
+        "role": "Funcao",
+        "expires": "Expira",
+        "emptyTitle": "Nenhum convite",
+        "emptySubtitle": "Envie um convite para adicionar um funcionario."
+      },
+      "drawer": {
+        "editTitle": "Editar funcionario",
+        "addTitle": "Adicionar funcionario",
+        "updateEyebrow": "Atualizar perfil",
+        "newEyebrow": "Novo funcionario",
+        "subtitle": "Preencha os dados e atribua uma funcao."
+      },
+      "inviteDrawer": {
+        "title": "Convidar funcionario",
+        "eyebrow": "Fluxo de convite",
+        "subtitle": "Enviaremos o convite por email."
+      },
+      "delete": {
+        "title": "Excluir funcionario",
+        "eyebrow": "Excluir funcionario",
+        "subtitle": "Esta acao nao pode ser desfeita.",
+        "confirm": "Tem certeza de que deseja excluir {{name}}?",
+        "confirmButton": "Excluir funcionario"
+      },
+      "inviteStatus": {
+        "revoked": "Revogado",
+        "accepted": "Aceito",
+        "expired": "Expirado",
+        "pending": "Pendente"
+      },
+      "labels": {
+        "employee": "Funcionario",
+        "unknownRole": "Funcao desconhecida",
+        "missing": "-"
+      },
+      "toast": {
+        "rolesRequired": "Voce deve criar ao menos uma funcao antes de adicionar funcionarios.",
+        "updated": "Funcionario atualizado",
+        "successTitle": "Sucesso",
+        "updateFailed": "Falha ao atualizar funcionario",
+        "failedTitle": "Falha",
+        "emailExists": "{{email}} ja existe",
+        "warningTitle": "Aviso",
+        "added": "Funcionario adicionado",
+        "addFailed": "Falha ao adicionar funcionario",
+        "checkEmailFailed": "Falha ao verificar email",
+        "inviteSent": "Convite enviado para {{name}}",
+        "deleted": "Funcionario excluido",
+        "deleteFailed": "Falha ao excluir funcionario"
+      }
+    }
+  }
+}

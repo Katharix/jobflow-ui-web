@@ -1,0 +1,190 @@
+<app-page-header
+  [title]="'admin.estimates.title' | translate"
+  [subtitle]="'admin.estimates.subtitle' | translate">
+</app-page-header>
+
+@if (error) {
+  <div class="alert alert-danger mb-3">{{ error }}</div>
+}
+
+<section class="estimates-overview">
+  <div class="estimates-overview__metrics">
+    <article class="estimates-card">
+      <p class="estimates-card__label">{{ 'admin.estimates.metrics.total' | translate }}</p>
+      <h3>{{ summary.total }}</h3>
+      <p class="estimates-card__note">{{ 'admin.estimates.metrics.totalNote' | translate }}</p>
+    </article>
+    <article class="estimates-card">
+      <p class="estimates-card__label">{{ 'admin.estimates.metrics.draft' | translate }}</p>
+      <h3>{{ summary.draft }}</h3>
+      <p class="estimates-card__note">{{ 'admin.estimates.metrics.draftNote' | translate }}</p>
+    </article>
+    <article class="estimates-card">
+      <p class="estimates-card__label">{{ 'admin.estimates.metrics.sent' | translate }}</p>
+      <h3>{{ summary.sent }}</h3>
+      <p class="estimates-card__note">{{ 'admin.estimates.metrics.sentNote' | translate }}</p>
+    </article>
+    <article class="estimates-card">
+      <p class="estimates-card__label">{{ 'admin.estimates.metrics.accepted' | translate }}</p>
+      <h3>{{ summary.accepted }}</h3>
+      <p class="estimates-card__note">{{ 'admin.estimates.metrics.acceptedNote' | translate }}</p>
+    </article>
+    <article class="estimates-card estimates-card--accent">
+      <p class="estimates-card__label">{{ 'admin.estimates.metrics.totalValue' | translate }}</p>
+      <h3>{{ formatCurrency(summary.totalValue) }}</h3>
+      <p class="estimates-card__note">{{ 'admin.estimates.metrics.totalValueNote' | translate }}</p>
+    </article>
+  </div>
+  <div class="estimates-cta">
+    <div>
+      <p class="estimates-cta__eyebrow">{{ 'admin.estimates.cta.eyebrow' | translate }}</p>
+      <h3>{{ 'admin.estimates.cta.title' | translate }}</h3>
+      <p>{{ 'admin.estimates.cta.subtitle' | translate }}</p>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="openNew()">
+      {{ 'admin.estimates.cta.button' | translate }}
+    </button>
+  </div>
+</section>
+
+<section class="estimates-filters" aria-label="Estimate filters">
+  <div class="estimates-filters__group">
+    @for (filter of statusFilters; track filter.key) {
+      <button
+        type="button"
+        class="estimates-filter"
+        [class.estimates-filter--active]="selectedStatusFilter === filter.key"
+        (click)="setStatusFilter(filter.key)">
+        {{ filter.label }}
+        <span class="estimates-filter__count">{{ getFilterCount(filter.key) }}</span>
+      </button>
+    }
+  </div>
+</section>
+
+<!-- Client cell template -->
+<ng-template #clientTemplate let-estimate>
+  <div class="estimate-client-cell">
+    <div class="estimate-client-name">{{ getClientName(estimate) }}</div>
+    <div class="estimate-client-email">{{ getClientEmail(estimate) }}</div>
+  </div>
+</ng-template>
+
+<!-- Status chip template -->
+<ng-template #statusTemplate let-estimate>
+  <span class="estimate-status-chip" [ngClass]="getStatusClass(estimate)">
+    {{ getStatusLabel(estimate) }}
+  </span>
+</ng-template>
+
+<!-- Actions template -->
+<ng-template #actionsTemplate let-estimate>
+  <div class="estimate-actions">
+    <button type="button" class="btn btn-sm btn-link" (click)="openEdit(estimate)">
+      {{ 'admin.estimates.actions.edit' | translate }}
+    </button>
+    <button
+      type="button"
+      class="btn btn-sm btn-link text-primary"
+      (click)="openSend(estimate)"
+      [disabled]="resolveStatus(estimate.status) === 3">
+      {{ 'admin.estimates.actions.send' | translate }}
+    </button>
+    <button type="button" class="btn btn-sm btn-link text-danger" (click)="deleteEstimate(estimate)">
+      {{ 'admin.estimates.actions.delete' | translate }}
+    </button>
+  </div>
+</ng-template>
+
+<!-- Grid -->
+<app-jobflow-grid
+  [data]="filteredItems"
+  [columns]="columns"
+  [pageSettings]="pageSettings"
+  [showSearchBar]="true">
+</app-jobflow-grid>
+
+<!-- Create / Edit Drawer -->
+<app-jobflow-drawer
+  [open]="isFormDrawerOpen"
+  [title]="editingEstimate ? ('admin.estimates.drawer.editTitle' | translate) : ('admin.estimates.drawer.newTitle' | translate)"
+  [width]="660"
+  (closed)="onFormCancelled()">
+  @if (isFormDrawerOpen) {
+    <div class="estimate-drawer">
+      <div class="estimate-drawer__intro">
+        <p class="estimate-drawer__eyebrow">
+          {{ editingEstimate ? ('admin.estimates.drawer.updateEyebrow' | translate) : ('admin.estimates.drawer.newEyebrow' | translate) }}
+        </p>
+        <h3>
+          {{ editingEstimate ? ('admin.estimates.drawer.updateTitle' | translate) : ('admin.estimates.drawer.newTitleMain' | translate) }}
+        </h3>
+        <p>{{ 'admin.estimates.drawer.subtitle' | translate }}</p>
+      </div>
+      <app-estimate-form
+        [estimate]="editingEstimate"
+        (saved)="onFormSaved($event)"
+        (cancelled)="onFormCancelled()">
+      </app-estimate-form>
+    </div>
+  }
+</app-jobflow-drawer>
+
+<!-- Send Drawer -->
+<app-jobflow-drawer
+  [open]="isSendDrawerOpen"
+  [title]="'admin.estimates.send.title' | translate"
+  [width]="440"
+  (closed)="isSendDrawerOpen = false">
+  @if (isSendDrawerOpen && estimateToSend) {
+    <div class="send-form">
+      <p class="text-muted mb-4">
+        {{ 'admin.estimates.send.intro' | translate }} <strong>{{ estimateToSend.estimateNumber }}</strong>.
+        {{ 'admin.estimates.send.subtitle' | translate }}
+      </p>
+      @if (sendError) {
+        <div class="alert alert-danger mb-3">{{ sendError }}</div>
+      }
+      <div class="mb-3">
+        <label class="form-label fw-semibold" for="estimateSendEmail">
+          {{ 'admin.estimates.send.recipientEmail' | translate }} <span class="text-danger">*</span>
+        </label>
+        <input
+          id="estimateSendEmail"
+          type="email"
+          class="form-control"
+          [(ngModel)]="sendEmail"
+          [placeholder]="'admin.estimates.send.recipientPlaceholder' | translate" />
+        </div>
+        <div class="mb-4">
+          <label class="form-label fw-semibold" for="estimateSendMessage">
+            {{ 'admin.estimates.send.message' | translate }} <span class="text-muted fw-normal">({{ 'admin.estimates.send.optional' | translate }})</span>
+          </label>
+          <textarea
+            id="estimateSendMessage"
+            class="form-control"
+            rows="4"
+            [(ngModel)]="sendMessage"
+            [placeholder]="'admin.estimates.send.messagePlaceholder' | translate">
+          </textarea>
+        </div>
+        <div class="d-flex justify-content-end gap-2">
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="isSendDrawerOpen = false"
+            [disabled]="sending">
+            {{ 'admin.estimates.send.cancel' | translate }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="confirmSend()"
+            [disabled]="sending || !sendEmail.trim()">
+            {{ sending ? ('admin.estimates.send.sending' | translate) : ('admin.estimates.send.send' | translate) }}
+          </button>
+        </div>
+      </div>
+    }
+  </app-jobflow-drawer>
+

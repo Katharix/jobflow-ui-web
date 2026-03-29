@@ -1,6 +1,9 @@
-import {Component, Input, Output, EventEmitter, OnInit} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
 import {FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
-import {CommonModule} from '@angular/common';
+
+import {InputTextModule} from 'primeng/inputtext';
+import {SelectModule} from 'primeng/select';
+import {CheckboxModule} from 'primeng/checkbox';
 import {Employee} from '../models/employee';
 import {EmployeeRoleService} from '../../employee-roles/services/employee-role.service';
 import {EmployeeRole} from '../../employee-roles/models/employee-role';
@@ -9,11 +12,15 @@ import {OrganizationContextService} from '../../../services/shared/organization-
 @Component({
    selector: 'app-employee-form',
    standalone: true,
-   imports: [CommonModule, ReactiveFormsModule],
+   imports: [ReactiveFormsModule, InputTextModule, SelectModule, CheckboxModule],
    templateUrl: './employee-form.component.html',
    styleUrls: ['./employee-form.component.scss']
 })
 export class EmployeeFormComponent implements OnInit {
+   private fb = inject(FormBuilder);
+   private employeeRoleService = inject(EmployeeRoleService);
+   private organizationContext = inject(OrganizationContextService);
+
    @Input() employee?: Employee;
    @Output() submitted = new EventEmitter<Partial<Employee>>();
 
@@ -22,13 +29,6 @@ export class EmployeeFormComponent implements OnInit {
    roles: EmployeeRole[] = [];
    organizationId: string | null = null;
    loadingRoles = false;
-
-   constructor(
-      private fb: FormBuilder,
-      private employeeRoleService: EmployeeRoleService,
-      private organizationContext: OrganizationContextService
-   ) {
-   }
 
    ngOnInit(): void {
       this.organizationContext.org$.subscribe(org => {

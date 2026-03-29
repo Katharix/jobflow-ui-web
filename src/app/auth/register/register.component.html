@@ -1,85 +1,185 @@
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-xl-5">
-      <div class="p-4 rounded-3 bg-white">
-        <div class="text-center mb-4">
-          <a routerLink=".">
-            <img src="/assets/public/images/Asset 1.png" alt="Logo" style="height: 40px;" />
+<section class="register-shell">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="register-hero">
+          <a routerLink="/" class="register-hero__logo">
+            <img src="/assets/public/images/Asset 1.png" alt="JobFlow" />
           </a>
-          <h5 class="text-muted fw-normal mt-3">Create your account</h5>
+          <p class="register-hero__eyebrow">{{ 'auth.register.eyebrow' | translate }}</p>
+          <h1>{{ 'auth.register.headline' | translate }}</h1>
+          <p class="register-hero__lead">
+            {{ 'auth.register.lead' | translate }}
+          </p>
+          <div class="register-hero__checks">
+            <span><i class="ti ti-circle-check text-success me-2"></i>{{ 'auth.register.checks.access' | translate }}</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>{{ 'auth.register.checks.secure' | translate }}</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>{{ 'auth.register.checks.billing' | translate }}</span>
+          </div>
         </div>
+      </div>
 
-        <form (ngSubmit)="onRegister($event)">
-          <!-- Company Name -->
-          <div class="form-group form-floating-line mb-4">
-            <input type="text"
-                   class="form-control no-border"
-                   id="orgName"
-                   name="organizationName"
-                   placeholder="Company Name"
-                   [(ngModel)]="organizationName"
-                   disabled />
-          
+      <div class="col-lg-6">
+        <div class="register-card">
+          <div class="register-card__header">
+            <div class="flow-steps" aria-label="Signup steps">
+              <span class="flow-step">{{ 'auth.register.steps.subscription' | translate }}</span>
+              <span class="flow-step is-active">{{ 'auth.register.steps.account' | translate }}</span>
+            </div>
+            <h2>{{ 'auth.register.title' | translate }}</h2>
+            <p class="text-muted">{{ 'auth.register.subtitle' | translate }}</p>
           </div>
 
-          <!-- Email / Username -->
-          <div class="form-group form-floating-line mb-4">
-            <input type="text"
-                   class="form-control no-border"
-                   id="email"
-                   name="email"
-                   placeholder="This is your email address"
-                   [(ngModel)]="email"
-                   disabled />
-         
-          </div>
+          <form #form="ngForm" (ngSubmit)="onRegister($event)" novalidate>
+            @if (submitted && form.invalid) {
+              <div class="alert alert-danger">
+                {{ 'auth.register.validation.formInvalid' | translate }}
+              </div>
+            }
 
-          <!-- Password -->
-          <div class="form-group form-floating-line mb-4">
-            <input type="password"
-                   class="form-control no-border"
-                   id="password"
-                   name="password"
-                   placeholder="Password"
-                   [(ngModel)]="password"
-                   required
-                   minlength="8"
-                   [pattern]="pattern"
-                   #passwordModel="ngModel" />
-         
-            <div *ngIf="passwordModel.invalid && passwordModel.touched" class="text-danger mt-1">
-              <div *ngIf="passwordModel.errors?.['required']">Password is required.</div>
-              <div *ngIf="passwordModel.errors?.['minlength']">Minimum 8 characters required.</div>
-              <div *ngIf="passwordModel.errors?.['pattern']">
-                Must include uppercase, lowercase, number, and special character.
+            @if (error) {
+              <div class="alert alert-danger">
+                {{ error }}
+              </div>
+            }
+
+            <div class="form-group mb-3">
+              <label class="form-label" for="orgName">{{ 'auth.register.companyName' | translate }}</label>
+              <input
+                type="text"
+                class="form-control"
+                id="orgName"
+                name="organizationName"
+                [placeholder]="'auth.register.companyNamePlaceholder' | translate"
+                [(ngModel)]="organizationName"
+                disabled
+                />
+              </div>
+
+              <div class="form-group mb-3">
+                <label class="form-label" for="email">{{ 'auth.register.workEmail' | translate }}</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  name="email"
+                  [placeholder]="'auth.register.emailPlaceholder' | translate"
+                  [(ngModel)]="email"
+                  required
+                  email
+                  #emailModel="ngModel"
+                  [readonly]="organizationId"
+                  [ngClass]="{ 'is-invalid': emailModel.invalid && (emailModel.touched || submitted) }"
+                  />
+                  @if (emailModel.invalid && (emailModel.touched || submitted)) {
+                    <div class="text-danger mt-1">
+                      @if (emailModel.errors?.['required']) {
+                        <div>{{ 'auth.register.validation.emailRequired' | translate }}</div>
+                      }
+                      @if (emailModel.errors?.['email']) {
+                        <div>{{ 'auth.register.validation.emailInvalid' | translate }}</div>
+                      }
+                    </div>
+                  }
+                  @if (organizationId) {
+                    <div class="form-hint mt-1">{{ 'auth.register.billingEmailHint' | translate }}</div>
+                  }
+                </div>
+
+                <div class="form-group mb-3">
+                  <label class="form-label" for="password">{{ 'auth.register.passwordLabel' | translate }}</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    name="password"
+                    [placeholder]="'auth.register.passwordPlaceholder' | translate"
+                    [(ngModel)]="password"
+                    required
+                    minlength="8"
+                    [pattern]="pattern"
+                    #passwordModel="ngModel"
+                    [ngClass]="{ 'is-invalid': passwordModel.invalid && (passwordModel.touched || submitted) }"
+                    />
+                    @if (passwordModel.invalid && (passwordModel.touched || submitted)) {
+                      <div class="text-danger mt-1">
+                        @if (passwordModel.errors?.['required']) {
+                          <div>{{ 'auth.register.validation.passwordRequired' | translate }}</div>
+                        }
+                        @if (passwordModel.errors?.['minlength']) {
+                          <div>{{ 'auth.register.validation.passwordMin' | translate }}</div>
+                        }
+                        @if (passwordModel.errors?.['pattern']) {
+                          <div>
+                            {{ 'auth.register.validation.passwordPattern' | translate }}
+                          </div>
+                        }
+                      </div>
+                    }
+                    <div class="form-hint mt-1">
+                      {{ 'auth.register.passwordHint' | translate }}
+                    </div>
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label class="form-label" for="confirmPassword">{{ 'auth.register.confirmPasswordLabel' | translate }}</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      [placeholder]="'auth.register.confirmPasswordPlaceholder' | translate"
+                      [(ngModel)]="confirmPassword"
+                      required
+                      #confirmPasswordModel="ngModel"
+                      [ngClass]="{ 'is-invalid': confirmPasswordModel.invalid && (confirmPasswordModel.touched || submitted) }"
+                      />
+                      @if (confirmPasswordModel.invalid && (confirmPasswordModel.touched || submitted)) {
+                        <div class="text-danger mt-1">
+                          {{ 'auth.register.validation.confirmPassword' | translate }}
+                        </div>
+                      }
+                    </div>
+
+                    <div class="d-grid gap-2">
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary google-auth-btn"
+                        [disabled]="isSubmitting"
+                        (click)="onGoogleRegister()">
+                        @if (!isSubmitting) {
+                          <span>{{ 'auth.register.googleSignUp' | translate }}</span>
+                        }
+                        @if (isSubmitting) {
+                          <span>{{ 'auth.register.googleSubmitting' | translate }}</span>
+                        }
+                      </button>
+                    </div>
+
+                    <div class="auth-separator">
+                      <span>{{ 'auth.register.orCreateWithEmail' | translate }}</span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isSubmitting">
+                        @if (!isSubmitting) {
+                          <span>{{ 'auth.register.submit' | translate }}</span>
+                        }
+                        @if (isSubmitting) {
+                          <span>{{ 'auth.register.submitting' | translate }}</span>
+                        }
+                      </button>
+                    </div>
+
+                    <div class="register-card__footer">
+                      <span>{{ 'auth.register.footer.prefix' | translate }}</span>
+                      <a routerLink="/terms">{{ 'auth.register.footer.terms' | translate }}</a>
+                      <span>{{ 'auth.register.footer.and' | translate }}</span>
+                      <a routerLink="/privacy">{{ 'auth.register.footer.privacy' | translate }}</a>.
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
-
-          <!-- Confirm Password -->
-          <div class="form-group form-floating-line mb-4">
-            <input type="password"
-                   class="form-control no-border"
-                   id="confirmPassword"
-                   name="confirmPassword"
-                   placeholder="Confirm Password"
-                   [(ngModel)]="confirmPassword"
-                   required />
-
-          </div>
-
-          <!-- Remember Me -->
-          <div class="form-check mb-3">
-            <input type="checkbox" class="form-check-input" id="authCheck" />
-            <label class="form-check-label" for="authCheck">Remember me</label>
-          </div>
-
-          <!-- Submit -->
-          <div class="d-grid">
-            <button type="submit" class="btn btn-primary">Create Account</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+        </section>

@@ -1,0 +1,22 @@
+<section class="error-shell" aria-live="polite">
+  <div class="error-card">
+    <div class="error-pill">{{ type }}</div>
+
+    <h1>{{ title }}</h1>
+
+    <p class="error-copy">
+      @for (line of descLines; track line; let last = $last) {
+        <span>
+          {{ line }}@if (!last) {
+          <br />
+        }
+      </span>
+    }
+  </p>
+
+  <div class="error-actions">
+    <a class="btn btn-primary" routerLink="/">Back to home</a>
+    <a class="btn btn-outline-secondary" routerLink="/auth/login">Go to login</a>
+  </div>
+  </div>
+</section>

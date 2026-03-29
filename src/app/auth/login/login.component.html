@@ -1,54 +1,135 @@
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-xl-5">
-      <div class="p-4 rounded-3 bg-white">
-        <div class="text-center mb-4">
-          <a routerLink=".">
-            <img src="/assets/public/images/Asset 1.png" alt="Logo" style="height: 40px;" />
+<section class="login-shell">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="login-hero">
+          <a routerLink="/" class="login-hero__logo">
+            <img src="/assets/public/images/Asset 1.png" alt="JobFlow" />
           </a>
-          <h5 class="text-muted fw-normal mt-3">Welcome back! Log in to your account.</h5>
+          <p class="login-hero__eyebrow">{{ 'auth.login.eyebrow' | translate }}</p>
+          <h1>{{ 'auth.login.headline' | translate }}</h1>
+          <p class="login-hero__lead">
+            {{ 'auth.login.lead' | translate }}
+          </p>
+          <div class="login-hero__checks">
+            <span><i class="ti ti-circle-check text-success me-2"></i>{{ 'auth.login.checks.dispatch' | translate }}</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>{{ 'auth.login.checks.estimate' | translate }}</span>
+            <span><i class="ti ti-circle-check text-success me-2"></i>{{ 'auth.login.checks.payment' | translate }}</span>
+          </div>
         </div>
-
-        <form #form="ngForm" (ngSubmit)="onLoggedin($event)">
-          <!-- Email -->
-          <div class="form-group form-floating-line mb-4">
-            <input type="email" class="form-control no-border" id="email" name="email" placeholder="Email"
-              [(ngModel)]="email" required email #emailModel="ngModel" />
-            <!-- <label for="email" class="form-label">Email address</label> -->
-            <div *ngIf="emailModel.invalid && emailModel.touched" class="text-danger mt-1">
-              <div *ngIf="emailModel.errors?.['required']">Email is required.</div>
-              <div *ngIf="emailModel.errors?.['email']">Enter a valid email address.</div>
-            </div>
-          </div>
-
-          <!-- Password -->
-          <div class="form-group form-floating-line mb-4">
-            <input type="password" class="form-control no-border" id="password" name="password" placeholder="Password"
-              [(ngModel)]="password" required minlength="6" #passwordModel="ngModel" />
-            <!-- <label for="password" class="form-label">Password</label> -->
-            <div *ngIf="passwordModel.invalid && passwordModel.touched" class="text-danger mt-1">
-              <div *ngIf="passwordModel.errors?.['required']">Password is required.</div>
-              <div *ngIf="passwordModel.errors?.['minlength']">Password must be at least 6 characters.</div>
-            </div>
-          </div>
-
-          <!-- Error -->
-          <div *ngIf="error" class="alert alert-danger">
-            {{ error }}
-          </div>
-
-          <!-- Buttons -->
-          <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
-              Login
-            </button>
-            <button type="button" class="btn btn-outline-dark" (click)="loginWithGoogle()">
-              <i class="feather icon-mail me-1"></i>
-              Sign in with Google
-            </button>
-          </div>
-        </form>
       </div>
-    </div>
-  </div>
-</div>
+
+      <div class="col-lg-6">
+        <div class="login-card">
+          <div class="login-card__header">
+            <h2>{{ 'auth.login.title' | translate }}</h2>
+            <p class="text-muted">{{ 'auth.login.subtitle' | translate }}</p>
+          </div>
+
+          <form #form="ngForm" (ngSubmit)="onLoggedin($event)" novalidate>
+            <div class="form-group mb-3">
+              <label class="form-label" for="email">{{ 'auth.login.emailLabel' | translate }}</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                [placeholder]="'auth.login.emailPlaceholder' | translate"
+                [(ngModel)]="email"
+                required
+                email
+                #emailModel="ngModel"
+                [ngClass]="{ 'is-invalid': emailModel.invalid && (emailModel.touched || submitted) }"
+                />
+                @if (emailModel.invalid && (emailModel.touched || submitted)) {
+                  <div class="text-danger mt-1">
+                    @if (emailModel.errors?.['required']) {
+                      <div>{{ 'auth.login.validation.emailRequired' | translate }}</div>
+                    }
+                    @if (emailModel.errors?.['email']) {
+                      <div>{{ 'auth.login.validation.emailInvalid' | translate }}</div>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="form-group mb-3">
+                <label class="form-label" for="password">{{ 'auth.login.passwordLabel' | translate }}</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  name="password"
+                  [placeholder]="'auth.login.passwordPlaceholder' | translate"
+                  [(ngModel)]="password"
+                  required
+                  minlength="6"
+                  #passwordModel="ngModel"
+                  [ngClass]="{ 'is-invalid': passwordModel.invalid && (passwordModel.touched || submitted) }"
+                  />
+                  @if (passwordModel.invalid && (passwordModel.touched || submitted)) {
+                    <div class="text-danger mt-1">
+                      @if (passwordModel.errors?.['required']) {
+                        <div>{{ 'auth.login.validation.passwordRequired' | translate }}</div>
+                      }
+                      @if (passwordModel.errors?.['minlength']) {
+                        <div>{{ 'auth.login.validation.passwordMin' | translate }}</div>
+                      }
+                    </div>
+                  }
+                </div>
+
+                @if (submitted && form.invalid) {
+                  <div class="alert alert-danger">
+                    {{ 'auth.login.validation.formInvalid' | translate }}
+                  </div>
+                }
+
+                @if (error) {
+                  <div class="alert alert-danger">
+                    {{ error }}
+                  </div>
+                }
+
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isSubmitting || isGoogleSubmitting">
+                    @if (!isSubmitting) {
+                      <span>{{ 'auth.login.submit' | translate }}</span>
+                    }
+                    @if (isSubmitting) {
+                      <span>{{ 'auth.login.submitting' | translate }}</span>
+                    }
+                  </button>
+                </div>
+
+                <div class="auth-separator">
+                  <span>{{ 'auth.login.orContinueWith' | translate }}</span>
+                </div>
+
+                <div class="d-grid gap-2">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary google-auth-btn"
+                    [disabled]="isSubmitting || isGoogleSubmitting"
+                    (click)="onGoogleLogin()">
+                    @if (!isGoogleSubmitting) {
+                      <span>{{ 'auth.login.googleSignIn' | translate }}</span>
+                    }
+                    @if (isGoogleSubmitting) {
+                      <span>{{ 'auth.login.googleSubmitting' | translate }}</span>
+                    }
+                  </button>
+                </div>
+
+                <div class="login-card__footer">
+                  <span>{{ 'auth.login.footer.prefix' | translate }}</span>
+                  <a routerLink="/terms">{{ 'auth.login.footer.terms' | translate }}</a>
+                  <span>{{ 'auth.login.footer.and' | translate }}</span>
+                  <a routerLink="/privacy">{{ 'auth.login.footer.privacy' | translate }}</a>.
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>

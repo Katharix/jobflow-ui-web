@@ -1,6 +1,6 @@
 export interface PaymentProvider {
     logoPath: string;
-    provider: string;
+    provider: 'Stripe' | 'Square';
     description: string;
     altLogoText: string;
 }

@@ -1,0 +1,51 @@
+<section class="client-page">
+  <header class="client-page-head">
+    <div>
+      <h1>Welcome back, {{ displayName }}</h1>
+      <p class="client-page-subtitle">
+        Everything is organized for quick decisions: update your details, review financials, and request service.
+      </p>
+    </div>
+    <a class="btn btn-primary" routerLink="/client-hub/request-work">Request New Work</a>
+  </header>
+
+  @if (isLoading) {
+    <div class="alert alert-info">Loading your client hub...</div>
+  }
+
+  @if (error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+
+  @if (!isLoading && !error) {
+    <div class="row g-3 mb-3">
+      <div class="col-12 col-md-6 col-xl-4">
+        <article class="client-surface stat-card h-100">
+          <p class="stat-label">Open Estimates</p>
+          <p class="stat-value">{{ estimateCount }}</p>
+        </article>
+      </div>
+
+      <div class="col-12 col-md-6 col-xl-4">
+        <article class="client-surface stat-card h-100">
+          <p class="stat-label">Invoices</p>
+          <p class="stat-value">{{ invoiceCount }}</p>
+        </article>
+      </div>
+
+      <div class="col-12 col-xl-4">
+        <article class="client-surface stat-card h-100">
+          <p class="stat-label">Outstanding Balance</p>
+          <p class="stat-value">{{ formatCurrency(outstandingBalance) }}</p>
+        </article>
+      </div>
+    </div>
+
+    <div class="client-surface quick-links">
+      <a class="btn btn-outline-primary" routerLink="/client-hub/profile">Update My Info</a>
+      <a class="btn btn-outline-primary" routerLink="/client-hub/estimates">View Estimates</a>
+      <a class="btn btn-outline-primary" routerLink="/client-hub/invoices">View Invoices</a>
+      <a class="btn btn-outline-primary" routerLink="/client-hub/request-work">Request Service</a>
+    </div>
+  }
+</section>

@@ -6,14 +6,13 @@ import {
    RouterOutlet
 } from '@angular/router';
 import {PreloaderComponent} from "../../landing/preloader.component";
-import {LoadingService} from '../../services/loading-service.service';
-import {CommonModule} from '@angular/common';
-import {LoadingOverlayComponent} from "../../common/app-loading-overlay/app-loading-overlay.component";
+import {LoadingService} from '../../services/shared/loading-service.service';
+import { CommonModule, DOCUMENT } from '@angular/common';
 
 @Component({
    selector: 'app-auth-layout',
    standalone: true,
-   imports: [RouterOutlet, CommonModule, PreloaderComponent, LoadingOverlayComponent],
+   imports: [RouterOutlet, CommonModule, PreloaderComponent],
    templateUrl: './auth-layout.component.html',
    styleUrl: './auth-layout.component.scss',
    encapsulation: ViewEncapsulation.None
@@ -21,10 +20,12 @@ import {LoadingOverlayComponent} from "../../common/app-loading-overlay/app-load
 export class AuthLayoutComponent {
    private router = inject(Router);
    private loadingService = inject(LoadingService);
+   private document = inject(DOCUMENT);
 
    isLoading$ = this.loadingService.isLoading$;
 
    constructor() {
+      this.resetSidebarClasses();
       this.router.events.subscribe(event => {
 
          if (event instanceof NavigationStart) {
@@ -39,5 +40,9 @@ export class AuthLayoutComponent {
             this.loadingService.hide();
          }
       });
+   }
+
+   private resetSidebarClasses(): void {
+      this.document.body.classList.remove('sidebar-open', 'sidebar-folded', 'open-sidebar-folded', 'settings-open');
    }
 }

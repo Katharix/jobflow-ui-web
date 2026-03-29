@@ -1,32 +1,34 @@
 <h2>Create Invoice</h2>
 
-<div *ngIf="error">{{ error }}</div>
+@if (error) {
+  <div>{{ error }}</div>
+}
 
-<div *ngFor="let item of lineItems">
-   <input
+@for (item of lineItems; track item) {
+  <div>
+    <input
       placeholder="Description"
       [(ngModel)]="item.description" />
+      <input
+        type="number"
+        min="1"
+        [(ngModel)]="item.quantity" />
+        <input
+          type="number"
+          min="0"
+          [(ngModel)]="item.unitPrice" />
+        </div>
+      }
 
-   <input
-      type="number"
-      min="1"
-      [(ngModel)]="item.quantity" />
+      <button (click)="addLine()">Add Line</button>
 
-   <input
-      type="number"
-      min="0"
-      [(ngModel)]="item.unitPrice" />
-</div>
+      <button (click)="save()" [disabled]="saving">
+        {{ saving ? 'Saving…' : 'Save Invoice' }}
+      </button>
 
-<button (click)="addLine()">Add Line</button>
-
-<button (click)="save()" [disabled]="saving">
-   {{ saving ? 'Saving…' : 'Save Invoice' }}
-</button>
-
-<button
-   type="button"
-   (click)="send()"
-   [disabled]="saving || !invoiceId">
-   Send Invoice
-</button>
+      <button
+        type="button"
+        (click)="send()"
+        [disabled]="saving || !invoiceId">
+        Send Invoice
+      </button>

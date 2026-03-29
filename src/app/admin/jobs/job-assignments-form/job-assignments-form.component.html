@@ -1,0 +1,153 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+  <div class="mb-3">
+    <span class="form-label fw-semibold text-muted">Weather for this date</span>
+    <div class="d-flex align-items-start gap-2">
+      <i [class]="weatherStatusIcon" [ngClass]="weatherStatusClass"></i>
+      <div>
+        <div>{{ weatherMessage }}</div>
+        @if (!addressMissing && !locationUnavailable) {
+          <small class="text-muted">
+            {{ weatherLocation }}@if (weatherIsApproximate) {
+            <span> · approx</span>
+          }
+        </small>
+      }
+    </div>
+  </div>
+</div>
+
+<div class="mb-3">
+  <label class="form-label fw-semibold text-muted" for="scheduleMode">Schedule Mode</label>
+  <p-select inputId="scheduleMode" formControlName="scheduleMode" [options]="scheduleModeOptions" optionLabel="label" optionValue="value" size="small" [fluid]="true" />
+</div>
+
+<div class="mb-3">
+  <label class="form-label fw-semibold text-muted" for="scheduleType">Time style</label>
+  <p-select inputId="scheduleType" formControlName="scheduleType" [options]="scheduleTypeOptions" optionLabel="label" optionValue="value" size="small" [fluid]="true" />
+  <small class="text-muted d-block mt-1">Exact locks a time. Window gives crews flexibility.</small>
+</div>
+
+@if (form.get('scheduleType')?.value === ScheduleType.Window) {
+  <div class="mb-3">
+    <label class="form-label fw-semibold text-muted" for="windowMinutes">Window length (minutes)</label>
+    <p-inputnumber inputId="windowMinutes" formControlName="windowMinutes" [min]="15" [fluid]="true" />
+    <small class="text-muted d-block mt-1">Sets the latest arrival time for this visit.</small>
+  </div>
+}
+
+@if (travelBufferMinutes > 0) {
+  <div class="mb-3">
+    <span class="form-label fw-semibold text-muted">Travel buffer guardrail</span>
+    <div class="text-muted">{{ travelBufferMinutes }} minutes are reserved between assignments.</div>
+  </div>
+}
+
+<div class="mb-3">
+  <label class="form-label fw-semibold text-muted" for="scheduledStart">Start</label>
+  <p-datepicker inputId="scheduledStart" formControlName="scheduledStart" [showTime]="true" hourFormat="12" [fluid]="true" />
+  <small class="text-muted d-block mt-1">Drag on the calendar for faster scheduling.</small>
+</div>
+
+<div class="mb-3">
+  <label class="form-label fw-semibold text-muted" for="scheduledEnd">End</label>
+  <p-datepicker inputId="scheduledEnd" formControlName="scheduledEnd" [showTime]="true" hourFormat="12" [fluid]="true" />
+  @if (form.get('scheduledEnd')?.touched && form.get('scheduledEnd')?.errors) {
+    <div class="text-danger small">
+      End time must be after start.
+    </div>
+  }
+  @if (form.get('scheduleType')?.value === ScheduleType.Exact) {
+    <small class="text-muted d-block mt-1">Keep enough time for travel and wrap‑up.</small>
+  }
+</div>
+
+<div class="mb-3">
+  <label class="form-label fw-semibold text-muted" for="assignmentNotes">Notes</label>
+  <textarea id="assignmentNotes" pTextarea rows="3" formControlName="notes" class="w-100"></textarea>
+</div>
+
+@if (isRecurring) {
+  <div class="mb-3">
+    <label class="form-label fw-semibold text-muted" for="pattern">Frequency</label>
+    <p-select inputId="pattern" formControlName="pattern" [options]="patternOptions" optionLabel="label" optionValue="value" size="small" [fluid]="true" />
+  </div>
+  <div class="mb-3">
+    <label class="form-label fw-semibold text-muted" for="interval">Interval</label>
+    <p-inputnumber inputId="interval" formControlName="interval" [min]="1" [fluid]="true" />
+    @if (form.get('interval')?.touched && form.get('interval')?.errors) {
+      <div class="text-danger small">
+        Interval must be at least 1.
+      </div>
+    }
+  </div>
+  @if (form.get('pattern')?.value === 'Weekly') {
+    <div class="mb-3">
+      <span class="form-label fw-semibold text-muted">Days of Week</span>
+      <div class="d-flex gap-2">
+        @for (day of weekDays; track day) {
+          <label class="form-check form-check-inline">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              [value]="day.value"
+              (change)="onDayOfWeekChange(day.value, $event)"
+              [checked]="isDaySelected(day.value)">
+              <span class="form-check-label">{{ day.name }}</span>
+            </label>
+          }
+        </div>
+        @if (form.get('dayOfWeek')?.touched && form.get('dayOfWeek')?.errors) {
+          <div class="text-danger small">
+            Select at least one day.
+          </div>
+        }
+      </div>
+    }
+    @if (form.get('pattern')?.value === 'Monthly') {
+      <div class="mb-3">
+        <label class="form-label fw-semibold text-muted" for="dayOfMonth">Day of Month</label>
+        <p-inputnumber inputId="dayOfMonth" formControlName="dayOfMonth" [min]="1" [max]="31" [fluid]="true" />
+        @if (form.get('dayOfMonth')?.touched && form.get('dayOfMonth')?.errors) {
+          <div class="text-danger small">
+            Choose a day between 1 and 31.
+          </div>
+        }
+      </div>
+    }
+    <div class="mb-3">
+      <label class="form-label fw-semibold text-muted" for="endType">Ends</label>
+      <p-select inputId="endType" formControlName="endType" [options]="endTypeOptions" optionLabel="label" optionValue="value" size="small" [fluid]="true" />
+    </div>
+    @if (form.get('endType')?.value === 'OnDate') {
+      <div class="mb-3">
+        <label class="form-label fw-semibold text-muted" for="endDate">End Date</label>
+        <p-datepicker inputId="endDate" formControlName="endDate" [fluid]="true" />
+        @if (form.get('endDate')?.touched && form.get('endDate')?.errors) {
+          <div class="text-danger small">
+            End date is required.
+          </div>
+        }
+      </div>
+    }
+    @if (form.get('endType')?.value === 'AfterCount') {
+      <div class="mb-3">
+        <label class="form-label fw-semibold text-muted" for="occurrenceCount">Occurrences</label>
+        <p-inputnumber inputId="occurrenceCount" formControlName="occurrenceCount" [min]="1" [fluid]="true" />
+        @if (form.get('occurrenceCount')?.touched && form.get('occurrenceCount')?.errors) {
+          <div class="text-danger small">
+            Occurrence count must be at least 1.
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <div class="d-flex justify-content-end mt-4">
+    <button
+      type="submit"
+      class="btn btn-primary fw-semibold">
+      Save Assignment
+    </button>
+  </div>
+</form>

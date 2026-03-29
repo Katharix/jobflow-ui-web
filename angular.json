@@ -40,11 +40,14 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "404.html",
+                "input": "public",
+                "output": "/"
+              }
             ],
             "styles": [
-              "node_modules/@rg-software/angular-archwizard/styles/archwizard.css",
-              "node_modules/@syncfusion/ej2-bootstrap5-theme/styles/bootstrap5.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -79,6 +82,31 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "staging": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "6mb",
+                  "maximumError": "12mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2mb",
+                  "maximumError": "4mb"
+                }
+              ],
+              "optimization": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "sourceMap": false,
+              "outputHashing": "all"
             }
           },
           "defaultConfiguration": "production"
@@ -91,6 +119,9 @@
             },
             "development": {
               "buildTarget": "jobflow-ui-web:build:development"
+            },
+            "staging": {
+              "buildTarget": "jobflow-ui-web:build:staging"
             }
           },
           "defaultConfiguration": "development"
@@ -104,6 +135,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
+            "karmaConfig": "karma.conf.cjs",
             "polyfills": [
               "zone.js",
               "zone.js/testing"
@@ -115,17 +147,27 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/@rg-software/angular-archwizard/styles/archwizard.css",
-              "node_modules/@syncfusion/ej2-bootstrap5-theme/styles/bootstrap5.css",
               "src/styles.scss"
             ],
             "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": false,
+    "schematicCollections": [
+      "angular-eslint"
+    ]
   }
 }

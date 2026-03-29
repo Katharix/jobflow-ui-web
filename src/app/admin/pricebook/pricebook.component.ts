@@ -1,6 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {filter, distinctUntilChanged} from 'rxjs/operators';
-import {CommonModule} from '@angular/common';
+
 import {LucideAngularModule} from 'lucide-angular';
 import {Product} from './models/product';
 import {
@@ -18,16 +18,25 @@ import {
    AddEditPriceBookCategoryDialogComponent
 } from './add-edit-pricebook-category-dialog/add-edit-pricebook-category-dialog.component';
 import {ToastService} from '../../common/toast/toast.service';
-import {RouterLink, RouterLinkActive} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
+import {PageHeaderComponent} from '../dashboard/page-header/page-header.component';
 
 @Component({
    selector: 'app-pricebook',
    standalone: true,
-   imports: [CommonModule, LucideAngularModule, RouterLink, RouterLinkActive],
-   templateUrl: './pricebook.component.html'
+   imports: [LucideAngularModule, RouterLink, PageHeaderComponent],
+   templateUrl: './pricebook.component.html',
+   styleUrls: ['./pricebook.component.scss']
 })
 export class PriceBookComponent implements OnInit {
+   private priceBookCategoryService = inject(PriceBookCategoryService);
+   private organizationContext = inject(OrganizationContextService);
+   private toast = inject(ToastService);
+   private modal = inject(ModalService);
+   private route = inject(ActivatedRoute);
+
    organizationId: string | null = null;
+   private onboardingActionHandled = false;
 
    headerActions = [
       {
@@ -45,12 +54,7 @@ export class PriceBookComponent implements OnInit {
    error: string | null = null;
    organization: OrganizationDto
 
-   constructor(
-      private priceBookCategoryService: PriceBookCategoryService,
-      private organizationContext: OrganizationContextService,
-      private toast: ToastService,
-      private modal: ModalService,
-   ) {
+   constructor() {
       this.organizationContext.org$.subscribe(org => {
          if (org) {
             this.organization = org;
@@ -70,6 +74,14 @@ export class PriceBookComponent implements OnInit {
             this.organizationId = org.id!;
             this.loadCategories();
          });
+
+      this.route.queryParamMap.subscribe(params => {
+         if (this.onboardingActionHandled) return;
+         if (params.get('onboardingAction') !== 'open-pricebook-modal') return;
+
+         this.openAddMaterialDialog();
+         this.onboardingActionHandled = true;
+      });
    }
 
    private loadCategories(): void {
@@ -139,15 +151,18 @@ export class PriceBookComponent implements OnInit {
       });
    }
 
-   viewCategoryItems(category: PriceBookCategoryDto): void {
+   viewCategoryItems(_category: PriceBookCategoryDto): void {
+      void _category;
       // navigate or open a modal
    }
 
-   editMaterial(material: Product): void {
+   editMaterial(_material: Product): void {
+      void _material;
       // logic to edit
    }
 
-   deleteMaterial(material: Product): void {
+   deleteMaterial(_material: Product): void {
+      void _material;
       // logic to delete
    }
 

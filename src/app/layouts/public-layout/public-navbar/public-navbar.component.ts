@@ -1,56 +1,83 @@
-import { CommonModule, TitleCasePipe } from '@angular/common';
-import { Component, HostListener, Input, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Component, HostListener, Input, inject } from '@angular/core';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+import { filter } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-public-navbar',
   standalone: true,
-  imports: [CommonModule, NgbCollapseModule,TitleCasePipe,RouterLink],
+  imports: [CommonModule, NgbCollapseModule, RouterLink, TranslateModule],
   templateUrl: './public-navbar.component.html',
   styleUrl: './public-navbar.component.scss'
 })
 export class PublicNavbarComponent {
-  navLinks=["home","about","features","pricing","contact"]
+  private router = inject(Router);
+
+  navLinks = ['home', 'about', 'features', 'pricing', 'contact'];
 
   @Input() navbarLight?: boolean
   isCollapsed = true;
   isSticky = false
 
   currentSection = 'home';
+  private pendingSection: string | null = null;
 
-    // Listen to scroll event
-    @HostListener('window:scroll', ['$event'])
-    onWindowScroll() {
-      this.checkActiveSection();
-      this.isSticky = window.scrollY >= 50
-    }
-  
-    // Check which section is currently in view 249965
-    checkActiveSection() {
-      const sections = document.querySelectorAll('.section');
-      const scrollPosition = window.pageYOffset + 50; // You can adjust the offset based on your needs
-  
-      sections.forEach((section: any) => {
-        if (scrollPosition >= section.offsetTop && scrollPosition < section.offsetTop + section.offsetHeight) {
-          this.currentSection = section.id;
+  constructor() {
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe(() => {
+        if (!this.pendingSection) {
+          return;
         }
+
+        const sectionId = this.pendingSection;
+        this.pendingSection = null;
+        setTimeout(() => this.scrollToSection(sectionId), 0);
       });
-    }
-  
-    // Scroll to a specific section when a navbar link is clicked
-    scrollToSection(sectionId: string) {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        window.scrollTo({
-          top: element.offsetTop,
-          behavior: 'smooth'
-        });
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    this.checkActiveSection();
+    this.isSticky = window.scrollY >= 50;
+  }
+
+  checkActiveSection(): void {
+    const sections = document.querySelectorAll<HTMLElement>('section[id]');
+    const scrollPosition = window.pageYOffset + 120;
+
+    sections.forEach((section) => {
+      if (scrollPosition >= section.offsetTop && scrollPosition < section.offsetTop + section.offsetHeight) {
+        this.currentSection = section.id;
       }
+    });
+  }
+
+  scrollToSection(sectionId: string): void {
+    const element = document.getElementById(sectionId);
+    if (!element) return;
+
+    const navbarOffset = 85;
+    const top = Math.max(element.offsetTop - navbarOffset, 0);
+    window.scrollTo({ top, behavior: 'smooth' });
+    this.isCollapsed = true;
+  }
+
+  navigateToSection(sectionId: string): void {
+    const onHome = this.router.url === '/' || this.router.url.startsWith('/#');
+    if (onHome) {
+      this.scrollToSection(sectionId);
+      return;
     }
-  
-    // Check if the section is active
-    isActiveSection(sectionId: string): boolean {
-      return this.currentSection === sectionId;
-    }
+
+    this.pendingSection = sectionId;
+    this.router.navigate(['/'], { fragment: sectionId });
+    this.isCollapsed = true;
+  }
+
+  isActiveSection(sectionId: string): boolean {
+    return this.currentSection === sectionId;
+  }
 }

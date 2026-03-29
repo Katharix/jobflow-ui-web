@@ -1,0 +1,96 @@
+<section class="legal-hero">
+  <div class="container">
+    <div class="legal-hero__inner">
+      <p class="legal-eyebrow">Legal</p>
+      <h1>Privacy Policy</h1>
+      <p class="legal-hero__lead">
+        This Policy explains how {{ companyName }} collects, uses, and safeguards personal information for {{ legalEntity }}.
+      </p>
+      <div class="legal-meta">
+        <span>Last updated: {{ lastUpdated }}</span>
+        <span>Questions? <a [href]="'mailto:' + contactEmail">{{ contactEmail }}</a></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="legal-content">
+  <div class="container">
+    <div class="legal-card">
+      <h2>1. Company Information</h2>
+      <p>
+        {{ companyName }} is an app built by {{ legalEntity }} in {{ jurisdiction }}. Business address: {{ businessAddress }}.
+      </p>
+
+      <h2>2. Information We Collect</h2>
+      <ul>
+        <li>Account details such as name, email, phone, and company information.</li>
+        <li>Job, scheduling, and billing data you enter into the service.</li>
+        <li>Usage data about how you use the platform and its features.</li>
+        <li>Payment and billing details when you subscribe.</li>
+      </ul>
+
+      <h2>3. How We Use Information</h2>
+      <ul>
+        <li>Provide, maintain, and improve the service.</li>
+        <li>Process transactions and manage subscriptions.</li>
+        <li>Provide customer support and respond to requests.</li>
+        <li>Send service-related messages and product updates.</li>
+      </ul>
+
+      <h2>4. Sharing of Information</h2>
+      <p>
+        We do not sell your personal data. We may share information with trusted service providers who help us operate the platform,
+        under confidentiality obligations.
+      </p>
+      <ul>
+        <li>Stripe and Square for payment processing.</li>
+        <li>Twilio for communications and notifications.</li>
+      </ul>
+
+      <h2>5. Data Retention</h2>
+      <p>
+        We retain information as long as needed to provide services, comply with legal obligations, resolve disputes, and enforce
+        our agreements.
+      </p>
+
+      <h2>6. Security</h2>
+      <p>
+        We use industry-standard safeguards to protect your data. No system is 100% secure, but we work to protect your information.
+      </p>
+      <p>
+        We are committed to compliance with OWASP guidance, SOC 2 Type II controls, and PCI DSS requirements where applicable.
+        We may still be in progress toward formal certification, and we will only state certification in writing once achieved.
+      </p>
+
+      <h2>7. Your Choices</h2>
+      <ul>
+        <li>Access and update your account information.</li>
+        <li>Request an export of your account data.</li>
+        <li>Request deletion of your account data, subject to legal requirements.</li>
+        <li>Opt out of marketing communications.</li>
+      </ul>
+
+      <h2>8. Cookies</h2>
+      <p>
+        We use cookies and similar technologies to provide functionality and improve the experience. You can manage cookie settings
+        in your browser.
+      </p>
+
+      <h2>9. Changes to This Policy</h2>
+      <p>
+        We may update this Policy from time to time. We will post changes here and revise the "Last updated" date.
+      </p>
+
+      <h2>10. Contact</h2>
+      <p>
+        For questions about this Policy, contact us at <a [href]="'mailto:' + contactEmail">{{ contactEmail }}</a>.
+      </p>
+
+      <div class="legal-footer">
+        <a routerLink="/terms">Read Terms & Conditions</a>
+        <a routerLink="/">Back to Home</a>
+      </div>
+    </div>
+  </div>
+</section>

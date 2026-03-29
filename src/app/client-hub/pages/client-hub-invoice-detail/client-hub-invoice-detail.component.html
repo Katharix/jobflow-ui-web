@@ -1,0 +1,139 @@
+<section class="client-page">
+  <header class="client-page-head">
+    <div>
+      <h1>Invoice Details</h1>
+      <p class="client-page-subtitle">Review this invoice and pay securely.</p>
+    </div>
+    <a class="btn btn-outline-primary" routerLink="/client-hub/invoices">Back to Invoices</a>
+  </header>
+
+  @if (isLoading) {
+    <div class="alert alert-info">Loading invoice details...</div>
+  }
+
+  @if (error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+
+  @if (paymentError) {
+    <div class="alert alert-danger">{{ paymentError }}</div>
+  }
+
+  @if (!isLoading && !error && invoice) {
+    <div class="client-surface invoice-detail p-3 p-md-4">
+      <div class="detail-head">
+        <div>
+          <p class="eyebrow">Invoice</p>
+          <h2>Invoice #{{ invoice.invoiceNumber }}</h2>
+          <div class="meta-row">
+            <span>Invoice date: {{ formatDate(invoice.invoiceDate) }}</span>
+            <span>Due date: {{ formatDate(invoice.dueDate) }}</span>
+          </div>
+        </div>
+        <span class="badge rounded-pill invoice-status" [class]="'badge rounded-pill invoice-status ' + statusClass(invoice.status)">
+          {{ statusLabel }}
+        </span>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <span>Balance due</span>
+          <strong [class]="balanceDueClass">{{ formatCurrency(invoice.balanceDue) }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Amount paid</span>
+          <strong class="amount-positive">{{ formatCurrency(invoice.amountPaid) }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Total amount</span>
+          <strong>{{ formatCurrency(invoice.totalAmount) }}</strong>
+        </div>
+      </div>
+
+      <div class="table-responsive mt-3">
+        <table class="table client-table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th class="text-end">Qty</th>
+              <th class="text-end">Unit Price</th>
+              <th class="text-end">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of invoice.lineItems; track $index) {
+              <tr>
+                <td>{{ item.description }}</td>
+                <td class="text-end">{{ item.quantity }}</td>
+                <td class="text-end">{{ formatCurrency(item.unitPrice) }}</td>
+                <td class="text-end fw-semibold">{{ formatCurrency(lineItemAmount(item)) }}</td>
+              </tr>
+            }
+
+            @if (invoice.lineItems.length === 0) {
+              <tr>
+                <td class="text-center text-muted py-4" colspan="4">No line items on this invoice.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="invoice-totals mt-3">
+        <div>
+          <span>Total amount</span>
+          <strong>{{ formatCurrency(invoice.totalAmount) }}</strong>
+        </div>
+        <div>
+          <span>Amount paid</span>
+          <strong class="amount-positive">{{ formatCurrency(invoice.amountPaid) }}</strong>
+        </div>
+        <div>
+          <span>Balance due</span>
+          <strong [class]="balanceDueClass">{{ formatCurrency(invoice.balanceDue) }}</strong>
+        </div>
+      </div>
+
+      @if (!showPaymentForm) {
+        <div class="detail-actions mt-4">
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="!canPay"
+            (click)="payInvoice()"
+          >
+            {{ isPaying ? 'Opening Checkout...' : payButtonLabel }}
+          </button>
+        </div>
+
+        <p class="text-muted small mt-2 mb-0">
+          Payment opens a secure {{ paymentProviderLabel }} checkout session.
+        </p>
+      }
+
+      @if (showPaymentForm) {
+        <div class="payment-surface mt-4">
+          <div #paymentElementContainer class="payment-element"></div>
+          <div class="detail-actions mt-3">
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="isConfirming"
+              (click)="confirmPayment()"
+            >
+              {{ isConfirming ? 'Processing...' : 'Confirm Payment' }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              [disabled]="isConfirming"
+              (click)="cancelPayment()"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>

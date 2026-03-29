@@ -1,0 +1,135 @@
+.support-list {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.support-list__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 16px;
+  padding: 1.2rem 1.5rem;
+}
+
+.support-list__composer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 16px;
+  padding: 1.2rem 1.5rem;
+  align-items: end;
+}
+
+.support-org-select {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.support-list__grid {
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 16px;
+  padding: 1.2rem;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+}
+
+.support-list__empty {
+  display: grid;
+  place-items: center;
+  min-height: 220px;
+}
+
+.status-chip {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-chip--urgent {
+  background: rgba(239, 68, 68, 0.16);
+  color: #b91c1c;
+}
+
+.status-chip--high {
+  background: rgba(249, 115, 22, 0.18);
+  color: #c2410c;
+}
+
+.status-chip--normal {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--jf-accent);
+}
+
+.status-chip--low {
+  background: rgba(16, 185, 129, 0.18);
+  color: #047857;
+}
+
+.status-chip--resolved {
+  background: rgba(148, 163, 184, 0.35);
+  color: #475569;
+}
+
+.support-modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 1050;
+}
+
+.support-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.support-modal__panel {
+  position: relative;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1.5rem;
+  width: min(520px, 90vw);
+  display: grid;
+  gap: 1rem;
+  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.2);
+}
+
+.support-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.support-modal__list {
+  display: grid;
+  gap: 0.6rem;
+  max-height: 280px;
+  overflow: auto;
+}
+
+.support-modal__item {
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.support-modal__item:hover {
+  background: #e2e8f0;
+}

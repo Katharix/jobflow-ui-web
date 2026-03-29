@@ -1,0 +1,19 @@
+.sidebar .sidebar-nav .nav-link {
+	position: relative;
+	display: flex;
+	align-items: center;
+	padding: .625rem 1.188rem;
+}
+
+.sidebar .sidebar-nav .link-icon {
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	color: #fff;
+}
+
+.sidebar .sidebar-nav .link-title {
+	margin-left: 1.8rem;
+}
+
+

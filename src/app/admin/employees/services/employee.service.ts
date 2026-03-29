@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
-import {BaseApiService} from '../../../services/base-api.service';
+import {BaseApiService} from '../../../services/shared/base-api.service';
 import {Employee} from '../models/employee';
 
 
@@ -8,10 +8,9 @@ import {Employee} from '../models/employee';
    providedIn: 'root'
 })
 export class EmployeeService {
-   private apiUrl = 'employees';
+   private api = inject(BaseApiService);
 
-   constructor(private api: BaseApiService) {
-   }
+   private apiUrl = 'employees';
 
    getByOrganization(): Observable<Employee[]> {
       return this.api.get<Employee[]>(`${this.apiUrl}/organization`);

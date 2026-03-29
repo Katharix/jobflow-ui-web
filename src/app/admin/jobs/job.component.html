@@ -1,68 +1,343 @@
-﻿<app-page-header
-   title="Jobs"
-   subtitle="Manage your jobs"
-   [actions]="headerActions"
+<app-page-header
+  [title]="'admin.jobs.title' | translate"
+  [subtitle]="'admin.jobs.subtitle' | translate"
 ></app-page-header>
-<div *ngIf="error" class="alert alert-danger mb-3">
-   {{ error }}
-</div>
 
-<jobflow-drawer
-   [open]="isDrawerOpen"
-   title="Add Job"
-   (closed)="closeDrawer()"
->
-   <job-create/>
-</jobflow-drawer>
+@if (error) {
+  <div class="alert alert-danger mb-3">
+    {{ error }}
+  </div>
+}
 
-<ng-template #jobTitleTemplate let-job>
-   <div class="job-cell">
-      <div class="job-title">{{ job.title }}</div>
-      <div class="job-client">
-         {{ job.organizationClient.firstName }}
-         {{ job.organizationClient.lastName }}
+<app-jobflow-drawer
+  [open]="isDrawerOpen"
+  [title]="'admin.jobs.drawer.addTitle' | translate"
+  (closed)="onDrawerClosed()"
+  >
+  <app-job-create [job]="editingJob" (saved)="onCreateSaved()" (cancelled)="onCreateCancelled()"/>
+</app-jobflow-drawer>
+
+<section class="jobflow-hero">
+  <div class="jobflow-hero__intro">
+    <span class="jobflow-hero__eyebrow">{{ 'admin.jobs.hero.eyebrow' | translate }}</span>
+    <p>{{ 'admin.jobs.hero.subtitle' | translate }}</p>
+  </div>
+  <div class="jobflow-hero__metrics">
+    <div class="jobflow-metric">
+      <span class="jobflow-metric__label">{{ 'admin.jobs.metrics.total' | translate }}</span>
+      <span class="jobflow-metric__value">{{ totalJobs }}</span>
+    </div>
+    <div class="jobflow-metric">
+      <span class="jobflow-metric__label">{{ 'admin.jobs.metrics.unscheduled' | translate }}</span>
+      <span class="jobflow-metric__value">{{ unscheduledJobs.length }}</span>
+    </div>
+    <div class="jobflow-metric">
+      <span class="jobflow-metric__label">{{ 'admin.jobs.metrics.inProgress' | translate }}</span>
+      <span class="jobflow-metric__value">{{ inProgressCount }}</span>
+    </div>
+    <div class="jobflow-metric">
+      <span class="jobflow-metric__label">{{ 'admin.jobs.metrics.completed' | translate }}</span>
+      <span class="jobflow-metric__value">{{ completedCount }}</span>
+    </div>
+  </div>
+  <div class="jobflow-cta">
+    <div>
+      <p class="jobflow-cta__eyebrow">{{ 'admin.jobs.cta.eyebrow' | translate }}</p>
+      <h3>{{ 'admin.jobs.cta.title' | translate }}</h3>
+      <p>{{ 'admin.jobs.cta.subtitle' | translate }}</p>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="openAddJob()">
+      {{ 'admin.jobs.cta.button' | translate }}
+    </button>
+  </div>
+</section>
+
+<section class="jobflow-filters">
+  <div class="jobflow-filters__group">
+    <label for="jobFilterStatus">{{ 'admin.jobs.filters.status' | translate }}</label>
+    <select id="jobFilterStatus" class="form-select" [(ngModel)]="selectedStatusFilter" (change)="onFiltersChanged()">
+      <option value="">{{ 'admin.jobs.filters.allStatuses' | translate }}</option>
+      @for (status of statusOptions; track status) {
+        <option [value]="status.statusKey">
+          {{ status.label }}
+        </option>
+      }
+    </select>
+    <small class="text-muted">{{ 'admin.jobs.filters.statusHint' | translate }}</small>
+  </div>
+  <div class="jobflow-filters__group">
+    <label for="jobFilterClient">{{ 'admin.jobs.filters.client' | translate }}</label>
+    <select id="jobFilterClient" class="form-select" [(ngModel)]="selectedClientFilter" (change)="onFiltersChanged()">
+      <option value="">{{ 'admin.jobs.filters.allClients' | translate }}</option>
+      @for (client of clientOptions; track client) {
+        <option [value]="client.value">
+          {{ client.label }}
+        </option>
+      }
+    </select>
+    <small class="text-muted">{{ 'admin.jobs.filters.clientHint' | translate }}</small>
+  </div>
+  <div class="jobflow-filters__group">
+    <label for="jobFilterAssignee">{{ 'admin.jobs.filters.assignee' | translate }}</label>
+    <select id="jobFilterAssignee" class="form-select" [(ngModel)]="selectedAssigneeFilter" (change)="onFiltersChanged()">
+      <option value="">{{ 'admin.jobs.filters.allAssignees' | translate }}</option>
+      @for (assignee of assigneeOptions; track assignee) {
+        <option [value]="assignee.value">
+          {{ assignee.label }}
+        </option>
+      }
+    </select>
+    <small class="text-muted">{{ 'admin.jobs.filters.assigneeHint' | translate }}</small>
+  </div>
+  <button class="btn btn-link jobflow-filters__clear" type="button" (click)="clearFilters()">
+    {{ 'admin.jobs.filters.clear' | translate }}
+  </button>
+</section>
+
+<section class="jobflow-lanes">
+  <div class="jobflow-lanes__main">
+    <div class="jobflow-lane">
+      <div class="jobflow-lane__header">
+        <div>
+          <h5>{{ 'admin.jobs.lanes.unscheduled.title' | translate }}</h5>
+          <p>{{ 'admin.jobs.lanes.unscheduled.subtitle' | translate }}</p>
+          <small class="text-muted">{{ 'admin.jobs.lanes.unscheduled.hint' | translate }}</small>
+        </div>
+        <span class="jobflow-lane__count">{{ unscheduledJobs.length }} {{ 'admin.jobs.lanes.unscheduled.count' | translate }}</span>
       </div>
-   </div>
-</ng-template>
+      @if (unscheduledJobs.length) {
+        <div class="jobflow-lane__body">
+          @for (job of unscheduledJobs; track job) {
+            <article
+              class="jobflow-card"
+              [class.is-active]="selectedJob?.id === job.id"
+              (click)="selectJob(job)"
+              (keydown.enter)="selectJob(job)"
+              (keydown.space)="selectJob(job); $event.preventDefault()"
+              tabindex="0"
+              role="button"
+              >
+              <div>
+                <h6>{{ job.title || ('admin.jobs.labels.untitled' | translate) }}</h6>
+                <p>{{ getClientName(job) }}</p>
+              </div>
+              <div class="jobflow-card__meta">
+                <span class="job-status-chip" [ngClass]="getStatusChipClass(job)">
+                  {{ getStatusChipLabel(job) }}
+                </span>
+                <button class="btn btn-sm btn-primary" (click)="scheduleJob(job); $event.stopPropagation()">{{ 'admin.jobs.actions.schedule' | translate }}</button>
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="jobflow-empty">
+          <p>{{ 'admin.jobs.empty.unscheduled.title' | translate }}</p>
+          <span>{{ 'admin.jobs.empty.unscheduled.subtitle' | translate }}</span>
+        </div>
+      }
+    </div>
 
-<ng-template #actionsTemplate let-data>
-   <div class="grid-actions">
+    <div class="jobflow-lane">
+      <div class="jobflow-lane__header">
+        <div>
+          <h5>{{ 'admin.jobs.lanes.scheduled.title' | translate }}</h5>
+          <p>{{ 'admin.jobs.lanes.scheduled.subtitle' | translate }}</p>
+          <small class="text-muted">{{ 'admin.jobs.lanes.scheduled.hint' | translate }}</small>
+        </div>
+        <span class="jobflow-lane__count">{{ upcomingScheduledJobs.length }} {{ 'admin.jobs.lanes.scheduled.count' | translate }}</span>
+      </div>
+      @if (upcomingScheduledJobs.length) {
+        <div class="jobflow-lane__body">
+          @for (job of upcomingScheduledJobs; track job) {
+            <article
+              class="jobflow-card jobflow-card--scheduled"
+              [class.is-active]="selectedJob?.id === job.id"
+              (click)="selectJob(job)"
+              (keydown.enter)="selectJob(job)"
+              (keydown.space)="selectJob(job); $event.preventDefault()"
+              tabindex="0"
+              role="button"
+              >
+              <div>
+                <h6>{{ job.title || ('admin.jobs.labels.untitled' | translate) }}</h6>
+                <p>{{ getClientName(job) }}</p>
+                @if (getTimelineMarkers(job).length) {
+                  <div class="jobflow-timeline">
+                    <span class="jobflow-timeline__rail"></span>
+                    @for (marker of getTimelineMarkers(job); track marker) {
+                      <span class="jobflow-timeline__dot" [attr.title]="getTimelineTooltip(marker.date)">
+                        <span>{{ marker.label }}</span>
+                      </span>
+                    }
+                  </div>
+                }
+              </div>
+              <div class="jobflow-card__meta">
+                @if (getAssigneeStack(job).length) {
+                  <div class="jobflow-assignee-stack">
+                    @for (initials of getAssigneeStack(job); track initials) {
+                      <span class="jobflow-assignee-dot">
+                        {{ initials }}
+                      </span>
+                    }
+                    @if (getAssigneeOverflow(job) > 0) {
+                      <span class="jobflow-assignee-dot jobflow-assignee-dot--more">
+                        +{{ getAssigneeOverflow(job) }}
+                      </span>
+                    }
+                  </div>
+                }
+                <span class="jobflow-card__time">{{ getNextScheduledLabel(job) }}</span>
+                <span class="job-status-chip" [ngClass]="getStatusChipClass(job)">
+                  {{ getStatusChipLabel(job) }}
+                </span>
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="jobflow-empty">
+          <p>{{ 'admin.jobs.empty.scheduled.title' | translate }}</p>
+          <span>{{ 'admin.jobs.empty.scheduled.subtitle' | translate }}</span>
+        </div>
+      }
+    </div>
+  </div>
 
-      <button
-         *ngIf="isUnscheduled(data)"
-         class="btn btn-sm btn-primary"
-         (click)="scheduleJob(data)">
-         Schedule
-      </button>
+  <aside class="jobflow-preview">
+    <div class="jobflow-preview__header">
+      <span class="jobflow-preview__eyebrow">{{ 'admin.jobs.preview.eyebrow' | translate }}</span>
+      <h5>{{ selectedJob?.title || ('admin.jobs.preview.titleFallback' | translate) }}</h5>
+      <p>{{ selectedJob ? getClientName(selectedJob) : ('admin.jobs.preview.subtitle' | translate) }}</p>
+    </div>
 
-      <button
-         class="btn btn-sm btn-link"
-         (click)="editJob(data)">
-         Edit
-      </button>
+    @if (selectedJob) {
+      <div class="jobflow-preview__body">
+        <div class="jobflow-preview__row">
+          <span>{{ 'admin.jobs.preview.status' | translate }}</span>
+          <div class="jobflow-status-toggle">
+            @for (status of statusOptions; track status) {
+              <button
+                class="jobflow-status-toggle__btn"
+                [class.is-active]="resolveLifecycleStatus(selectedJob) === status.value"
+                (click)="updateJobStatus(status.value)"
+                [disabled]="updatingStatus"
+              >{{ status.label }}</button>
+            }
+          </div>
+        </div>
+        <div class="jobflow-preview__row">
+          <span>{{ 'admin.jobs.preview.nextSchedule' | translate }}</span>
+          <span>{{ getNextScheduledLabel(selectedJob) }}</span>
+        </div>
+        <div class="jobflow-preview__assignees">
+          <span>{{ 'admin.jobs.preview.quickAssign' | translate }}</span>
+          @if (!previewAssignment) {
+            <p class="text-muted small mb-2">{{ 'admin.jobs.preview.assignHint' | translate }}</p>
+          }
+          @if (previewAssignment) {
+            <div class="jobflow-assignee-list">
+              @for (employee of employees; track employee) {
+                <label class="jobflow-assignee-chip">
+                  <input
+                    type="checkbox"
+                    [checked]="previewAssignees.has(employee.id)"
+                    (change)="togglePreviewAssignee(employee.id)"
+                    />
+                    <span>{{ employee.firstName }} {{ employee.lastName }}</span>
+                  </label>
+                }
+              </div>
+            }
+            <button
+              class="btn btn-outline-primary btn-sm"
+              type="button"
+              (click)="savePreviewAssignees()"
+              [disabled]="!previewAssignment || updatingAssignees"
+              >
+              {{ updatingAssignees ? ('admin.jobs.preview.saving' | translate) : ('admin.jobs.preview.applyCrew' | translate) }}
+            </button>
+          </div>
+          <div class="jobflow-preview__notes">
+            <span>{{ 'admin.jobs.preview.notes' | translate }}</span>
+            <p>{{ selectedJob.comments || ('admin.jobs.preview.noNotes' | translate) }}</p>
+          </div>
+          <div class="jobflow-preview__actions">
+            @if (isUnscheduled(selectedJob)) {
+              <button class="btn btn-primary" (click)="scheduleJob(selectedJob)">{{ 'admin.jobs.actions.schedule' | translate }}</button>
+            }
+            <button class="btn btn-outline-primary" (click)="editJob(selectedJob)">{{ 'admin.jobs.actions.edit' | translate }}</button>
+            @if (canShareUpdates) {
+              <button
+                class="btn btn-outline-secondary"
+                (click)="copyClientUpdatesLink(selectedJob)"
+                >
+                {{ 'admin.jobs.actions.copyUpdates' | translate }}
+              </button>
+            }
+            <a class="btn btn-outline-secondary" routerLink="/admin/dispatch">{{ 'admin.jobs.actions.openDispatch' | translate }}</a>
+          </div>
+        </div>
+      }
+    </aside>
+  </section>
 
-      <button
-         class="btn btn-sm btn-link text-danger"
-         (click)="deleteJob(data)">
-         Delete
-      </button>
+  <section class="jobflow-table">
+    <div class="jobflow-table__header">
+      <h5>{{ 'admin.jobs.table.title' | translate }}</h5>
+      <p>{{ 'admin.jobs.table.subtitle' | translate }}</p>
+    </div>
 
-   </div>
-</ng-template>
+    <ng-template #jobTitleTemplate let-job>
+      <div class="job-cell">
+        <div class="job-title">{{ job.title || ('admin.jobs.labels.untitled' | translate) }}</div>
+        <div class="job-client">
+          {{ job.organizationClient.firstName }}
+          {{ job.organizationClient.lastName }}
+        </div>
+      </div>
+    </ng-template>
 
-<ng-template #statusTemplate let-job>
-   <span
-      class="job-status-chip"
-      [ngClass]="getStatusChipClass(job)">
-      {{ getStatusChipLabel(job) }}
-   </span>
-</ng-template>
+    <ng-template #actionsTemplate let-data>
+      <div class="grid-actions">
+        @if (isUnscheduled(data)) {
+          <button
+            class="btn btn-sm btn-primary"
+            (click)="scheduleJob(data)">
+            {{ 'admin.jobs.actions.schedule' | translate }}
+          </button>
+        }
 
-<jobflow-grid
-   [data]="items"
-   [columns]="columns"
-   [pageSettings]="pageSettings"
-   [height]="600"
-   [showSearchBar]="true"
-   (commandClick)="onCommandClick($event)"
-></jobflow-grid>
+        <button
+          class="btn btn-sm btn-link"
+          (click)="editJob(data)">
+          {{ 'admin.jobs.actions.edit' | translate }}
+        </button>
+
+        <button
+          class="btn btn-sm btn-link text-danger"
+          (click)="deleteJob(data)">
+          {{ 'admin.jobs.actions.delete' | translate }}
+        </button>
+      </div>
+    </ng-template>
+
+    <ng-template #statusTemplate let-job>
+      <span
+        class="job-status-chip"
+        [ngClass]="getStatusChipClass(job)">
+        {{ getStatusChipLabel(job) }}
+      </span>
+    </ng-template>
+
+    <app-jobflow-grid
+      [data]="items"
+      [columns]="columns"
+      [pageSettings]="pageSettings"
+      [height]="520"
+      [showSearchBar]="true"
+      (commandClick)="onCommandClick($event)"
+    ></app-jobflow-grid>
+  </section>
+

@@ -1,0 +1,132 @@
+<section class="client-auth-shell">
+  <div class="client-auth-wrapper">
+    <div class="client-auth-container">
+      <div class="client-auth-header">
+        <div class="client-auth-brand">
+          <img src="/assets/public/images/Asset%201.png" alt="JobFlow" class="client-auth-logo" />
+        </div>
+        <h1 class="client-auth-title">Client Hub</h1>
+        <p class="client-auth-subtitle">Access your portal with a secure link—no password needed.</p>
+      </div>
+
+      <div class="client-auth-form-section">
+        @if (isConsumingToken) {
+          <div class="alert alert-info mb-4">Completing your sign-in...</div>
+        }
+
+        @if (sentTo) {
+          <div class="alert alert-success mb-4">
+            Magic link sent to <strong>{{ sentTo }}</strong>
+          </div>
+        }
+
+        @if (error) {
+          <div class="alert alert-danger mb-4">{{ error }}</div>
+        }
+
+        <form (ngSubmit)="sendMagicLink(magicLinkForm)" #magicLinkForm="ngForm" novalidate>
+          <div class="mb-4">
+            <label for="emailAddress" class="form-label">Email address</label>
+            <input
+              #emailModel="ngModel"
+              id="emailAddress"
+              name="emailAddress"
+              type="email"
+              class="form-control"
+              [class.is-invalid]="(emailModel.invalid && (emailModel.touched || attemptedSubmit))"
+              [(ngModel)]="emailAddress"
+              (ngModelChange)="onEmailChanged()"
+              [disabled]="isSubmitting || isConsumingToken"
+              required
+              email
+              maxlength="120"
+              autocomplete="email"
+              placeholder="your.email@company.com"
+            />
+            @if (emailModel.invalid && (emailModel.touched || attemptedSubmit)) {
+              <div class="invalid-feedback d-block">
+                @if (emailModel.errors?.['required']) {
+                  <span>Email is required.</span>
+                }
+                @if (emailModel.errors?.['email']) {
+                  <span>Enter a valid email address.</span>
+                }
+                @if (emailModel.errors?.['maxlength']) {
+                  <span>Email must be 120 characters or fewer.</span>
+                }
+              </div>
+            }
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary w-100"
+            [disabled]="isSubmitting || isConsumingToken"
+          >
+            {{ isSubmitting ? 'Sending Link...' : 'Send Magic Link' }}
+          </button>
+        </form>
+
+        @if (requiresOrganizationSelection) {
+          <div class="client-org-selection mt-4">
+            <h3>Select Your Organization</h3>
+            <p>We found multiple client records for this email. Choose one to continue.</p>
+
+            <div class="client-org-list">
+              @for (candidate of organizationCandidates; track candidate.id) {
+                <label class="client-org-item" [class.is-selected]="selectedOrganizationClientId === candidate.id">
+                  <input
+                    type="radio"
+                    name="organizationClientId"
+                    [value]="candidate.id"
+                    [(ngModel)]="selectedOrganizationClientId"
+                    [disabled]="isSubmitting || isConsumingToken"
+                  />
+                  <div>
+                    <strong>{{ candidateLabel(candidate) }}</strong>
+                    <span>{{ candidateOrganizationLabel(candidate) }}</span>
+                  </div>
+                </label>
+              }
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-primary w-100 mt-3"
+              [disabled]="isSubmitting || isConsumingToken || !selectedOrganizationClientId"
+              (click)="sendMagicLinkForSelection()"
+            >
+              {{ isSubmitting ? 'Sending Link...' : 'Send Link to Selected Organization' }}
+            </button>
+          </div>
+        }
+      </div>
+
+      <div class="client-auth-footer">
+        <p>Check your email for the sign-in link. It expires in 30 minutes.</p>
+      </div>
+    </div>
+
+    <div class="client-auth-benefits">
+      <h2>What You Can Do</h2>
+      <ul>
+        <li>
+          <strong>Review Estimates</strong>
+          <span>See detailed project estimates and pricing.</span>
+        </li>
+        <li>
+          <strong>Track Invoices</strong>
+          <span>Monitor invoice status and payment history.</span>
+        </li>
+        <li>
+          <strong>Request Work</strong>
+          <span>Submit service requests directly to your team.</span>
+        </li>
+        <li>
+          <strong>Manage Your Info</strong>
+          <span>Keep your contact details and preferences up to date.</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>

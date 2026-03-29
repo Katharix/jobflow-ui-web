@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthLayoutComponent } from '../layouts/auth-layout/auth-layout.component';
-import { AuthRedirectGuard } from '../services/auth-redirect.guard';
+import { AuthRedirectGuard } from '../core/guards/auth-redirect.guard';
 
 export default [
   {

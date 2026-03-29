@@ -1,49 +1,88 @@
-<div class="container my-5" *ngFor="let provider of paymentProviders">
-  <div class="row justify-content-center">
-    <div class="col-md-8 position-relative">
-      <!-- Coming Soon Overlay -->
-      <div
-        *ngIf="provider.provider === 'Square'"
-        class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-light bg-opacity-75 rounded"
-        style="z-index: 2;"
-      >
-        <div class="text-center">
-          <h3 class="text-primary fw-bold">Coming Soon!</h3>
+<section class="connected-payment">
+  <div class="container">
+    <header class="page-hero">
+      <div>
+        <p class="eyebrow">Connected Payments</p>
+        <h1>Choose how clients pay you</h1>
+        <p class="lead">
+          Connect Stripe or Square to accept client payments in invoices and the Client Hub.
+          You can change your provider anytime.
+        </p>
+      </div>
+      <div class="hero-card">
+        <h3>What this unlocks</h3>
+        <ul>
+          <li>Pay invoices directly in the Client Hub</li>
+          <li>Real-time payment status updates</li>
+          <li>Secure processing with provider webhooks</li>
+        </ul>
+      </div>
+    </header>
+
+    @if (callbackStatus) {
+      <div class="status-banner">
+        <div
+          class="alert"
+        [ngClass]="{
+          'alert-info': callbackStatus === 'processing',
+          'alert-success': callbackStatus === 'success',
+          'alert-danger': callbackStatus === 'error'
+        }"
+          role="alert"
+          >
+          @if (callbackProvider) {
+            <strong>{{ callbackProvider }}:</strong>
+          }
+          {{ callbackMessage }}
         </div>
       </div>
+    }
 
-      <!-- Payment Card -->
-      <div
-        class="card shadow-lg border-0 p-4"
-        [class.opacity-50]="provider.provider === 'Square'"
-      >
-        <div class="row align-items-center">
-          <!-- Logo + Button -->
-          <div class="col-md-6 text-center mb-4 mb-md-0">
+    <div class="provider-grid">
+      @for (provider of paymentProviders; track provider) {
+        <div class="provider-card" [class.provider-card--selected]="isProviderSelected(provider.provider)">
+          <div class="provider-brand">
             <img
               [src]="provider.logoPath"
-              width="180"
-              class="img-fluid mb-3"
               [alt]="provider.altLogoText"
-            />
-            <button
-              class="btn btn-primary btn-lg"
-              [disabled]="provider.provider === 'Square'"
-              (click)="createStripeConnectedAccount()"
-            >
-              Connect {{ provider.provider }}
-            </button>
+              class="provider-logo"
+              />
+              <div class="provider-tags">
+                @if (provider.provider === 'Stripe') {
+                  <span class="provider-tag">Recommended</span>
+                }
+                @if (isProviderSelected(provider.provider)) {
+                  <span class="provider-tag provider-tag--active">Selected</span>
+                }
+              </div>
+            </div>
+            <div class="provider-copy">
+              <h2>{{ provider.provider }}</h2>
+              <p class="provider-description">{{ provider.description }}</p>
+            </div>
+            <div class="provider-actions">
+              <button
+                class="btn btn-primary"
+                (click)="createConnectedAccount(provider.provider)"
+                [disabled]="isProviderSelected(provider.provider)"
+              >
+                {{ isProviderSelected(provider.provider) ? 'Connected via ' + provider.provider : 'Connect ' + provider.provider }}
+              </button>
+              @if (provider.provider === 'Square' && isProviderSelected('Square')) {
+                <button
+                  class="btn btn-outline-danger"
+                  (click)="disconnectSquare()"
+                  [disabled]="isDisconnectingSquare"
+                >
+                  {{ isDisconnectingSquare ? 'Disconnecting...' : 'Disconnect Square' }}
+                </button>
+              }
+              <p class="small-text">
+                {{ isProviderSelected(provider.provider) ? 'This provider is active for your account.' : 'You will be redirected to authorize and return here.' }}
+              </p>
+            </div>
           </div>
-
-          <!-- Description -->
-          <div class="col-md-6">
-            <h4 class="mb-3">Accept Payments Securely</h4>
-            <p class="text-muted">
-              {{ provider.description }}
-            </p>
-          </div>
-        </div>
+        }
       </div>
     </div>
-  </div>
-</div>
+  </section>

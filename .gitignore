@@ -36,6 +36,9 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+/playwright-report
+/test-results
+/tests/e2e/.auth
 
 # System files
 .DS_Store

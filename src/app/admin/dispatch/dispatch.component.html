@@ -1,0 +1,276 @@
+<app-page-header
+  title="Dispatch"
+  subtitle="Live command center for scheduling, crew assignment, and real-time status"
+></app-page-header>
+
+<section class="dispatch-layout">
+  <div class="card dispatch-hero mb-3">
+    <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
+      <div>
+        <p class="dispatch-hero__eyebrow mb-1">Today · {{ todaysDateLabel }}</p>
+        <h5 class="mb-1">Keep crews moving. Surface blockers early.</h5>
+        <p class="text-muted mb-0">Drag, drop, and dispatch without leaving the board.</p>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-primary" routerLink="/admin/jobs">Create Dispatch Ticket</a>
+        <a class="btn btn-outline-primary" routerLink="/admin/jobs">Open Jobs Board</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-6 col-lg-3">
+      <article class="card h-100 stat-card">
+        <div class="card-body">
+          <p>Open Tickets</p>
+          <h4>{{ openTickets }}</h4>
+        </div>
+      </article>
+    </div>
+    <div class="col-6 col-lg-3">
+      <article class="card h-100 stat-card">
+        <div class="card-body">
+          <p>Crews Out</p>
+          <h4>{{ crewsOut }}</h4>
+        </div>
+      </article>
+    </div>
+    <div class="col-6 col-lg-3">
+      <article class="card h-100 stat-card">
+        <div class="card-body">
+          <p>At Risk Jobs</p>
+          <h4>{{ atRiskJobs }}</h4>
+        </div>
+      </article>
+    </div>
+    <div class="col-6 col-lg-3">
+      <article class="card h-100 stat-card">
+        <div class="card-body">
+          <p>Completed Today</p>
+          <h4>{{ completedToday }}</h4>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <div class="dispatch-grid">
+    <div class="dispatch-main">
+      <div class="card dispatch-board mb-3">
+        <div class="card-body">
+          <div class="dispatch-board__header">
+            <div>
+              <h6 class="mb-1">Central Dispatch Board</h6>
+              <p class="text-muted small mb-0">Click a slot to schedule. Click a job to update status.</p>
+              <div class="text-muted small">Drag cards into open time slots to schedule fast.</div>
+            </div>
+            <div class="dispatch-board__filters">
+              <select class="form-select form-select-sm" [(ngModel)]="selectedStatus" (change)="onStatusFilterChange(selectedStatus)">
+                <option value="">All statuses</option>
+                <option value="Scheduled">Scheduled</option>
+                <option value="InProgress">In Progress</option>
+                <option value="Completed">Completed</option>
+                <option value="Canceled">Cancelled</option>
+                <option value="Skipped">Skipped</option>
+              </select>
+              <div class="text-muted small mt-1">Filter the board without hiding unscheduled work.</div>
+            </div>
+          </div>
+
+          <app-jobflow-calendar
+            [(selectedDate)]="selectedDate"
+            [eventSettings]="calendarEvents"
+            [filters]="employeeFilters"
+            [selectedFilter]="selectedEmployeeId"
+            [allowExternalDrop]="true"
+            (selectedDateChange)="onCalendarDateChange($event)"
+            (selectedFilterChange)="onEmployeeFilterChange($event)"
+            (eventCreate)="onCalendarEventCreate($event)"
+            (eventChange)="onCalendarEventUpdate($event)"
+            (eventSelect)="onCalendarEventSelect($event)"
+            (externalEventCreate)="onExternalEventCreate($event)"
+            >
+          </app-jobflow-calendar>
+        </div>
+      </div>
+
+      <div class="card dispatch-queue">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <div>
+              <h6 class="mb-1">Unscheduled Queue</h6>
+              <p class="text-muted small mb-0">Drag a job onto the calendar to assign a time.</p>
+              <div class="text-muted small">Keep this list short to reduce same-day surprises.</div>
+            </div>
+            <span class="dispatch-queue__count">{{ unscheduledJobs.length }} waiting</span>
+          </div>
+
+          @if (unscheduledJobs.length) {
+            <div #unscheduledList class="dispatch-queue__list">
+              @for (job of unscheduledJobs; track job) {
+                <article
+                  class="dispatch-queue__item"
+                  [attr.data-job-id]="job.jobId"
+                  [attr.data-title]="job.jobTitle ?? 'Assignment'"
+                  >
+                  <div>
+                    <p class="dispatch-queue__title mb-1">{{ job.jobTitle || 'Untitled job' }}</p>
+                    <p class="dispatch-queue__subtitle mb-0">{{ job.clientName || 'Client TBD' }}</p>
+                  </div>
+                  <button class="btn btn-sm btn-outline-primary" type="button" (click)="scheduleUnscheduled(job)">Schedule</button>
+                </article>
+              }
+            </div>
+          } @else {
+            <div class="dispatch-empty">
+              <p class="mb-1">No unscheduled jobs right now.</p>
+              <span class="text-muted small">New jobs will appear here automatically.</span>
+            </div>
+          }
+
+        </div>
+      </div>
+    </div>
+
+    <div class="dispatch-side">
+      <div class="card mb-3">
+        <div class="card-body">
+          <div>
+            <h6 class="mb-1">Daily Dispatch Overview</h6>
+            <p class="text-muted small mb-0">Who is assigned, with gaps and overlaps.</p>
+          </div>
+
+          @if (overviewRows.length) {
+            <div class="dispatch-overview">
+              @for (row of overviewRows; track row) {
+                <div class="dispatch-overview__row">
+                  <div>
+                    <p class="dispatch-overview__name mb-1">{{ row.employeeName }}</p>
+                    @if (row.conflicts) {
+                      <span class="dispatch-overview__meta">{{ row.conflicts }} conflict{{ row.conflicts === 1 ? '' : 's' }}</span>
+                    }
+                  </div>
+                  <div class="dispatch-overview__chips">
+                    @for (item of row.assignments; track item) {
+                      <span class="dispatch-chip">
+                        {{ item.jobTitle || 'Assignment' }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="text-muted small mb-0">No assignments scheduled for this day yet.</p>
+          }
+
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body d-grid gap-3">
+          <div>
+            <h6 class="mb-1">Next Best Actions</h6>
+            <p class="text-muted small mb-0">Simple, high-value prompts for dispatch leads.</p>
+          </div>
+
+          <ul class="dispatch-actions mb-0">
+            @for (action of nextActions; track action) {
+              <li>{{ action }}</li>
+            }
+          </ul>
+
+          <div class="d-grid gap-2 pt-2">
+            <a class="btn btn-outline-primary" routerLink="/admin/messaging">Message Crews</a>
+            <a class="btn btn-outline-primary" routerLink="/admin/jobs">Open Jobs Board</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-jobflow-drawer
+  [open]="drawerOpen"
+  [title]="drawerMode === 'schedule' ? 'Schedule Job' : 'Dispatch Details'"
+  (closed)="closeDrawer()"
+  >
+  @if (drawerMode === 'schedule') {
+    <div>
+      <p class="text-muted small">Select a job and confirm the time window.</p>
+      <div class="text-muted small mb-3">Use windows for flexible arrivals and exact times for tight commitments.</div>
+      <label class="form-label" for="dispatchJob">Job</label>
+      <select id="dispatchJob" class="form-select mb-3" [(ngModel)]="draftJobId">
+        <option [ngValue]="null">Select an unscheduled job</option>
+        @for (job of unscheduledJobs; track job) {
+          <option [ngValue]="job.jobId">
+            {{ job.jobTitle || 'Untitled job' }} · {{ job.clientName || 'Client TBD' }}
+          </option>
+        }
+      </select>
+      <div class="dispatch-drawer__time">
+        <div>
+          <p class="dispatch-drawer__label">Start</p>
+          <p class="mb-0">{{ draftSlot?.StartTime | date: 'short' }}</p>
+        </div>
+        <div>
+          <p class="dispatch-drawer__label">End</p>
+          <p class="mb-0">{{ draftSlot?.EndTime | date: 'short' }}</p>
+        </div>
+      </div>
+      <button class="btn btn-primary w-100 mt-3" type="button" (click)="saveSchedule()" [disabled]="!draftJobId">
+        Schedule Job
+      </button>
+    </div>
+  }
+
+  @if (drawerMode === 'details' && selectedAssignment) {
+    <div>
+      <div class="dispatch-drawer__header">
+        <h6 class="mb-1">{{ selectedAssignment.jobTitle || 'Assignment' }}</h6>
+        <p class="text-muted small mb-0">{{ selectedAssignment.clientName || 'Client TBD' }}</p>
+      </div>
+      <div class="dispatch-drawer__block">
+        <label class="form-label" for="dispatchStatus">Status</label>
+        <select id="dispatchStatus" class="form-select" [(ngModel)]="statusDraft">
+          <option value="">Scheduled</option>
+          <option value="InProgress">In Progress</option>
+          <option value="Completed">Completed</option>
+          <option value="Canceled">Cancelled</option>
+          <option value="Skipped">Skipped</option>
+        </select>
+      </div>
+      <div class="dispatch-drawer__block">
+        <span class="form-label">Assigned Crew</span>
+        <div class="dispatch-assignees">
+          @for (employee of employees; track employee) {
+            <label class="dispatch-assignee">
+              <input
+                type="checkbox"
+                [checked]="selectedAssigneeIds.has(employee.id)"
+                (change)="toggleAssignee(employee.id)"
+                />
+                <span>{{ employee.firstName }} {{ employee.lastName }}</span>
+              </label>
+            }
+          </div>
+          <label class="form-label mt-3" for="dispatchLead">Lead</label>
+          <select id="dispatchLead" class="form-select" [(ngModel)]="selectedLeadId">
+            <option [ngValue]="null">No lead</option>
+            @for (employee of employees; track employee) {
+              <option [ngValue]="employee.id" [disabled]="!selectedAssigneeIds.has(employee.id)">
+                {{ employee.firstName }} {{ employee.lastName }}
+              </option>
+            }
+          </select>
+        </div>
+        <div class="dispatch-drawer__block">
+          <label class="form-label" for="dispatchNotes">Notes</label>
+          <textarea id="dispatchNotes" class="form-control" rows="4" [(ngModel)]="notesDraft"></textarea>
+        </div>
+        <button class="btn btn-primary w-100" type="button" (click)="saveAssignmentDetails()">
+          Save Updates
+        </button>
+      </div>
+    }
+  </app-jobflow-drawer>
+

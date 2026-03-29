@@ -1,0 +1,75 @@
+<div class="support-auth__header">
+  <h2>{{ 'support.login.title' | translate }}</h2>
+  <p class="support-muted">{{ 'support.login.subtitle' | translate }}</p>
+</div>
+
+<form #form="ngForm" (ngSubmit)="onLogin($event)" novalidate>
+  @if (submitted && form.invalid) {
+    <p-message severity="error" [text]="'support.login.formInvalid' | translate"></p-message>
+  }
+
+  @if (error) {
+    <p-message severity="error" [text]="error"></p-message>
+  }
+
+  <div class="support-auth__field">
+    <label class="form-label" for="email">{{ 'support.login.emailLabel' | translate }}</label>
+    <input
+      pInputText
+      type="email"
+      class="support-w-100"
+      id="email"
+      name="email"
+      [placeholder]="'support.login.emailPlaceholder' | translate"
+      [(ngModel)]="email"
+      required
+      email
+      #emailModel="ngModel"
+      [ngClass]="{ 'p-invalid': emailModel.invalid && (emailModel.touched || submitted) }"
+    />
+    @if (emailModel.invalid && (emailModel.touched || submitted)) {
+      <div class="support-error support-mt-1">
+        @if (emailModel.errors?.['required']) {
+          <div>{{ 'support.login.validation.emailRequired' | translate }}</div>
+        }
+        @if (emailModel.errors?.['email']) {
+          <div>{{ 'support.login.validation.emailInvalid' | translate }}</div>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="support-auth__field">
+    <label class="form-label" for="password">{{ 'support.login.passwordLabel' | translate }}</label>
+    <p-password
+      id="password"
+      name="password"
+      [placeholder]="'support.login.passwordPlaceholder' | translate"
+      [(ngModel)]="password"
+      required
+      [toggleMask]="true"
+      [feedback]="false"
+      styleClass="support-w-100"
+      inputStyleClass="support-w-100"
+      #passwordModel="ngModel"
+      [ngClass]="{ 'p-invalid': passwordModel.invalid && (passwordModel.touched || submitted) }"
+    ></p-password>
+    @if (passwordModel.invalid && (passwordModel.touched || submitted)) {
+      <div class="support-error support-mt-1">
+        <div>{{ 'support.login.validation.passwordRequired' | translate }}</div>
+      </div>
+    }
+  </div>
+
+  <div class="support-auth__actions">
+    <button pButton type="submit" class="support-auth__submit" [disabled]="isSubmitting" (click)="onLogin($event)">
+      @if (!isSubmitting) {
+        <span>{{ 'support.login.submit' | translate }}</span>
+      }
+      @if (isSubmitting) {
+        <span>{{ 'support.login.submitting' | translate }}</span>
+      }
+    </button>
+    <a routerLink="/support-hub/auth/register">{{ 'support.login.registerLink' | translate }}</a>
+  </div>
+</form>

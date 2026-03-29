@@ -1,59 +1,115 @@
 <div class="jobflow-grid-wrapper">
-   <div
-      class="jobflow-grid-search"
-      *ngIf="showSearchBar"
-   >
+  @if (showSearchBar) {
+    <div class="jobflow-grid-search">
       <input
-         type="text"
-         class="form-control form-control-lg"
-         placeholder="Search…"
-         [(ngModel)]="searchText"
-         (input)="onSearchChange()"
-      />
+        pInputText
+        type="text"
+        class="p-inputtext-lg"
+        placeholder="Search..."
+        [(ngModel)]="searchText"
+        (input)="onSearchChange()"
+        />
+      @if (searchText) {
+        <button
+          pButton
+          type="button"
+          class="p-button-text p-button-plain clear-btn"
+          icon="pi pi-times"
+          aria-label="Clear search"
+          (click)="clearSearch()"
+          ></button>
+      }
+    </div>
+    }
 
-      <button
-         *ngIf="searchText"
-         class="btn btn-link clear-btn"
-         (click)="clearSearch()"
+    @if (toolbar.length) {
+      <div class="jobflow-grid-toolbar">
+        @for (tool of toolbar; track tool) {
+          <button
+            type="button"
+            class="btn btn-sm"
+            [ngClass]="getToolbarButtonClass(tool)"
+            (click)="onToolbarItemClick(tool)">
+            {{ getToolbarButtonLabel(tool) }}
+          </button>
+        }
+      </div>
+    }
+
+    <p-table
+      #dt
+      styleClass="jobflow-grid"
+      [value]="data"
+      [paginator]="allowPaging"
+      [rows]="pageSize"
+      [rowsPerPageOptions]="pageSizes"
+      [sortMode]="'multiple'"
+      [globalFilterFields]="globalFilterFields"
+      [tableStyle]="{ 'min-width': '100%' }"
+      [scrollable]="true"
+      [scrollHeight]="gridHeight"
       >
-         ✕
-      </button>
-   </div>
+      <ng-template pTemplate="header">
+        <tr>
+          @for (col of columns; track trackByHeader($index, col)) {
+            <th
+              [style.width.px]="col.width"
+              [style.text-align]="col.textAlign?.toLowerCase() ?? 'left'"
+              [pSortableColumn]="getSortableField(col)"
+              >
+              {{ col.headerText }}
+              @if (allowSorting && col.field && !col.template) {
+                <p-sortIcon
+                  [field]="col.field"
+                ></p-sortIcon>
+              }
+            </th>
+          }
+        </tr>
+      </ng-template>
 
-   <ejs-grid class="jobflow-grid"
-             #grid
-             [dataSource]="data"
-             [allowPaging]="allowPaging"
-             [pageSettings]="pageSettings"
-             [allowSorting]="allowSorting"
-             [allowFiltering]="allowFiltering"
-             [toolbar]="toolbar"
-             (toolbarClick)="onToolbarClick($event)"
-             (commandClick)="onCommandClick($event)"
-             [enableStickyHeader]="enableStickyHeader"
-   >
-      <e-columns>
-         <ng-container *ngFor="let col of columns">
-            <e-column
-               [field]="col.template ? null : col.field"
-               [headerText]="col.headerText"
-               [width]="col.width"
-               [textAlign]="col.textAlign"
-               [format]="col.format"
-               [valueAccessor]="col.valueAccessor"
-               [commands]="col.commands">
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          @for (col of columns; track trackByHeader($index, col)) {
+            <td
+              [style.text-align]="col.textAlign?.toLowerCase() ?? 'left'"
+              >
+              @if (col.template) {
+                <ng-container
+                  *ngTemplateOutlet="col.template!; context: { $implicit: row }"
+                ></ng-container>
+              } @else {
+                @if (col.commands?.length) {
+                  <div class="jobflow-grid-command-buttons">
+                    @for (command of col.commands; track command) {
+                      <button
+                        type="button"
+                        class="btn btn-sm"
+                        [ngClass]="command.buttonOption?.cssClass"
+                        (click)="onCommandItemClick(command.type, row)"
+                        >
+                        @if (command.buttonOption?.iconCss) {
+                          <i [class]="command.buttonOption?.iconCss"></i>
+                        }
+                        {{ command.buttonOption?.content ?? command.type }}
+                      </button>
+                    }
+                  </div>
+                } @else {
+                  {{ getCellValue(row, col) }}
+                }
+              }
+            </td>
+          }
+        </tr>
+      </ng-template>
 
-               <ng-template
-                  *ngIf="col.template"
-                  #template
-                  let-data>
-                  <ng-container
-                     *ngTemplateOutlet="col.template; context: { $implicit: data }">
-                  </ng-container>
-               </ng-template>
-
-            </e-column>
-         </ng-container>
-      </e-columns>
-   </ejs-grid>
-</div>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="columns.length" class="text-center py-4 text-muted">
+            No records found.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>

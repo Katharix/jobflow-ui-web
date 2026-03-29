@@ -23,7 +23,7 @@ export class ModalContainerComponent {
   @ViewChild(CdkPortalOutlet, { static: true })
   outlet!: CdkPortalOutlet;
 
-  attach(portal: ComponentPortal<any>) {
+  attach(portal: ComponentPortal<unknown>) {
     this.outlet.attach(portal);
   }
 }

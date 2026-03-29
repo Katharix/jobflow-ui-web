@@ -1,32 +1,34 @@
-<nav *ngIf="showNavbar" class="navbar bg-white shadow-sm px-3">
-
-  <div class="navbar-content d-flex align-items-center justify-content-between w-100">
-
-    <!-- Left: Logo + Nav Items -->
-    <div class="d-flex align-items-center">
-      <div class="logo-mini-wrapper me-4">
-        <img src="assets/public/images/Asset 5.png" class="logo-mini logo-mini-light" alt="logo" height="30">
-        <img src="assets/public/images/Asset 6.png" class="logo-mini logo-mini-dark" alt="logo" height="30">
+@if (showNavbar) {
+  <nav class="navbar bg-white shadow-sm px-3">
+    <div class="navbar-content d-flex align-items-center justify-content-between w-100">
+      <!-- Left: Logo + Nav Items -->
+      <div class="d-flex align-items-center">
+        <div class="logo-mini-wrapper me-4">
+          <img src="assets/public/images/Asset 5.png" class="logo-mini logo-mini-light" alt="logo" height="30">
+          <img src="assets/public/images/Asset 6.png" class="logo-mini logo-mini-dark" alt="logo" height="30">
+        </div>
+        <ul class="navbar-nav d-flex flex-row align-items-center gap-3 mb-0 h-100">
+          @for (item of navItems; track item) {
+            <li class="nav-item">
+              @if (item.route) {
+                <a class="nav-link px-2 py-1 border-bottom-nav" [routerLink]="item.route"
+                  [class.active]="item.active">
+                  <i class="{{ item.icon }} me-1"></i> {{ item.label }}
+                </a>
+              }
+              @if (!item.route && item.action) {
+                <button class="nav-link px-2 py-1 border-bottom-nav btn btn-link"
+                  (click)="item.action()">
+                  <i class="{{ item.icon }} me-1"></i> {{ item.label }}
+                </button>
+              }
+            </li>
+          }
+        </ul>
       </div>
-
-      <ul class="navbar-nav d-flex flex-row align-items-center gap-3 mb-0 h-100">
-        <li class="nav-item" *ngFor="let item of navItems">
-          <a class="nav-link px-2 py-1 border-bottom-nav" *ngIf="item.route" [routerLink]="item.route"
-            [class.active]="item.active">
-            <i class="{{ item.icon }} me-1"></i> {{ item.label }}
-          </a>
-
-          <button *ngIf="!item.route && item.action" class="nav-link px-2 py-1 border-bottom-nav btn btn-link"
-            (click)="item.action()">
-            <i class="{{ item.icon }} me-1"></i> {{ item.label }}
-          </button>
-        </li>
-      </ul>
+      <div class="navbar-actions d-flex align-items-center gap-3 ms-3">
+        <app-weather-widget variant="navbar" class="navbar-weather"></app-weather-widget>
+      </div>
     </div>
-
-    <!-- Right: Sidebar Toggler -->
-    <a href="#" class="sidebar-toggler text-secondary" (click)="toggleSidebar($event)">
-      <i class="feather icon-menu fs-4"></i>
-    </a>
-  </div>
-</nav>
+  </nav>
+}

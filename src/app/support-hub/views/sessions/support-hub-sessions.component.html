@@ -1,0 +1,157 @@
+<app-page-header
+  [title]="'support.sessions.header.title' | translate"
+  [subtitle]="'support.sessions.header.subtitle' | translate"
+></app-page-header>
+
+<section class="support-table">
+  <div class="support-table__header">
+    <div>
+      <h5 class="support-mb-1">{{ 'support.sessions.queueTitle' | translate }}</h5>
+      <p class="support-muted">{{ 'support.sessions.queueSubtitle' | translate }}</p>
+    </div>
+    <button
+      pButton
+      type="button"
+      class="p-button-primary"
+      (click)="createSession()"
+    >{{ 'support.sessions.startSession' | translate }}</button>
+  </div>
+
+  <div class="support-table__composer">
+    <div>
+      <label class="form-label" for="support-session-org">{{ 'support.common.organization' | translate }}</label>
+      <div class="support-org-select">
+        <p-dropdown
+          [options]="organizationOptions"
+          optionLabel="label"
+          optionValue="value"
+          inputId="support-session-org"
+          [(ngModel)]="selectedOrganizationId"
+          [placeholder]="'support.common.selectOrganization' | translate"
+          styleClass="support-w-100"
+        ></p-dropdown>
+        <button
+          pButton
+          type="button"
+          class="p-button-outlined p-button-secondary"
+          (click)="openOrgModal()"
+        >{{ 'support.common.find' | translate }}</button>
+      </div>
+    </div>
+    <div>
+      <label class="form-label" for="support-session-agent">{{ 'support.sessions.agentLabel' | translate }}</label>
+      <div class="support-agent-select">
+        <input
+          pInputText
+          id="support-session-agent"
+          class="support-w-100"
+          [(ngModel)]="newAgentName"
+          [placeholder]="'support.sessions.agentPlaceholder' | translate"
+        />
+        <button
+          pButton
+          type="button"
+          class="p-button-outlined p-button-secondary"
+          (click)="assignToMe()"
+        >{{ 'support.sessions.assignMe' | translate }}</button>
+      </div>
+    </div>
+    <div>
+      <label class="form-label" for="support-session-status">{{ 'support.sessions.statusLabel' | translate }}</label>
+      <p-dropdown
+        [options]="statusOptions"
+        optionLabel="label"
+        optionValue="value"
+        inputId="support-session-status"
+        [(ngModel)]="newStatus"
+        styleClass="support-w-100"
+      ></p-dropdown>
+    </div>
+  </div>
+
+  @if (actionMessage) {
+    <p-message severity="success" [text]="actionMessage"></p-message>
+  }
+
+  <ng-template #statusTemplate let-session>
+    <span [ngClass]="getSessionStatusClass(session.status)">
+      {{ formatSessionStatus(session.status) }}
+    </span>
+  </ng-template>
+
+  <ng-template #actionsTemplate let-session>
+    <div class="support-table__grid-actions">
+      <button
+        pButton
+        type="button"
+        class="p-button-outlined p-button-secondary p-button-sm"
+        [disabled]="viewingSessionId === session.id"
+        (click)="onViewScreen(session.id)"
+      >{{ 'support.sessions.viewScreen' | translate }}</button>
+      <button
+        pButton
+        type="button"
+        class="p-button-outlined p-button-secondary p-button-sm"
+        (click)="copySessionId(session)"
+      >{{ 'support.common.copyId' | translate }}</button>
+    </div>
+  </ng-template>
+
+  <div class="support-table__grid">
+    @if (isLoading) {
+      <div class="support-table__empty">
+        <p class="support-muted support-mb-0">{{ 'support.sessions.loading' | translate }}</p>
+      </div>
+    } @else if (error) {
+      <div class="support-table__empty">
+        <p-message severity="error" [text]="error"></p-message>
+      </div>
+    } @else {
+      <app-jobflow-grid
+        [data]="sessions"
+        [columns]="columns"
+        [allowPaging]="true"
+        [allowSorting]="true"
+        [allowFiltering]="false"
+        [showSearchBar]="true"
+        [pageSettings]="pageSettings"
+        [height]="520"
+      ></app-jobflow-grid>
+    }
+  </div>
+</section>
+
+@if (isOrgModalOpen) {
+  <div class="support-modal">
+    <button
+      type="button"
+      class="support-modal__backdrop"
+      (click)="closeOrgModal()"
+      [attr.aria-label]="'support.common.closeModal' | translate"
+    ></button>
+    <div class="support-modal__panel">
+      <div class="support-modal__header">
+        <h5>{{ 'support.common.selectOrganization' | translate }}</h5>
+        <button
+          pButton
+          type="button"
+          class="p-button-text"
+          (click)="closeOrgModal()"
+        >{{ 'support.common.close' | translate }}</button>
+      </div>
+      <input
+        pInputText
+        class="support-w-100"
+        [placeholder]="'support.common.searchOrganizations' | translate"
+        [(ngModel)]="orgSearchTerm"
+      />
+      <div class="support-modal__list">
+        @for (org of filteredOrganizations; track org.id) {
+          <button class="support-modal__item" type="button" (click)="selectOrganization(org)">
+            <span>{{ org.organizationName }}</span>
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

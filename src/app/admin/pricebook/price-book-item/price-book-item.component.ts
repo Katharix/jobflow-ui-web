@@ -1,16 +1,15 @@
-import {Component, OnDestroy, OnInit, ViewChild, inject} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {Component, OnDestroy, OnInit, inject} from '@angular/core';
+
 import {ActivatedRoute, Router} from '@angular/router';
-import {
-   CommandModel,
-   ToolbarItems,
-   PageSettingsModel, CommandClickEventArgs
-} from '@syncfusion/ej2-angular-grids';
 
 import {Subscription, combineLatest} from 'rxjs';
 
 import {
-   PriceBookItemService, PriceBookItemDto, PriceBookItemType
+   CreatePriceBookItemRequest,
+   PriceBookItemDto,
+   PriceBookItemService,
+   PriceBookItemType,
+   UpdatePriceBookItemRequest
 } from '../services/price-book-item.service';
 import {OrganizationContextService} from '../../../services/shared/organization-context.service';
 import {ToastService} from '../../../common/toast/toast.service';
@@ -20,15 +19,22 @@ import {
    EditItemData,
    EditItemResult
 } from '../add-edit-pricebook-item-dialog/add-edit-pricebook-item-dialog.component';
-import {PageHeaderComponent} from "../../../views/admin-views/dashboard/page-header/page-header.component";
+import {PageHeaderComponent} from "../../dashboard/page-header/page-header.component";
 import {PriceBookCategoryService} from '../services/price-book-category.service';
-import {JobflowGridColumn, JobflowGridComponent} from "../../../common/jobflow-grid/jobflow-grid.component";
-import {ClickEventArgs} from "@syncfusion/ej2-navigations";
+import {LucideAngularModule} from 'lucide-angular';
+import {
+   JobflowGridColumn,
+   JobflowGridCommandClickEventArgs,
+   JobflowGridCommandModel,
+   JobflowGridComponent,
+   JobflowGridPageSettings,
+   JobflowGridToolbarClickEventArgs
+} from "../../../common/jobflow-grid/jobflow-grid.component";
 
 @Component({
    selector: 'app-price-book-item',
    standalone: true,
-   imports: [CommonModule, PageHeaderComponent, JobflowGridComponent],
+   imports: [PageHeaderComponent, JobflowGridComponent, LucideAngularModule],
    templateUrl: './price-book-item.component.html',
    styleUrl: './price-book-item.component.scss'
 })
@@ -48,10 +54,10 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
    categoryName: string | null = null; // optional if you pass name along (query param) or load it
 
    items: PriceBookItemDto[] = [];
-   typeAccessor = (_: string, data: any) => this.typeLabel(data?.itemType);
+   typeAccessor = (_: string, data: unknown) => this.typeLabel((data as PriceBookItemDto)?.itemType);
 
 
-   commandButtons: CommandModel[] = [
+   commandButtons: JobflowGridCommandModel[] = [
       {
          type: 'Edit',
          buttonOption: {
@@ -70,7 +76,7 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
       }
    ];
 
-   pageSettings: PageSettingsModel = {pageSize: 20, pageSizes: [10, 20, 50, 100]};
+   pageSettings: JobflowGridPageSettings = {pageSize: 20, pageSizes: [10, 20, 50, 100]};
 
    columns: JobflowGridColumn[] = [
       {field: 'name', headerText: 'Name', width: 220},
@@ -113,7 +119,7 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
    }
 
 // --- Implement the handlers you need ---
-   private goBackToCategories() {
+   goBackToCategories() {
       // navigate back to your categories page/route
       this.router.navigate(['/admin/pricebook']); // adjust route as needed
    }
@@ -164,13 +170,13 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
       return true;
    }
 
-   onToolbarClick(e: ClickEventArgs) {
-      const id = (e.item as any)?.id;
+   onToolbarClick(e: JobflowGridToolbarClickEventArgs) {
+      const id = e.item?.id ?? e.item?.text;
       if (id === 'AddItem') this.add();
    }
 
 
-   onCommandClick(args: CommandClickEventArgs) {
+   onCommandClick(args: JobflowGridCommandClickEventArgs) {
       const row = args.rowData as PriceBookItemDto;
 
       switch (args.commandColumn?.type) {
@@ -193,8 +199,18 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
          if (!result) return;
          // force-associate with current category if present
          result.type = 1;
-         const body = {...result, categoryId: this.categoryId ?? result.categoryId};
-         this.itemService.create(body as any).subscribe({
+         const body: CreatePriceBookItemRequest = {
+            name: result.name,
+            description: result.description ?? null,
+            partNumber: result.partNumber ?? null,
+            unit: result.unit ?? null,
+            cost: result.cost,
+            price: result.price,
+            itemType: result.type,
+            inventoryUnitsPerSale: result.inventoryUnitsPerSale,
+            categoryId: this.categoryId ?? result.categoryId ?? null
+         };
+         this.itemService.create(body).subscribe({
             next: created => {
                // show only if it belongs to this category
                if (!this.categoryId || (created.categoryId ?? '').toLowerCase() === this.categoryId.toLowerCase()) {
@@ -224,8 +240,20 @@ export class PriceBookItemComponent implements OnInit, OnDestroy {
       ref.afterClosed().subscribe(result => {
          if (!result) return;
 
-         const body = {...row, ...result, id: row.id, organizationId: this.orgId};
-         this.itemService.update(body as any).subscribe({
+         const body: UpdatePriceBookItemRequest = {
+            ...row,
+            id: row.id,
+            name: result.name,
+            description: result.description ?? null,
+            partNumber: result.partNumber ?? null,
+            unit: result.unit ?? null,
+            cost: result.cost,
+            price: result.price,
+            itemType: result.type ?? row.itemType,
+            inventoryUnitsPerSale: result.inventoryUnitsPerSale,
+            categoryId: result.categoryId ?? row.categoryId ?? null
+         };
+         this.itemService.update(body).subscribe({
             next: updated => {
                const stillMatches =
                   !this.categoryId || (updated.categoryId ?? '').toLowerCase() === this.categoryId!.toLowerCase();

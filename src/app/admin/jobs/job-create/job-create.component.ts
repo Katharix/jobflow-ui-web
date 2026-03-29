@@ -1,46 +1,53 @@
-import {Component} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+
 import {FormsModule} from '@angular/forms';
-import {Router} from '@angular/router';
 import {OrganizationContextService} from "../../../services/shared/organization-context.service";
 import {CustomersService} from "../../customer/services/customer.service";
-import {CreateJobRequest, JobsService} from "../services/jobs.service";
-import {
-   NgLabelTemplateDirective,
-   NgOptionComponent,
-   NgOptionTemplateDirective,
-   NgSelectComponent
-} from '@ng-select/ng-select';
+import {JobUpsertRequest, JobsService} from "../services/jobs.service";
+import {InvoicingWorkflow, InvoicingWorkflowLabels, Job} from "../models/job";
+import {Client} from "../../customer/models/customer";
+import {InputTextModule} from 'primeng/inputtext';
+import {SelectModule} from 'primeng/select';
+import {RouterLink} from '@angular/router';
 
 @Component({
-   selector: 'job-create',
+   selector: 'app-job-create',
    standalone: true,
    imports: [
-      CommonModule,
-      FormsModule,
-      NgLabelTemplateDirective,
-      NgOptionTemplateDirective,
-      NgSelectComponent,
-      NgOptionComponent
-   ],
+    FormsModule,
+    InputTextModule,
+    SelectModule,
+    RouterLink
+],
    templateUrl: './job-create.component.html'
 })
-export class CreateJobComponent {
+export class CreateJobComponent implements OnChanges {
+   private jobsService = inject(JobsService);
+   private customersService = inject(CustomersService);
+   private organizationContext = inject(OrganizationContextService);
+
+   @Output() saved = new EventEmitter<void>();
+   @Output() cancelled = new EventEmitter<void>();
+   @Input() job: Job | null = null;
+
    organizationId: string | null = null;
 
-   customers: any[] = [];
+   customers: (Client & { displayName: string })[] = [];
    selectedCustomerId: string | null = null;
    title = '';
+   comments = '';
+   invoicingWorkflow: InvoicingWorkflow | null = null;
+
+   invoicingOptions = [
+      { label: 'Use org default', value: null },
+      { label: InvoicingWorkflowLabels[InvoicingWorkflow.SendInvoice], value: InvoicingWorkflow.SendInvoice },
+      { label: InvoicingWorkflowLabels[InvoicingWorkflow.InPerson], value: InvoicingWorkflow.InPerson }
+   ];
 
    saving = false;
    error: string | null = null;
 
-   constructor(
-      private jobsService: JobsService,
-      private customersService: CustomersService,
-      private organizationContext: OrganizationContextService,
-      private router: Router
-   ) {
+   constructor() {
       this.organizationContext.org$.subscribe(org => {
          if (!org) return;
 
@@ -49,13 +56,34 @@ export class CreateJobComponent {
       });
    }
 
+   get isEditing(): boolean {
+      return !!this.job?.id;
+   }
+
+   ngOnChanges(changes: SimpleChanges): void {
+      if (!changes['job']) return;
+
+      if (!this.job) {
+         this.resetForm();
+         return;
+      }
+
+      this.selectedCustomerId = this.job.organizationClientId ?? this.job.organizationClient?.id ?? null;
+      this.title = this.job.title ?? '';
+      this.comments = this.job.comments ?? '';
+      this.invoicingWorkflow = this.job.invoicingWorkflow ?? null;
+   }
+
    private loadCustomers(): void {
       if (!this.organizationId) return;
 
       this.customersService
          .getAllByOrganization()
          .subscribe({
-            next: customers => (this.customers = customers),
+            next: customers => (this.customers = customers.map((client) => ({
+               ...client,
+               displayName: `${client.firstName ?? ''} ${client.lastName ?? ''}`.trim() || client.emailAddress || 'Client'
+            }))),
             error: () => (this.error = 'Failed to load customers.')
          });
    }
@@ -69,17 +97,33 @@ export class CreateJobComponent {
       this.saving = true;
       this.error = null;
 
-      const payload: CreateJobRequest = {
+      const request: JobUpsertRequest = {
+         id: this.job?.id,
          organizationClientId: this.selectedCustomerId,
-         title: this.title.trim()
+         title: this.title.trim(),
+         comments: this.comments.trim() || undefined,
+         invoicingWorkflow: this.invoicingWorkflow
       };
 
-      this.jobsService.upsertJob(payload).subscribe({
-         next: () => this.router.navigate(['/admin']),
+      this.jobsService.upsertJob(request).subscribe({
+         next: () => this.saved.emit(),
          error: () => {
             this.saving = false;
             this.error = 'Failed to create job.';
          }
       });
+   }
+
+   cancel(): void {
+      this.cancelled.emit();
+   }
+
+   private resetForm(): void {
+      this.selectedCustomerId = null;
+      this.title = '';
+      this.comments = '';
+      this.invoicingWorkflow = null;
+      this.error = null;
+      this.saving = false;
    }
 }

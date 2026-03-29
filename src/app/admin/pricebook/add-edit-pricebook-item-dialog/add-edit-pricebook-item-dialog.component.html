@@ -1,49 +1,47 @@
   <div class="modal-header">
     <h5 class="modal-title">{{ data.title }}</h5>
-    <button type="button" class="btn-close" (click)="close()"></button>
+    <button type="button" class="btn-close" (click)="close()">
+      <span class="visually-hidden">Close</span>
+    </button>
   </div>
 
   <form [formGroup]="form" (ngSubmit)="save()">
     <div class="modal-body">
       <div class="row g-3">
         <div class="col-md-8">
-          <label class="form-label">Name</label>
-          <input class="form-control" formControlName="name" required maxlength="200" />
+          <label class="form-label" for="pricebookItemName">Name</label>
+          <input id="pricebookItemName" pInputText pSize="small" formControlName="name" class="w-100" maxlength="200" />
         </div>
         <div class="col-md-4">
-          <label class="form-label">Type</label>
-          <select class="form-select" formControlName="type">
-            <option [value]="0">Material</option>
-            <option [value]="1">Service</option>
-            <option [value]="2">Product</option>
-          </select>
+          <label class="form-label" for="pricebookItemType">Type</label>
+          <p-select inputId="pricebookItemType" formControlName="type" [options]="typeOptions" optionLabel="label" optionValue="value" size="small" [fluid]="true" />
         </div>
 
         <div class="col-md-4">
-          <label class="form-label">Part #</label>
-          <input class="form-control" formControlName="partNumber" maxlength="100" />
+          <label class="form-label" for="pricebookItemPart">Part #</label>
+          <input id="pricebookItemPart" pInputText pSize="small" formControlName="partNumber" class="w-100" maxlength="100" />
         </div>
         <div class="col-md-4">
-          <label class="form-label">Unit</label>
-          <input class="form-control" formControlName="unit" maxlength="50" placeholder="ea, hr, ft" />
+          <label class="form-label" for="pricebookItemUnit">Unit</label>
+          <input id="pricebookItemUnit" pInputText pSize="small" formControlName="unit" class="w-100" maxlength="50" placeholder="ea, hr, ft" />
         </div>
         <div class="col-md-4">
-          <label class="form-label">Inventory Units per Sale</label>
-          <input type="number" step="0.0001" class="form-control" formControlName="inventoryUnitsPerSale" />
+          <label class="form-label" for="pricebookItemInventory">Inventory Units per Sale</label>
+          <p-inputnumber inputId="pricebookItemInventory" formControlName="inventoryUnitsPerSale" [minFractionDigits]="0" [maxFractionDigits]="4" [fluid]="true" />
         </div>
 
         <div class="col-md-6">
-          <label class="form-label">Cost</label>
-          <input type="number" step="0.01" class="form-control" formControlName="cost" />
+          <label class="form-label" for="pricebookItemCost">Cost</label>
+          <p-inputnumber inputId="pricebookItemCost" formControlName="cost" [minFractionDigits]="2" [maxFractionDigits]="2" [fluid]="true" />
         </div>
         <div class="col-md-6">
-          <label class="form-label">Price</label>
-          <input type="number" step="0.01" class="form-control" formControlName="price" />
+          <label class="form-label" for="pricebookItemPrice">Price</label>
+          <p-inputnumber inputId="pricebookItemPrice" formControlName="price" [minFractionDigits]="2" [maxFractionDigits]="2" [fluid]="true" />
         </div>
 
         <div class="col-12">
-          <label class="form-label">Description</label>
-          <textarea class="form-control" rows="3" formControlName="description"></textarea>
+          <label class="form-label" for="pricebookItemDescription">Description</label>
+          <textarea id="pricebookItemDescription" pTextarea rows="3" formControlName="description" class="w-100"></textarea>
         </div>
       </div>
     </div>
