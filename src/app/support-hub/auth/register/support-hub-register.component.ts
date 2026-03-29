@@ -3,7 +3,6 @@ import { Component, ViewChild, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
-import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { SupportHubAuthService } from '../../services/support-hub-auth.service';
 import { firstValueFrom } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
@@ -28,7 +27,6 @@ import { MessageModule } from 'primeng/message';
 })
 export class SupportHubRegisterComponent {
   private auth = inject(Auth);
-  private firestore = inject(Firestore);
   private router = inject(Router);
   private supportHubAuth = inject(SupportHubAuthService);
 
@@ -63,21 +61,13 @@ export class SupportHubRegisterComponent {
     this.isSubmitting = true;
 
     try {
-      const credential = await createUserWithEmailAndPassword(
+      await createUserWithEmailAndPassword(
         this.auth,
         this.email.trim(),
         this.password.trim()
       );
 
       await firstValueFrom(this.supportHubAuth.register());
-
-      await setDoc(doc(this.firestore, 'users', credential.user.uid), {
-        email: this.email.trim(),
-        username: this.username.trim(),
-        role: 'KatharixEmployee',
-        supportHubAccess: true,
-        createdAt: new Date(),
-      });
 
       await this.auth.currentUser?.getIdToken(true);
 

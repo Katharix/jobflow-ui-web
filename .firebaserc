@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "jobflow-ui-web"
+    "default": "jobflow-ui-web-staging",
+    "dev": "jobflow-ui-web-staging",
+    "staging": "jobflow-ui-web-staging",
+    "prod": "jobflow-ui-web"
   }
 }
