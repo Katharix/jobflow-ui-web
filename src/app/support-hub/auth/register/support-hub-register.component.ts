@@ -61,7 +61,7 @@ export class SupportHubRegisterComponent {
     this.isSubmitting = true;
 
     try {
-      const credential = await createUserWithEmailAndPassword(
+      await createUserWithEmailAndPassword(
         this.auth,
         this.email.trim(),
         this.password.trim()
