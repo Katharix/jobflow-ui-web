@@ -1,7 +1,7 @@
 export const environment = {
    production: true,
-   apiUrl: 'https://jobflow-api-staging.azurewebsites.net/api',
-   baseUrl: 'https://jobflow-api-staging.azurewebsites.net',
+   apiUrl: 'https://api.staging.gojobflow.com/api',
+   baseUrl: 'https://api.staging.gojobflow.com',
    firebase: {
       apiKey: 'AIzaSyCyQtD7ukgjwfONtjeemVtvFa2OKTtq1d4',
       authDomain: 'jobflow-ui-web-staging.firebaseapp.com',
