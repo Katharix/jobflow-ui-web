@@ -7,6 +7,9 @@ on:
     types:
       - completed
 
+permissions:
+  contents: read
+
 jobs:
   deploy-staging:
     if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' }}
@@ -17,6 +20,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -37,32 +42,59 @@ jobs:
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
-  deploy-prod:
+  prod-approval:
+    name: Manual Approval For Production
     if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' }}
     needs: deploy-staging
     runs-on: ubuntu-latest
-    environment:
-      name: Production
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Validate PROD_APPROVERS variable
+        env:
+          PROD_APPROVERS: ${{ vars.PROD_APPROVERS }}
+        run: |
+          if [ -z "$PROD_APPROVERS" ]; then
+            echo "Set repository variable PROD_APPROVERS to a comma-separated list of GitHub usernames allowed to approve production deploys."
+            exit 1
+          fi
+
+      - name: Wait for manual approval
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.token }}
+          approvers: ${{ vars.PROD_APPROVERS }}
+          minimum-approvals: 1
+          issue-title: "Approve UI production deploy"
+          issue-body: "Review staging deployment and approve this production deployment by commenting 'approve'."
+          exclude-workflow-initiator-as-approver: true
+
+  create-release-tag:
+    name: Create Release Tag
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' }}
+    needs: prod-approval
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
         with:
-          node-version: '20.11.1'
-          cache: npm
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Angular app
-        run: npm run build:prod
-
-      - name: Deploy to Firebase Hosting (prod)
-        uses: w9jds/firebase-action@master
-        with:
-          args: deploy --only hosting --project prod
+      - name: Create and push release tag
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          tag="release-$(date -u +'%Y.%m.%d')-${GITHUB_RUN_NUMBER}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$tag" -m "UI release $tag"
+          git push origin "$tag"
+
+      - name: Tag summary
+        run: echo "Release tag created and pushed. Production deploy is handled by tag-triggered workflow."
