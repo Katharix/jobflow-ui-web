@@ -63,7 +63,7 @@ export class RegisterComponent implements OnInit {
          organizationId: orgId
       }
       this.orgService.getOrganizationById(orgRequest).subscribe({
-         next: (data: Organization) => {
+         next: (data: OrganizationDto) => {
             this.email = data.emailAddress ?? '';
             this.organizationName = data.organizationName ?? '';
          },
