@@ -24,11 +24,9 @@ jobs:
       - name: Publish version table
         env:
           RELEASE_TAG: ${{ steps.release-tag.outputs.value }}
-          DEV_VERSION: ${{ vars.UI_DEV_VERSION }}
           STAGING_VERSION: ${{ vars.UI_STAGING_VERSION }}
           PROD_VERSION: ${{ vars.UI_PRODUCTION_VERSION }}
         run: |
-          [ -n "$DEV_VERSION" ] || DEV_VERSION="n/a"
           [ -n "$STAGING_VERSION" ] || STAGING_VERSION="n/a"
           [ -n "$PROD_VERSION" ] || PROD_VERSION="n/a"
 
@@ -39,7 +37,6 @@ jobs:
             echo
             echo "| Environment | Current deployed version | Planned action |"
             echo "| --- | --- | --- |"
-            echo "| Development | $DEV_VERSION | No change in this workflow |"
             echo "| Staging | $STAGING_VERSION | Already deployed before tagging |"
             echo "| Production | $PROD_VERSION | Deploy $RELEASE_TAG after approval |"
           } >> "$GITHUB_STEP_SUMMARY"
@@ -122,12 +119,10 @@ jobs:
       - name: Publish final deployment table
         env:
           RELEASE_TAG: ${{ steps.release-tag.outputs.value }}
-          DEV_VERSION: ${{ vars.UI_DEV_VERSION }}
           STAGING_VERSION: ${{ vars.UI_STAGING_VERSION }}
           PROD_VERSION: ${{ needs.deploy-prod.result == 'success' && steps.release-tag.outputs.value || vars.UI_PRODUCTION_VERSION }}
           PROD_STATUS: ${{ needs.deploy-prod.result }}
         run: |
-          [ -n "$DEV_VERSION" ] || DEV_VERSION="n/a"
           [ -n "$STAGING_VERSION" ] || STAGING_VERSION="n/a"
           [ -n "$PROD_VERSION" ] || PROD_VERSION="n/a"
 
@@ -138,7 +133,6 @@ jobs:
             echo
             echo "| Environment | Deployed version | Job status |"
             echo "| --- | --- | --- |"
-            echo "| Development | $DEV_VERSION | unchanged |"
             echo "| Staging | $STAGING_VERSION | unchanged in this workflow |"
             echo "| Production | $PROD_VERSION | $PROD_STATUS |"
           } >> "$GITHUB_STEP_SUMMARY"
