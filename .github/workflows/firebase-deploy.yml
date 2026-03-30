@@ -42,39 +42,10 @@ jobs:
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
-  prod-approval:
-    name: Manual Approval For Production
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' }}
-    needs: deploy-staging
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      issues: write
-
-    steps:
-      - name: Validate PROD_APPROVERS variable
-        env:
-          PROD_APPROVERS: ${{ vars.PROD_APPROVERS }}
-        run: |
-          if [ -z "$PROD_APPROVERS" ]; then
-            echo "Set repository variable PROD_APPROVERS to a comma-separated list of GitHub usernames allowed to approve production deploys."
-            exit 1
-          fi
-
-      - name: Wait for manual approval
-        uses: trstringer/manual-approval@v1
-        with:
-          secret: ${{ github.token }}
-          approvers: ${{ vars.PROD_APPROVERS }}
-          minimum-approvals: 1
-          issue-title: "Approve UI production deploy"
-          issue-body: "Review staging deployment and approve this production deployment by commenting 'approve'."
-          exclude-workflow-initiator-as-approver: false
-
   create-release-tag:
     name: Create Release Tag
     if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' }}
-    needs: prod-approval
+    needs: deploy-staging
     runs-on: ubuntu-latest
     permissions:
       contents: write
