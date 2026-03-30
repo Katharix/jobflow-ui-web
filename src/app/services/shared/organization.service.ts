@@ -27,8 +27,8 @@ export class OrganizationService {
     return this.api.post<Organization>(`${this.organizationUrl}create`, org);
   }
 
-  getOrganizationById(org: OrganizationRequest): Observable<Organization> {
-    return this.api.post<Organization>(`${this.organizationUrl}retrieve`, org);
+  getOrganizationById(org: OrganizationRequest): Observable<OrganizationDto> {
+    return this.api.post<OrganizationDto>(`${this.organizationUrl}retrieve`, org);
   }
 
   updateIndustry(industryKey: string | null): Observable<OrganizationDto> {
