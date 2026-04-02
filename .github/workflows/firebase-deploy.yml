@@ -54,6 +54,7 @@ jobs:
         env:
           DEPLOYED_VERSION: ${{ steps.staging-version.outputs.value }}
         with:
+          github-token: ${{ secrets.ACTIONS_VARIABLES_TOKEN != '' && secrets.ACTIONS_VARIABLES_TOKEN || github.token }}
           script: |
             const { owner, repo } = context.repo;
             const name = 'UI_STAGING_VERSION';
@@ -65,6 +66,8 @@ jobs:
             } catch (error) {
               if (error.status === 404) {
                 await github.rest.actions.createRepoVariable({ owner, repo, name, value });
+              } else if (error.status === 403) {
+                core.warning('Skipping repository variable update: token lacks actions_variables permission. Configure secret ACTIONS_VARIABLES_TOKEN with repository Variables read/write access.');
               } else {
                 throw error;
               }
