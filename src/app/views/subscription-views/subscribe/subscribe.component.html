@@ -136,7 +136,7 @@
                       [(ngModel)]="phoneNumber"
                       name="phoneNumber"
                       required
-                      pattern="^[0-9+()\\s-]{7,}$"
+                      pattern="^[0-9+() -]{7,}$"
                       #phoneCtrl="ngModel"
                       [ngClass]="{ 'is-invalid': phoneCtrl.invalid && (phoneCtrl.touched || submitted) }"
                       />
