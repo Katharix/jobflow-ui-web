@@ -91,11 +91,49 @@ export class ConnectPaymentComponent implements OnInit {
     }
 
     if (provider === 'stripe') {
-      this.callbackStatus = 'success';
-      this.callbackMessage = 'Stripe account connected successfully. You can now accept payments.';
-      this.selectedProvider = 'Stripe';
-      this.updateOrgProvider(PaymentProvider.Stripe);
-      this.clearCallbackQueryParams();
+      if (!this.orgId) {
+        this.callbackHandled = false;
+        return;
+      }
+
+      const accountId = this.route.snapshot.queryParamMap.get('accountId');
+
+      if (!accountId) {
+        this.callbackStatus = 'error';
+        this.callbackMessage = 'Stripe authorization completed, but account id was missing.';
+        this.clearCallbackQueryParams();
+        return;
+      }
+
+      this.callbackStatus = 'processing';
+      this.callbackMessage = 'Finalizing Stripe connection...';
+
+      this.paymentService.linkConnectedAccount({
+        accountId,
+        provider: PaymentProvider.Stripe
+      }).subscribe({
+        next: () => {
+          this.callbackStatus = 'success';
+          this.callbackMessage = 'Stripe account connected successfully. You can now accept payments.';
+          this.selectedProvider = 'Stripe';
+          this.updateOrgProvider(PaymentProvider.Stripe);
+          if (this.currentOrg) {
+            this.orgContext.setOrganization({
+              ...this.currentOrg,
+              paymentProvider: PaymentProvider.Stripe,
+              stripeConnectAccountId: accountId,
+              isStripeConnected: true,
+              canAcceptPayments: true
+            });
+          }
+          this.clearCallbackQueryParams();
+        },
+        error: () => {
+          this.callbackStatus = 'error';
+          this.callbackMessage = 'Stripe authorization succeeded, but account linking failed. Please try again.';
+          this.clearCallbackQueryParams();
+        }
+      });
       return;
     }
 
