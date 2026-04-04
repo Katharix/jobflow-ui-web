@@ -4,6 +4,7 @@ import {AdminLayoutComponent} from './layouts/admin-layout/admin-layout.componen
 import {HomeComponent} from './views/home/home.component';
 import {authGuard} from './core/guards/auth.guard';
 import {subscriptionGuard} from './core/guards/subscription.guard';
+import {subscriptionAccessGuard} from './core/guards/subscription-access.guard';
 import {DashboardComponent} from './admin/dashboard/dashboard.component';
 import {SubscribeComponent} from './views/subscription-views/subscribe/subscribe.component';
 import {AuthLayoutComponent} from './layouts/auth-layout/auth-layout.component';
@@ -32,9 +33,11 @@ import {NotFoundComponent} from "./views/general/not-found/not-found.component";
 import {TermsComponent} from "./views/general/terms/terms.component";
 import {PrivacyComponent} from "./views/general/privacy/privacy.component";
 import {BillingPaymentsComponent} from './admin/billing-payments/billing-payments.component';
+import { SubscriptionManagementComponent } from './admin/subscription-management/subscription-management.component';
 import { DispatchComponent } from './admin/dispatch/dispatch.component';
 import { WorkflowSettingsComponent } from './admin/settings/workflow-settings/workflow-settings.component';
 import { UserProfileComponent } from './views/general/user-profile/user-profile.component';
+import { SubscriptionRequiredComponent } from './views/subscription-views/subscription-required/subscription-required.component';
 
 
 export const routes: Routes = [
@@ -53,12 +56,13 @@ export const routes: Routes = [
       path: 'admin',
       component: AdminLayoutComponent,
       canActivate: [authGuard],
+      canActivateChild: [subscriptionAccessGuard],
       children: [
          {path: '', component: DashboardComponent},
          {path: 'settings/branding', component: BrandingComponent},
          {path: 'settings/workflow', component: WorkflowSettingsComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
          {path: 'messaging', component: ChatComponent},
-         {path: 'company', component: CompanyComponent},
+         {path: 'company', component: CompanyComponent, data: { allowExpiredAccess: true }},
 
          {path: 'employees', component: EmployeesComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
          {path: 'employees/roles', component: EmployeeRolesComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
@@ -119,6 +123,10 @@ export const routes: Routes = [
          {
             path: 'billing-payments',
             component: BillingPaymentsComponent
+         },
+         {
+            path: 'subscription-management',
+            component: SubscriptionManagementComponent
          }
       ]
    },
@@ -126,11 +134,11 @@ export const routes: Routes = [
       path: 'user-profile',
       component: AdminLayoutComponent,
       canActivate: [authGuard],
+      canActivateChild: [subscriptionAccessGuard],
       children: [
          {
             path: '',
             component: UserProfileComponent,
-            canActivate: [subscriptionGuard],
             data: { minPlan: 'Go' }
          }
       ]
@@ -138,6 +146,8 @@ export const routes: Routes = [
    {
       path: 'onboarding',
       component: AdminLayoutComponent, 
+      canActivate: [authGuard],
+      canActivateChild: [subscriptionAccessGuard],
       children: [
          {
             path: '',
@@ -162,6 +172,13 @@ export const routes: Routes = [
       component: AuthLayoutComponent,
       children: [
          {path: '', component: SubscribeComponent},
+      ]
+   },
+   {
+      path: 'subscription-required',
+      component: GeneralLayoutComponent,
+      children: [
+         { path: '', component: SubscriptionRequiredComponent }
       ]
    },
    {

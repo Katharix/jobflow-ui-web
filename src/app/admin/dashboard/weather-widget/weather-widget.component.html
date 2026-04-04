@@ -2,7 +2,7 @@
   <div class="weather-navbar-inline" [class.is-unavailable]="locationUnavailable">
     @if (!locationUnavailable) {
       <section class="weather-inline__current">
-        <i [class]="weatherIconClass" aria-hidden="true"></i>
+        <span aria-hidden="true">{{ toWeatherGlyph(weatherIconClass) }}</span>
         <div class="weather-inline__meta">
           <strong>{{ weatherTemperatureText }}</strong>
           <span>{{ weatherConditionText }}</span>
@@ -19,7 +19,7 @@
           @for (day of weatherForecast; track day; let i = $index) {
             <div class="weather-inline__day" [class.is-today]="i === 0">
               <span class="weather-inline__label">{{ i === 0 ? 'Today' : (day.date | date: 'EEE') }}</span>
-              <i [class]="day.iconClass" aria-hidden="true"></i>
+              <span aria-hidden="true">{{ toWeatherGlyph(day.iconClass) }}</span>
               <em>{{ day.highTempF }}°</em>
             </div>
           }
@@ -51,7 +51,7 @@
     } @else {
       <div class="weather-main">
         <div class="weather-now">
-          <i [class]="weatherIconClass" aria-hidden="true"></i>
+          <span aria-hidden="true">{{ toWeatherGlyph(weatherIconClass) }}</span>
           <div class="weather-now__temp">{{ weatherTemperatureText }}</div>
           <div class="weather-now__condition">{{ weatherConditionText }}</div>
           <div class="weather-now__location">
@@ -71,7 +71,7 @@
                   [class.is-today]="i === 0"
                   >
                   <span class="weather-forecast__label">{{ i === 0 ? 'Today' : (day.date | date: 'EEE') }}</span>
-                  <i [class]="day.iconClass"></i>
+                  <span aria-hidden="true">{{ toWeatherGlyph(day.iconClass) }}</span>
                   <span class="weather-forecast__temps">
                     {{ day.highTempF }}°<span class="lo"> / {{ day.lowTempF }}°</span>
                   </span>

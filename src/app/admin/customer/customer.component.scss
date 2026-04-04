@@ -129,6 +129,11 @@
 .clientflow-grid {
    border-top: 1px solid rgba(15, 23, 42, 0.08);
    padding-top: 1rem;
+      .list-pagination-controls {
+         display: flex;
+         justify-content: flex-end;
+         gap: 0.5rem;
+      }
 }
 
 .client-cell {

@@ -1,0 +1,165 @@
+<app-page-header
+  title="Subscription Management"
+  subtitle="Manage plan pricing, plan changes, renewal, and cancellation settings."
+></app-page-header>
+
+<section class="subscription-shell">
+  <section class="subscription-toolbar">
+    <a class="btn btn-outline-secondary" routerLink="/admin/billing-payments">Back to Billing &amp; Payments</a>
+    <button class="btn btn-outline-primary" [disabled]="refreshing" (click)="onRefresh()">
+      {{ refreshing ? 'Refreshing...' : 'Refresh Status' }}
+    </button>
+  </section>
+
+  <section class="subscription-hero">
+    <div class="subscription-hero__content">
+      <p class="subscription-hero__eyebrow">Billing Control Center</p>
+      <h2>Keep subscription health clear, predictable, and easy to act on.</h2>
+      <p class="subscription-hero__text">
+        Review your plan, status, renewal timing, and provider details in one place, then apply plan changes with confidence.
+      </p>
+      <div class="subscription-hero__status-row">
+        <span [class]="statusToneClass">{{ statusText }}</span>
+        <span class="subscription-hero__status-meta">Current plan: {{ subscriptionPlan || currentSubscription?.planName || 'Unassigned' }}</span>
+      </div>
+    </div>
+
+    <div class="subscription-metrics">
+      <article class="subscription-metric-card">
+        <span>Current Plan</span>
+        <strong>{{ subscriptionPlan || currentSubscription?.planName || 'Unassigned' }}</strong>
+      </article>
+      <article class="subscription-metric-card">
+        <span>Access Until</span>
+        <strong>{{ subscriptionExpiresAt ? (subscriptionExpiresAt | date:'mediumDate') : 'Not set' }}</strong>
+      </article>
+      <article class="subscription-metric-card subscription-metric-card--wide">
+        <span>Provider Subscription ID</span>
+        <strong>{{ currentSubscription?.providerSubscriptionId || 'No active subscription' }}</strong>
+      </article>
+    </div>
+  </section>
+
+  <section class="subscription-content-grid">
+    <article class="subscription-panel">
+      <div class="subscription-panel__header">
+        <h3>Choose Plan &amp; Billing Cycle</h3>
+        <p>Select a cycle and compare plans side-by-side.</p>
+      </div>
+
+      <div class="cycle-toggle" role="tablist" aria-label="Billing cycle selector">
+        <button
+          type="button"
+          class="cycle-toggle__btn"
+          [class.cycle-toggle__btn--active]="selectedCycle === 'monthly'"
+          (click)="selectedCycle = 'monthly'"
+        >Monthly</button>
+        <button
+          type="button"
+          class="cycle-toggle__btn"
+          [class.cycle-toggle__btn--active]="selectedCycle === 'yearly'"
+          (click)="selectedCycle = 'yearly'"
+        >Yearly</button>
+      </div>
+
+      <div class="plan-grid">
+        @for (plan of planCards; track plan.key) {
+          <article class="plan-card" [class.plan-card--selected]="selectedPlan === plan.key">
+            <div class="plan-card__head">
+              <h4>{{ plan.title }}</h4>
+              <div class="plan-pill-wrap">
+                @if (hasSubscription && currentPlan === plan.key) {
+                  <span class="plan-pill plan-pill--current">Current {{ currentCycle }}</span>
+                }
+                @if (selectedPlan === plan.key) {
+                  <span class="plan-pill">Selected</span>
+                }
+              </div>
+            </div>
+
+            <p class="plan-price">
+              {{ selectedCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice | currency }}
+              <small>/{{ selectedCycle === 'monthly' ? 'mo' : 'yr' }}</small>
+            </p>
+
+            <ul>
+              @for (item of plan.highlights; track item) {
+                <li>{{ item }}</li>
+              }
+            </ul>
+
+            <button class="btn btn-sm btn-outline-primary" (click)="selectedPlan = plan.key">Select {{ plan.title }}</button>
+          </article>
+        }
+      </div>
+    </article>
+
+    <article class="subscription-panel subscription-panel--summary">
+      <div class="subscription-panel__header">
+        <h3>Selection Summary</h3>
+        <p>Review the selected change before applying it.</p>
+      </div>
+
+      <div class="summary-stack">
+        <div class="summary-row">
+          <span>Selected Plan</span>
+          <strong>{{ selectedPlan | titlecase }}</strong>
+        </div>
+        <div class="summary-row">
+          <span>Billing Cycle</span>
+          <strong>{{ selectedCycle | titlecase }}</strong>
+        </div>
+        <div class="summary-row">
+          <span>Estimated Total</span>
+          <strong>{{ selectedPrice | currency }}</strong>
+        </div>
+        @if (currentPlan && currentCycle) {
+          <div class="summary-row">
+            <span>Current Subscription</span>
+            <strong>{{ currentPlan | titlecase }} ({{ currentCycle }})</strong>
+          </div>
+        }
+        @if (hasPendingSelectionChange) {
+          <div class="summary-row summary-row--highlight">
+            <span>Pending Change</span>
+            <strong>{{ selectedPlan | titlecase }} ({{ selectedCycle }})</strong>
+          </div>
+        }
+        @if (selectedCycle === 'yearly' && estimatedYearlySavings > 0) {
+          <div class="summary-row summary-row--success">
+            <span>Annual Savings</span>
+            <strong>{{ estimatedYearlySavings | currency }}</strong>
+          </div>
+        }
+      </div>
+
+      <div class="subscription-actions">
+        <button
+          class="btn btn-primary"
+          [disabled]="changingPlan || creatingCheckout"
+          (click)="onSaveSubscription()"
+        >
+          {{ saveButtonLabel }}
+        </button>
+        <button
+          class="btn btn-outline-danger"
+          [disabled]="!canCancelSubscription || cancelingSubscription"
+          (click)="onCancelSubscription()"
+        >
+          {{ cancelingSubscription ? 'Canceling...' : 'Cancel Subscription' }}
+        </button>
+        <button
+          class="btn btn-outline-primary"
+          [disabled]="!hasSubscription || !isCanceled || changingPlan"
+          (click)="onRenewCurrentPlan()"
+        >
+          Renew Current Plan
+        </button>
+      </div>
+
+      @if (!canSelfServePlanChange && currentSubscription) {
+        <p class="subscription-hint">Self-serve plan updates are available for Stripe subscriptions. Contact support for provider-assisted changes.</p>
+      }
+    </article>
+  </section>
+</section>

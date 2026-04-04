@@ -4,6 +4,16 @@ import {BaseApiService} from "../../../services/shared/base-api.service";
 import {Client} from "../models/customer";
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../../environments/environment';
+import { CursorPagedResponse } from '../../../models/cursor-paged-response';
+
+export interface ClientPagedQueryOptions {
+   cursor?: string;
+   pageSize?: number;
+   missingEmailOnly?: boolean;
+   search?: string;
+   sortBy?: string;
+   sortDirection?: 'asc' | 'desc';
+}
 
 export interface CreateCustomerRequest {
    id?: string;
@@ -89,6 +99,20 @@ export class CustomersService {
       return this.api.get(
          `${this.apiUrl}orgall`
       );
+   }
+
+   getAllByOrganizationPaged(options?: ClientPagedQueryOptions): Observable<CursorPagedResponse<Client>> {
+      const params: Record<string, string> = {
+         pageSize: `${options?.pageSize ?? 50}`,
+      };
+
+      if (options?.cursor) params['cursor'] = options.cursor;
+      if (options?.missingEmailOnly) params['missingEmailOnly'] = 'true';
+      if (options?.search) params['search'] = options.search;
+      if (options?.sortBy) params['sortBy'] = options.sortBy;
+      if (options?.sortDirection) params['sortDirection'] = options.sortDirection;
+
+      return this.api.get<CursorPagedResponse<Client>>(`${this.apiUrl}orgall`, params);
    }
 
    sendClientHubLink(clientId: string, request: SendClientHubLinkRequest): Observable<SendClientHubLinkResponse> {

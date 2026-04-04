@@ -81,11 +81,9 @@
                                 </button>
                               </li>
                             }
-                            @if (!filteredConversations.length) {
-                              <li class="tab-empty-state">
-                                <p class="text-muted mb-0">No conversations match your search.</p>
-                              </li>
-                            }
+                            <li class="tab-empty-state" [class.d-none]="filteredConversations.length > 0">
+                              <p class="text-muted mb-0">No conversations match your search.</p>
+                            </li>
                           </ul>
                         </ng-scrollbar>
                       </ng-template>
@@ -107,89 +105,83 @@
 
                           @if (!isLoadingContacts) {
                             <p class="text-secondary mb-1">Employees</p>
-                            @if (employeeContacts.length) {
-                              <ul class="list-unstyled chat-list px-1">
-                                @for (contact of employeeContacts; track trackByContactId($index, contact)) {
-                                  <li class="chat-item pe-1">
-                                    <div class="d-flex align-items-center">
-                                      <figure class="mb-0 me-2">
-                                        @if (contact.avatarUrl) {
-                                          <img [src]="contact.avatarUrl" class="img-xs rounded-circle" alt="employee avatar">
-                                        } @else {
-                                          <div class="avatar-initials img-xs rounded-circle">{{ getAvatarInitials(contact.name) }}</div>
-                                        }
-                                        <div class="status" [ngClass]="contact.status === 'offline' ? 'offline' : 'online'"></div>
-                                      </figure>
-                                      <div class="d-flex align-items-center justify-content-between flex-grow-1 border-bottom">
-                                        <div>
-                                          <div class="d-flex align-items-center gap-2">
-                                            <p class="text-body mb-1">{{ contact.name }}</p>
-                                            <span class="badge rounded-pill contact-badge">{{ getContactBadge(contact) }}</span>
-                                          </div>
-                                          <p class="text-secondary fs-13px mb-0">{{ getContactSubtitle(contact) }}</p>
-                                        </div>
-                                        <div class="d-flex align-items-end text-body contact-actions">
-                                          <button type="button" class="btn btn-link p-0 text-secondary me-2" (click)="openContactChat(contact)" ngbTooltip="Open chat">
-                                            <i class="feather icon-message-square icon-sm"></i>
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </li>
-                                }
-                              </ul>
-                            } @else {
-                              <div class="tab-empty-state">
-                                <p class="text-muted mb-0">No employees found.</p>
-                              </div>
-                            }
-                            <p class="text-secondary mt-3 mb-1">Clients</p>
-                            @if (clientContacts.length) {
-                              <ul class="list-unstyled chat-list px-1">
-                                @for (contact of clientContacts; track trackByContactId($index, contact)) {
-                                  <li class="chat-item pe-1">
-                                    <div class="d-flex align-items-center">
-                                      <figure class="mb-0 me-2">
+                            <ul class="list-unstyled chat-list px-1" [class.d-none]="employeeContacts.length === 0">
+                              @for (contact of employeeContacts; track trackByContactId($index, contact)) {
+                                <li class="chat-item pe-1">
+                                  <div class="d-flex align-items-center">
+                                    <figure class="mb-0 me-2">
+                                      @if (contact.avatarUrl) {
+                                        <img [src]="contact.avatarUrl" class="img-xs rounded-circle" alt="employee avatar">
+                                      } @else {
                                         <div class="avatar-initials img-xs rounded-circle">{{ getAvatarInitials(contact.name) }}</div>
-                                        <div class="status" [ngClass]="contact.status === 'offline' ? 'offline' : 'online'"></div>
-                                      </figure>
-                                      <div class="d-flex align-items-center justify-content-between flex-grow-1 border-bottom">
-                                        <div>
-                                          <div class="d-flex align-items-center gap-2">
-                                            <p class="text-body mb-1">{{ contact.name }}</p>
-                                            <span class="badge rounded-pill contact-badge">{{ getContactBadge(contact) }}</span>
-                                            @if (contact.hasClientHub) {
-                                              <span
-                                                class="badge rounded-pill hub-badge"
-                                                ngbTooltip="Client Hub linked"
-                                                >
-                                                Hub
-                                              </span>
-                                            }
-                                          </div>
-                                          <p class="text-secondary fs-13px mb-0">{{ getContactSubtitle(contact) }}</p>
+                                      }
+                                      <div class="status" [ngClass]="contact.status === 'offline' ? 'offline' : 'online'"></div>
+                                    </figure>
+                                    <div class="d-flex align-items-center justify-content-between flex-grow-1 border-bottom">
+                                      <div>
+                                        <div class="d-flex align-items-center gap-2">
+                                          <p class="text-body mb-1">{{ contact.name }}</p>
+                                          <span class="badge rounded-pill contact-badge">{{ getContactBadge(contact) }}</span>
                                         </div>
-                                        <div class="d-flex align-items-end text-body contact-actions">
-                                          <button
-                                            type="button"
-                                            class="btn btn-link p-0 text-secondary me-2"
-                                            (click)="openContactChat(contact)"
-                                            [disabled]="!canStartClientChat(contact)"
-                                            [ngbTooltip]="contact.phoneNumber ? 'Start SMS chat' : 'Client needs a phone number'"
-                                            >
-                                            <i class="feather icon-message-square icon-sm"></i>
-                                          </button>
-                                        </div>
+                                        <p class="text-secondary fs-13px mb-0">{{ getContactSubtitle(contact) }}</p>
+                                      </div>
+                                      <div class="d-flex align-items-end text-body contact-actions">
+                                        <button type="button" class="btn btn-link p-0 text-secondary me-2" (click)="openContactChat(contact)" ngbTooltip="Open chat">
+                                          <i class="feather icon-message-square icon-sm"></i>
+                                        </button>
                                       </div>
                                     </div>
-                                  </li>
-                                }
-                              </ul>
-                            } @else {
-                              <div class="tab-empty-state">
-                                <p class="text-muted mb-0">No clients found.</p>
-                              </div>
-                            }
+                                  </div>
+                                </li>
+                              }
+                            </ul>
+                            <div class="tab-empty-state" [class.d-none]="employeeContacts.length > 0">
+                              <p class="text-muted mb-0">No employees found.</p>
+                            </div>
+                            <p class="text-secondary mt-3 mb-1">Clients</p>
+                            <ul class="list-unstyled chat-list px-1" [class.d-none]="clientContacts.length === 0">
+                              @for (contact of clientContacts; track trackByContactId($index, contact)) {
+                                <li class="chat-item pe-1">
+                                  <div class="d-flex align-items-center">
+                                    <figure class="mb-0 me-2">
+                                      <div class="avatar-initials img-xs rounded-circle">{{ getAvatarInitials(contact.name) }}</div>
+                                      <div class="status" [ngClass]="contact.status === 'offline' ? 'offline' : 'online'"></div>
+                                    </figure>
+                                    <div class="d-flex align-items-center justify-content-between flex-grow-1 border-bottom">
+                                      <div>
+                                        <div class="d-flex align-items-center gap-2">
+                                          <p class="text-body mb-1">{{ contact.name }}</p>
+                                          <span class="badge rounded-pill contact-badge">{{ getContactBadge(contact) }}</span>
+                                          @if (contact.hasClientHub) {
+                                            <span
+                                              class="badge rounded-pill hub-badge"
+                                              ngbTooltip="Client Hub linked"
+                                              >
+                                              Hub
+                                            </span>
+                                          }
+                                        </div>
+                                        <p class="text-secondary fs-13px mb-0">{{ getContactSubtitle(contact) }}</p>
+                                      </div>
+                                      <div class="d-flex align-items-end text-body contact-actions">
+                                        <button
+                                          type="button"
+                                          class="btn btn-link p-0 text-secondary me-2"
+                                          (click)="openContactChat(contact)"
+                                          [disabled]="!canStartClientChat(contact)"
+                                          [ngbTooltip]="contact.phoneNumber ? 'Start SMS chat' : 'Client needs a phone number'"
+                                          >
+                                          <i class="feather icon-message-square icon-sm"></i>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </li>
+                              }
+                            </ul>
+                            <div class="tab-empty-state" [class.d-none]="clientContacts.length > 0">
+                              <p class="text-muted mb-0">No clients found.</p>
+                            </div>
                           }
                         </ng-scrollbar>
                       </ng-template>

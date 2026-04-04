@@ -8,83 +8,92 @@
   </div>
 }
 
-<section class="clientflow-hero">
-  <div class="clientflow-hero__intro">
-    <span class="clientflow-hero__eyebrow">Client workspace</span>
-    <h2>Clarity for every relationship.</h2>
-    <p>Capture contact details once and keep every follow-up smooth.</p>
-  </div>
-  <div class="clientflow-hero__metrics">
-    <div class="clientflow-metric">
-      <span class="clientflow-metric__label">Total clients</span>
-      <span class="clientflow-metric__value">{{ totalClients }}</span>
+@if (metrics$ | async; as metricsVm) {
+  <section class="clientflow-hero">
+    <div class="clientflow-hero__intro">
+      <span class="clientflow-hero__eyebrow">Client workspace</span>
+      <h2>Clarity for every relationship.</h2>
+      <p>Capture contact details once and keep every follow-up smooth.</p>
     </div>
-    <div class="clientflow-metric">
-      <span class="clientflow-metric__label">With email</span>
-      <span class="clientflow-metric__value">{{ clientsWithEmail }}</span>
-    </div>
-    <div class="clientflow-metric">
-      <span class="clientflow-metric__label">With phone</span>
-      <span class="clientflow-metric__value">{{ clientsWithPhone }}</span>
-    </div>
-    <div class="clientflow-metric">
-      <span class="clientflow-metric__label">Missing email</span>
-      <span class="clientflow-metric__value">{{ clientsMissingEmail }}</span>
-    </div>
-  </div>
-  <div class="clientflow-cta">
-    <div>
-      <p class="clientflow-cta__eyebrow">Quick action</p>
-      <h3>Add or import clients</h3>
-      <p>Create a client manually or import from a CSV file.</p>
-    </div>
-    <div class="clientflow-cta__actions">
-      <button type="button" class="btn btn-primary" (click)="openAddClient()">
-        Add Client
-      </button>
-      <button type="button" class="btn btn-outline-primary" (click)="openImportModal()">
-        Import Data
-      </button>
-    </div>
-  </div>
-</section>
-
-<section class="clientflow-shell">
-  <div class="clientflow-shell__header">
-    <div>
-      <h6 class="mb-1">Client directory</h6>
-      <p class="text-muted mb-0">Search, edit, and email Client Hub access directly from this list.</p>
-    </div>
-    <div class="clientflow-shell__actions">
-      <button
-        type="button"
-        class="btn btn-sm"
-        [ngClass]="showMissingEmailOnly ? 'btn-dark' : 'btn-outline-secondary'"
-        (click)="toggleMissingEmailFilter()"
-        >
-        Missing email ({{ clientsMissingEmail }})
-      </button>
-      <span class="badge bg-light text-dark">Email Client Hub Link in actions menu</span>
-    </div>
-  </div>
-
-  <div class="clientflow-grid">
-    <ng-template #clientNameTemplate let-client>
-      <div class="client-cell">
-        <div class="client-title">{{ client.firstName }} {{ client.lastName }}</div>
-        <div class="client-meta">{{ client.emailAddress || 'Email missing' }}</div>
+    <div class="clientflow-hero__metrics">
+      <div class="clientflow-metric">
+        <span class="clientflow-metric__label">Total clients</span>
+        <span class="clientflow-metric__value">{{ metricsVm.totalClients }}</span>
       </div>
-    </ng-template>
+      <div class="clientflow-metric">
+        <span class="clientflow-metric__label">With email</span>
+        <span class="clientflow-metric__value">{{ metricsVm.clientsWithEmail }}</span>
+      </div>
+      <div class="clientflow-metric">
+        <span class="clientflow-metric__label">With phone</span>
+        <span class="clientflow-metric__value">{{ metricsVm.clientsWithPhone }}</span>
+      </div>
+      <div class="clientflow-metric">
+        <span class="clientflow-metric__label">Missing email</span>
+        <span class="clientflow-metric__value">{{ metricsVm.clientsMissingEmail }}</span>
+      </div>
+    </div>
+    <div class="clientflow-cta">
+      <div>
+        <p class="clientflow-cta__eyebrow">Quick action</p>
+        <h3>Add or import clients</h3>
+        <p>Create a client manually or import from a CSV file.</p>
+      </div>
+      <div class="clientflow-cta__actions">
+        <button type="button" class="btn btn-primary" (click)="openAddClient()">
+          Add Client
+        </button>
+        <button type="button" class="btn btn-outline-primary" (click)="openImportModal()">
+          Import Data
+        </button>
+      </div>
+    </div>
+  </section>
 
-    <app-jobflow-grid
-      [data]="filteredItems"
-      [columns]="columns"
-      [pageSettings]="pageSettings"
-      [showSearchBar]="true"
-      (commandClick)="onCommandClick($event)"
-    ></app-jobflow-grid>
-  </div>
-</section>
+  <section class="clientflow-shell">
+    <div class="clientflow-shell__header">
+      <div>
+        <h6 class="mb-1">Client directory</h6>
+        <p class="text-muted mb-0">Search, edit, and email Client Hub access directly from this list.</p>
+      </div>
+      <div class="clientflow-shell__actions">
+        <button
+          type="button"
+          class="btn btn-sm"
+          [ngClass]="showMissingEmailOnly ? 'btn-dark' : 'btn-outline-secondary'"
+          (click)="toggleMissingEmailFilter()"
+          >
+          Missing email ({{ metricsVm.clientsMissingEmail }})
+        </button>
+        <span class="badge bg-light text-dark">Email Client Hub Link in actions menu</span>
+      </div>
+    </div>
+
+    <div class="clientflow-grid">
+      <div class="list-pagination-controls mb-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBack || clientsLoading" (click)="onPrevPage()">Previous</button>
+        <button type="button" class="btn btn-sm btn-outline-primary" [disabled]="!nextCursor || clientsLoading" (click)="onNextPage()">Next</button>
+      </div>
+
+      <ng-template #clientNameTemplate let-client>
+        <div class="client-cell">
+          <div class="client-title">{{ client.firstName }} {{ client.lastName }}</div>
+          <div class="client-meta">{{ client.emailAddress || 'Email missing' }}</div>
+        </div>
+      </ng-template>
+
+      <app-jobflow-grid
+        [data]="filteredItems"
+        [columns]="columns"
+        [pageSettings]="pageSettings"
+        [showSearchBar]="true"
+        (commandClick)="onCommandClick($event)"
+        (searchChange)="onGridSearchChange($event)"
+        (sortChange)="onGridSortChange($event)"
+      ></app-jobflow-grid>
+    </div>
+  </section>
+}
 
 <app-jobflow-drawer
   [open]="isDrawerOpen"

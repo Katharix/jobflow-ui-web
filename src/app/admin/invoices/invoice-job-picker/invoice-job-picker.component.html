@@ -1,0 +1,48 @@
+@if (jobPickerError) {
+  <div class="alert alert-warning mb-0">
+    {{ jobPickerError }}
+  </div>
+}
+
+<div class="invoice-drawer__job-list">
+  @for (row of rows; track trackByRowId($index, row)) {
+    <article class="invoice-drawer__job-card">
+      <div>
+        <h4>{{ row.title }}</h4>
+        <p>{{ row.clientName }} • {{ row.scheduledDateText }}</p>
+      </div>
+      <div class="invoice-drawer__job-card-actions">
+        <span class="job-status-chip" [ngClass]="row.statusClass">
+          {{ row.statusLabel }}
+        </span>
+        <button
+          type="button"
+          class="btn btn-primary btn-sm"
+          (click)="selectJob.emit(row.job)"
+          >
+          {{ 'admin.invoices.drawer.selectJob' | translate }}
+        </button>
+      </div>
+    </article>
+  }
+</div>
+
+@if (!jobPickerError && rows.length === 0) {
+  <div class="invoice-drawer__empty-state">
+    <h4>{{ hasJobSearchTerm ? ('admin.invoices.drawer.noMatches' | translate) : ('admin.invoices.drawer.noJobs' | translate) }}</h4>
+    @if (hasJobSearchTerm) {
+      <p>{{ 'admin.invoices.drawer.noMatchesHint' | translate }}</p>
+    } @else {
+      {{ 'admin.invoices.drawer.noJobsHint' | translate }}
+    }
+    <a
+      class="btn btn-outline-primary btn-sm"
+      [routerLink]="['/admin/jobs']"
+      [queryParams]="returnToCommandCenter
+        ? { onboardingAction: 'open-job-drawer', returnTo: 'dashboard-command-center' }
+        : { onboardingAction: 'open-job-drawer' }"
+      >
+      {{ 'admin.invoices.drawer.createJob' | translate }}
+    </a>
+  </div>
+}

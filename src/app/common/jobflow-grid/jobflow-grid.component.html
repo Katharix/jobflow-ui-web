@@ -48,6 +48,7 @@
       [tableStyle]="{ 'min-width': '100%' }"
       [scrollable]="true"
       [scrollHeight]="gridHeight"
+      (onSort)="onSortChange($event)"
       >
       <ng-template pTemplate="header">
         <tr>
@@ -58,9 +59,9 @@
               [pSortableColumn]="getSortableField(col)"
               >
               {{ col.headerText }}
-              @if (allowSorting && col.field && !col.template) {
+              @if (allowSorting && getSortableField(col)) {
                 <p-sortIcon
-                  [field]="col.field"
+                  [field]="getSortableField(col)!"
                 ></p-sortIcon>
               }
             </th>

@@ -21,7 +21,7 @@
         <p-select
           id="jobCreateCustomer"
           [(ngModel)]="selectedCustomerId"
-          [options]="customers"
+          [options]="(customers$ | async) ?? []"
           optionLabel="displayName"
           optionValue="id"
           [filter]="true"

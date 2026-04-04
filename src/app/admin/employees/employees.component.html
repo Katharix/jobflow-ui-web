@@ -140,36 +140,33 @@
         {{ 'admin.employees.invites.send' | translate }}
       </button>
     </div>
-    @if (sortedInvites.length) {
-      <div class="employees-invites__list">
-        @for (invite of sortedInvites; track invite.id) {
-          <article class="employees-invite-card">
+    <div class="employees-invites__list" [class.d-none]="sortedInvites.length === 0">
+      @for (invite of sortedInvites; track invite.id) {
+        <article class="employees-invite-card">
+          <div>
+            <h4>{{ getInviteName(invite) }}</h4>
+            <p>{{ invite.email }}</p>
+          </div>
+          <div class="employees-invite-card__meta">
             <div>
-              <h4>{{ getInviteName(invite) }}</h4>
-              <p>{{ invite.email }}</p>
+              <span class="employees-invite-card__label">{{ 'admin.employees.invites.role' | translate }}</span>
+              <span>{{ getInviteRoleName(invite) }}</span>
             </div>
-            <div class="employees-invite-card__meta">
-              <div>
-                <span class="employees-invite-card__label">{{ 'admin.employees.invites.role' | translate }}</span>
-                <span>{{ getInviteRoleName(invite) }}</span>
-              </div>
-              <div>
-                <span class="employees-invite-card__label">{{ 'admin.employees.invites.expires' | translate }}</span>
-                <span>{{ getInviteExpiry(invite) }}</span>
-              </div>
-              <span class="invite-status" [ngClass]="getInviteStatusClassForInvite(invite)">
-                {{ getInviteStatusLabelForInvite(invite) }}
-              </span>
+            <div>
+              <span class="employees-invite-card__label">{{ 'admin.employees.invites.expires' | translate }}</span>
+              <span>{{ getInviteExpiry(invite) }}</span>
             </div>
-          </article>
-        }
-      </div>
-    } @else {
-      <div class="employees-invites__empty">
-        <h4>{{ 'admin.employees.invites.emptyTitle' | translate }}</h4>
-        <p>{{ 'admin.employees.invites.emptySubtitle' | translate }}</p>
-      </div>
-    }
+            <span class="invite-status" [ngClass]="getInviteStatusClassForInvite(invite)">
+              {{ getInviteStatusLabelForInvite(invite) }}
+            </span>
+          </div>
+        </article>
+      }
+    </div>
+    <div class="employees-invites__empty" [class.d-none]="sortedInvites.length > 0">
+      <h4>{{ 'admin.employees.invites.emptyTitle' | translate }}</h4>
+      <p>{{ 'admin.employees.invites.emptySubtitle' | translate }}</p>
+    </div>
   </section>
 }
 

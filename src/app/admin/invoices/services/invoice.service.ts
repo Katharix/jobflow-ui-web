@@ -2,6 +2,16 @@ import { Injectable, inject } from '@angular/core';
 import { BaseApiService } from '../../../services/shared/base-api.service';
 import { CreateInvoiceRequest, Invoice } from '../../../models/invoice';
 import { Observable } from 'rxjs';
+import { CursorPagedResponse } from '../../../models/cursor-paged-response';
+
+export interface InvoicePagedQueryOptions {
+  cursor?: string;
+  pageSize?: number;
+  status?: string;
+  search?: string;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
+}
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +23,20 @@ export class InvoiceService {
 
   getByOrganization(): Observable<Invoice[]> {
     return this.api.get<Invoice[]>(`${this.invoiceUrl}organization`);
+  }
+
+  getByOrganizationPaged(options?: InvoicePagedQueryOptions): Observable<CursorPagedResponse<Invoice>> {
+    const params: Record<string, string> = {
+      pageSize: `${options?.pageSize ?? 50}`,
+    };
+
+    if (options?.cursor) params['cursor'] = options.cursor;
+    if (options?.status) params['status'] = options.status;
+    if (options?.search) params['search'] = options.search;
+    if (options?.sortBy) params['sortBy'] = options.sortBy;
+    if (options?.sortDirection) params['sortDirection'] = options.sortDirection;
+
+    return this.api.get<CursorPagedResponse<Invoice>>(`${this.invoiceUrl}organization`, params);
   }
 
   getByClient(clientId: string): Observable<Invoice[]> {

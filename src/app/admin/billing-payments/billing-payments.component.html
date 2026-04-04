@@ -28,6 +28,88 @@
     <a class="btn btn-outline-primary" routerLink="/admin/invoices">{{ 'admin.billing.actions.openInvoices' | translate }}</a>
   </div>
 
+  <section class="billing-section">
+    <div class="billing-section__header">
+      <div>
+        <h3>Recent Payment Activity</h3>
+        <p>Latest successful, failed, refund, and subscription events.</p>
+      </div>
+      <div class="billing-page-controls">
+        <button class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBackHistory || historyLoading" (click)="onPrevHistoryPage()">Previous</button>
+        <button class="btn btn-sm btn-outline-primary" [disabled]="!historyNextCursor || historyLoading" (click)="onNextHistoryPage()">Next</button>
+      </div>
+    </div>
+    @if (historyLoading) {
+      <div class="billing-empty">Loading payment activity...</div>
+    }
+    <div class="billing-empty" [class.d-none]="historyLoading || history.length > 0">No payment activity available yet.</div>
+    <div class="table-responsive" [class.d-none]="historyLoading || history.length === 0">
+      <table class="table align-middle mb-0">
+        <thead>
+          <tr>
+            <th>When</th>
+            <th>Event</th>
+            <th>Status</th>
+            <th>Payment ID</th>
+            <th class="text-end">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (event of history; track event.id) {
+            <tr>
+              <td>{{ event.paidAt | date: 'medium' }}</td>
+              <td>{{ event.eventType }}</td>
+              <td>{{ event.status }}</td>
+              <td>{{ event.stripePaymentIntentId || '-' }}</td>
+              <td class="text-end">{{ toDollarFromMinor(event.amountPaid) | currency:event.currency }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="billing-section">
+    <div class="billing-section__header">
+      <div>
+        <h3>Disputes</h3>
+        <p>Chargebacks and dispute lifecycle events from your payment providers.</p>
+      </div>
+      <div class="billing-page-controls">
+        <button class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBackDisputes || disputesLoading" (click)="onPrevDisputesPage()">Previous</button>
+        <button class="btn btn-sm btn-outline-primary" [disabled]="!disputeNextCursor || disputesLoading" (click)="onNextDisputesPage()">Next</button>
+      </div>
+    </div>
+    @if (disputesLoading) {
+      <div class="billing-empty">Loading disputes...</div>
+    }
+    <div class="billing-empty" [class.d-none]="disputesLoading || disputes.length > 0">No disputes found.</div>
+    <div class="table-responsive" [class.d-none]="disputesLoading || disputes.length === 0">
+      <table class="table align-middle mb-0">
+        <thead>
+          <tr>
+            <th>When</th>
+            <th>Event</th>
+            <th>Status</th>
+            <th>Customer</th>
+            <th class="text-end">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (dispute of disputes; track dispute.id) {
+            <tr>
+              <td>{{ dispute.paidAt | date: 'medium' }}</td>
+              <td>{{ dispute.eventType }}</td>
+              <td>{{ dispute.status }}</td>
+              <td>{{ dispute.customerId || '-' }}</td>
+              <td class="text-end">{{ toDollarFromMinor(dispute.amountPaid) | currency:dispute.currency }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   @if (loading) {
     <p class="billing-state">{{ 'admin.billing.state.loading' | translate }}</p>
   }
@@ -44,11 +126,8 @@
         </div>
         <span>{{ totalDrafts }} {{ 'admin.billing.sections.total' | translate }}</span>
       </div>
-      @if (!draftInvoices.length) {
-        <div class="billing-empty">{{ 'admin.billing.empty.draft' | translate }}</div>
-      }
-      @if (draftInvoices.length) {
-        <div class="table-responsive">
+      <div class="billing-empty" [class.d-none]="draftInvoices.length > 0">{{ 'admin.billing.empty.draft' | translate }}</div>
+      <div class="table-responsive" [class.d-none]="draftInvoices.length === 0">
           <table class="table align-middle mb-0">
             <thead>
               <tr>
@@ -79,7 +158,6 @@
             </tbody>
           </table>
         </div>
-      }
     </section>
     <section class="billing-section">
       <div class="billing-section__header">
@@ -89,11 +167,8 @@
         </div>
         <span>{{ totalSent }} {{ 'admin.billing.sections.total' | translate }}</span>
       </div>
-      @if (!sentInvoices.length) {
-        <div class="billing-empty">{{ 'admin.billing.empty.sent' | translate }}</div>
-      }
-      @if (sentInvoices.length) {
-        <div class="table-responsive">
+      <div class="billing-empty" [class.d-none]="sentInvoices.length > 0">{{ 'admin.billing.empty.sent' | translate }}</div>
+      <div class="table-responsive" [class.d-none]="sentInvoices.length === 0">
           <table class="table align-middle mb-0">
             <thead>
               <tr>
@@ -124,7 +199,6 @@
             </tbody>
           </table>
         </div>
-      }
     </section>
     <section class="billing-section">
       <div class="billing-section__header">
@@ -134,11 +208,8 @@
         </div>
         <span>{{ totalOverdue }} {{ 'admin.billing.sections.total' | translate }}</span>
       </div>
-      @if (!overdueInvoices.length) {
-        <div class="billing-empty">{{ 'admin.billing.empty.overdue' | translate }}</div>
-      }
-      @if (overdueInvoices.length) {
-        <div class="table-responsive">
+      <div class="billing-empty" [class.d-none]="overdueInvoices.length > 0">{{ 'admin.billing.empty.overdue' | translate }}</div>
+      <div class="table-responsive" [class.d-none]="overdueInvoices.length === 0">
           <table class="table align-middle mb-0">
             <thead>
               <tr>
@@ -169,10 +240,8 @@
             </tbody>
           </table>
         </div>
-      }
     </section>
-    @if (paidInvoices.length) {
-      <section class="billing-section">
+    <section class="billing-section" [class.d-none]="paidInvoices.length === 0">
         <div class="billing-section__header">
           <div>
             <h3>{{ 'admin.billing.sections.paid.title' | translate }}</h3>
@@ -188,6 +257,7 @@
                 <th>{{ 'admin.billing.table.client' | translate }}</th>
                 <th>{{ 'admin.billing.table.paid' | translate }}</th>
                 <th class="text-end">{{ 'admin.billing.table.total' | translate }}</th>
+                <th class="text-end">Refund amount</th>
                 <th>{{ 'admin.billing.table.status' | translate }}</th>
                 <th class="text-end">{{ 'admin.billing.table.actions' | translate }}</th>
               </tr>
@@ -199,9 +269,35 @@
                   <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
                   <td>{{ invoice.invoiceDate | date: 'mediumDate' }}</td>
                   <td class="text-end">{{ invoice.totalAmount | currency }}</td>
+                  <td class="text-end" style="min-width: 180px;">
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      [disabled]="!canRefundInvoice(invoice)"
+                      min="0.01"
+                      step="0.01"
+                      [(ngModel)]="invoiceRefundAmounts[invoice.id]"
+                    />
+                  </td>
                   <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
                   <td class="text-end">
-                    <button class="btn btn-sm btn-outline-secondary" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.view' | translate }}</button>
+                    <div class="d-flex justify-content-end gap-2">
+                      <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        style="max-width: 220px;"
+                        placeholder="Refund reason (optional)"
+                        [(ngModel)]="invoiceRefundReasons[invoice.id]"
+                      />
+                      <button class="btn btn-sm btn-outline-secondary" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.view' | translate }}</button>
+                      <button
+                        class="btn btn-sm btn-primary"
+                        [disabled]="!canRefundInvoice(invoice) || refundingInvoiceId === invoice.id"
+                        (click)="onIssueRefundForInvoice(invoice)"
+                      >
+                        {{ refundingInvoiceId === invoice.id ? 'Submitting...' : 'Refund' }}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               }
@@ -209,6 +305,5 @@
           </table>
         </div>
       </section>
-    }
   }
 </section>

@@ -1,0 +1,74 @@
+.support-billing {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.support-billing__toolbar {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 420px;
+}
+
+.support-billing__summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.75rem;
+}
+
+.support-billing__card,
+.support-billing__panel {
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.75rem;
+  background: var(--bs-body-bg);
+  padding: 0.9rem;
+}
+
+.support-billing__card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.support-billing__card span {
+  font-size: 0.8rem;
+  color: var(--bs-secondary-color);
+}
+
+.support-billing__card strong {
+  font-size: 1.05rem;
+}
+
+.support-billing__panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+
+  h5 {
+    margin: 0;
+  }
+}
+
+.support-billing__page-controls {
+  display: inline-flex;
+  gap: 0.5rem;
+}
+
+.support-billing__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.support-muted {
+  margin: 0;
+  color: var(--bs-secondary-color);
+}
+
+@media (max-width: 1024px) {
+  .support-billing__grid {
+    grid-template-columns: 1fr;
+  }
+}

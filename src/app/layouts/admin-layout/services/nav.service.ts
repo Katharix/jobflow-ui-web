@@ -7,6 +7,7 @@ import {NavItem} from '../../../models/nav-item';
 export class NavService {
    private readonly billingNavItems: NavItem[] = [
       {label: 'Billing & Payments', icon: '', route: '/admin/billing-payments'},
+      {label: 'Subscription Management', icon: '', route: '/admin/subscription-management'},
       {label: 'Connected Accounts', icon: '', route: '/admin/connectedpayment', allowDeepMatch: true}
    ];
 
@@ -55,6 +56,7 @@ export class NavService {
          {label: 'Services', icon: '', route: '/general/edit-profile'}
       ],
       '/admin/billing-payments': this.billingNavItems,
+      '/admin/subscription-management': this.billingNavItems,
       '/admin/connectedpayment': this.billingNavItems
    };
 
@@ -81,6 +83,13 @@ export class NavService {
             return {
                ...item,
                active: normalizedPath.startsWith('/admin/connectedpayment')
+            };
+         }
+
+         if (item.route === '/admin/subscription-management') {
+            return {
+               ...item,
+               active: normalizedPath.startsWith('/admin/subscription-management')
             };
          }
 
