@@ -16,10 +16,10 @@ interface LoginWithFirebaseResponse {
   organization: OrganizationDto;
 }
 
-type BackendProblemDetails = {
+interface BackendProblemDetails {
   title?: string;
   detail?: string;
-};
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
