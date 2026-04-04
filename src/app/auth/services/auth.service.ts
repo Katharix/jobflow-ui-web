@@ -16,6 +16,11 @@ interface LoginWithFirebaseResponse {
   organization: OrganizationDto;
 }
 
+type BackendProblemDetails = {
+  title?: string;
+  detail?: string;
+};
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private auth = inject(Auth);
@@ -56,5 +61,30 @@ export class AuthService {
 
   get currentUser() {
     return this.auth.currentUser;
+  }
+
+  getBackendErrorMessage(error: unknown, fallbackMessage: string): string {
+    const maybeHttpError = error as {
+      error?: BackendProblemDetails | string;
+    } | null;
+
+    if (!maybeHttpError) {
+      return fallbackMessage;
+    }
+
+    if (typeof maybeHttpError.error === 'string' && maybeHttpError.error.trim()) {
+      return maybeHttpError.error;
+    }
+
+    const errorBody = maybeHttpError.error;
+    if (errorBody && typeof errorBody === 'object' && 'detail' in errorBody && typeof errorBody.detail === 'string') {
+      return errorBody.detail;
+    }
+
+    if (errorBody && typeof errorBody === 'object' && 'title' in errorBody && typeof errorBody.title === 'string') {
+      return errorBody.title;
+    }
+
+    return fallbackMessage;
   }
 }

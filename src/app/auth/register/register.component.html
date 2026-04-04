@@ -43,6 +43,18 @@
               </div>
             }
 
+            @if (organizationId && isOrgDataLoading) {
+              <div class="alert alert-info py-2">
+                {{ 'auth.register.loadingOrgData' | translate }}
+              </div>
+            }
+
+            @if (organizationId && orgDataLoadFailed) {
+              <div class="alert alert-warning py-2">
+                {{ 'auth.register.errors.orgLoadFailed' | translate }}
+              </div>
+            }
+
             <div class="form-group mb-3">
               <label class="form-label" for="orgName">{{ 'auth.register.companyName' | translate }}</label>
               <input
@@ -51,8 +63,9 @@
                 id="orgName"
                 name="organizationName"
                 [placeholder]="'auth.register.companyNamePlaceholder' | translate"
-                [(ngModel)]="organizationName"
-                disabled
+                [value]="organizationName"
+                (input)="organizationName = $any($event.target).value"
+                [readonly]="organizationId"
                 />
               </div>
 
@@ -64,21 +77,16 @@
                   id="email"
                   name="email"
                   [placeholder]="'auth.register.emailPlaceholder' | translate"
-                  [(ngModel)]="email"
+                  [value]="email"
+                  (input)="email = $any($event.target).value"
                   required
                   email
-                  #emailModel="ngModel"
                   [readonly]="organizationId"
-                  [ngClass]="{ 'is-invalid': emailModel.invalid && (emailModel.touched || submitted) }"
+                  [ngClass]="{ 'is-invalid': submitted && !email }"
                   />
-                  @if (emailModel.invalid && (emailModel.touched || submitted)) {
+                  @if (submitted && !email) {
                     <div class="text-danger mt-1">
-                      @if (emailModel.errors?.['required']) {
-                        <div>{{ 'auth.register.validation.emailRequired' | translate }}</div>
-                      }
-                      @if (emailModel.errors?.['email']) {
-                        <div>{{ 'auth.register.validation.emailInvalid' | translate }}</div>
-                      }
+                      <div>{{ 'auth.register.validation.emailRequired' | translate }}</div>
                     </div>
                   }
                   @if (organizationId) {

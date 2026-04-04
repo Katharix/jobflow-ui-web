@@ -50,18 +50,21 @@
         @if (filteredFaqs.length) {
           <p-accordion [multiple]="true">
             @for (faq of filteredFaqs; track faq) {
-              <p-accordionTab [header]="faq.question">
-                <div class="faq-content">
-                  <p-tag
-                    [value]="faq.category"
-                    [severity]="getCategorySeverity(faq.category)"
-                    [rounded]="true"
-                  ></p-tag>
-                  <p class="mb-0 text-muted">
-                    {{ faq.answer }}
-                  </p>
-                </div>
-              </p-accordionTab>
+              <p-accordion-panel>
+                <p-accordion-header>{{ faq.question }}</p-accordion-header>
+                <p-accordion-content>
+                  <div class="faq-content">
+                    <p-tag
+                      [value]="faq.category"
+                      [severity]="getCategorySeverity(faq.category)"
+                      [rounded]="true"
+                    ></p-tag>
+                    <p class="mb-0 text-muted">
+                      {{ faq.answer }}
+                    </p>
+                  </div>
+                </p-accordion-content>
+              </p-accordion-panel>
             }
           </p-accordion>
         } @else {

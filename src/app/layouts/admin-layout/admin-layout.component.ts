@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, inject, OnInit, ViewEncapsulation} from '@angular/core';
-import {DOCUMENT, Location} from '@angular/common';
+import {ChangeDetectorRef, Component, DOCUMENT, inject, OnInit, ViewEncapsulation} from '@angular/core';
+import {Location} from '@angular/common';
 import {NavigationEnd, Router, RouterModule, RouterOutlet} from '@angular/router';
 import {AdminSidebarComponent} from "./admin-sidebar/admin-sidebar.component";
 import {AdminNavbarComponent} from './admin-navbar/admin-navbar.component';

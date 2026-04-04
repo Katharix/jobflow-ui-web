@@ -1,20 +1,25 @@
 import { Injectable, inject } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { Auth } from '@angular/fire/auth';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 
 @Injectable({ providedIn: 'root' })
 export class AuthRedirectGuard implements CanActivate {
   private router = inject(Router);
   private auth = inject(Auth);
 
-  canActivate(): boolean {
-    const user = this.auth.currentUser;
+  canActivate(): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      const unsubscribe = onAuthStateChanged(this.auth, async (user) => {
+        unsubscribe();
 
-    if (user) {
-      this.router.navigate(['/admin']);
-      return false;
-    }
+        if (user) {
+          await this.router.navigate(['/admin']);
+          resolve(false);
+          return;
+        }
 
-    return true;
+        resolve(true);
+      });
+    });
   }
 }

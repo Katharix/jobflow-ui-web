@@ -103,8 +103,22 @@ export class LoginComponent implements OnInit {
       } catch (err: unknown) {
          if (this.isBackendAuthError(err)) {
             console.error('Backend login failed:', err);
-            this.error = this.translate.instant('auth.login.serverError');
-            this.toast.error(this.translate.instant('auth.login.toastFailed'));
+            const backendFallback = this.translate.instant('auth.common.backendSyncFailed');
+            const backendTitle = this.translate.instant('auth.common.backendSyncTitle');
+            this.error = this.authService.getBackendErrorMessage(
+               err,
+               backendFallback
+            );
+            this.toast.error(this.error || backendFallback, backendTitle);
+
+            // Keep Firebase and local app session in sync when backend provisioning fails.
+            try {
+               await this.authService.logout();
+            } catch (logoutErr) {
+               console.warn('Logout after backend login failure failed:', logoutErr);
+            }
+
+            this.orgContext.clearOrganization();
             return;
          }
 

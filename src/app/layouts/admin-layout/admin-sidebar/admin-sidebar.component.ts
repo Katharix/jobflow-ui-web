@@ -1,5 +1,5 @@
-import { DOCUMENT, NgClass } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild, inject } from '@angular/core';
+import { NgClass } from '@angular/common';
+import { AfterViewInit, Component, DOCUMENT, ElementRef, OnInit, Renderer2, ViewChild, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslateModule } from '@ngx-translate/core';

@@ -13,7 +13,7 @@ import {
   JobflowGridPageSettings
 } from '../../../common/jobflow-grid/jobflow-grid.component';
 import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -27,7 +27,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     PageHeaderComponent,
     JobflowGridComponent,
     ButtonModule,
-    DropdownModule,
+    SelectModule,
     InputTextModule,
     MessageModule,
     TranslateModule

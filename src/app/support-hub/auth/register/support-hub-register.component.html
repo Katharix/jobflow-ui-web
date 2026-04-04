@@ -68,7 +68,7 @@
       placeholder="Create a password"
       [(ngModel)]="password"
       required
-      minlength="8"
+      [minlength]="8"
       [toggleMask]="true"
       [feedback]="false"
       styleClass="support-w-100"

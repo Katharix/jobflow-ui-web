@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, inject } from '@angular/core';
 import {FormsModule, NgForm} from '@angular/forms';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {Organization, OrganizationRequest, OrganizationDto} from '../../models/organization';
@@ -13,6 +13,8 @@ import { PaymentProvider } from '../../models/customer-payment-profile';
 import { ToastService } from '../../common/toast/toast.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../services/auth.service';
+import { map } from 'rxjs/operators';
+import { UserCredential } from 'firebase/auth';
 
 @Component({
    selector: 'app-register',
@@ -31,6 +33,7 @@ export class RegisterComponent implements OnInit {
    private toast = inject(ToastService);
    private translate = inject(TranslateService);
    private authService = inject(AuthService);
+   private cdr = inject(ChangeDetectorRef);
 
    @ViewChild('form') form?: NgForm;
 
@@ -46,28 +49,52 @@ export class RegisterComponent implements OnInit {
    pattern = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d])\\S+$';
    submitted = false;
    isSubmitting = false;
+   isOrgDataLoading = false;
+   orgDataLoadFailed = false;
 
    ngOnInit(): void {
       this.loadOrganizationTypes();
-      this.organizationId = this.normalizeOrganizationId(
+
+      const initialOrgId = this.normalizeOrganizationId(
          this.route.snapshot.queryParamMap.get('organizationId')
       );
 
-      if (this.organizationId) {
-         this.getOrganizationData(this.organizationId);
+      if (initialOrgId) {
+         this.organizationId = initialOrgId;
+         this.getOrganizationData(initialOrgId);
       }
+
+      this.route.queryParamMap
+         .pipe(map(params => this.normalizeOrganizationId(params.get('organizationId'))))
+         .subscribe((orgId) => {
+            if (orgId && orgId !== this.organizationId) {
+               this.organizationId = orgId;
+               this.getOrganizationData(orgId);
+            }
+         });
    }
 
    private getOrganizationData(orgId: string) {
+      this.isOrgDataLoading = true;
+      this.orgDataLoadFailed = false;
+
       const orgRequest: OrganizationRequest = {
          organizationId: orgId
       }
+
       this.orgService.getOrganizationById(orgRequest).subscribe({
          next: (data: OrganizationDto) => {
-            this.email = data.emailAddress ?? '';
+            this.email = data.emailAddress ?? data.email ?? '';
             this.organizationName = data.organizationName ?? '';
+            this.isOrgDataLoading = false;
+            this.cdr.detectChanges();
          },
-         error: (err) => console.error(err)
+         error: (err) => {
+            console.error('Failed to load organization data:', err);
+            this.isOrgDataLoading = false;
+            this.orgDataLoadFailed = true;
+            this.toast.error(this.translate.instant('auth.register.errors.orgLoadFailed'));
+         }
       });
    }
 
@@ -101,6 +128,7 @@ export class RegisterComponent implements OnInit {
       this.error = '';
       const role = 'OrganizationAdmin';
       this.submitted = true;
+      let createdCredential: UserCredential | null = null;
 
       if (this.form?.invalid) {
          this.form.control.markAllAsTouched();
@@ -126,21 +154,38 @@ export class RegisterComponent implements OnInit {
       this.isSubmitting = true;
 
       try {
-         const userCredential = await this.authService.register(
+         createdCredential = await this.authService.register(
             this.email.trim(),
             this.password.trim()
          );
 
-         await this.completeRegistration(userCredential.user.uid, this.email.trim(), role);
+         await this.completeRegistration(createdCredential.user.uid, this.email.trim(), role);
 
       } catch (err: unknown) {
          console.error('Registration Error:', err);
          if (this.isBackendAuthError(err)) {
-            this.error = this.translate.instant('auth.register.errors.serverSyncFailed');
+            const backendFallback = this.translate.instant('auth.common.backendSyncFailed');
+            const backendTitle = this.translate.instant('auth.common.backendSyncTitle');
+            this.error = this.authService.getBackendErrorMessage(
+               err,
+               backendFallback
+            );
+
+            // Email/password users are just created locally before server sync.
+            // If server sync fails, remove the fresh Firebase user so retry works cleanly.
+            if (createdCredential?.user) {
+               try {
+                  await createdCredential.user.delete();
+               } catch (deleteErr) {
+                  console.warn('Failed to rollback newly created Firebase user:', deleteErr);
+               }
+            }
+
+            this.toast.error(this.error || backendFallback, backendTitle);
          } else {
             this.error = this.mapFirebaseAuthError(err);
+            this.toast.error(this.error || this.translate.instant('auth.register.errors.generic'));
          }
-         this.toast.error(this.error || this.translate.instant('auth.register.errors.generic'));
       } finally {
          this.isSubmitting = false;
       }
@@ -183,11 +228,24 @@ export class RegisterComponent implements OnInit {
       } catch (err: unknown) {
          console.error('Google Registration Error:', err);
          if (this.isBackendAuthError(err)) {
-            this.error = this.translate.instant('auth.register.errors.serverSyncFailed');
+            const backendFallback = this.translate.instant('auth.common.backendSyncFailed');
+            const backendTitle = this.translate.instant('auth.common.backendSyncTitle');
+            this.error = this.authService.getBackendErrorMessage(
+               err,
+               backendFallback
+            );
+
+            try {
+               await this.authService.logout();
+            } catch (logoutErr) {
+               console.warn('Failed to logout after backend registration error:', logoutErr);
+            }
+
+            this.toast.error(this.error || backendFallback, backendTitle);
          } else {
             this.error = this.mapFirebaseAuthError(err);
+            this.toast.error(this.error || this.translate.instant('auth.register.errors.generic'));
          }
-         this.toast.error(this.error || this.translate.instant('auth.register.errors.generic'));
       } finally {
          this.isSubmitting = false;
       }

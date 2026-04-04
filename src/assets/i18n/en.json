@@ -92,6 +92,10 @@
     }
   },
   "auth": {
+    "common": {
+      "backendSyncTitle": "Authentication issue",
+      "backendSyncFailed": "We couldn't complete account provisioning right now. Please try again."
+    },
     "login": {
       "eyebrow": "Welcome back",
       "headline": "Run every job from request to payment.",
@@ -156,6 +160,7 @@
         "subscription": "1. Subscription",
         "account": "2. Create account"
       },
+      "loadingOrgData": "Loading your company details...",
       "title": "Create your account",
       "subtitle": "Finish your details to launch JobFlow.",
       "companyName": "Company name",
@@ -206,7 +211,8 @@
         "googleEmailMismatch": "Please use the same email address used for your JobFlow subscription.",
         "googleMissingEmail": "Your Google account did not provide an email address.",
         "missingOrganization": "We could not find your organization setup. Please start from subscription checkout again.",
-        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again."
+        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again.",
+        "orgLoadFailed": "Unable to load your organization details. Please refresh the page or contact support."
       },
       "errorCode": "(code: {{code}})",
       "toastCreated": "Account created",
@@ -306,9 +312,10 @@
       },
       "errors": {
         "invalidEmail": "Please enter a valid email address.",
-        "userNotFound": "No account found for this email.",
-        "wrongPassword": "Incorrect password. Try again.",
+        "invalidCredentials": "Invalid email or password.",
+        "userDisabled": "This account has been disabled. Contact your administrator.",
         "tooManyRequests": "Too many attempts. Please wait and try again.",
+        "network": "Network error. Check your connection and try again.",
         "generic": "Something went wrong. Please try again."
       }
     },

@@ -10,13 +10,13 @@
       <p class="support-muted">Invite staff, assign roles, and review activity.</p>
     </div>
     <div class="support-people__invite">
-      <p-dropdown
+      <p-select
         [options]="inviteRoleOptions"
         optionLabel="label"
         optionValue="value"
         [(ngModel)]="newInviteRole"
         styleClass="support-w-100"
-      ></p-dropdown>
+      ></p-select>
       <button
         pButton
         type="button"

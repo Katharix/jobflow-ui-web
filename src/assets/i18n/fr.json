@@ -70,6 +70,10 @@
       "default": "Completez cette etape pour continuer l'onboarding."
     }
   },
+      "common": {
+        "backendSyncTitle": "Authentication issue",
+        "backendSyncFailed": "We couldn't complete account provisioning right now. Please try again."
+      },
   "dashboard": {
     "welcomeTitle": "Bienvenue, {{organization}}",
     "welcomeSubtitle": "Voici votre centre de commande pour aujourd'hui, commencez par l'essentiel.",
@@ -156,6 +160,7 @@
         "subscription": "1. Abonnement",
         "account": "2. Creer un compte"
       },
+      "loadingOrgData": "Chargement des informations de votre entreprise...",
       "title": "Creez votre compte",
       "subtitle": "Terminez vos informations pour lancer JobFlow.",
       "companyName": "Nom de l'entreprise",
@@ -203,7 +208,8 @@
         "googleEmailMismatch": "Please use the same email address used for your JobFlow subscription.",
         "googleMissingEmail": "Your Google account did not provide an email address.",
         "missingOrganization": "We could not find your organization setup. Please start from subscription checkout again.",
-        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again."
+        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again.",
+        "orgLoadFailed": "Unable to load your organization details. Please refresh the page or contact support."
       },
       "errorCode": "(code: {{code}})",
       "toastCreated": "Compte cree",
@@ -306,9 +312,10 @@
       },
       "errors": {
         "invalidEmail": "Entrez un email valide.",
-        "userNotFound": "Aucun compte pour cet email.",
-        "wrongPassword": "Mot de passe incorrect. Reessayez.",
+        "invalidCredentials": "Email ou mot de passe incorrect.",
+        "userDisabled": "Ce compte a ete desactive. Contactez votre administrateur.",
         "tooManyRequests": "Trop de tentatives. Attendez et reessayez.",
+        "network": "Erreur reseau. Verifiez votre connexion et reessayez.",
         "generic": "Un probleme est survenu. Reessayez."
       }
     },

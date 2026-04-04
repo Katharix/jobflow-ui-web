@@ -70,6 +70,10 @@
       "default": "Conclua esta etapa para continuar o onboarding."
     }
   },
+      "common": {
+        "backendSyncTitle": "Authentication issue",
+        "backendSyncFailed": "We couldn't complete account provisioning right now. Please try again."
+      },
   "dashboard": {
     "welcomeTitle": "Bem-vindo, {{organization}}",
     "welcomeSubtitle": "Este e seu centro de comando para hoje, comece pelo que importa.",
@@ -156,6 +160,7 @@
         "subscription": "1. Assinatura",
         "account": "2. Criar conta"
       },
+      "loadingOrgData": "Carregando os dados da sua empresa...",
       "title": "Crie sua conta",
       "subtitle": "Finalize seus dados para lancar o JobFlow.",
       "companyName": "Nome da empresa",
@@ -203,7 +208,8 @@
         "googleEmailMismatch": "Please use the same email address used for your JobFlow subscription.",
         "googleMissingEmail": "Your Google account did not provide an email address.",
         "missingOrganization": "We could not find your organization setup. Please start from subscription checkout again.",
-        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again."
+        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again.",
+        "orgLoadFailed": "Unable to load your organization details. Please refresh the page or contact support."
       },
       "errorCode": "(codigo: {{code}})",
       "toastCreated": "Conta criada",
@@ -306,9 +312,10 @@
       },
       "errors": {
         "invalidEmail": "Informe um email valido.",
-        "userNotFound": "Nenhuma conta para este email.",
-        "wrongPassword": "Senha incorreta. Tente novamente.",
+        "invalidCredentials": "Email ou senha incorretos.",
+        "userDisabled": "Esta conta foi desativada. Contate o administrador.",
         "tooManyRequests": "Muitas tentativas. Aguarde e tente novamente.",
+        "network": "Erro de rede. Verifique sua conexao e tente novamente.",
         "generic": "Algo deu errado. Tente novamente."
       }
     },

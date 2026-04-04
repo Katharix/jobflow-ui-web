@@ -70,6 +70,10 @@
       "default": "Schliessen Sie diesen Schritt ab, um fortzufahren."
     }
   },
+      "common": {
+        "backendSyncTitle": "Authentication issue",
+        "backendSyncFailed": "We couldn't complete account provisioning right now. Please try again."
+      },
   "dashboard": {
     "welcomeTitle": "Willkommen, {{organization}}",
     "welcomeSubtitle": "Hier ist Ihr Kommandocenter fur heute - starten Sie mit dem Wichtigsten.",
@@ -156,6 +160,7 @@
         "subscription": "1. Abo",
         "account": "2. Konto erstellen"
       },
+      "loadingOrgData": "Firmendaten werden geladen...",
       "title": "Konto erstellen",
       "subtitle": "Schliessen Sie Ihre Angaben ab, um JobFlow zu starten.",
       "companyName": "Firmenname",
@@ -203,7 +208,8 @@
         "googleEmailMismatch": "Please use the same email address used for your JobFlow subscription.",
         "googleMissingEmail": "Your Google account did not provide an email address.",
         "missingOrganization": "We could not find your organization setup. Please start from subscription checkout again.",
-        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again."
+        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again.",
+        "orgLoadFailed": "Unable to load your organization details. Please refresh the page or contact support."
       },
       "errorCode": "(code: {{code}})",
       "toastCreated": "Konto erstellt",
@@ -306,9 +312,10 @@
       },
       "errors": {
         "invalidEmail": "Geben Sie eine gultige E-Mail ein.",
-        "userNotFound": "Kein Konto fur diese E-Mail.",
-        "wrongPassword": "Falsches Passwort. Bitte erneut versuchen.",
+        "invalidCredentials": "Falsche E-Mail oder falsches Passwort.",
+        "userDisabled": "Dieses Konto wurde deaktiviert. Kontaktieren Sie Ihren Administrator.",
         "tooManyRequests": "Zu viele Versuche. Bitte warten.",
+        "network": "Netzwerkfehler. Uberprufen Sie Ihre Verbindung und versuchen Sie es erneut.",
         "generic": "Etwas ist schief gelaufen. Bitte erneut versuchen."
       }
     },

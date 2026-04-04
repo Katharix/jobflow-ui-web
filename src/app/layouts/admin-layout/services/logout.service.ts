@@ -16,15 +16,17 @@ export class LogoutService {
       this.isLoggingOut = true;
 
       try {
-         await signOut(this.auth);
-      } catch (err) {
-         console.warn('Sign out error (ignored):', err);
+         try {
+            await signOut(this.auth);
+         } catch (err) {
+            console.warn('Sign out error (ignored):', err);
+         }
+
+         this.orgContext.clearOrganization();
+
+         await this.router.navigateByUrl('/auth/login');
+      } finally {
+         this.isLoggingOut = false;
       }
-
-      this.orgContext.clearOrganization();
-
-      await this.router.navigateByUrl('/auth/login');
-
-      this.isLoggingOut = false;
    }
 }
