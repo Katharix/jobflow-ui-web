@@ -56,6 +56,24 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Validate release tag is on master
+        env:
+          RELEASE_REF: ${{ github.ref_name }}
+        run: |
+          TAG_SHA="$(git rev-list -n 1 "$RELEASE_REF" 2>/dev/null || true)"
+          if [ -z "$TAG_SHA" ]; then
+            echo "Unable to resolve tag ref: $RELEASE_REF"
+            exit 1
+          fi
+
+          git fetch --no-tags origin master:refs/remotes/origin/master
+
+          if ! git merge-base --is-ancestor "$TAG_SHA" origin/master; then
+            echo "Release tag $RELEASE_REF ($TAG_SHA) is not on master. Blocking production deploy."
+            exit 1
+          fi
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
