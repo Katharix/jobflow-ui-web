@@ -1,0 +1,131 @@
+<app-page-header
+  title="Billing Ops"
+  subtitle="Support-side billing visibility for subscriptions, payments, and disputes."
+></app-page-header>
+
+<section class="support-billing">
+  <div class="support-billing__toolbar">
+    <label for="orgSelect">Organization</label>
+    <select
+      id="orgSelect"
+      class="form-select"
+      [(ngModel)]="selectedOrganizationId"
+      (change)="loadOrganizationBilling()"
+    >
+      @for (org of organizations; track org.id) {
+        <option [value]="org.id">{{ org.organizationName || 'Unknown org' }}</option>
+      }
+    </select>
+  </div>
+
+  @if (loading) {
+    <div class="support-billing__card">Loading billing data...</div>
+  }
+
+  @if (!loading && financialSummary) {
+    <div class="support-billing__summary">
+      <div class="support-billing__card">
+        <span>Plan</span>
+        <strong>{{ financialSummary.subscriptionPlan || 'Unknown' }}</strong>
+      </div>
+      <div class="support-billing__card">
+        <span>Status</span>
+        <strong>{{ financialSummary.subscriptionStatus || 'Unknown' }}</strong>
+      </div>
+      <div class="support-billing__card">
+        <span>Net collected</span>
+        <strong>{{ financialSummary.netCollected | currency }}</strong>
+      </div>
+      <div class="support-billing__card">
+        <span>Outstanding</span>
+        <strong>{{ financialSummary.outstanding | currency }}</strong>
+      </div>
+      <div class="support-billing__card">
+        <span>Disputes</span>
+        <strong>{{ financialSummary.disputeCount }}</strong>
+      </div>
+    </div>
+  }
+
+  <div class="support-billing__grid">
+    <section class="support-billing__panel">
+      <div class="support-billing__panel-head">
+        <h5>Recent Payment Events</h5>
+        <div class="support-billing__page-controls">
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBackPayments || paymentsLoading" (click)="onPrevPaymentsPage()">Previous</button>
+          <button class="btn btn-sm btn-outline-primary" [disabled]="!paymentNextCursor || paymentsLoading" (click)="onNextPaymentsPage()">Next</button>
+        </div>
+      </div>
+      @if (paymentsLoading) {
+        <p class="support-muted">Loading payment events...</p>
+      }
+      @if (!paymentsLoading && !payments.length) {
+        <p class="support-muted">No payment events.</p>
+      }
+      @if (!paymentsLoading && payments.length) {
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>When</th>
+                <th>Event</th>
+                <th>Status</th>
+                <th class="text-end">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of payments; track item.id) {
+                <tr>
+                  <td>{{ item.paidAt | date: 'short' }}</td>
+                  <td>{{ item.eventType }}</td>
+                  <td>{{ item.status }}</td>
+                  <td class="text-end">{{ amountDollars(item.amountPaid) | currency:item.currency }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+
+    <section class="support-billing__panel">
+      <div class="support-billing__panel-head">
+        <h5>Disputes</h5>
+        <div class="support-billing__page-controls">
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBackDisputes || disputesLoading" (click)="onPrevDisputesPage()">Previous</button>
+          <button class="btn btn-sm btn-outline-primary" [disabled]="!disputeNextCursor || disputesLoading" (click)="onNextDisputesPage()">Next</button>
+        </div>
+      </div>
+      @if (disputesLoading) {
+        <p class="support-muted">Loading disputes...</p>
+      }
+      @if (!disputesLoading && !disputes.length) {
+        <p class="support-muted">No dispute events.</p>
+      }
+      @if (!disputesLoading && disputes.length) {
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>When</th>
+                <th>Event</th>
+                <th>Status</th>
+                <th class="text-end">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of disputes; track item.id) {
+                <tr>
+                  <td>{{ item.paidAt | date: 'short' }}</td>
+                  <td>{{ item.eventType }}</td>
+                  <td>{{ item.status }}</td>
+                  <td class="text-end">{{ amountDollars(item.amountPaid) | currency:item.currency }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  </div>
+</section>

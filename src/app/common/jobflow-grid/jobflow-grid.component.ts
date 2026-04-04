@@ -5,6 +5,11 @@ import {Table, TableModule} from 'primeng/table';
 import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 
+export interface JobflowGridSortChangeEvent {
+   field?: string;
+   direction?: 'asc' | 'desc';
+}
+
 export interface JobflowGridColumn {
    field?: string;
    sortField?: string;
@@ -90,6 +95,8 @@ export class JobflowGridComponent {
    /** Events */
    @Output() commandClick = new EventEmitter<JobflowGridCommandClickEventArgs>();
    @Output() toolbarClick = new EventEmitter<JobflowGridToolbarClickEventArgs>();
+   @Output() searchChange = new EventEmitter<string>();
+   @Output() sortChange = new EventEmitter<JobflowGridSortChangeEvent>();
 
    readonly defaultPageSize = 20;
 
@@ -157,12 +164,28 @@ export class JobflowGridComponent {
    }
 
    onSearchChange(): void {
-      this.table?.filterGlobal(this.searchText?.trim() ?? '', 'contains');
+      const nextSearch = this.searchText?.trim() ?? '';
+      this.table?.filterGlobal(nextSearch, 'contains');
+      this.searchChange.emit(nextSearch);
    }
 
    clearSearch(): void {
       this.searchText = '';
       this.table?.clear();
+      this.searchChange.emit('');
+   }
+
+   onSortChange(event: { field?: string; order?: number; multiSortMeta?: { field: string; order: number }[] }): void {
+      const primaryField = event.field || event.multiSortMeta?.[0]?.field;
+      const order = event.order ?? event.multiSortMeta?.[0]?.order;
+      if (!primaryField || !order) {
+         return;
+      }
+
+      this.sortChange.emit({
+         field: primaryField,
+         direction: order === 1 ? 'asc' : 'desc'
+      });
    }
 
    getCellValue(row: unknown, col: JobflowGridColumn): unknown {

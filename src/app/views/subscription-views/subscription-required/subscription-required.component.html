@@ -1,0 +1,34 @@
+<section class="subscription-required">
+  <div class="subscription-required__card">
+    <h2>Subscription required</h2>
+    <p>
+      Your current plan or billing status does not allow access to this section.
+    </p>
+
+    <ul>
+      <li><strong>Required plan:</strong> {{ required }}</li>
+      <li><strong>Current plan:</strong> {{ current }}</li>
+      <li><strong>Subscription status:</strong> {{ status }}</li>
+    </ul>
+
+    <div class="subscription-required__actions mb-3">
+      <select class="form-select" style="max-width: 220px;" [(ngModel)]="selectedPlan">
+        <option value="go">Go</option>
+        <option value="flow">Flow</option>
+        <option value="max">Max</option>
+      </select>
+      <select class="form-select" style="max-width: 220px;" [(ngModel)]="selectedCycle">
+        <option value="monthly">Monthly</option>
+        <option value="yearly">Yearly</option>
+      </select>
+      <button class="btn btn-primary" [disabled]="renewing || !providerSubscriptionId" (click)="renewSubscription()">
+        {{ renewing ? 'Renewing...' : 'Renew subscription' }}
+      </button>
+    </div>
+
+    <div class="subscription-required__actions">
+      <a class="btn btn-outline-primary" routerLink="/admin/company">Open Organization Profile</a>
+      <a class="btn btn-outline-secondary" routerLink="/admin">Back to Dashboard</a>
+    </div>
+  </div>
+</section>

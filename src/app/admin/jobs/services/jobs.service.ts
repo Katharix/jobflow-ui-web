@@ -2,6 +2,18 @@ import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {BaseApiService} from '../../../services/shared/base-api.service';
 import {Job, JobLifecycleStatus, InvoicingWorkflow} from "../models/job";
+import { CursorPagedResponse } from '../../../models/cursor-paged-response';
+
+export interface JobPagedQueryOptions {
+   cursor?: string;
+   pageSize?: number;
+   statusKey?: string;
+   clientId?: string;
+   assigneeId?: string;
+   search?: string;
+   sortBy?: string;
+   sortDirection?: 'asc' | 'desc';
+}
 
 export interface CreateJobRequest {
    organizationClientId: string;
@@ -61,6 +73,25 @@ export class JobsService {
       return this.api.get<Job[]>(
          `${this.apiUrl}all`
       )
+   }
+
+   getAllJobsPaged(options?: JobPagedQueryOptions): Observable<CursorPagedResponse<Job>> {
+      const params: Record<string, string> = {
+         pageSize: `${options?.pageSize ?? 50}`,
+      };
+
+      if (options?.cursor) params['cursor'] = options.cursor;
+      if (options?.statusKey) params['statusKey'] = options.statusKey;
+      if (options?.clientId) params['clientId'] = options.clientId;
+      if (options?.assigneeId) params['assigneeId'] = options.assigneeId;
+      if (options?.search) params['search'] = options.search;
+      if (options?.sortBy) params['sortBy'] = options.sortBy;
+      if (options?.sortDirection) params['sortDirection'] = options.sortDirection;
+
+      return this.api.get<CursorPagedResponse<Job>>(
+         `${this.apiUrl}all`,
+         params
+      );
    }
 
    getScheduledJobs(start: Date, end: Date): Observable<Job[]> {

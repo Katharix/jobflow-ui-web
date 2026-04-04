@@ -25,7 +25,7 @@
   <div class="jobflow-hero__metrics">
     <div class="jobflow-metric">
       <span class="jobflow-metric__label">{{ 'admin.jobs.metrics.total' | translate }}</span>
-      <span class="jobflow-metric__value">{{ totalJobs }}</span>
+      <span class="jobflow-metric__value">{{ totalJobs$ | async }}</span>
     </div>
     <div class="jobflow-metric">
       <span class="jobflow-metric__label">{{ 'admin.jobs.metrics.unscheduled' | translate }}</span>
@@ -57,10 +57,12 @@
     <label for="jobFilterStatus">{{ 'admin.jobs.filters.status' | translate }}</label>
     <select id="jobFilterStatus" class="form-select" [(ngModel)]="selectedStatusFilter" (change)="onFiltersChanged()">
       <option value="">{{ 'admin.jobs.filters.allStatuses' | translate }}</option>
-      @for (status of statusOptions; track status) {
-        <option [value]="status.statusKey">
-          {{ status.label }}
-        </option>
+      @if (statusOptionsReady) {
+        @for (status of statusOptions; track status.statusKey) {
+          <option [value]="status.statusKey">
+            {{ status.label }}
+          </option>
+        }
       }
     </select>
     <small class="text-muted">{{ 'admin.jobs.filters.statusHint' | translate }}</small>
@@ -69,7 +71,7 @@
     <label for="jobFilterClient">{{ 'admin.jobs.filters.client' | translate }}</label>
     <select id="jobFilterClient" class="form-select" [(ngModel)]="selectedClientFilter" (change)="onFiltersChanged()">
       <option value="">{{ 'admin.jobs.filters.allClients' | translate }}</option>
-      @for (client of clientOptions; track client) {
+      @for (client of clientOptions; track client.value) {
         <option [value]="client.value">
           {{ client.label }}
         </option>
@@ -81,7 +83,7 @@
     <label for="jobFilterAssignee">{{ 'admin.jobs.filters.assignee' | translate }}</label>
     <select id="jobFilterAssignee" class="form-select" [(ngModel)]="selectedAssigneeFilter" (change)="onFiltersChanged()">
       <option value="">{{ 'admin.jobs.filters.allAssignees' | translate }}</option>
-      @for (assignee of assigneeOptions; track assignee) {
+      @for (assignee of assigneeOptions; track assignee.value) {
         <option [value]="assignee.value">
           {{ assignee.label }}
         </option>
@@ -92,6 +94,11 @@
   <button class="btn btn-link jobflow-filters__clear" type="button" (click)="clearFilters()">
     {{ 'admin.jobs.filters.clear' | translate }}
   </button>
+</section>
+
+<section class="list-pagination-controls">
+  <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBack || jobsLoading" (click)="onPrevPage()">Previous</button>
+  <button type="button" class="btn btn-sm btn-outline-primary" [disabled]="!nextCursor || jobsLoading" (click)="onNextPage()">Next</button>
 </section>
 
 <section class="jobflow-lanes">
@@ -105,9 +112,9 @@
         </div>
         <span class="jobflow-lane__count">{{ unscheduledJobs.length }} {{ 'admin.jobs.lanes.unscheduled.count' | translate }}</span>
       </div>
-      @if (unscheduledJobs.length) {
+      @if (hasUnscheduledJobs) {
         <div class="jobflow-lane__body">
-          @for (job of unscheduledJobs; track job) {
+          @for (job of unscheduledJobs; track job.id) {
             <article
               class="jobflow-card"
               [class.is-active]="selectedJob?.id === job.id"
@@ -147,9 +154,9 @@
         </div>
         <span class="jobflow-lane__count">{{ upcomingScheduledJobs.length }} {{ 'admin.jobs.lanes.scheduled.count' | translate }}</span>
       </div>
-      @if (upcomingScheduledJobs.length) {
+      @if (hasUpcomingScheduledJobs) {
         <div class="jobflow-lane__body">
-          @for (job of upcomingScheduledJobs; track job) {
+          @for (job of upcomingScheduledJobs; track job.id) {
             <article
               class="jobflow-card jobflow-card--scheduled"
               [class.is-active]="selectedJob?.id === job.id"
@@ -165,7 +172,7 @@
                 @if (getTimelineMarkers(job).length) {
                   <div class="jobflow-timeline">
                     <span class="jobflow-timeline__rail"></span>
-                    @for (marker of getTimelineMarkers(job); track marker) {
+                    @for (marker of getTimelineMarkers(job); track marker.date.getTime()) {
                       <span class="jobflow-timeline__dot" [attr.title]="getTimelineTooltip(marker.date)">
                         <span>{{ marker.label }}</span>
                       </span>
@@ -217,7 +224,7 @@
         <div class="jobflow-preview__row">
           <span>{{ 'admin.jobs.preview.status' | translate }}</span>
           <div class="jobflow-status-toggle">
-            @for (status of statusOptions; track status) {
+            @for (status of statusOptions; track status.statusKey) {
               <button
                 class="jobflow-status-toggle__btn"
                 [class.is-active]="resolveLifecycleStatus(selectedJob) === status.value"
@@ -238,7 +245,7 @@
           }
           @if (previewAssignment) {
             <div class="jobflow-assignee-list">
-              @for (employee of employees; track employee) {
+              @for (employee of employees; track employee.id) {
                 <label class="jobflow-assignee-chip">
                   <input
                     type="checkbox"
@@ -338,6 +345,8 @@
       [height]="520"
       [showSearchBar]="true"
       (commandClick)="onCommandClick($event)"
+      (searchChange)="onGridSearchChange($event)"
+      (sortChange)="onGridSortChange($event)"
     ></app-jobflow-grid>
   </section>
 

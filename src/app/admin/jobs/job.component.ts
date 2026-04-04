@@ -13,7 +13,8 @@ import {
    JobflowGridCommandClickEventArgs,
    JobflowGridColumn,
    JobflowGridComponent,
-   JobflowGridPageSettings
+   JobflowGridPageSettings,
+   JobflowGridSortChangeEvent
 } from "../../common/jobflow-grid/jobflow-grid.component";
 import {JobflowDrawerComponent} from "../../common/jobflow-drawer/jobflow-drawer.component";
 import {ToastService} from "../../common/toast/toast.service";
@@ -31,6 +32,7 @@ import {Employee} from "../employees/models/employee";
 import {AssignmentsService} from "./services/assignments.service";
 import {AssignmentDto} from "./models/assignment";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
+import { BehaviorSubject, Subject, Subscription, catchError, debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
 
 
 @Component({
@@ -51,6 +53,8 @@ import { TranslateModule, TranslateService } from "@ngx-translate/core";
    templateUrl: './job.component.html'
 })
 export class JobComponent implements OnInit, OnDestroy {
+   private readonly jobPageSize = 50;
+
    private jobs = inject(JobsService);
    private employeesService = inject(EmployeeService);
    private assignmentsService = inject(AssignmentsService);
@@ -79,7 +83,14 @@ export class JobComponent implements OnInit, OnDestroy {
    private suppressNextDrawerClosedHandler = false;
 
    items: Job[] = [];
+   nextCursor: string | null = null;
+   private cursorStack: string[] = [];
+   jobsLoading = false;
+   totalJobsCount: number | null = null;
    columns: JobflowGridColumn[] = [];
+   searchText = '';
+   sortBy = 'createdAt';
+   sortDirection: 'asc' | 'desc' = 'desc';
    error: string | null = null;
    selectedJob: Job | null = null;
 
@@ -88,10 +99,30 @@ export class JobComponent implements OnInit, OnDestroy {
    selectedClientFilter = '';
    selectedAssigneeFilter = '';
    canShareUpdates = false;
+   clientOptions: { label: string; value: string }[] = [];
+   assigneeOptions: { label: string; value: string }[] = [];
+   unscheduledJobs: Job[] = [];
+   scheduledJobs: Job[] = [];
+   upcomingScheduledJobs: Job[] = [];
+   hasUnscheduledJobs = false;
+   hasUpcomingScheduledJobs = false;
+   totalJobs = 0;
+   readonly totalJobs$ = new BehaviorSubject<number>(0);
+   inProgressCount = 0;
+   completedCount = 0;
 
    statusOptions: { statusKey: string; label: string; value: JobLifecycleStatus }[] = [];
+   statusOptionsReady = false;
    private statusLabelMap: Record<number, string> = { ...JobLifecycleStatusLabels };
    private statusKeyMap: Record<number, string> = {};
+   private readonly searchInput$ = new Subject<string>();
+   private readonly loadPage$ = new Subject<string | undefined>();
+   private searchInputSub?: Subscription;
+   private loadPageSub?: Subscription;
+   private orgSub?: Subscription;
+   private planSub?: Subscription;
+   private routeSub?: Subscription;
+   private hasRendered = false;
 
    previewAssignees = new Set<string>();
    previewAssignment: AssignmentDto | null = null;
@@ -108,27 +139,67 @@ export class JobComponent implements OnInit, OnDestroy {
 
    headerActions = [] as { key: string; label: string; icon: string; class: string; click: () => void }[];
 
-   constructor() {
-      this.orgContext.org$.subscribe(org => {
-         this.organizationId = org?.id ?? null;
-      });
-   }
-
    ngOnInit(): void {
       this.refreshLabels();
-      this.loadWorkflowStatuses();
 
-      this.orgContext.hasMinPlan$('Flow').subscribe(canShare => {
-         this.canShareUpdates = canShare;
+      this.orgSub = this.orgContext.org$.subscribe(org => {
+         const previousOrganizationId = this.organizationId;
+         this.organizationId = org?.id ?? null;
+
+         if (!this.hasRendered) {
+            return;
+         }
+
+         if (this.organizationId && this.organizationId !== previousOrganizationId) {
+            this.load();
+         }
       });
 
-      this.loadEmployees();
+      this.loadPageSub = this.loadPage$
+         .pipe(
+            switchMap((cursor) => {
+               this.jobsLoading = true;
+               return this.jobs.getAllJobsPaged({
+                  cursor,
+                  pageSize: this.jobPageSize,
+                  statusKey: this.selectedStatusFilter || undefined,
+                  clientId: this.selectedClientFilter || undefined,
+                  assigneeId: this.selectedAssigneeFilter || undefined,
+                  search: this.searchText || undefined,
+                  sortBy: this.sortBy,
+                  sortDirection: this.sortDirection
+               }).pipe(
+                  catchError((e) => {
+                     this.jobsLoading = false;
+                     this.toast.error(this.translate.instant('admin.jobs.toast.loadFailed'));
+                     console.error(e);
+                     return of(null);
+                  })
+               );
+            })
+         )
+         .subscribe(page => {
+            this.jobsLoading = false;
+            if (!page) {
+               return;
+            }
 
-      if (this.organizationId) {
-         this.load();
-      }
+            this.items = page.items ?? [];
+            this.nextCursor = page.nextCursor ?? null;
+            this.totalJobsCount = page.totalCount ?? null;
+            this.recomputeDerivedState();
+            this.selectDefaultJob();
+            this.syncPreviewAssignment();
+         });
 
-      this.route.queryParamMap.subscribe(params => {
+      this.searchInputSub = this.searchInput$
+         .pipe(debounceTime(300), distinctUntilChanged())
+         .subscribe(search => {
+            this.searchText = search;
+            this.load();
+         });
+
+      this.routeSub = this.route.queryParamMap.subscribe(params => {
          this.returnToCommandCenter = params.get('returnTo') === 'dashboard-command-center';
 
          if (this.onboardingActionHandled) return;
@@ -137,13 +208,35 @@ export class JobComponent implements OnInit, OnDestroy {
          this.openAddJob();
          this.onboardingActionHandled = true;
       });
+
+      setTimeout(() => {
+         this.hasRendered = true;
+         setTimeout(() => this.loadWorkflowStatuses(), 0);
+         setTimeout(() => this.loadEmployees(), 0);
+         setTimeout(() => {
+            this.planSub = this.orgContext.hasMinPlan$('Flow').subscribe(canShare => {
+               this.canShareUpdates = canShare;
+            });
+         }, 0);
+         setTimeout(() => {
+            if (this.organizationId) {
+               this.load();
+            }
+         }, 0);
+      }, 0);
    }
 
    ngOnDestroy(): void {
+      this.searchInputSub?.unsubscribe();
+      this.loadPageSub?.unsubscribe();
+      this.orgSub?.unsubscribe();
+      this.planSub?.unsubscribe();
+      this.routeSub?.unsubscribe();
       this.translateLangSub?.unsubscribe();
    }
 
    private loadWorkflowStatuses(): void {
+      this.statusOptionsReady = false;
       this.workflowSettings.getJobStatuses().subscribe({
          next: (statuses) => this.applyWorkflowStatuses(statuses),
          error: () => this.applyWorkflowStatuses(this.buildDefaultWorkflowStatuses())
@@ -166,10 +259,10 @@ export class JobComponent implements OnInit, OnDestroy {
 
             nextOptions.push({
                statusKey: status.statusKey,
-               label: status.label,
+               label: status.label || this.getDefaultStatusLabel(status.statusKey),
                value: enumValue
             });
-            nextLabelMap[enumValue] = status.label;
+            nextLabelMap[enumValue] = status.label || this.getDefaultStatusLabel(status.statusKey);
             nextKeyMap[enumValue] = status.statusKey;
          });
 
@@ -182,6 +275,8 @@ export class JobComponent implements OnInit, OnDestroy {
       this.statusOptions = nextOptions;
       this.statusLabelMap = nextLabelMap;
       this.statusKeyMap = nextKeyMap;
+      this.statusOptionsReady = true;
+      this.recomputeDerivedState();
    }
 
    private buildDefaultWorkflowStatuses(): WorkflowStatusDto[] {
@@ -215,7 +310,7 @@ export class JobComponent implements OnInit, OnDestroy {
          {
             headerText: this.translate.instant('admin.jobs.table.columns.status'),
             width: 120,
-            sortField: 'lifecycleStatus',
+            sortField: 'status',
             template: this.statusTemplate
          },
          {
@@ -257,63 +352,44 @@ export class JobComponent implements OnInit, OnDestroy {
 
 
    load(): void {
-      this.jobs.getAllJobs().subscribe({
-         next: list => {
-            this.items = list ?? [];
-            this.selectDefaultJob();
-            this.syncPreviewAssignment();
-         },
-         error: e => {
-            this.toast.error(this.translate.instant('admin.jobs.toast.loadFailed'));
-            console.error(e);
-         }
-      });
+      this.cursorStack = [];
+      this.loadJobsPage();
+   }
+
+   private loadJobsPage(cursor?: string): void {
+      this.loadPage$.next(cursor);
+   }
+
+   get canGoBack(): boolean {
+      return this.cursorStack.length > 0;
+   }
+
+   onNextPage(): void {
+      if (!this.nextCursor || this.jobsLoading) return;
+      this.cursorStack.push(this.nextCursor);
+      this.loadJobsPage(this.nextCursor);
+   }
+
+   onPrevPage(): void {
+      if (!this.canGoBack || this.jobsLoading) return;
+      this.cursorStack.pop();
+      const previousCursor = this.cursorStack.length > 0
+         ? this.cursorStack[this.cursorStack.length - 1]
+         : undefined;
+      this.loadJobsPage(previousCursor);
    }
 
    private loadEmployees(): void {
       this.employeesService.getByOrganization().subscribe({
          next: employees => {
             this.employees = employees ?? [];
+            this.recomputeDerivedState();
          },
          error: () => {
             this.employees = [];
+            this.recomputeDerivedState();
          }
       });
-   }
-
-   get totalJobs(): number {
-      return this.items.length;
-   }
-
-   get unscheduledJobs(): Job[] {
-      return this.applyFlowFilters(this.items.filter(job => !job.hasAssignments));
-   }
-
-   get scheduledJobs(): Job[] {
-      return this.applyFlowFilters(this.items.filter(job => job.hasAssignments));
-   }
-
-   get upcomingScheduledJobs(): Job[] {
-      const now = new Date();
-      const horizon = new Date();
-      horizon.setDate(horizon.getDate() + 7);
-
-      return this.scheduledJobs
-         .map(job => ({
-            job,
-            nextDate: this.getNextAssignmentStart(job)
-         }))
-         .filter(item => item.nextDate && item.nextDate >= now && item.nextDate <= horizon)
-         .sort((a, b) => (a.nextDate?.getTime() ?? 0) - (b.nextDate?.getTime() ?? 0))
-         .map(item => item.job);
-   }
-
-   get inProgressCount(): number {
-      return this.items.filter(job => this.resolveLifecycleStatus(job) === JobLifecycleStatus.InProgress).length;
-   }
-
-   get completedCount(): number {
-      return this.items.filter(job => this.resolveLifecycleStatus(job) === JobLifecycleStatus.Completed).length;
    }
 
    isUnscheduled(job: Job): boolean {
@@ -329,38 +405,25 @@ export class JobComponent implements OnInit, OnDestroy {
       this.selectedStatusFilter = '';
       this.selectedClientFilter = '';
       this.selectedAssigneeFilter = '';
-      this.selectDefaultJob();
-      this.syncPreviewAssignment();
+      this.load();
    }
 
    onFiltersChanged(): void {
-      this.selectDefaultJob();
-      this.syncPreviewAssignment();
+      this.load();
    }
 
-   get clientOptions(): { label: string; value: string }[] {
-      const map = new Map<string, string>();
-      this.items.forEach(job => {
-         const clientId = job.organizationClient?.id ?? job.organizationClientId;
-         const name = this.getClientName(job);
-         if (clientId && name) {
-            map.set(clientId, name);
-         }
-      });
-
-      return Array.from(map.entries())
-         .map(([value, label]) => ({ value, label }))
-         .sort((a, b) => a.label.localeCompare(b.label));
+   onGridSearchChange(search: string): void {
+      this.searchInput$.next(search);
    }
 
-   get assigneeOptions(): { label: string; value: string }[] {
-      return this.employees
-         .filter(employee => employee.isActive)
-         .map(employee => ({
-            value: employee.id,
-            label: `${employee.firstName} ${employee.lastName}`.trim()
-         }))
-         .sort((a, b) => a.label.localeCompare(b.label));
+   onGridSortChange(event: JobflowGridSortChangeEvent): void {
+      if (!event.field || !event.direction) {
+         return;
+      }
+
+      this.sortBy = event.field;
+      this.sortDirection = event.direction;
+      this.load();
    }
 
    onCommandClick(args: JobflowGridCommandClickEventArgs) {
@@ -657,6 +720,60 @@ export class JobComponent implements OnInit, OnDestroy {
       }
 
       this.selectedJob = this.unscheduledJobs[0] ?? this.upcomingScheduledJobs[0] ?? filtered[0] ?? null;
+   }
+
+   private recomputeDerivedState(): void {
+      this.totalJobs = this.totalJobsCount ?? this.items.length;
+      this.totalJobs$.next(this.totalJobs);
+      this.clientOptions = this.buildClientOptions();
+      this.assigneeOptions = this.buildAssigneeOptions();
+
+      const filtered = this.applyFlowFilters(this.items);
+      this.unscheduledJobs = filtered.filter(job => !job.hasAssignments);
+      this.scheduledJobs = filtered.filter(job => job.hasAssignments);
+      this.hasUnscheduledJobs = this.unscheduledJobs.length > 0;
+
+      const now = new Date();
+      const horizon = new Date();
+      horizon.setDate(horizon.getDate() + 7);
+
+      this.upcomingScheduledJobs = this.scheduledJobs
+         .map(job => ({
+            job,
+            nextDate: this.getNextAssignmentStart(job)
+         }))
+         .filter(item => item.nextDate && item.nextDate >= now && item.nextDate <= horizon)
+         .sort((a, b) => (a.nextDate?.getTime() ?? 0) - (b.nextDate?.getTime() ?? 0))
+         .map(item => item.job);
+      this.hasUpcomingScheduledJobs = this.upcomingScheduledJobs.length > 0;
+
+      this.inProgressCount = this.items.filter(job => this.resolveLifecycleStatus(job) === JobLifecycleStatus.InProgress).length;
+      this.completedCount = this.items.filter(job => this.resolveLifecycleStatus(job) === JobLifecycleStatus.Completed).length;
+   }
+
+   private buildClientOptions(): { label: string; value: string }[] {
+      const map = new Map<string, string>();
+      this.items.forEach(job => {
+         const clientId = job.organizationClient?.id ?? job.organizationClientId;
+         const name = this.getClientName(job);
+         if (clientId && name) {
+            map.set(clientId, name);
+         }
+      });
+
+      return Array.from(map.entries())
+         .map(([value, label]) => ({ value, label }))
+         .sort((a, b) => a.label.localeCompare(b.label));
+   }
+
+   private buildAssigneeOptions(): { label: string; value: string }[] {
+      return this.employees
+         .filter(employee => employee.isActive)
+         .map(employee => ({
+            value: employee.id,
+            label: `${employee.firstName} ${employee.lastName}`.trim()
+         }))
+         .sort((a, b) => a.label.localeCompare(b.label));
    }
 
    private applyFlowFilters(jobs: Job[]): Job[] {

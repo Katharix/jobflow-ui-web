@@ -25,6 +25,24 @@ function toGateDecision(currentPlan: string | null | undefined, minPlan: Plan, r
   });
 }
 
+function isBlockedSubscriptionStatus(status: string | null | undefined): boolean {
+  const normalized = (status ?? '').toLowerCase();
+  return normalized === 'past_due'
+    || normalized === 'unpaid'
+    || normalized === 'incomplete'
+    || normalized === 'incomplete_expired';
+}
+
+function isExpired(status: string | null | undefined, expiresAt: string | null | undefined): boolean {
+  if ((status ?? '').toLowerCase() !== 'canceled') return false;
+  if (!expiresAt) return true;
+
+  const expires = new Date(expiresAt);
+  if (Number.isNaN(expires.getTime())) return true;
+
+  return expires.getTime() <= Date.now();
+}
+
 export const subscriptionGuard: CanActivateFn = (route) => {
   const router = inject(Router);
   const orgContext = inject(OrganizationContextService);
@@ -37,7 +55,20 @@ export const subscriptionGuard: CanActivateFn = (route) => {
     take(1),
     switchMap((org) => {
       const currentPlan = org?.subscriptionPlanName as string | undefined;
+      const subscriptionStatus = org?.subscriptionStatus as string | undefined;
+      const subscriptionExpiresAt = org?.subscriptionExpiresAt as string | undefined;
       const organizationId = org?.id;
+
+      if (isBlockedSubscriptionStatus(subscriptionStatus) || isExpired(subscriptionStatus, subscriptionExpiresAt)) {
+        return of(router.createUrlTree(['/subscription-required'], {
+          queryParams: {
+            required: minPlan,
+            current: currentPlan ?? 'None',
+            status: subscriptionStatus,
+            expiresAt: subscriptionExpiresAt,
+          },
+        }));
+      }
 
       // If cache is missing the plan, refresh org once before gating.
       if (!currentPlan && organizationId) {
@@ -45,6 +76,18 @@ export const subscriptionGuard: CanActivateFn = (route) => {
           map((latestOrg) => {
             if (latestOrg) {
               orgContext.setOrganization(latestOrg);
+            }
+
+            if (isBlockedSubscriptionStatus(latestOrg?.subscriptionStatus)
+              || isExpired(latestOrg?.subscriptionStatus, latestOrg?.subscriptionExpiresAt)) {
+              return router.createUrlTree(['/subscription-required'], {
+                queryParams: {
+                  required: minPlan,
+                  current: latestOrg?.subscriptionPlanName ?? 'None',
+                  status: latestOrg?.subscriptionStatus ?? 'unknown',
+                  expiresAt: latestOrg?.subscriptionExpiresAt ?? '',
+                },
+              });
             }
 
             return toGateDecision(latestOrg?.subscriptionPlanName, minPlan, router);

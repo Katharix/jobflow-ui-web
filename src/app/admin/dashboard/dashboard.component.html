@@ -50,25 +50,22 @@
         <span>{{ 'dashboard.clientActivitySubtitle' | translate }}</span>
       </div>
 
-      @if (clientActivity.length) {
-        <ul class="dashboard-activity-list">
-          @for (activity of clientActivity; track activity) {
-            <li class="dashboard-activity-item">
-              <div class="dashboard-activity-item__top">
-                <span class="dashboard-activity-badge" [ngClass]="getActivityClass(activity.type)">
-                  {{ getActivityLabel(activity.type) }}
-                </span>
-                <time>{{ formatActivityDate(activity.occurredAt) }}</time>
-              </div>
-              <p>{{ activity.title }}</p>
-              <small>{{ activity.detail }}</small>
-              <a [routerLink]="activity.route">{{ 'dashboard.open' | translate }}</a>
-            </li>
-          }
-        </ul>
-      } @else {
-        <p class="dashboard-empty-state mb-0">{{ 'dashboard.clientActivityEmpty' | translate }}</p>
-      }
+      <ul class="dashboard-activity-list" [class.d-none]="clientActivity.length === 0">
+        @for (activity of clientActivity; track activity) {
+          <li class="dashboard-activity-item">
+            <div class="dashboard-activity-item__top">
+              <span class="dashboard-activity-badge" [ngClass]="getActivityClass(activity.type)">
+                {{ getActivityLabel(activity.type) }}
+              </span>
+              <time>{{ formatActivityDate(activity.occurredAt) }}</time>
+            </div>
+            <p>{{ activity.title }}</p>
+            <small>{{ activity.detail }}</small>
+            <a [routerLink]="activity.route">{{ 'dashboard.open' | translate }}</a>
+          </li>
+        }
+      </ul>
+      <p class="dashboard-empty-state mb-0" [class.d-none]="clientActivity.length > 0">{{ 'dashboard.clientActivityEmpty' | translate }}</p>
 
     </article>
 
