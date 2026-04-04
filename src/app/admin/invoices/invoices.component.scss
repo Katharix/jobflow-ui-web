@@ -486,3 +486,10 @@
    font-weight: 700;
    color: var(--bs-secondary);
 }
+
+.list-pagination-controls {
+   display: flex;
+   justify-content: flex-end;
+   gap: 0.5rem;
+   margin-bottom: 0.75rem;
+}

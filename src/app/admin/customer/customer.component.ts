@@ -1,4 +1,4 @@
-import {Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -10,7 +10,8 @@ import {
    JobflowGridCommandClickEventArgs,
    JobflowGridCommandModel,
    JobflowGridComponent,
-   JobflowGridPageSettings
+   JobflowGridPageSettings,
+   JobflowGridSortChangeEvent
 } from "../../common/jobflow-grid/jobflow-grid.component";
 import {ToastService} from "../../common/toast/toast.service";
 import {Client} from "./models/customer";
@@ -24,7 +25,7 @@ import {
    ClientImportPreviewResponse,
    CustomersService
 } from "./services/customer.service";
-import {Subscription, catchError, interval, of, startWith, switchMap} from 'rxjs';
+import {BehaviorSubject, Subscription, Subject, catchError, debounceTime, distinctUntilChanged, interval, of, startWith, switchMap} from 'rxjs';
 
 
 @Component({
@@ -34,18 +35,33 @@ import {Subscription, catchError, interval, of, startWith, switchMap} from 'rxjs
    templateUrl: './customer.component.html',
    styleUrls: ['./customer.component.scss'],
 })
-export class CustomerComponent implements OnInit, OnDestroy {
+export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
+   private readonly clientPageSize = 50;
+
    private customers = inject(CustomersService);
    private orgContext = inject(OrganizationContextService);
    private router = inject(Router);
    private route = inject(ActivatedRoute);
-
-   @ViewChild('clientNameTemplate', {static: true})
+   @ViewChild('clientNameTemplate')
    clientNameTemplate!: TemplateRef<Client>;
 
    organizationId: string | null = null;
    items: Client[] = [];
+   nextCursor: string | null = null;
+   private cursorStack: string[] = [];
+   clientsLoading = false;
+   totalClientCount: number | null = null;
    columns: JobflowGridColumn[] = [];
+   searchText = '';
+   sortBy = 'createdAt';
+   sortDirection: 'asc' | 'desc' = 'desc';
+   private readonly initialMetrics = {
+      totalClients: 0,
+      clientsWithEmail: 0,
+      clientsWithPhone: 0,
+      clientsMissingEmail: 0
+   };
+   metrics$ = new BehaviorSubject(this.initialMetrics);
 
    error: string | null = null;
    isDrawerOpen = false;
@@ -60,6 +76,12 @@ export class CustomerComponent implements OnInit, OnDestroy {
    private returnToCommandCenter = false;
    private suppressNextDrawerClosedHandler = false;
    private importPollSub: Subscription | null = null;
+   private readonly searchInput$ = new Subject<string>();
+   private readonly loadPage$ = new Subject<string | undefined>();
+   private searchInputSub: Subscription | null = null;
+   private loadPageSub: Subscription | null = null;
+   private orgSub: Subscription | null = null;
+   private routeSub: Subscription | null = null;
 
    showImportModal = false;
    selectedImportFile: File | null = null;
@@ -82,12 +104,6 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
 
    private toast = inject(ToastService);
-
-   constructor() {
-      this.orgContext.org$.subscribe(org => {
-         this.organizationId = org?.id ?? null;
-      });
-   }
 
    // --- Header Actions ---
    headerActions = [
@@ -138,12 +154,50 @@ export class CustomerComponent implements OnInit, OnDestroy {
    pageSettings: JobflowGridPageSettings = {pageSize: 20, pageSizes: [10, 20, 50, 100]};
 
    ngOnInit(): void {
-      this.buildColumns();
-      if (this.organizationId) {
-         this.load();
-      }
+      this.loadPageSub = this.loadPage$
+         .pipe(
+            switchMap((cursor) => {
+               this.clientsLoading = true;
+               return this.customers.getAllByOrganizationPaged({
+                  cursor,
+                  pageSize: this.clientPageSize,
+                  missingEmailOnly: this.showMissingEmailOnly,
+                  search: this.searchText,
+                  sortBy: this.sortBy,
+                  sortDirection: this.sortDirection
+               });
+            })
+         )
+         .subscribe(page => {
+            this.clientsLoading = false;
+            if (!page) {
+               return;
+            }
 
-      this.route.queryParamMap.subscribe(params => {
+            this.items = page.items ?? [];
+            this.nextCursor = page.nextCursor ?? null;
+            this.totalClientCount = page.totalCount ?? null;
+            this.refreshMetrics();
+         });
+
+      this.searchInputSub = this.searchInput$
+         .pipe(debounceTime(300), distinctUntilChanged())
+         .subscribe(search => {
+            this.searchText = search;
+            this.load();
+         });
+
+      this.orgSub = this.orgContext.org$.subscribe(org => {
+         const nextOrganizationId = org?.id ?? null;
+         const hasOrganizationChanged = nextOrganizationId !== this.organizationId;
+         this.organizationId = nextOrganizationId;
+
+         if (hasOrganizationChanged && this.organizationId) {
+            this.load();
+         }
+      });
+
+      this.routeSub = this.route.queryParamMap.subscribe(params => {
          if (this.onboardingActionHandled) return;
          if (params.get('onboardingAction') !== 'open-client-drawer') return;
 
@@ -153,8 +207,16 @@ export class CustomerComponent implements OnInit, OnDestroy {
       });
    }
 
+   ngAfterViewInit(): void {
+      this.buildColumns();
+   }
+
    ngOnDestroy(): void {
       this.stopImportPolling();
+      this.searchInputSub?.unsubscribe();
+      this.loadPageSub?.unsubscribe();
+      this.orgSub?.unsubscribe();
+      this.routeSub?.unsubscribe();
    }
 
    private getActionMap() {
@@ -165,42 +227,55 @@ export class CustomerComponent implements OnInit, OnDestroy {
    }
 
    load() {
-      this.customers.getAllByOrganization().subscribe({
-         next: list => {
-            this.items = (list ?? []).sort((a, b) => a.firstName.localeCompare(b.lastName));
-         },
-         error: e => {
-            console.error(e);
-         }
-      });
+      this.metrics$.next(this.initialMetrics);
+      this.cursorStack = [];
+      this.loadClientPage();
    }
 
-   get totalClients(): number {
-      return this.items.length;
+   private loadClientPage(cursor?: string): void {
+      this.loadPage$.next(cursor);
    }
 
-   get clientsWithEmail(): number {
-      return this.items.filter(client => !!client.emailAddress?.trim()).length;
+   get canGoBack(): boolean {
+      return this.cursorStack.length > 0;
    }
 
-   get clientsWithPhone(): number {
-      return this.items.filter(client => !!client.phoneNumber?.trim()).length;
+   onNextPage(): void {
+      if (!this.nextCursor || this.clientsLoading) return;
+      this.cursorStack.push(this.nextCursor);
+      this.loadClientPage(this.nextCursor);
    }
 
-   get clientsMissingEmail(): number {
-      return this.totalClients - this.clientsWithEmail;
+   onPrevPage(): void {
+      if (!this.canGoBack || this.clientsLoading) return;
+      this.cursorStack.pop();
+      const previousCursor = this.cursorStack.length > 0
+         ? this.cursorStack[this.cursorStack.length - 1]
+         : undefined;
+      this.loadClientPage(previousCursor);
    }
 
    get filteredItems(): Client[] {
-      if (!this.showMissingEmailOnly) {
-         return this.items;
-      }
-
-      return this.items.filter(client => !client.emailAddress?.trim());
+      return this.items;
    }
 
    toggleMissingEmailFilter(): void {
       this.showMissingEmailOnly = !this.showMissingEmailOnly;
+      this.load();
+   }
+
+   onGridSearchChange(search: string): void {
+      this.searchInput$.next(search);
+   }
+
+   onGridSortChange(event: JobflowGridSortChangeEvent): void {
+      if (!event.field || !event.direction) {
+         return;
+      }
+
+      this.sortBy = event.field;
+      this.sortDirection = event.direction;
+      this.load();
    }
 
    onAddClientClick(): void {
@@ -454,6 +529,19 @@ export class CustomerComponent implements OnInit, OnDestroy {
       }
 
       return Math.min(100, Math.round((this.importStatus.processedRows / this.importStatus.totalRows) * 100));
+   }
+
+   private refreshMetrics(): void {
+      const clientsWithEmail = this.items.filter(client => !!client.emailAddress?.trim()).length;
+      const clientsWithPhone = this.items.filter(client => !!client.phoneNumber?.trim()).length;
+      const totalClients = this.totalClientCount ?? this.items.length;
+
+      this.metrics$.next({
+         totalClients,
+         clientsWithEmail,
+         clientsWithPhone,
+         clientsMissingEmail: Math.max(0, totalClients - clientsWithEmail)
+      });
    }
 
    private beginImportPolling(jobId: string): void {

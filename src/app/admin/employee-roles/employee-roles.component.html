@@ -213,13 +213,13 @@
     [title]="editingPresetId ? 'Edit Preset' : 'Add Preset'"
     [width]="560"
     (closed)="closePresetDrawer()">
-    <div class="preset-drawer">
+    <div class="preset-drawer" [formGroup]="presetForm">
       <div class="role-drawer__intro">
         <p class="role-drawer__eyebrow">{{ editingPresetId ? 'Update preset' : 'New preset' }}</p>
         <h3>{{ editingPresetId ? 'Refine the preset pack' : 'Create a preset pack' }}</h3>
         <p>Group roles so new teams can be set up quickly.</p>
       </div>
-      <div [formGroup]="presetForm" class="preset-drawer__form">
+      <div class="preset-drawer__form">
         <label class="form-label fw-semibold" for="presetName">Preset name</label>
         <input
           pInputText

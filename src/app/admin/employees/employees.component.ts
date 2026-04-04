@@ -26,6 +26,7 @@ import {
 } from '../../common/jobflow-grid/jobflow-grid.component';
 import { JobflowDrawerComponent } from '../../common/jobflow-drawer/jobflow-drawer.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 
 @Component({
    selector: 'app-employees',
@@ -94,22 +95,32 @@ export class EmployeesComponent implements OnInit, OnDestroy {
    public router = inject(Router);
    private route = inject(ActivatedRoute);
    private translate = inject(TranslateService);
-   private translateLangSub = this.translate.onLangChange.subscribe(() => this.refreshLabels());
-
-   constructor() {
-      this.organizationContext.org$.subscribe(org => {
-         if (org) {
-            this.organization = org;
-            this.organizationId = org.id ?? null;
-         }
-      });
-   }
+   private translateLangSub?: Subscription;
+   private orgSub?: Subscription;
+   private queryParamSub?: Subscription;
 
    ngOnInit(): void {
-      this.refreshLabels();
-      this.checkRolesBeforeLoad();
+      this.orgSub = this.organizationContext.org$.subscribe(org => {
+         if (org) {
+            const previousOrganizationId = this.organizationId;
+            this.organization = org;
+            this.organizationId = org.id ?? null;
 
-      this.route.queryParamMap.subscribe(params => {
+            if (this.organizationId && this.organizationId !== previousOrganizationId) {
+               this.checkRolesBeforeLoad();
+            }
+         } else {
+            this.organizationId = null;
+            this.rolesExist = false;
+            this.checkingRoles = false;
+         }
+      });
+
+      this.translateLangSub = this.translate.onLangChange.subscribe(() => this.refreshLabels());
+
+      this.refreshLabels();
+
+      this.queryParamSub = this.route.queryParamMap.subscribe(params => {
          if (this.onboardingActionHandled) return;
          if (params.get('onboardingAction') !== 'open-employee-modal') return;
 
@@ -120,6 +131,8 @@ export class EmployeesComponent implements OnInit, OnDestroy {
 
    ngOnDestroy(): void {
       this.translateLangSub?.unsubscribe();
+      this.orgSub?.unsubscribe();
+      this.queryParamSub?.unsubscribe();
    }
 
    private refreshLabels(): void {
@@ -163,7 +176,10 @@ export class EmployeesComponent implements OnInit, OnDestroy {
    };
 
    checkRolesBeforeLoad(): void {
-      if (!this.organizationId) return;
+      if (!this.organizationId) {
+         this.checkingRoles = false;
+         return;
+      }
 
       this.checkingRoles = true;
       this.employeeRoleService.getByOrganization().subscribe({

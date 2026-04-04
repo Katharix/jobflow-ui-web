@@ -7,7 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {CreateInvoiceLineItemRequest, CreateInvoiceRequest, Invoice, InvoiceStatus} from '../../models/invoice';
 import {InvoiceService} from './services/invoice.service';
 import {PageHeaderComponent} from '../dashboard/page-header/page-header.component';
-import {JobflowGridColumn, JobflowGridComponent, JobflowGridPageSettings} from '../../common/jobflow-grid/jobflow-grid.component';
+import {JobflowGridColumn, JobflowGridComponent, JobflowGridPageSettings, JobflowGridSortChangeEvent} from '../../common/jobflow-grid/jobflow-grid.component';
 import {JobflowDrawerComponent} from '../../common/jobflow-drawer/jobflow-drawer.component';
 import {ToastService} from '../../common/toast/toast.service';
 import {Job, JobLifecycleStatus, JobLifecycleStatusLabels} from '../jobs/models/job';
@@ -21,6 +21,8 @@ import {InputTextModule} from 'primeng/inputtext';
 import {InputNumberModule} from 'primeng/inputnumber';
 import { Auth } from '@angular/fire/auth';
 import { useNotifierHub, InvoicePaidEvent } from '../services/useNotifierHub';
+import { BehaviorSubject, Subject, Subscription, asyncScheduler, catchError, debounceTime, distinctUntilChanged, observeOn, of, switchMap } from 'rxjs';
+import { InvoiceJobPickerComponent, InvoiceJobPickerRow } from './invoice-job-picker/invoice-job-picker.component';
 
 @Component({
    selector: 'app-invoices',
@@ -33,6 +35,7 @@ import { useNotifierHub, InvoicePaidEvent } from '../services/useNotifierHub';
       TranslateModule,
       InputTextModule,
       InputNumberModule,
+      InvoiceJobPickerComponent,
       PageHeaderComponent,
       JobflowGridComponent,
       JobflowDrawerComponent
@@ -41,6 +44,8 @@ import { useNotifierHub, InvoicePaidEvent } from '../services/useNotifierHub';
    styleUrl: './invoices.component.scss'
 })
 export class InvoicesComponent implements OnInit, OnDestroy {
+   private readonly invoicePageSize = 50;
+
    private fb = inject(FormBuilder);
    private invoiceService = inject(InvoiceService);
    private jobsService = inject(JobsService);
@@ -64,6 +69,13 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
    columns: JobflowGridColumn[] = [];
    items: Invoice[] = [];
+   nextCursor: string | null = null;
+   private cursorStack: string[] = [];
+   listLoading = false;
+   totalInvoiceCount: number | null = null;
+   searchText = '';
+   sortBy = 'createdAt';
+   sortDirection: 'asc' | 'desc' = 'desc';
 
    summary = {
       total: 0,
@@ -73,6 +85,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       totalBilled: 0,
       balanceDue: 0
    };
+   readonly summary$ = new BehaviorSubject(this.summary);
 
    statusFilters: { key: string; label: string; status?: InvoiceStatus }[] = [];
    selectedStatusFilter = 'all';
@@ -80,7 +93,11 @@ export class InvoicesComponent implements OnInit, OnDestroy {
    headerActions = [] as { label: string; icon: string; class: string; click: () => void }[];
 
    recentJobs: Job[] = [];
+   filteredRecentJobs: Job[] = [];
+   readonly filteredRecentJobRows$ = new BehaviorSubject<InvoiceJobPickerRow[]>([]);
+   hasFilteredRecentJobs = false;
    jobSearchText = '';
+   hasJobSearchTerm = false;
    jobPickerError: string | null = null;
    isInvoiceOnboardingFlow = false;
    error: string | null = null;
@@ -100,6 +117,10 @@ export class InvoicesComponent implements OnInit, OnDestroy {
    private statusLabelMap: Record<number, string> = { ...JobLifecycleStatusLabels };
 
    private notifierHub: ReturnType<typeof useNotifierHub> | null = null;
+   private readonly searchInput$ = new Subject<string>();
+   private readonly loadPage$ = new Subject<string | undefined>();
+   private searchInputSub?: Subscription;
+   private loadPageSub?: Subscription;
 
    pageSettings: JobflowGridPageSettings = {
       pageSize: 20,
@@ -113,13 +134,58 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       this.refreshLabels();
       this.buildInvoiceForm();
       this.loadWorkflowStatuses();
-      this.load();
       this.loadRecentJobs();
+
+      this.loadPageSub = this.loadPage$
+         .pipe(
+            switchMap((cursor) => {
+               this.listLoading = true;
+               const status = this.selectedStatusFilter === 'all'
+                  ? undefined
+                  : this.statusFilters.find(filter => filter.key === this.selectedStatusFilter)?.status;
+
+               return this.invoiceService.getByOrganizationPaged({
+                  cursor,
+                  pageSize: this.invoicePageSize,
+                  status: typeof status === 'number' ? InvoiceStatus[status] : undefined,
+                  search: this.searchText || undefined,
+                  sortBy: this.sortBy,
+                  sortDirection: this.sortDirection
+               }).pipe(
+                  catchError((e) => {
+                     this.error = this.translate.instant('admin.invoices.errors.load');
+                     this.toast.error(this.translate.instant('admin.invoices.toast.loadFailed'));
+                     console.error(e);
+                     return of(null);
+                  })
+               );
+            })
+         )
+         .subscribe((page) => {
+            this.listLoading = false;
+            if (!page) {
+               return;
+            }
+
+            this.items = page.items ?? [];
+            this.totalInvoiceCount = page.totalCount ?? null;
+            this.nextCursor = page.nextCursor ?? null;
+            this.updateSummary(this.items);
+         });
 
       this.notifierHub = useNotifierHub(this.auth, {
          onInvoicePaid: (payload) => this.applyInvoicePaid(payload)
       });
       void this.notifierHub.connect();
+
+      this.searchInputSub = this.searchInput$
+         .pipe(debounceTime(300), distinctUntilChanged())
+         .subscribe(search => {
+            this.searchText = search;
+            this.load();
+         });
+
+      this.load();
 
       if (this.isInvoiceOnboardingFlow) {
          this.openCreateInvoiceDrawer();
@@ -128,6 +194,8 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
    ngOnDestroy(): void {
       void this.notifierHub?.disconnect();
+      this.searchInputSub?.unsubscribe();
+      this.loadPageSub?.unsubscribe();
       this.translateLangSub?.unsubscribe();
    }
 
@@ -196,19 +264,10 @@ export class InvoicesComponent implements OnInit, OnDestroy {
          }));
    }
 
-   get filteredRecentJobs(): Job[] {
-      const term = this.jobSearchText.trim().toLowerCase();
-
-      if (!term) {
-         return this.recentJobs;
-      }
-
-      return this.recentJobs.filter(job => {
-         const title = job.title?.toLowerCase() ?? '';
-         const firstName = job.organizationClient?.firstName?.toLowerCase() ?? '';
-         const lastName = job.organizationClient?.lastName?.toLowerCase() ?? '';
-         return title.includes(term) || firstName.includes(term) || lastName.includes(term);
-      });
+   onJobSearchChange(value: string): void {
+      this.jobSearchText = value;
+      this.hasJobSearchTerm = value.trim().length > 0;
+      this.refreshFilteredRecentJobs();
    }
 
    get invoiceLineItems(): FormArray {
@@ -238,11 +297,12 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
    setStatusFilter(key: string): void {
       this.selectedStatusFilter = key;
+      this.load();
    }
 
    getFilterCount(key: string): number {
       if (key === 'all') {
-         return this.summary.total;
+         return this.totalInvoiceCount ?? this.summary.total;
       }
 
       const target = this.statusFilters.find(filter => filter.key === key);
@@ -263,7 +323,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
          {
             headerText: this.translate.instant('admin.invoices.table.client'),
             width: 220,
-            sortField: 'organizationClient.firstName',
+            sortField: 'invoiceDate',
             searchFields: ['organizationClient.firstName', 'organizationClient.lastName', 'organizationClient.emailAddress'],
             template: this.clientTemplate
          },
@@ -309,22 +369,45 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       ];
    }
 
-   load(): void {
-      this.invoiceService.getByOrganization().subscribe({
-         next: (list) => {
-            this.items = (list ?? []).sort((left, right) => {
-               const leftDate = new Date(left.invoiceDate).getTime();
-               const rightDate = new Date(right.invoiceDate).getTime();
-               return rightDate - leftDate;
-            });
-            this.updateSummary(this.items);
-         },
-         error: (e) => {
-            this.error = this.translate.instant('admin.invoices.errors.load');
-            this.toast.error(this.translate.instant('admin.invoices.toast.loadFailed'));
-            console.error(e);
-         }
-      });
+   load(cursor?: string): void {
+      if (!cursor) {
+         this.cursorStack = [];
+      }
+
+      this.loadPage$.next(cursor);
+   }
+
+   get canGoBack(): boolean {
+      return this.cursorStack.length > 0;
+   }
+
+   onNextPage(): void {
+      if (!this.nextCursor || this.listLoading) return;
+      this.cursorStack.push(this.nextCursor);
+      this.load(this.nextCursor);
+   }
+
+   onPrevPage(): void {
+      if (!this.canGoBack || this.listLoading) return;
+      this.cursorStack.pop();
+      const previousCursor = this.cursorStack.length > 0
+         ? this.cursorStack[this.cursorStack.length - 1]
+         : undefined;
+      this.load(previousCursor);
+   }
+
+   onGridSearchChange(search: string): void {
+      this.searchInput$.next(search);
+   }
+
+   onGridSortChange(event: JobflowGridSortChangeEvent): void {
+      if (!event.field || !event.direction) {
+         return;
+      }
+
+      this.sortBy = event.field;
+      this.sortDirection = event.direction;
+      this.load();
    }
 
    private applyInvoicePaid(payload: InvoicePaidEvent): void {
@@ -344,13 +427,16 @@ export class InvoicesComponent implements OnInit, OnDestroy {
    }
 
    loadRecentJobs(): void {
-      this.jobsService.getAllJobs().subscribe({
+      this.jobsService.getAllJobs().pipe(observeOn(asyncScheduler)).subscribe({
          next: (jobs) => {
-            this.recentJobs = this.sortByMostRecent(jobs ?? []);
+            this.recentJobs = this.sortByMostRecent((jobs ?? []).map(job => this.cloneJob(job)));
+            this.refreshFilteredRecentJobs();
             this.jobPickerError = null;
          },
          error: (e) => {
             this.recentJobs = [];
+            this.filteredRecentJobs = [];
+            this.filteredRecentJobRows$.next([]);
             this.jobPickerError = this.translate.instant('admin.invoices.errors.loadJobs');
             this.toast.error(this.translate.instant('admin.invoices.toast.loadJobsFailed'));
             console.error(e);
@@ -359,12 +445,16 @@ export class InvoicesComponent implements OnInit, OnDestroy {
    }
 
    openCreateInvoiceDrawer(): void {
-      this.isCreateDrawerOpen = true;
       this.selectedJob = null;
       this.prefillEstimate = null;
       this.createInvoiceError = null;
+      this.jobPickerError = null;
       this.jobSearchText = '';
+      this.hasJobSearchTerm = false;
+      this.refreshFilteredRecentJobs();
       this.resetInvoiceForm();
+
+      this.isCreateDrawerOpen = true;
 
       this.loadEstimatePrefills();
    }
@@ -460,10 +550,6 @@ export class InvoicesComponent implements OnInit, OnDestroy {
             console.error(e);
          }
       });
-   }
-
-   trackByJobId(_index: number, job: Job): string {
-      return job.id;
    }
 
    getJobClientName(job: Job | null | undefined): string {
@@ -640,6 +726,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       }
 
       this.summary = summary;
+      this.summary$.next(summary);
    }
 
    private buildInvoiceForm(): void {
@@ -831,6 +918,49 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       }
 
       return date.getTime();
+   }
+
+   private refreshFilteredRecentJobs(): void {
+      const term = this.jobSearchText.trim().toLowerCase();
+
+      if (!term) {
+         this.filteredRecentJobs = [...this.recentJobs];
+         const rows = this.buildJobPickerRows(this.filteredRecentJobs);
+         this.filteredRecentJobRows$.next(rows);
+         this.hasFilteredRecentJobs = rows.length > 0;
+         return;
+      }
+
+      this.filteredRecentJobs = this.recentJobs.filter(job => {
+         const title = job.title?.toLowerCase() ?? '';
+         const firstName = job.organizationClient?.firstName?.toLowerCase() ?? '';
+         const lastName = job.organizationClient?.lastName?.toLowerCase() ?? '';
+         return title.includes(term) || firstName.includes(term) || lastName.includes(term);
+      });
+      const rows = this.buildJobPickerRows(this.filteredRecentJobs);
+      this.filteredRecentJobRows$.next(rows);
+      this.hasFilteredRecentJobs = rows.length > 0;
+   }
+
+   private buildJobPickerRows(jobs: Job[]): InvoiceJobPickerRow[] {
+      return jobs.map(job => ({
+         id: job.id,
+         job,
+         title: job.title?.trim() || this.translate.instant('admin.invoices.drawer.untitledJob'),
+         clientName: this.getJobClientName(job),
+         scheduledDateText: this.formatJobDate(job.scheduledStart),
+         statusClass: this.getJobStatusClass(job),
+         statusLabel: this.getJobStatusLabel(job)
+      }));
+   }
+
+   private cloneJob(job: Job): Job {
+      return {
+         ...job,
+         organizationClient: job.organizationClient
+            ? { ...job.organizationClient }
+            : job.organizationClient
+      };
    }
 
    private resolveJobStatus(rawStatus: JobLifecycleStatus | number | string): JobLifecycleStatus | null {

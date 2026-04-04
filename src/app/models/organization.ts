@@ -17,6 +17,7 @@ export interface OrganizationDto {
     phoneNumber?: string;
     defaultTaxRate?: number;
     subscriptionStatus?: string;
+    subscriptionExpiresAt?: string;
     onboardingComplete?: boolean;
     subscriptionPlanName?: string;
     stripeConnectedAccountId?: string;
@@ -47,6 +48,8 @@ export interface Organization {
     emailAddress?: string;
     hasFreeAccount: boolean;
     onboardingComplete: boolean;
+    subscriptionStatus?: string;
+    subscriptionExpiresAt?: string;
   }
   
   export interface OrganizationRequest{

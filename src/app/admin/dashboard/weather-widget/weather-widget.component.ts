@@ -24,7 +24,7 @@ export class WeatherWidgetComponent implements OnInit, OnChanges, OnDestroy {
    weatherIsApproximate = false;
    weatherTemperatureText = '--';
    weatherConditionText = 'Weather update';
-   weatherIconClass = 'pi pi-spin pi-spinner';
+   weatherIconClass = 'pi pi-cloud';
    weatherForecast: WeatherForecastDay[] = [];
    weatherRiskAlerts: string[] = [];
    locationBlocked = false;
@@ -60,7 +60,6 @@ export class WeatherWidgetComponent implements OnInit, OnChanges, OnDestroy {
    refresh(): void {
       this.locationBlocked = false;
       this.locationUnavailable = false;
-      this.weatherIconClass = 'pi pi-spin pi-spinner';
       this.loadCurrentWeather();
    }
 
@@ -144,5 +143,35 @@ export class WeatherWidgetComponent implements OnInit, OnChanges, OnDestroy {
       return [JobLifecycleStatus.Completed, JobLifecycleStatus.Cancelled, JobLifecycleStatus.Failed].includes(
          job.lifecycleStatus
       );
+   }
+
+   toWeatherGlyph(iconClass: string | null | undefined): string {
+      const normalized = (iconClass ?? '').toLowerCase();
+
+      if (normalized.includes('bolt') || normalized.includes('thunder')) {
+         return '⚡';
+      }
+
+      if (normalized.includes('snow')) {
+         return '❄';
+      }
+
+      if (normalized.includes('rain') || normalized.includes('tint') || normalized.includes('drizzle')) {
+         return '🌧';
+      }
+
+      if (normalized.includes('moon') || normalized.includes('night')) {
+         return '🌙';
+      }
+
+      if (normalized.includes('cloud')) {
+         return '☁';
+      }
+
+      if (normalized.includes('sun') || normalized.includes('clear')) {
+         return '☀';
+      }
+
+      return '☁';
    }
 }

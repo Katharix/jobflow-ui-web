@@ -21,6 +21,7 @@ export class SupportHubLayoutComponent {
     { label: 'Tickets', route: '/support-hub/tickets', icon: 'ti ti-lifebuoy' },
     { label: 'Sessions', route: '/support-hub/sessions', icon: 'ti ti-screen-share' },
     { label: 'Organizations', route: '/support-hub/organizations', icon: 'ti ti-building-community' },
+    { label: 'Billing', route: '/support-hub/billing', icon: 'ti ti-report-money' },
     { label: 'People', route: '/support-hub/people', icon: 'ti ti-users' },
     { label: 'Settings', route: '/support-hub/settings', icon: 'ti ti-settings' },
   ];

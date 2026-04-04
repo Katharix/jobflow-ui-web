@@ -1,0 +1,21 @@
+.subscription-required {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+}
+
+.subscription-required__card {
+  width: min(680px, 100%);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.75rem;
+  background: var(--bs-body-bg);
+  padding: 1.5rem;
+  box-shadow: var(--bs-box-shadow-sm);
+}
+
+.subscription-required__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}

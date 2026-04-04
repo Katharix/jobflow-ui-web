@@ -14,29 +14,25 @@
       <p class="suggestions-card__state">Loading jobs...</p>
     }
 
-    @if (!loadingUnassignedJobs && !unassignedJobs.length) {
-      <p class="suggestions-card__state">Everything is already assigned for now.</p>
-    }
+    <p class="suggestions-card__state" [class.d-none]="loadingUnassignedJobs || unassignedJobs.length > 0">Everything is already assigned for now.</p>
 
-    @if (!loadingUnassignedJobs && unassignedJobs.length) {
-      <ul class="suggestions-list">
-        @for (job of unassignedJobs; track job.id) {
-          <li>
-            <button
-              type="button"
-              class="suggestions-list__item"
-              [class.suggestions-list__item--active]="job.id === currentJobId"
-              (click)="selectSuggestedJob(job)"
-            >
-              <strong>{{ job.title }}</strong>
-              <span>
-                {{ job.organizationClient.firstName }} {{ job.organizationClient.lastName }}
-              </span>
-            </button>
-          </li>
-        }
-      </ul>
-    }
+    <ul class="suggestions-list" [class.d-none]="loadingUnassignedJobs || unassignedJobs.length === 0">
+      @for (job of unassignedJobs; track job.id) {
+        <li>
+          <button
+            type="button"
+            class="suggestions-list__item"
+            [class.suggestions-list__item--active]="job.id === currentJobId"
+            (click)="selectSuggestedJob(job)"
+          >
+            <strong>{{ job.title }}</strong>
+            <span>
+              {{ job.organizationClient.firstName }} {{ job.organizationClient.lastName }}
+            </span>
+          </button>
+        </li>
+      }
+    </ul>
   </aside>
 
   <div class="calendar-panel">

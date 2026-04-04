@@ -20,55 +20,51 @@
     </div>
   </div>
 
-  @if (exportJobStatus || exportJobs.length) {
-    <div class="card mb-4">
-      <div class="card-body">
-        @if (exportJobStatus) {
-          <div class="small text-muted mb-2">
-            Current export status: <strong>{{ exportJobStatus.status }}</strong>
-            @if (exportJobStatus.errorMessage) {
-              <span class="text-danger ms-2">{{ exportJobStatus.errorMessage }}</span>
-            }
-          </div>
-        }
+  <div class="card mb-4" [class.d-none]="!exportJobStatus && exportJobs.length === 0">
+    <div class="card-body">
+      @if (exportJobStatus) {
+        <div class="small text-muted mb-2">
+          Current export status: <strong>{{ exportJobStatus.status }}</strong>
+          @if (exportJobStatus.errorMessage) {
+            <span class="text-danger ms-2">{{ exportJobStatus.errorMessage }}</span>
+          }
+        </div>
+      }
 
-        @if (exportJobs.length) {
-          <div class="table-responsive export-jobs-table">
-            <table class="table table-sm align-middle mb-0">
-              <thead>
-              <tr>
-                <th>Status</th>
-                <th>Completed (UTC)</th>
-                <th>Expires (UTC)</th>
-                <th>Downloads</th>
-                <th class="text-end">Action</th>
-              </tr>
-              </thead>
-              <tbody>
-              @for (job of exportJobs; track job.jobId) {
-                <tr>
-                  <td>{{ job.status }}</td>
-                  <td>{{ job.completedAtUtc || '—' }}</td>
-                  <td>{{ job.expiresAtUtc || '—' }}</td>
-                  <td>{{ job.downloadCount }}</td>
-                  <td class="text-end">
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline-secondary"
-                      [disabled]="job.status !== 'completed'"
-                      (click)="downloadExportJob(job.jobId)">
-                      Download ZIP
-                    </button>
-                  </td>
-                </tr>
-              }
-              </tbody>
-            </table>
-          </div>
-        }
+      <div class="table-responsive export-jobs-table" [class.d-none]="exportJobs.length === 0">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+          <tr>
+            <th>Status</th>
+            <th>Completed (UTC)</th>
+            <th>Expires (UTC)</th>
+            <th>Downloads</th>
+            <th class="text-end">Action</th>
+          </tr>
+          </thead>
+          <tbody>
+          @for (job of exportJobs; track job.jobId) {
+            <tr>
+              <td>{{ job.status }}</td>
+              <td>{{ job.completedAtUtc || '—' }}</td>
+              <td>{{ job.expiresAtUtc || '—' }}</td>
+              <td>{{ job.downloadCount }}</td>
+              <td class="text-end">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary"
+                  [disabled]="job.status !== 'completed'"
+                  (click)="downloadExportJob(job.jobId)">
+                  Download ZIP
+                </button>
+              </td>
+            </tr>
+          }
+          </tbody>
+        </table>
       </div>
     </div>
-  }
+  </div>
 
   <div class="card mb-3">
     <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">

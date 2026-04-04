@@ -1,4 +1,6 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, inject } from '@angular/core';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 import {FormsModule} from '@angular/forms';
 import {OrganizationContextService} from "../../../services/shared/organization-context.service";
@@ -14,6 +16,7 @@ import {RouterLink} from '@angular/router';
    selector: 'app-job-create',
    standalone: true,
    imports: [
+      CommonModule,
     FormsModule,
     InputTextModule,
     SelectModule,
@@ -21,7 +24,7 @@ import {RouterLink} from '@angular/router';
 ],
    templateUrl: './job-create.component.html'
 })
-export class CreateJobComponent implements OnChanges {
+export class CreateJobComponent implements AfterViewInit, OnChanges, OnDestroy {
    private jobsService = inject(JobsService);
    private customersService = inject(CustomersService);
    private organizationContext = inject(OrganizationContextService);
@@ -32,7 +35,7 @@ export class CreateJobComponent implements OnChanges {
 
    organizationId: string | null = null;
 
-   customers: (Client & { displayName: string })[] = [];
+   readonly customers$ = new BehaviorSubject<(Client & { displayName: string })[]>([]);
    selectedCustomerId: string | null = null;
    title = '';
    comments = '';
@@ -46,14 +49,21 @@ export class CreateJobComponent implements OnChanges {
 
    saving = false;
    error: string | null = null;
+   private orgSub?: Subscription;
 
-   constructor() {
-      this.organizationContext.org$.subscribe(org => {
-         if (!org) return;
+   ngAfterViewInit(): void {
+      setTimeout(() => {
+         this.orgSub = this.organizationContext.org$.subscribe(org => {
+            if (!org) return;
 
-         this.organizationId = org.id ?? null;
-         this.loadCustomers();
-      });
+            this.organizationId = org.id ?? null;
+            this.loadCustomers();
+         });
+      }, 0);
+   }
+
+   ngOnDestroy(): void {
+      this.orgSub?.unsubscribe();
    }
 
    get isEditing(): boolean {
@@ -80,11 +90,16 @@ export class CreateJobComponent implements OnChanges {
       this.customersService
          .getAllByOrganization()
          .subscribe({
-            next: customers => (this.customers = customers.map((client) => ({
-               ...client,
-               displayName: `${client.firstName ?? ''} ${client.lastName ?? ''}`.trim() || client.emailAddress || 'Client'
-            }))),
-            error: () => (this.error = 'Failed to load customers.')
+            next: customers => {
+               this.customers$.next(customers.map((client) => ({
+                  ...client,
+                  displayName: `${client.firstName ?? ''} ${client.lastName ?? ''}`.trim() || client.emailAddress || 'Client'
+               })));
+            },
+            error: () => {
+               this.error = 'Failed to load customers.';
+               this.customers$.next([]);
+            }
          });
    }
 

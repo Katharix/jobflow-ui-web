@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef, ViewChild, inject} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef, ViewChild, inject} from '@angular/core';
 import {FormArray, FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 
 import {InputTextModule} from 'primeng/inputtext';
@@ -18,6 +18,7 @@ import {
    JobflowGridComponent,
    JobflowGridPageSettings
 } from '../../common/jobflow-grid/jobflow-grid.component';
+import { Subscription } from 'rxjs';
 
 @Component({
    selector: 'app-employee-roles',
@@ -26,13 +27,17 @@ import {
    styleUrls: ['./employee-roles.component.scss'],
    imports: [ReactiveFormsModule, FormsModule, InputTextModule, JobflowGridComponent, PageHeaderComponent, JobflowDrawerComponent]
 })
-export class EmployeeRolesComponent implements OnInit {
+export class EmployeeRolesComponent implements OnInit, OnDestroy {
    private employeeRoleService = inject(EmployeeRoleService);
    private employeeRolePresetService = inject(EmployeeRolePresetService);
    private toast = inject(ToastService);
    private organizationContext = inject(OrganizationContextService);
    private organizationService = inject(OrganizationService);
    private formBuilder = inject(FormBuilder);
+   private route = inject(ActivatedRoute);
+   private orgSub?: Subscription;
+   private routeSub?: Subscription;
+   private onboardingActionHandled = false;
 
    @ViewChild('actionsTemplate', {static: true})
    actionsTemplate!: TemplateRef<unknown>;
@@ -85,17 +90,6 @@ export class EmployeeRolesComponent implements OnInit {
       }
    ];
 
-   constructor() {
-      this.organizationContext.org$.subscribe(org => {
-         if (org) {
-            this.organizationId = org.id ?? '';
-            this.industryKey = org.industryKey ?? '';
-            const plan = (org.subscriptionPlanName ?? '').toLowerCase();
-            this.canManageRoles = plan === 'flow' || plan === 'max';
-         }
-      });
-   }
-
    ngOnInit(): void {
       this.columns = [
          {field: 'name', headerText: 'Role Name', width: 220},
@@ -103,9 +97,25 @@ export class EmployeeRolesComponent implements OnInit {
          {headerText: 'Employees', width: 120, textAlign: 'Center', valueAccessor: this.usageAccessor},
          {headerText: 'Actions', width: 180, textAlign: 'Right', template: this.actionsTemplate}
       ];
-      this.loadRoles();
-      this.loadPresets();
-      this.route.queryParamMap.subscribe(params => {
+
+      this.orgSub = this.organizationContext.org$.subscribe(org => {
+         if (!org) {
+            return;
+         }
+
+         const previousOrganizationId = this.organizationId;
+         this.organizationId = org.id ?? '';
+         this.industryKey = org.industryKey ?? '';
+         const plan = (org.subscriptionPlanName ?? '').toLowerCase();
+         this.canManageRoles = plan === 'flow' || plan === 'max';
+
+         if (this.organizationId && this.organizationId !== previousOrganizationId) {
+            this.loadRoles();
+            this.loadPresets();
+         }
+      });
+
+      this.routeSub = this.route.queryParamMap.subscribe(params => {
          if (this.onboardingActionHandled) return;
          if (params.get('onboardingAction') !== 'open-role-modal') return;
 
@@ -113,8 +123,11 @@ export class EmployeeRolesComponent implements OnInit {
          this.onboardingActionHandled = true;
       });
    }
-   private onboardingActionHandled = false;
-   private route = inject(ActivatedRoute);
+
+   ngOnDestroy(): void {
+      this.orgSub?.unsubscribe();
+      this.routeSub?.unsubscribe();
+   }
 
    onAddRoleClick(): void {
       if (!this.canManageRoles) {

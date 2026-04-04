@@ -36,6 +36,12 @@
    letter-spacing: 0.08em;
    text-transform: uppercase;
    color: #64748b;
+.list-pagination-controls {
+   display: flex;
+   justify-content: flex-end;
+   gap: 0.5rem;
+   margin-bottom: 0.75rem;
+}
 }
 
 .jobflow-filters__clear {
