@@ -9,24 +9,35 @@ export const authGuard: CanActivateFn = (route, state) => {
    const allowedRoles: string[] = route.data?.['roles'] ?? [];
 
    return new Promise<boolean>((resolve) => {
-      onAuthStateChanged(auth, async (user) => {
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+         unsubscribe();
+
          if (!user) {
-            router.navigate(['/auth/login'], {
+            await router.navigate(['/auth/login'], {
                queryParams: {returnUrl: state.url}
             });
-            return resolve(false);
+            resolve(false);
+            return;
          }
 
-         const idTokenResult = await user.getIdTokenResult(false);
-         const roleClaim = idTokenResult.claims['role'];
-         const role = typeof roleClaim === 'string' ? roleClaim : '';
+         try {
+            const idTokenResult = await user.getIdTokenResult(true);
+            const roleClaim = idTokenResult.claims['role'];
+            const role = typeof roleClaim === 'string' ? roleClaim : '';
 
-         if (allowedRoles.length === 0 || allowedRoles.includes(role)) {
-            return resolve(true);
+            if (allowedRoles.length === 0 || allowedRoles.includes(role)) {
+               resolve(true);
+               return;
+            }
+
+            await router.navigate(['/unauthorized']);
+            resolve(false);
+         } catch {
+            await router.navigate(['/auth/login'], {
+               queryParams: {returnUrl: state.url}
+            });
+            resolve(false);
          }
-
-         router.navigate(['/unauthorized']);
-         resolve(false);
       });
    });
 };

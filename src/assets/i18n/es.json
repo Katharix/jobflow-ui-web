@@ -70,6 +70,10 @@
       "default": "Completa este paso para continuar con el onboarding."
     }
   },
+      "common": {
+        "backendSyncTitle": "Authentication issue",
+        "backendSyncFailed": "We couldn't complete account provisioning right now. Please try again."
+      },
   "dashboard": {
     "welcomeTitle": "Bienvenido, {{organization}}",
     "welcomeSubtitle": "Aqui esta tu centro de mando para hoy, empieza con lo mas importante.",
@@ -156,6 +160,7 @@
         "subscription": "1. Suscripcion",
         "account": "2. Crear cuenta"
       },
+      "loadingOrgData": "Cargando los datos de tu empresa...",
       "title": "Crea tu cuenta",
       "subtitle": "Completa tus datos para lanzar JobFlow.",
       "companyName": "Nombre de la empresa",
@@ -203,7 +208,8 @@
         "googleEmailMismatch": "Please use the same email address used for your JobFlow subscription.",
         "googleMissingEmail": "Your Google account did not provide an email address.",
         "missingOrganization": "We could not find your organization setup. Please start from subscription checkout again.",
-        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again."
+        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again.",
+        "orgLoadFailed": "Unable to load your organization details. Please refresh the page or contact support."
       },
       "errorCode": "(codigo: {{code}})",
       "toastCreated": "Cuenta creada",
@@ -306,9 +312,10 @@
       },
       "errors": {
         "invalidEmail": "Ingresa un correo valido.",
-        "userNotFound": "No hay cuenta para este correo.",
-        "wrongPassword": "Contrasena incorrecta. Intenta de nuevo.",
+        "invalidCredentials": "Correo o contrasena incorrectos.",
+        "userDisabled": "Esta cuenta ha sido desactivada. Contacta a tu administrador.",
         "tooManyRequests": "Demasiados intentos. Espera y vuelve a intentar.",
+        "network": "Error de red. Verifica tu conexion e intenta de nuevo.",
         "generic": "Algo salio mal. Intenta de nuevo."
       }
     },

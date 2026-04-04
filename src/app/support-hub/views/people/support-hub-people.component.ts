@@ -10,7 +10,7 @@ import {
   JobflowGridPageSettings
 } from '../../../common/jobflow-grid/jobflow-grid.component';
 import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { MessageModule } from 'primeng/message';
 
 @Component({
@@ -22,7 +22,7 @@ import { MessageModule } from 'primeng/message';
     PageHeaderComponent,
     JobflowGridComponent,
     ButtonModule,
-    DropdownModule,
+    SelectModule,
     MessageModule
   ],
   templateUrl: './support-hub-people.component.html',

@@ -70,6 +70,10 @@
       "default": "Completa questo passaggio per continuare l'onboarding."
     }
   },
+      "common": {
+        "backendSyncTitle": "Authentication issue",
+        "backendSyncFailed": "We couldn't complete account provisioning right now. Please try again."
+      },
   "dashboard": {
     "welcomeTitle": "Benvenuto, {{organization}}",
     "welcomeSubtitle": "Ecco il tuo centro di comando per oggi: inizia da cio che conta.",
@@ -156,6 +160,7 @@
         "subscription": "1. Abbonamento",
         "account": "2. Crea account"
       },
+      "loadingOrgData": "Caricamento dei dati della tua azienda...",
       "title": "Crea il tuo account",
       "subtitle": "Completa i dettagli per avviare JobFlow.",
       "companyName": "Nome azienda",
@@ -203,7 +208,8 @@
         "googleEmailMismatch": "Please use the same email address used for your JobFlow subscription.",
         "googleMissingEmail": "Your Google account did not provide an email address.",
         "missingOrganization": "We could not find your organization setup. Please start from subscription checkout again.",
-        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again."
+        "serverSyncFailed": "We signed you in, but failed to finish account setup. Please try again.",
+        "orgLoadFailed": "Unable to load your organization details. Please refresh the page or contact support."
       },
       "errorCode": "(codice: {{code}})",
       "toastCreated": "Account creato",
@@ -306,9 +312,10 @@
       },
       "errors": {
         "invalidEmail": "Inserisci una email valida.",
-        "userNotFound": "Nessun account per questa email.",
-        "wrongPassword": "Password errata. Riprova.",
+        "invalidCredentials": "Email o password non corretti.",
+        "userDisabled": "Questo account e stato disabilitato. Contatta il tuo amministratore.",
         "tooManyRequests": "Troppi tentativi. Attendi e riprova.",
+        "network": "Errore di rete. Controlla la connessione e riprova.",
         "generic": "Qualcosa e andato storto. Riprova."
       }
     },

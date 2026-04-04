@@ -21,7 +21,7 @@
     <div>
       <label class="form-label" for="support-ticket-org">{{ 'support.common.organization' | translate }}</label>
       <div class="support-org-select">
-        <p-dropdown
+        <p-select
           [options]="organizationOptions"
           optionLabel="label"
           optionValue="value"
@@ -29,7 +29,7 @@
           [(ngModel)]="selectedOrganizationId"
           [placeholder]="'support.common.selectOrganization' | translate"
           styleClass="support-w-100"
-        ></p-dropdown>
+        ></p-select>
         <button
           pButton
           type="button"
@@ -60,14 +60,14 @@
     </div>
     <div>
       <label class="form-label" for="support-ticket-priority">{{ 'support.tickets.priorityLabel' | translate }}</label>
-      <p-dropdown
+      <p-select
         [options]="statusOptions"
         optionLabel="label"
         optionValue="value"
         inputId="support-ticket-priority"
         [(ngModel)]="newStatus"
         styleClass="support-w-100"
-      ></p-dropdown>
+      ></p-select>
     </div>
     <button
       pButton

@@ -78,11 +78,15 @@ export class SupportHubLoginComponent {
       case 'auth/invalid-email':
         return this.translate.instant('support.login.errors.invalidEmail');
       case 'auth/user-not-found':
-        return this.translate.instant('support.login.errors.userNotFound');
       case 'auth/wrong-password':
-        return this.translate.instant('support.login.errors.wrongPassword');
+      case 'auth/invalid-credential':
+        return this.translate.instant('support.login.errors.invalidCredentials');
+      case 'auth/user-disabled':
+        return this.translate.instant('support.login.errors.userDisabled');
       case 'auth/too-many-requests':
         return this.translate.instant('support.login.errors.tooManyRequests');
+      case 'auth/network-request-failed':
+        return this.translate.instant('support.login.errors.network');
       default:
         return maybeError?.message || this.translate.instant('support.login.errors.generic');
     }

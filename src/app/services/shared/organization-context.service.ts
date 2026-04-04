@@ -1,14 +1,24 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { OrganizationDto } from '../../models/organization';
 import { BehaviorSubject, map } from 'rxjs';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 
 @Injectable({ providedIn: 'root' })
 export class OrganizationContextService {
+  private auth = inject(Auth);
   private orgSubject = new BehaviorSubject<OrganizationDto | null>(null);
   org$ = this.orgSubject.asObservable();
+  private authStateInitialized = false;
 
   constructor() {
     this.loadOrgFromStorage();
+
+    onAuthStateChanged(this.auth, (user) => {
+      this.authStateInitialized = true;
+      if (!user) {
+        this.clearOrganization();
+      }
+    });
   }
 
   setOrganization(org: OrganizationDto) {
@@ -28,6 +38,11 @@ export class OrganizationContextService {
   }
 
   private loadOrgFromStorage() {
+    if (this.authStateInitialized && !this.auth.currentUser) {
+      this.clearOrganization();
+      return;
+    }
+
     const raw = localStorage.getItem('org');
     if (raw) {
       this.orgSubject.next(JSON.parse(raw));
