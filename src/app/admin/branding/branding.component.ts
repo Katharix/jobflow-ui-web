@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
+import {RouterLink} from '@angular/router';
 import {InputTextModule} from 'primeng/inputtext';
 import {TextareaModule} from 'primeng/textarea';
 import {FloatLabelModule} from 'primeng/floatlabel';
@@ -27,6 +28,7 @@ interface ColorChangeEvent {
    standalone: true,
       imports: [
          CommonModule,
+         RouterLink,
          ReactiveFormsModule,
          InputTextModule,
          TextareaModule,
@@ -46,7 +48,7 @@ export class BrandingComponent implements OnInit {
    private orgContext = inject(OrganizationContextService);
    private brandingService = inject(OrganizationBrandingService);
    private uploadService = inject(FileUploadService);
-      private translate = inject(TranslateService);
+   private translate = inject(TranslateService);
 
    organization!: OrganizationDto;
    brandingForm!: FormGroup;
@@ -56,6 +58,7 @@ export class BrandingComponent implements OnInit {
    isSaving = false;
    saveStatus: 'success' | 'error' | null = null;
    saveMessage = '';
+   previewTab: 'invoice' | 'estimate' = 'invoice';
 
    constructor() {
       this.brandingForm = this.fb.group({
@@ -117,6 +120,12 @@ export class BrandingComponent implements OnInit {
       }
    }
 
+   removeLogo(): void {
+      this.logoPreview = null;
+      this.imageUrl = null;
+      this.uploadedLogo = null;
+   }
+
    onPrimaryColorChange(event: ColorChangeEvent): void {
       const hex = event.color.hex;
       this.brandingForm.patchValue({primaryColor: hex});
@@ -127,14 +136,20 @@ export class BrandingComponent implements OnInit {
       this.brandingForm.patchValue({secondaryColor: hex});
    }
 
-   get previewStyles() {
-      const primaryColor = this.brandingForm.value.primaryColor ?? '#0d6efd';
-      const secondaryColor = this.brandingForm.value.secondaryColor ?? '#6c757d';
-      return {
-         backgroundColor: '#fff',
-         borderColor: primaryColor,
-         boxShadow: `0 0 0 1px ${secondaryColor}`
-      };
+   get primaryColor(): string {
+      return this.brandingForm.value.primaryColor ?? '#0d6efd';
+   }
+
+   get secondaryColor(): string {
+      return this.brandingForm.value.secondaryColor ?? '#6c757d';
+   }
+
+   get orgAddress(): string {
+      const o = this.organization;
+      if (!o) return '';
+      const parts = [o.address1, o.address2].filter(Boolean);
+      const cityState = [o.city, o.state, o.zipCode].filter(Boolean).join(', ');
+      return [...parts, cityState].filter(Boolean).join('\n');
    }
 
    onSave(): void {

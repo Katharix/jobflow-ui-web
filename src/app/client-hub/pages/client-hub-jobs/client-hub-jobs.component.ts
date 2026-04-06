@@ -1,7 +1,10 @@
 
-import { Component, OnInit, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { finalize, timeout } from 'rxjs';
 import { ClientHubJobSummary } from '../../models/client-hub.models';
+import { ClientHubAuthService } from '../../services/client-hub-auth.service';
 import { ClientHubService } from '../../services/client-hub.service';
 import { JobLifecycleStatus, JobLifecycleStatusLabels } from '../../../admin/jobs/models/job';
 
@@ -14,6 +17,10 @@ import { JobLifecycleStatus, JobLifecycleStatusLabels } from '../../../admin/job
 })
 export class ClientHubJobsComponent implements OnInit {
   private readonly clientHubService = inject(ClientHubService);
+  private readonly clientHubAuth = inject(ClientHubAuthService);
+  private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly requestTimeoutMs = 15000;
 
   isLoading = true;
   error: string | null = null;
@@ -62,16 +69,31 @@ export class ClientHubJobsComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
 
-    this.clientHubService.getJobs().subscribe({
+    this.clientHubService.getJobs().pipe(
+      timeout(this.requestTimeoutMs),
+      finalize(() => {
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }),
+    ).subscribe({
       next: (jobs) => {
         this.jobs = jobs ?? [];
-        this.isLoading = false;
+        this.cdr.detectChanges();
       },
-      error: () => {
-        this.isLoading = false;
+      error: (error: HttpErrorResponse) => {
+        if (this.isAuthError(error)) {
+          this.clientHubAuth.handleUnauthorized(this.router, '/client-hub/jobs');
+          return;
+        }
+
         this.error = 'Unable to load your job updates right now.';
       },
     });
+  }
+
+  private isAuthError(error: unknown): error is HttpErrorResponse {
+    return error instanceof HttpErrorResponse
+      && (error.status === 401 || error.status === 403);
   }
 
   private resolveStatus(value: ClientHubJobSummary['status']): JobLifecycleStatus | null {

@@ -9,8 +9,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
    const isClientHubRequest = req.url.includes('/client-hub');
    const isClientHubAuthRequest = req.url.includes('/client-hub-auth');
    const isClientPortalRequest = req.url.includes('/client-portal');
+   const isExternalRequest = req.url.startsWith('https://') || req.url.startsWith('http://');
 
-   if (isClientHubRequest || isClientHubAuthRequest || isClientPortalRequest) {
+   if (isClientHubRequest || isClientHubAuthRequest || isClientPortalRequest || isExternalRequest) {
       return next(req);
    }
 

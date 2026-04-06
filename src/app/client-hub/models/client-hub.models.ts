@@ -146,3 +146,13 @@ export interface ClientHubDepositResponse {
   url?: string;
   providerPaymentId?: string;
 }
+
+export interface OrganizationBranding {
+  organizationId: string;
+  logoUrl?: string | null;
+  primaryColor?: string | null;
+  secondaryColor?: string | null;
+  businessName?: string | null;
+  tagline?: string | null;
+  footerNote?: string | null;
+}

@@ -1,7 +1,8 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { finalize, timeout } from 'rxjs';
 import {
   EstimateStatus,
   EstimateStatusLabels,
@@ -21,6 +22,8 @@ export class ClientHubEstimatesComponent implements OnInit {
   private readonly clientHubService = inject(ClientHubService);
   private readonly clientHubAuth = inject(ClientHubAuthService);
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly requestTimeoutMs = 15000;
 
   isLoading = true;
   error: string | null = null;
@@ -79,18 +82,23 @@ export class ClientHubEstimatesComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
 
-    this.clientHubService.getEstimates().subscribe({
+    this.clientHubService.getEstimates().pipe(
+      timeout(this.requestTimeoutMs),
+      finalize(() => {
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }),
+    ).subscribe({
       next: (items) => {
         this.items = [...(items ?? [])].sort((left, right) => {
           const leftDate = new Date(left.estimateDate ?? left.createdAt ?? 0).getTime();
           const rightDate = new Date(right.estimateDate ?? right.createdAt ?? 0).getTime();
           return rightDate - leftDate;
         });
-        this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {
-        this.isLoading = false;
-        if (error.status === 401 || error.status === 403) {
+        if (this.isAuthError(error)) {
           this.clientHubAuth.handleUnauthorized(this.router, '/client-hub/estimates');
           return;
         }
@@ -98,6 +106,11 @@ export class ClientHubEstimatesComponent implements OnInit {
         this.error = 'Unable to load your estimates at this time.';
       },
     });
+  }
+
+  private isAuthError(error: unknown): error is HttpErrorResponse {
+    return error instanceof HttpErrorResponse
+      && (error.status === 401 || error.status === 403);
   }
 
   private resolveStatus(status: ClientHubEstimate['status']): EstimateStatus | null {

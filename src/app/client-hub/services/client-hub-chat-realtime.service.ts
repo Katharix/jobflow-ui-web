@@ -21,6 +21,10 @@ export class ClientHubChatRealtimeService {
   private hubConnection: signalR.HubConnection | null = null;
   private activeConversationId: string | null = null;
 
+  private isConnected(connection: signalR.HubConnection): boolean {
+    return connection.state === signalR.HubConnectionState.Connected;
+  }
+
   private ensureConnection(): signalR.HubConnection {
     if (!this.hubConnection) {
       this.hubConnection = new signalR.HubConnectionBuilder()
@@ -31,8 +35,12 @@ export class ClientHubChatRealtimeService {
         .build();
 
       this.hubConnection.onreconnected(async () => {
-        if (this.activeConversationId) {
-          await this.joinConversation(this.activeConversationId);
+        if (this.activeConversationId && this.hubConnection) {
+          try {
+            await this.hubConnection.invoke('JoinConversation', this.activeConversationId);
+          } catch {
+            // best effort rejoin after reconnect
+          }
         }
       });
     }
@@ -43,20 +51,36 @@ export class ClientHubChatRealtimeService {
   async startConnection(): Promise<void> {
     const connection = this.ensureConnection();
 
-    if (connection.state === signalR.HubConnectionState.Connected) {
+    if (connection.state === signalR.HubConnectionState.Connected
+        || connection.state === signalR.HubConnectionState.Connecting
+        || connection.state === signalR.HubConnectionState.Reconnecting) {
       return;
     }
 
-    await connection.start();
+    try {
+      await connection.start();
+    } catch {
+      // connection is optional; callers can continue without realtime
+      return;
+    }
 
     if (this.activeConversationId) {
-      await this.joinConversation(this.activeConversationId);
+      try {
+        await this.joinConversation(this.activeConversationId);
+      } catch {
+        // non-blocking if join fails
+      }
     }
   }
 
   joinConversation(conversationId: string): Promise<void> {
     this.activeConversationId = conversationId;
     const connection = this.ensureConnection();
+
+    if (!this.isConnected(connection)) {
+      return Promise.resolve();
+    }
+
     return connection.invoke('JoinConversation', conversationId);
   }
 
@@ -65,6 +89,11 @@ export class ClientHubChatRealtimeService {
       this.activeConversationId = null;
     }
     const connection = this.ensureConnection();
+
+    if (!this.isConnected(connection)) {
+      return Promise.resolve();
+    }
+
     return connection.invoke('LeaveConversation', conversationId);
   }
 
@@ -82,6 +111,11 @@ export class ClientHubChatRealtimeService {
 
   sendTyping(conversationId: string, isTyping: boolean): Promise<void> {
     const connection = this.ensureConnection();
+
+    if (!this.isConnected(connection)) {
+      return Promise.resolve();
+    }
+
     return connection.invoke('Typing', conversationId, isTyping);
   }
 
@@ -92,6 +126,10 @@ export class ClientHubChatRealtimeService {
       return;
     }
 
-    await this.hubConnection.stop();
+    try {
+      await this.hubConnection.stop();
+    } catch {
+      // best effort cleanup
+    }
   }
 }

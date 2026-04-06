@@ -1,6 +1,6 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastService } from '../../../common/toast/toast.service';
@@ -20,6 +20,7 @@ export class ClientHubProfileComponent implements OnInit {
   private readonly clientHubAuth = inject(ClientHubAuthService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   isLoading = true;
   isSaving = false;
@@ -93,9 +94,11 @@ export class ClientHubProfileComponent implements OnInit {
         };
 
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {
         this.isLoading = false;
+        this.cdr.detectChanges();
         this.handleAuthError(error, 'Unable to load your profile details right now.');
       },
     });

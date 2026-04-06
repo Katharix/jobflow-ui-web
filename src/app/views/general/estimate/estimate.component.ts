@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { EstimateService } from '../../../admin/estimates/services/estimate.service';
 import { Estimate, EstimateStatus, EstimateStatusLabels } from '../../../admin/estimates/models/estimate';
+import { OrganizationBrandingService } from '../../../admin/branding/services/organization-branding.service';
+import { BrandingDto } from '../../../models/organization-branding';
 
 @Component({
   selector: 'app-estimate',
@@ -14,8 +16,10 @@ import { Estimate, EstimateStatus, EstimateStatusLabels } from '../../../admin/e
 export class EstimateComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private estimateService = inject(EstimateService);
+  private brandingService = inject(OrganizationBrandingService);
 
   estimate?: Estimate;
+  branding?: BrandingDto;
   loading = false;
   error: string | null = null;
 
@@ -31,6 +35,11 @@ export class EstimateComponent implements OnInit {
       next: (estimate) => {
         this.estimate = this.unwrapEstimate(estimate);
         this.loading = false;
+        const orgId = this.estimate?.organizationClient?.organization?.id
+          ?? this.estimate?.organizationId;
+        if (orgId) {
+          this.loadBranding(orgId);
+        }
       },
       error: () => {
         this.error = 'Unable to load this estimate. It may be expired or invalid.';
@@ -39,11 +48,34 @@ export class EstimateComponent implements OnInit {
     });
   }
 
+  private loadBranding(orgId: string): void {
+    this.brandingService.getBranding(orgId).subscribe({
+      next: branding => this.branding = branding,
+      error: () => { /* graceful fallback — branding is optional */ }
+    });
+  }
+
   private unwrapEstimate(response: Estimate | { data: Estimate }): Estimate {
     if (response && typeof response === 'object' && 'data' in response) {
       return (response as { data: Estimate }).data;
     }
     return response as Estimate;
+  }
+
+  get brandPrimary(): string {
+    return this.branding?.primaryColor || '#0d6efd';
+  }
+
+  get brandSecondary(): string {
+    return this.branding?.secondaryColor || '#6c757d';
+  }
+
+  get brandBusinessName(): string {
+    return this.branding?.businessName || this.organizationName;
+  }
+
+  get brandFooter(): string {
+    return this.branding?.footerNote || '';
   }
 
   get statusLabel(): string {

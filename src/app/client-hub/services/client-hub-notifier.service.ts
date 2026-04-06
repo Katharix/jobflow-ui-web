@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, NgZone } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { environment } from '../../../environments/environment';
 import { ClientHubAuthService } from './client-hub-auth.service';
@@ -16,6 +16,7 @@ export interface ClientHubInvoicePaidEvent {
 @Injectable({ providedIn: 'root' })
 export class ClientHubNotifierService {
   private readonly authService = inject(ClientHubAuthService);
+  private readonly ngZone = inject(NgZone);
   private hubConnection: signalR.HubConnection | null = null;
 
   private ensureConnection(): signalR.HubConnection {
@@ -33,11 +34,17 @@ export class ClientHubNotifierService {
 
   async startConnection(): Promise<void> {
     const connection = this.ensureConnection();
-    if (connection.state === signalR.HubConnectionState.Connected) {
+    if (connection.state === signalR.HubConnectionState.Connected
+        || connection.state === signalR.HubConnectionState.Connecting
+        || connection.state === signalR.HubConnectionState.Reconnecting) {
       return;
     }
 
-    await connection.start();
+    try {
+      await this.ngZone.runOutsideAngular(() => connection.start());
+    } catch {
+      /* connection is optional — pages work without real-time updates */
+    }
   }
 
   onInvoicePaid(callback: (payload: ClientHubInvoicePaidEvent) => void): void {
@@ -55,6 +62,10 @@ export class ClientHubNotifierService {
       return;
     }
 
-    await this.hubConnection.stop();
+    try {
+      await this.ngZone.runOutsideAngular(() => this.hubConnection!.stop());
+    } catch {
+      /* best-effort teardown */
+    }
   }
 }

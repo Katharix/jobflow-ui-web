@@ -24,95 +24,155 @@
   }
 
   @if (!isLoading && !error && estimate) {
-    <div class="client-surface estimate-detail p-3 p-md-4">
-      <div class="detail-head">
-        <div>
-          <h2 class="mb-1">Estimate #{{ estimate.estimateNumber }}</h2>
-          <p class="text-muted mb-0">Date: {{ formatDate(estimate.estimateDate ?? estimate.createdAt) }}</p>
-          <p class="text-muted mb-0">Expires: {{ formatDate(estimate.expirationDate) }}</p>
-        </div>
-        <span class="badge rounded-pill estimate-status" [class]="'badge rounded-pill estimate-status ' + statusClass(estimate.status)">
-          {{ statusLabel }}
-        </span>
-      </div>
-
-      <div class="table-responsive mt-3">
-        <table class="table client-table align-middle mb-0">
-          <thead>
-            <tr>
-              <th>Description</th>
-              <th class="text-end">Qty</th>
-              <th class="text-end">Unit Price</th>
-              <th class="text-end">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (item of estimate.lineItems ?? []; track $index) {
-              <tr>
-                <td>{{ item.description || item.name || 'Line item' }}</td>
-                <td class="text-end">{{ item.quantity ?? 0 }}</td>
-                <td class="text-end">{{ formatCurrency(item.unitPrice) }}</td>
-                <td class="text-end fw-semibold">{{ formatCurrency(lineItemTotal(item)) }}</td>
-              </tr>
+    <div
+      class="estimate-document"
+      [style.--brand-primary]="branding?.primaryColor || '#1a6fe0'"
+      [style.--brand-secondary]="branding?.secondaryColor || '#0d2438'"
+    >
+      <!-- Branded header -->
+      <div class="estimate-doc-header">
+        <div class="estimate-doc-header-inner">
+          <div class="estimate-doc-brand">
+            @if (branding?.logoUrl) {
+              <img [src]="branding!.logoUrl" [alt]="orgDisplayName || 'Company'" class="estimate-doc-logo" />
             }
-
-            @if ((estimate.lineItems ?? []).length === 0) {
-              <tr>
-                <td class="text-center text-muted py-4" colspan="4">No line items on this estimate.</td>
-              </tr>
-            }
-          </tbody>
-          <tfoot>
-            <tr>
-              <th colspan="3" class="text-end">Subtotal</th>
-              <th class="text-end">{{ formatCurrency(subtotal) }}</th>
-            </tr>
-            <tr>
-              <th colspan="3" class="text-end">Total</th>
-              <th class="text-end">{{ formatCurrency(estimate.total) }}</th>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-
-      @if (estimate.notes) {
-        <div class="estimate-notes mt-3">
-          <h3>Notes</h3>
-          <p class="mb-0">{{ estimate.notes }}</p>
+            <div class="estimate-doc-brand-text">
+              @if (orgDisplayName) {
+                <p class="estimate-doc-org-name">{{ orgDisplayName }}</p>
+              }
+              @if (branding?.tagline) {
+                <p class="estimate-doc-tagline">{{ branding!.tagline }}</p>
+              }
+            </div>
+          </div>
+          <div class="estimate-doc-title-block">
+            <h2 class="estimate-doc-title">Estimate</h2>
+            <p class="estimate-doc-number">#{{ estimate.estimateNumber }}</p>
+          </div>
         </div>
-      }
-
-      <div class="detail-actions mt-4">
-        <button
-          type="button"
-          class="btn btn-success"
-          [disabled]="!canRespond"
-          (click)="respondToEstimate('accept')"
-        >
-          {{ isSubmitting ? 'Saving...' : 'Accept Estimate' }}
-        </button>
-        <button
-          type="button"
-          class="btn btn-outline-danger"
-          [disabled]="!canRespond"
-          (click)="respondToEstimate('decline')"
-        >
-          {{ isSubmitting ? 'Saving...' : 'Decline Estimate' }}
-        </button>
-        <button
-          type="button"
-          class="btn btn-outline-primary"
-          [disabled]="!canRespond"
-          (click)="openRevisionModal()"
-        >
-          Request Revision
-        </button>
       </div>
 
-      @if (!canRespond) {
-        <p class="text-muted small mt-2 mb-0">
-          This estimate can no longer be changed from your portal.
-        </p>
+      <!-- Document body -->
+      <div class="estimate-doc-body">
+        <!-- Meta + Status row -->
+        <div class="estimate-doc-meta-row">
+          <div class="estimate-doc-dates">
+            <div class="estimate-doc-date-item">
+              <span class="label">Estimate Date</span>
+              <span class="value">{{ formatDate(estimate.estimateDate ?? estimate.createdAt) }}</span>
+            </div>
+            <div class="estimate-doc-date-item">
+              <span class="label">Expires</span>
+              <span class="value">{{ formatDate(estimate.expirationDate) }}</span>
+            </div>
+          </div>
+          <span class="badge rounded-pill estimate-status" [class]="'badge rounded-pill estimate-status ' + statusClass(estimate.status)">
+            {{ statusLabel }}
+          </span>
+        </div>
+
+        <!-- Summary cards -->
+        <div class="estimate-doc-summary">
+          <div class="estimate-doc-summary-card">
+            <span>Subtotal</span>
+            <strong>{{ formatCurrency(subtotal) }}</strong>
+          </div>
+          <div class="estimate-doc-summary-card accent">
+            <span>Total</span>
+            <strong>{{ formatCurrency(estimate.total) }}</strong>
+          </div>
+        </div>
+
+        <!-- Line items table -->
+        <div class="table-responsive">
+          <table class="table estimate-doc-table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th class="text-end">Qty</th>
+                <th class="text-end">Unit Price</th>
+                <th class="text-end">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of estimate.lineItems ?? []; track $index) {
+                <tr>
+                  <td>{{ item.description || item.name || 'Line item' }}</td>
+                  <td class="text-end">{{ item.quantity ?? 0 }}</td>
+                  <td class="text-end">{{ formatCurrency(item.unitPrice) }}</td>
+                  <td class="text-end fw-semibold">{{ formatCurrency(lineItemTotal(item)) }}</td>
+                </tr>
+              }
+
+              @if ((estimate.lineItems ?? []).length === 0) {
+                <tr>
+                  <td class="text-center text-muted py-4" colspan="4">No line items on this estimate.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Totals -->
+        <div class="estimate-doc-totals">
+          <div class="estimate-doc-totals-row">
+            <span>Subtotal</span>
+            <strong>{{ formatCurrency(subtotal) }}</strong>
+          </div>
+          <div class="estimate-doc-totals-row total">
+            <span>Estimated Total</span>
+            <strong>{{ formatCurrency(estimate.total) }}</strong>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        @if (estimate.notes) {
+          <div class="estimate-doc-notes">
+            <h3>Notes</h3>
+            <p>{{ estimate.notes }}</p>
+          </div>
+        }
+
+        <!-- Actions -->
+        <div class="estimate-doc-actions">
+          <button
+            type="button"
+            class="btn estimate-doc-accept-btn"
+            [disabled]="!canRespond"
+            (click)="respondToEstimate('accept')"
+          >
+            {{ isSubmitting ? 'Saving...' : 'Accept Estimate' }}
+          </button>
+          <button
+            type="button"
+            class="btn estimate-doc-decline-btn"
+            [disabled]="!canRespond"
+            (click)="respondToEstimate('decline')"
+          >
+            {{ isSubmitting ? 'Saving...' : 'Decline Estimate' }}
+          </button>
+          <button
+            type="button"
+            class="btn estimate-doc-revision-btn"
+            [disabled]="!canRespond"
+            (click)="openRevisionModal()"
+          >
+            Request Revision
+          </button>
+        </div>
+
+        @if (!canRespond) {
+          <p class="estimate-doc-locked-note">
+            This estimate can no longer be changed from your portal.
+          </p>
+        }
+      </div>
+
+      <!-- Footer -->
+      @if (branding?.footerNote) {
+        <div class="estimate-doc-footer">
+          <p>{{ branding!.footerNote }}</p>
+        </div>
       }
     </div>
 
