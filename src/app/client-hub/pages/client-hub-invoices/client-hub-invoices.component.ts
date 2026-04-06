@@ -1,12 +1,12 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject, NgZone } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { catchError, finalize, of, throwError, timeout } from 'rxjs';
 import { InvoiceStatus } from '../../../models/invoice';
 import { ClientHubInvoice } from '../../models/client-hub.models';
 import { ClientHubAuthService } from '../../services/client-hub-auth.service';
 import { ClientHubService } from '../../services/client-hub.service';
-import { ClientHubNotifierService, ClientHubInvoicePaidEvent } from '../../services/client-hub-notifier.service';
 
 @Component({
   selector: 'app-client-hub-invoices',
@@ -15,14 +15,13 @@ import { ClientHubNotifierService, ClientHubInvoicePaidEvent } from '../../servi
   templateUrl: './client-hub-invoices.component.html',
   styleUrl: './client-hub-invoices.component.scss',
 })
-export class ClientHubInvoicesComponent implements OnInit, OnDestroy {
+export class ClientHubInvoicesComponent implements OnInit {
   private readonly clientHubService = inject(ClientHubService);
   private readonly clientHubAuth = inject(ClientHubAuthService);
   private readonly router = inject(Router);
-  private readonly notifier = inject(ClientHubNotifierService);
-  private readonly invoicePaidHandler = (payload: ClientHubInvoicePaidEvent) => {
-    this.applyInvoicePaid(payload);
-  };
+  private readonly ngZone = inject(NgZone);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly requestTimeoutMs = 15000;
 
   isLoading = true;
   error: string | null = null;
@@ -30,13 +29,6 @@ export class ClientHubInvoicesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.load();
-    this.notifier.onInvoicePaid(this.invoicePaidHandler);
-    void this.notifier.startConnection();
-  }
-
-  ngOnDestroy(): void {
-    this.notifier.offInvoicePaid(this.invoicePaidHandler);
-    void this.notifier.stopConnection();
   }
 
   statusLabel(status: InvoiceStatus | number): string {
@@ -92,18 +84,34 @@ export class ClientHubInvoicesComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.error = null;
 
-    this.clientHubService.getInvoices().subscribe({
-      next: (items) => {
-        this.items = [...(items ?? [])].sort((left, right) => {
-          const leftDate = new Date(left.invoiceDate ?? 0).getTime();
-          const rightDate = new Date(right.invoiceDate ?? 0).getTime();
-          return rightDate - leftDate;
+    this.clientHubService.getInvoices().pipe(
+      timeout(this.requestTimeoutMs),
+      catchError((error: unknown) => {
+        if (this.isAuthError(error)) return throwError(() => error);
+        this.error = 'Unable to load your invoices at this time.';
+        return of([] as ClientHubInvoice[]);
+      }),
+      finalize(() => {
+        this.ngZone.run(() => {
+          this.isLoading = false;
+          this.cdr.detectChanges();
         });
-        this.isLoading = false;
+      }),
+    ).subscribe({
+      next: (response) => {
+        const items = this.normalizeInvoices(response);
+
+        this.ngZone.run(() => {
+          this.items = [...items].sort((left, right) => {
+            const leftDate = new Date(left.invoiceDate ?? 0).getTime();
+            const rightDate = new Date(right.invoiceDate ?? 0).getTime();
+            return rightDate - leftDate;
+          });
+          this.cdr.detectChanges();
+        });
       },
       error: (error: HttpErrorResponse) => {
-        this.isLoading = false;
-        if (error.status === 401 || error.status === 403) {
+        if (this.isAuthError(error)) {
           this.clientHubAuth.handleUnauthorized(this.router, '/client-hub/invoices');
           return;
         }
@@ -113,17 +121,37 @@ export class ClientHubInvoicesComponent implements OnInit, OnDestroy {
     });
   }
 
-  private applyInvoicePaid(payload: ClientHubInvoicePaidEvent): void {
-    const target = this.items.find(item => item.id === payload.invoiceId);
-    if (!target) {
-      return;
+  private isAuthError(error: unknown): error is HttpErrorResponse {
+    return error instanceof HttpErrorResponse
+      && (error.status === 401 || error.status === 403);
+  }
+
+  private normalizeInvoices(response: unknown): ClientHubInvoice[] {
+    if (Array.isArray(response)) {
+      return response as ClientHubInvoice[];
     }
 
-    target.status = payload.status as InvoiceStatus;
-    target.amountPaid = payload.amountPaid ?? target.amountPaid;
-    target.balanceDue = payload.balanceDue ?? target.balanceDue;
-    if (payload.paidAt) {
-      target.paidAt = payload.paidAt;
+    if (response && typeof response === 'object') {
+      const source = response as Record<string, unknown>;
+      const candidates: unknown[] = [
+        source['items'],
+        source['data'],
+        source['value'],
+        source['result'],
+        response,
+      ];
+
+      for (const candidate of candidates) {
+        if (Array.isArray(candidate)) {
+          return candidate as ClientHubInvoice[];
+        }
+
+        if (candidate && typeof candidate === 'object' && 'id' in (candidate as Record<string, unknown>)) {
+          return [candidate as ClientHubInvoice];
+        }
+      }
     }
+
+    return [];
   }
 }

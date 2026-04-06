@@ -11,6 +11,8 @@ import {firstValueFrom} from "rxjs";
 import {loadStripe, Stripe, StripeElements} from "@stripe/stripe-js";
 import {PaymentSessionRequest} from "../../../models/payment-session-request";
 import {environment} from "../../../../environments/environment";
+import {OrganizationBrandingService} from '../../../admin/branding/services/organization-branding.service';
+import {BrandingDto} from '../../../models/organization-branding';
 
 @Component({
    selector: 'app-invoice',
@@ -25,10 +27,12 @@ export class InvoiceComponent implements OnInit {
    private route = inject(ActivatedRoute);
    private paymentService = inject(PaymentService);
    private router = inject(Router);
+   private brandingService = inject(OrganizationBrandingService);
 
    InvoiceStatus = InvoiceStatus;
    PaymentProvider = PaymentProvider;
    invoice?: Invoice;
+   branding?: BrandingDto;
    loading = false;
    error: string | null = null;
    stripe!: Stripe;
@@ -47,14 +51,38 @@ export class InvoiceComponent implements OnInit {
             next: invoice => {
                this.invoice = invoice;
                this.organizationId = invoice.organizationId;
+               this.loadBranding(invoice.organizationId);
             },
             error: err => {
-               console.error('❌ Failed to retrieve invoice:', err);
+               console.error('Failed to retrieve invoice:', err);
             }
          });
-      } else {
-         console.warn('⚠️ No invoice ID provided in route.');
       }
+   }
+
+   private loadBranding(orgId: string): void {
+      this.brandingService.getBranding(orgId).subscribe({
+         next: branding => this.branding = branding,
+         error: () => { /* graceful fallback — branding is optional */ }
+      });
+   }
+
+   get brandPrimary(): string {
+      return this.branding?.primaryColor || '#0d6efd';
+   }
+
+   get brandSecondary(): string {
+      return this.branding?.secondaryColor || '#6c757d';
+   }
+
+   get brandBusinessName(): string {
+      return this.branding?.businessName
+         || this.invoice?.organizationClient?.organization?.organizationName
+         || '';
+   }
+
+   get brandFooter(): string {
+      return this.branding?.footerNote || '';
    }
 
    get subTotal(): number {

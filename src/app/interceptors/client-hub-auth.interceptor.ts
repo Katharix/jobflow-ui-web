@@ -1,5 +1,7 @@
 import { inject } from '@angular/core';
 import { HttpInterceptorFn } from '@angular/common/http';
+import { catchError, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 import { ClientHubAuthService } from '../client-hub/services/client-hub-auth.service';
 
 export const clientHubAuthInterceptor: HttpInterceptorFn = (req, next) => {
@@ -17,11 +19,20 @@ export const clientHubAuthInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  return next(
-    req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
+  const authedReq = req.clone({
+    setHeaders: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const router = inject(Router);
+
+  return next(authedReq).pipe(
+    catchError((error) => {
+      if (error?.status === 401 || error?.status === 403) {
+        authService.handleUnauthorized(router, router.url);
+      }
+      return throwError(() => error);
     }),
   );
 };

@@ -59,7 +59,7 @@ export const routes: Routes = [
       canActivateChild: [subscriptionAccessGuard],
       children: [
          {path: '', component: DashboardComponent},
-         {path: 'settings/branding', component: BrandingComponent},
+         {path: 'settings/branding', component: BrandingComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
          {path: 'settings/workflow', component: WorkflowSettingsComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
          {path: 'messaging', component: ChatComponent},
          {path: 'company', component: CompanyComponent, data: { allowExpiredAccess: true }},

@@ -5,6 +5,8 @@
 		padding: 0.75rem;
 		max-width: 220px;
 		background: #fff;
+		display: flex;
+		align-items: center;
 
 		img {
 			max-height: 70px;
@@ -12,21 +14,51 @@
 		}
 	}
 
-	.preview-card {
+	.color-swatch-row {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.color-swatch {
+		display: inline-block;
+		width: 24px;
+		height: 24px;
+		border-radius: 4px;
+		border: 1px solid var(--bs-border-color);
+	}
+
+	.preview-sticky {
 		position: sticky;
 		top: 1rem;
 	}
 
-	.preview-logo {
-		width: 64px;
-		height: 64px;
+	.preview-document {
+		background: #fff;
 		border: 1px solid var(--bs-border-color);
 		border-radius: 0.5rem;
+		overflow: hidden;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+	}
+
+	.preview-header {
+		padding: 1.25rem 1.5rem;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.preview-header-logo {
+		width: 48px;
+		height: 48px;
+		border-radius: 6px;
+		overflow: hidden;
+		background: rgba(255, 255, 255, 0.2);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		overflow: hidden;
-		background: #fff;
+		flex-shrink: 0;
 
 		img {
 			max-width: 100%;
@@ -35,14 +67,48 @@
 		}
 	}
 
-	.placeholder-logo {
-		font-size: 0.75rem;
-		color: var(--bs-secondary-color);
+	.preview-body {
+		padding: 1.5rem;
 	}
 
-	.preview-line {
-		border-left: 4px solid;
-		padding-left: 0.75rem;
+	.preview-table {
+		width: 100%;
+		font-size: 0.8rem;
+		border-collapse: collapse;
+		margin-bottom: 1rem;
+
+		th {
+			padding: 0.5rem 0.25rem;
+			font-weight: 600;
+			font-size: 0.7rem;
+			text-transform: uppercase;
+			letter-spacing: 0.03em;
+			border-bottom: 2px solid;
+		}
+
+		td {
+			padding: 0.4rem 0.25rem;
+			border-bottom: 1px solid var(--bs-border-color);
+		}
+	}
+
+	.preview-totals {
+		max-width: 200px;
+		margin-left: auto;
+		font-size: 0.85rem;
+
+		> div {
+			padding: 0.2rem 0;
+		}
+	}
+
+	.preview-footer {
+		margin-top: 1.5rem;
+		padding-top: 0.75rem;
+		border-top: 1px solid;
+		font-size: 0.75rem;
+		color: var(--bs-secondary-color);
+		text-align: center;
 	}
 }
 
