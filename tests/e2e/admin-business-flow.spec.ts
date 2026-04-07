@@ -2,21 +2,21 @@ import { test, expect } from '@playwright/test';
 import { authJson, unwrapResult } from './support/api';
 import { hasEnv, requiredEnv } from './support/env';
 
-type OrganizationClientDto = {
+interface OrganizationClientDto {
   id: string;
-};
+}
 
-type EstimateDto = {
+interface EstimateDto {
   id: string;
-};
+}
 
-type JobDto = {
+interface JobDto {
   id: string;
-};
+}
 
-type InvoiceDto = {
+interface InvoiceDto {
   id: string;
-};
+}
 
 const hasAuthFixtures =
   hasEnv('JOBFLOW_UI_STORAGE_STATE_PATH') &&

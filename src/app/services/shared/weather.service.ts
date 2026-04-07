@@ -35,11 +35,6 @@ interface OpenMeteoDailyForecast {
   precipitation_probability_max?: number[];
 }
 
-interface OpenMeteoResponse {
-  current_weather?: OpenMeteoCurrentWeather;
-  daily?: OpenMeteoDailyForecast;
-}
-
 interface WeatherApiResponse {
   location?: string;
   isApproximate?: boolean;
