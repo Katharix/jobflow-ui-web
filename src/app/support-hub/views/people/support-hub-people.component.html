@@ -3,13 +3,13 @@
   subtitle="Manage internal support staff and verify access levels."
 ></app-page-header>
 
-<section class="support-people">
-  <div class="support-people__header">
+<section class="sh-people">
+  <div class="sh-toolbar">
     <div>
       <h5 class="support-mb-1">Support roster</h5>
       <p class="support-muted">Invite staff, assign roles, and review activity.</p>
     </div>
-    <div class="support-people__invite">
+    <div class="sh-invite-controls">
       <p-select
         [options]="inviteRoleOptions"
         optionLabel="label"
@@ -27,7 +27,7 @@
     </div>
   </div>
 
-  <div class="support-people__invite-list">
+  <div class="sh-panel">
     <h6 class="support-mb-2">Active invites</h6>
     @if (isLoadingInvites) {
       <p class="support-muted support-mb-0">Loading invites...</p>
@@ -50,10 +50,10 @@
   </div>
 
   <ng-template #staffStatusTemplate let-person>
-    <span class="support-people__status">{{ person.status }}</span>
+    <span class="sh-status">{{ person.status }}</span>
   </ng-template>
 
-  <div class="support-people__grid">
+  <div class="sh-data">
     <app-jobflow-grid
       [data]="staff"
       [columns]="staffColumns"

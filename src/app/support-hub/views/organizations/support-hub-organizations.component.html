@@ -3,24 +3,22 @@
   subtitle="Search, review, and assist every organization in JobFlow."
 ></app-page-header>
 
-<section class="support-orgs">
-  <div class="support-orgs__summary">
+<section class="sh-orgs">
+  <div class="sh-toolbar">
     <div>
       <h5 class="support-mb-1">Organization console</h5>
       <p class="support-muted">Open an org to review billing, onboarding, and support history.</p>
     </div>
-    <div class="support-orgs__meta">
-      <span class="support-orgs__count">{{ organizations.length }} total</span>
-    </div>
+    <span class="sh-toolbar__count">{{ organizations.length }} total</span>
   </div>
 
-  <div class="support-orgs__grid">
+  <div class="sh-data">
     @if (isLoading) {
-      <div class="support-orgs__empty">
-        <p class="support-muted support-mb-0">Loading organizations...</p>
+      <div class="sh-empty">
+        <p>Loading organizations...</p>
       </div>
     } @else if (error) {
-      <div class="support-orgs__empty">
+      <div class="sh-empty">
         <p-message severity="error" [text]="error"></p-message>
       </div>
     } @else {

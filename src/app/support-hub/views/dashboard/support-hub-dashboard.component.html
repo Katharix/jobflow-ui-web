@@ -1,45 +1,127 @@
-<app-page-header
-  title="Support Hub"
-  subtitle="Command center for internal support, live assistance, and organization health."
-></app-page-header>
-
-<section class="support-dashboard">
-  <div class="support-dashboard__metrics">
-    @for (metric of metrics; track metric.label) {
-      <div class="support-card">
-        <p class="support-card__label">{{ metric.label }}</p>
-        <h3>{{ metric.value }}</h3>
-        <span class="support-card__trend">{{ metric.trend }}</span>
-      </div>
-    }
+@if (isLoading) {
+  <div class="sh-loading">
+    <p>Loading dashboard...</p>
   </div>
+} @else {
+  <div class="sh-dash">
+    <!-- ── Metrics Row ────────────────────────────────── -->
+    <div class="sh-metrics">
+      <div class="sh-metric">
+        <div class="sh-metric__icon sh-metric__icon--tickets">
+          <i class="ti ti-ticket"></i>
+        </div>
+        <div>
+          <span class="sh-metric__value">{{ openTickets }}</span>
+          <span class="sh-metric__label">Open tickets</span>
+        </div>
+        @if (urgentTickets > 0) {
+          <span class="sh-badge sh-badge--red sh-metric__extra">{{ urgentTickets }} urgent</span>
+        }
+      </div>
 
-  <div class="support-dashboard__grid">
-    <div class="support-card support-card--wide">
-      <h5>Assist a customer now</h5>
-      <p class="support-muted">Start a live support session, view screens, and guide teams through blockers.</p>
-      <div class="support-card__actions">
-        <button pButton type="button" class="p-button-primary">Start session</button>
-        <button pButton type="button" class="p-button-outlined p-button-secondary">Schedule follow-up</button>
+      <div class="sh-metric">
+        <div class="sh-metric__icon sh-metric__icon--sessions">
+          <i class="ti ti-headset"></i>
+        </div>
+        <div>
+          <span class="sh-metric__value">{{ liveSessions }}</span>
+          <span class="sh-metric__label">Live sessions</span>
+        </div>
+        @if (queuedSessions > 0) {
+          <span class="sh-badge sh-badge--blue sh-metric__extra">{{ queuedSessions }} queued</span>
+        }
+      </div>
+
+      <div class="sh-metric">
+        <div class="sh-metric__icon sh-metric__icon--orgs">
+          <i class="ti ti-building-community"></i>
+        </div>
+        <div>
+          <span class="sh-metric__value">{{ organizations.length }}</span>
+          <span class="sh-metric__label">Organizations</span>
+        </div>
+      </div>
+
+      <div class="sh-metric">
+        <div class="sh-metric__icon sh-metric__icon--content">
+          <i class="ti ti-book"></i>
+        </div>
+        <div>
+          <span class="sh-metric__value">{{ publishedArticles }}</span>
+          <span class="sh-metric__label">Published articles</span>
+        </div>
       </div>
     </div>
 
-    <div class="support-card">
-      <h5>Organization pulse</h5>
-      <p class="support-muted">Review billing state, onboarding status, and critical alerts across accounts.</p>
-      <button pButton type="button" class="p-button-outlined p-button-secondary support-w-100">Open org console</button>
+    <!-- ── Content Grid ───────────────────────────────── -->
+    <div class="sh-grid">
+
+      <!-- Recent Tickets -->
+      <section class="sh-panel">
+        <div class="sh-panel__head">
+          <h3>Recent Tickets</h3>
+          <a class="sh-link" routerLink="/support-hub/tickets">View all</a>
+        </div>
+        @if (recentTickets.length === 0) {
+          <p class="sh-empty">No tickets yet.</p>
+        } @else {
+          <div class="sh-table">
+            @for (ticket of recentTickets; track ticket.id) {
+              <div class="sh-table__row">
+                <div class="sh-table__cell sh-table__cell--grow">
+                  <span class="sh-table__title">{{ ticket.title }}</span>
+                  <span class="sh-table__sub">{{ ticket.organizationName }}</span>
+                </div>
+                <span [ngClass]="getStatusClass(ticket.status)">{{ ticket.status }}</span>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- Active Sessions -->
+      <section class="sh-panel">
+        <div class="sh-panel__head">
+          <h3>Active Sessions</h3>
+          <a class="sh-link" routerLink="/support-hub/sessions">View all</a>
+        </div>
+        @if (activeSessions.length === 0) {
+          <p class="sh-empty">No active sessions.</p>
+        } @else {
+          <div class="sh-table">
+            @for (session of activeSessions; track session.id) {
+              <div class="sh-table__row">
+                <div class="sh-table__cell sh-table__cell--grow">
+                  <span class="sh-table__title">{{ session.organizationName }}</span>
+                  <span class="sh-table__sub">{{ session.agentName }}</span>
+                </div>
+                <span [ngClass]="getStatusClass(session.status)">{{ session.status }}</span>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
     </div>
 
-    <div class="support-card">
-      <h5>Ticket triage</h5>
-      <p class="support-muted">Prioritize urgent issues and auto-route to the right support pod.</p>
-      <button pButton type="button" class="p-button-outlined p-button-secondary support-w-100">View tickets</button>
-    </div>
-
-    <div class="support-card">
-      <h5>Identity & access</h5>
-      <p class="support-muted">Manage internal staff permissions and MFA/passkey readiness.</p>
-      <button pButton type="button" class="p-button-outlined p-button-secondary support-w-100">Manage access</button>
+    <!-- ── Quick Actions ──────────────────────────────── -->
+    <div class="sh-actions">
+      <a class="sh-action" routerLink="/support-hub/tickets">
+        <i class="ti ti-ticket"></i>
+        <span>Triage tickets</span>
+      </a>
+      <a class="sh-action" routerLink="/support-hub/sessions">
+        <i class="ti ti-headset"></i>
+        <span>Start session</span>
+      </a>
+      <a class="sh-action" routerLink="/support-hub/organizations">
+        <i class="ti ti-building-community"></i>
+        <span>Browse orgs</span>
+      </a>
+      <a class="sh-action" routerLink="/support-hub/content">
+        <i class="ti ti-book"></i>
+        <span>Manage content</span>
+      </a>
     </div>
   </div>
-</section>
+}

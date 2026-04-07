@@ -35,11 +35,6 @@ interface OpenMeteoDailyForecast {
   precipitation_probability_max?: number[];
 }
 
-interface OpenMeteoResponse {
-  current_weather?: OpenMeteoCurrentWeather;
-  daily?: OpenMeteoDailyForecast;
-}
-
 interface WeatherApiResponse {
   location?: string;
   isApproximate?: boolean;
@@ -109,63 +104,6 @@ export class WeatherService {
     };
   }
 
-  private loadOpenMeteoWeather(coords: Coordinates): Observable<WeatherDashboardDto> {
-    const url =
-      `https://api.open-meteo.com/v1/forecast?latitude=${coords.latitude}&longitude=${coords.longitude}` +
-      '&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto';
-
-    return this.fetchJson(url).pipe(
-      map((response: unknown) => {
-        const data = response as OpenMeteoResponse | null;
-        const currentWeather = data?.current_weather;
-        const daily = data?.daily;
-
-        if (!currentWeather || !daily) {
-          throw new Error('Invalid weather payload');
-        }
-
-        const currentCode = Number(currentWeather.weathercode ?? 0);
-        const forecast: WeatherForecastDay[] = (daily.time ?? [])
-          .slice(0, WeatherService.FORECAST_DAYS)
-          .map((day: string, index: number) => {
-          const weatherCode = Number(daily.weathercode?.[index] ?? 0);
-          const highC = Number(daily.temperature_2m_max?.[index] ?? 0);
-          const lowC = Number(daily.temperature_2m_min?.[index] ?? 0);
-          const precipitationChance = Math.round(Number(daily.precipitation_probability_max?.[index] ?? 0));
-
-          return {
-            date: day,
-            highTempF: this.celsiusToFahrenheit(highC),
-            lowTempF: this.celsiusToFahrenheit(lowC),
-            precipitationChance,
-            weatherCode,
-            condition: this.getWeatherLabel(weatherCode),
-            iconClass: this.getWeatherIconClass(weatherCode)
-          };
-        });
-
-        return {
-          location: coords.location,
-          isApproximate: coords.isApproximate,
-          currentTempF: this.celsiusToFahrenheit(Number(currentWeather.temperature ?? 0)),
-          currentCondition: this.getWeatherLabel(currentCode),
-          currentIconClass: this.getWeatherIconClass(currentCode),
-          forecast
-        };
-      }),
-      catchError(() =>
-        of({
-          location: 'Local area',
-          isApproximate: true,
-          currentTempF: 0,
-          currentCondition: 'Unavailable',
-          currentIconClass: 'pi pi-cloud',
-          forecast: []
-        })
-      )
-    );
-  }
-
   private getWeatherDashboardWithCoords(coords: Coordinates): Observable<WeatherDashboardDto> {
     return this.api
       .get<unknown>('weather/forecast', {
@@ -175,7 +113,7 @@ export class WeatherService {
       })
       .pipe(
         map(apiPayload => this.mapToDashboardDto(apiPayload, coords)),
-        catchError(() => this.loadOpenMeteoWeather(coords))
+        catchError(() => of(this.locationUnavailableDto()))
       );
   }
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '@angular/fire/auth';
 import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
@@ -40,6 +40,7 @@ export class SupportHubSessionsComponent implements OnInit {
   private organizationService = inject(OrganizationService);
   private auth = inject(Auth);
   private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('statusTemplate', { static: true }) statusTemplate!: TemplateRef<unknown>;
   @ViewChild('actionsTemplate', { static: true }) actionsTemplate!: TemplateRef<unknown>;
@@ -75,9 +76,11 @@ export class SupportHubSessionsComponent implements OnInit {
         if (!this.selectedOrganizationId && this.organizations.length) {
           this.selectedOrganizationId = this.organizations[0].id ?? '';
         }
+        this.cdr.detectChanges();
       },
       error: () => {
         this.error = this.translate.instant('support.sessions.errors.loadOrganizations');
+        this.cdr.detectChanges();
       },
     });
   }
@@ -88,10 +91,12 @@ export class SupportHubSessionsComponent implements OnInit {
       next: (sessions) => {
         this.sessions = sessions ?? [];
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.error = this.translate.instant('support.sessions.errors.loadSessions');
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -106,10 +111,12 @@ export class SupportHubSessionsComponent implements OnInit {
       next: (response) => {
         window.open(response.viewerUrl, '_blank');
         this.viewingSessionId = null;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.error = this.translate.instant('support.sessions.errors.startScreen');
         this.viewingSessionId = null;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -140,9 +147,11 @@ export class SupportHubSessionsComponent implements OnInit {
           this.newStatus = 'Queued';
           this.actionMessage = this.translate.instant('support.sessions.actions.created');
           this.loadSessions();
+          this.cdr.detectChanges();
         },
         error: () => {
           this.error = this.translate.instant('support.sessions.errors.createSession');
+          this.cdr.detectChanges();
         },
       });
   }

@@ -1,0 +1,144 @@
+$border: 1px solid rgba(148, 163, 184, 0.2);
+$radius: 14px;
+
+.sh-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sh-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.sh-editor {
+  background: #ffffff;
+  border: $border;
+  border-radius: $radius;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.sh-editor__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.sh-editor__checks {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.75rem;
+}
+
+.sh-editor__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.sh-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sh-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border: $border;
+  border-radius: 10px;
+  background: #ffffff;
+  transition: box-shadow 0.15s;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  }
+}
+
+.sh-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sh-item__title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sh-item__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.2rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: var(--jf-muted);
+}
+
+.sh-item__actions {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.sh-badge-draft {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(249, 115, 22, 0.12);
+  color: #c2410c;
+}
+
+.sh-badge-featured {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+}
+
+.sh-badge-version {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.2);
+  color: #64748b;
+}
+
+.sh-empty {
+  border: 1px dashed rgba(148, 163, 184, 0.3);
+  border-radius: $radius;
+  padding: 2rem;
+  text-align: center;
+  color: var(--jf-muted);
+  background: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .sh-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sh-item__actions {
+    justify-content: flex-end;
+  }
+}

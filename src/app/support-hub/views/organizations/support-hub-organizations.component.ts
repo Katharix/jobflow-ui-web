@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { OrganizationService } from '../../../services/shared/organization.service';
 import { OrganizationDto } from '../../../models/organization';
@@ -19,6 +19,7 @@ import { MessageModule } from 'primeng/message';
 })
 export class SupportHubOrganizationsComponent implements OnInit {
   private organizationService = inject(OrganizationService);
+  private cdr = inject(ChangeDetectorRef);
 
   organizations: OrganizationDto[] = [];
   columns: JobflowGridColumn[] = [];
@@ -39,10 +40,12 @@ export class SupportHubOrganizationsComponent implements OnInit {
       next: (organizations) => {
         this.organizations = (organizations ?? []) as OrganizationDto[];
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.error = 'Unable to load organizations.';
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }

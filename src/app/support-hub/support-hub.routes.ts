@@ -8,6 +8,7 @@ import { SupportHubOrganizationsComponent } from './views/organizations/support-
 import { SupportHubPeopleComponent } from './views/people/support-hub-people.component';
 import { SupportHubSettingsComponent } from './views/settings/support-hub-settings.component';
 import { SupportHubBillingComponent } from './views/billing/support-hub-billing.component';
+import { SupportHubContentComponent } from './views/content/support-hub-content.component';
 
 export const SUPPORT_HUB_ROUTES: Routes = [
   {
@@ -27,6 +28,7 @@ export const SUPPORT_HUB_ROUTES: Routes = [
       { path: 'sessions', component: SupportHubSessionsComponent },
       { path: 'organizations', component: SupportHubOrganizationsComponent },
       { path: 'billing', component: SupportHubBillingComponent },
+      { path: 'content', component: SupportHubContentComponent },
       { path: 'people', component: SupportHubPeopleComponent },
       { path: 'settings', component: SupportHubSettingsComponent },
     ],
