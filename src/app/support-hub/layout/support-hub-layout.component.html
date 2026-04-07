@@ -1,48 +1,58 @@
-<div class="support-hub">
+<div class="support-hub" [class.support-hub--collapsed]="sidebarCollapsed">
   <aside class="support-hub__sidebar">
     <div class="support-hub__brand">
       <img src="/assets/public/images/Asset 1.png" alt="JobFlow" />
-      <div>
+      <div class="support-hub__brand-text">
         <span class="support-hub__brand-title">Support Hub</span>
-        <span class="support-hub__brand-subtitle">Katharix Console</span>
+        <span class="support-hub__brand-subtitle">Katharix</span>
       </div>
     </div>
 
     <nav class="support-hub__nav">
-      @for (item of navItems; track item.route) {
-        <a
-          class="support-hub__nav-link"
-          [routerLink]="item.route"
-          routerLinkActive="is-active"
+      @for (group of navGroups; track group.heading) {
+        <span class="support-hub__nav-heading">{{ group.heading }}</span>
+        @for (item of group.items; track item.route) {
+          <a
+            class="support-hub__nav-link"
+            [routerLink]="item.route"
+            routerLinkActive="is-active"
           >
-          <i [class]="item.icon"></i>
-          <span>{{ item.label }}</span>
-        </a>
+            <i [class]="item.icon"></i>
+            <span>{{ item.label }}</span>
+          </a>
+        }
       }
     </nav>
 
     <div class="support-hub__sidebar-footer">
-      <span class="support-hub__status">Master system online</span>
-      <small>JobFlow Support Hub {{ year }}</small>
+      <div class="support-hub__user">
+        <div class="support-hub__avatar">{{ userInitials }}</div>
+        <div class="support-hub__user-info">
+          <span class="support-hub__user-name" (dblclick)="copyToken()">{{ userDisplayName }}</span>
+          <span class="support-hub__user-email">{{ userEmail }}</span>
+        </div>
+      </div>
+      @if (tokenCopiedMessage) {
+        <div class="support-hub__token-toast">{{ tokenCopiedMessage }}</div>
+      }
+      <button class="support-hub__logout" (click)="logout()">
+        <i class="ti ti-logout"></i>
+        <span>Sign out</span>
+      </button>
     </div>
   </aside>
 
   <div class="support-hub__main">
     <header class="support-hub__topbar">
-      <div>
-        <p class="support-hub__eyebrow">Support operations</p>
-        <h1>Assist customers and organizations in real time.</h1>
-      </div>
-      <div class="support-hub__profile">
-        <div class="support-hub__avatar">KH</div>
-        <div>
-          <span class="support-hub__profile-name">Katharix Staff</span>
-          <span class="support-hub__profile-role">Internal access</span>
-        </div>
+      <button class="support-hub__toggle" (click)="toggleSidebar()" aria-label="Toggle sidebar">
+        <i class="ti ti-menu-2"></i>
+      </button>
+      <div class="support-hub__topbar-right">
+        <span class="support-hub__env-badge">Internal</span>
       </div>
     </header>
 
-    <div class="support-hub__content container-xxl">
+    <div class="support-hub__content">
       <router-outlet></router-outlet>
     </div>
   </div>

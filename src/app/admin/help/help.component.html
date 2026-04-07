@@ -1,79 +1,249 @@
 <app-page-header
   title="Help"
-  subtitle="Support center and frequently asked questions"
+  subtitle="Guides, FAQs, and support for your organization"
 ></app-page-header>
 
 <section class="help-layout">
+  <!-- Hero + Search -->
   <div class="card">
     <div class="card-body help-hero">
       <div>
-        <h5 class="mb-2">Need answers fast?</h5>
+        <h5 class="mb-2">How can we help?</h5>
         <p class="text-muted mb-0">
-          Search the knowledge base below to find guidance on billing, clients, jobs, branding, and support.
+          Browse feature guides, search FAQs, or reach out to our support team.
         </p>
       </div>
-      <p-tag value="Admin Help Center" severity="secondary" [rounded]="true"></p-tag>
+      <div class="search-bar">
+        <input
+          id="helpSearch"
+          pInputText
+          class="w-100"
+          placeholder="Search guides and FAQs..."
+          [(ngModel)]="searchTerm"
+        />
+        @if (searchTerm.trim()) {
+          <button pButton type="button" icon="ti ti-x" severity="secondary" [text]="true" (click)="clearSearch()" aria-label="Clear search"></button>
+        }
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-body">
-      <div class="help-toolbar">
-        <div class="search-field">
-          <label class="form-label fw-semibold mb-2" for="helpSearch">Search FAQs</label>
-          <input
-            id="helpSearch"
-            pInputText
-            pSize="small"
-            class="w-100"
-            placeholder="Try: invoice status, add client, branding"
-            [(ngModel)]="searchTerm"
-            />
-          </div>
-          <button
-            pButton
-            type="button"
-            label="Clear"
-            severity="secondary"
-            [outlined]="true"
-            (click)="clearSearch()"
-            [disabled]="!searchTerm.trim()"
-          >
-            <span class="visually-hidden">Clear</span>
-          </button>
-        </div>
-
-        <div class="help-results-meta">
-          <span class="text-muted">{{ resultCount }} result{{ resultCount === 1 ? '' : 's' }}</span>
-        </div>
-
-        <p-accordion [multiple]="true" [class.d-none]="filteredFaqs.length === 0">
-          @for (faq of filteredFaqs; track faq) {
-            <p-accordion-panel>
-              <p-accordion-header>{{ faq.question }}</p-accordion-header>
-              <p-accordion-content>
-                <div class="faq-content">
-                  <p-tag
-                    [value]="faq.category"
-                    [severity]="getCategorySeverity(faq.category)"
-                    [rounded]="true"
-                  ></p-tag>
-                  <p class="mb-0 text-muted">
-                    {{ faq.answer }}
-                  </p>
-                </div>
-              </p-accordion-content>
-            </p-accordion-panel>
-          }
-        </p-accordion>
-        <div class="empty-state" [class.d-none]="filteredFaqs.length > 0">
-          <h6 class="mb-2">No matching FAQs</h6>
-          <p class="text-muted mb-3">Try a broader keyword or clear the search to view all help topics.</p>
-          <button pButton type="button" label="Show all FAQs" (click)="clearSearch()">
-            <span class="visually-hidden">Show all FAQs</span>
-          </button>
-        </div>
-
+  @if (loading) {
+    <p class="text-muted px-2">Loading help content...</p>
+  } @else if (error) {
+    <p-message severity="error" [text]="error"></p-message>
+  } @else {
+    <!-- Search results indicator -->
+    @if (searchTerm.trim()) {
+      <div class="search-results-bar">
+        <span class="text-muted">{{ totalResults }} result{{ totalResults === 1 ? '' : 's' }} for "{{ searchTerm.trim() }}"</span>
       </div>
-    </div>
-  </section>
+    }
+
+    <p-tabs [(value)]="activeTab">
+      <p-tablist>
+        <p-tab value="0">
+          <i class="ti ti-book me-1"></i>Feature Guides
+        </p-tab>
+        <p-tab value="1">
+          <i class="ti ti-help me-1"></i>FAQs
+        </p-tab>
+        <p-tab value="2">
+          <i class="ti ti-headset me-1"></i>Contact Support
+        </p-tab>
+        <p-tab value="3">
+          <i class="ti ti-sparkles me-1"></i>What's New
+        </p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <!-- ── Feature Guides ────────────────────────── -->
+        <p-tabpanel value="0">
+          <!-- Featured guides -->
+          @if (!searchTerm.trim() && featuredGuides.length > 0) {
+            <div class="featured-section mb-4">
+              <h6 class="section-label mb-3">
+                <i class="ti ti-star me-1"></i>Featured
+              </h6>
+              <div class="featured-grid">
+                @for (guide of featuredGuides; track guide.id) {
+                  <div class="featured-card">
+                    <div class="featured-card-icon">
+                      <i [class]="HELP_CATEGORY_ICONS[guide.category]"></i>
+                    </div>
+                    <div class="featured-card-body">
+                      <div class="fw-semibold">{{ guide.title }}</div>
+                      @if (guide.summary) {
+                        <p class="text-muted mb-0 small">{{ guide.summary }}</p>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Guides grouped by category -->
+          @if (categoryGroups.length === 0) {
+            <div class="empty-state">
+              <h6 class="mb-2">No guides found</h6>
+              <p class="text-muted mb-0">
+                @if (searchTerm.trim()) {
+                  Try a different search term or clear the search.
+                } @else {
+                  Guides will appear here once published by our support team.
+                }
+              </p>
+            </div>
+          } @else {
+            @for (group of categoryGroups; track group.category) {
+              <div class="category-section">
+                <h6 class="section-label mb-2">
+                  <i [class]="group.icon + ' me-1'"></i>{{ group.label }}
+                </h6>
+                <div class="guide-list">
+                  <p-accordion [multiple]="true" [value]="[]">
+                    @for (guide of group.articles; track guide.id) {
+                      <p-accordion-panel [value]="guide.id">
+                        <p-accordion-header>{{ guide.title }}</p-accordion-header>
+                        <p-accordion-content>
+                          <div class="guide-content">
+                            @if (guide.summary) {
+                              <p class="text-muted fw-semibold mb-2">{{ guide.summary }}</p>
+                            }
+                            <div class="guide-body">{{ guide.content }}</div>
+                            @if (guide.tags) {
+                              <div class="guide-tags mt-2">
+                                @for (tag of guide.tags.split(','); track tag) {
+                                  <p-tag [value]="tag.trim()" severity="secondary" [rounded]="true"></p-tag>
+                                }
+                              </div>
+                            }
+                          </div>
+                        </p-accordion-content>
+                      </p-accordion-panel>
+                    }
+                  </p-accordion>
+                </div>
+              </div>
+            }
+          }
+        </p-tabpanel>
+
+        <!-- ── FAQs ──────────────────────────────────── -->
+        <p-tabpanel value="1">
+          @if (filteredFaqs.length === 0) {
+            <div class="empty-state">
+              <h6 class="mb-2">No FAQs found</h6>
+              <p class="text-muted mb-0">
+                @if (searchTerm.trim()) {
+                  No matching questions. Try a broader search term.
+                } @else {
+                  FAQs will appear here once published.
+                }
+              </p>
+            </div>
+          } @else {
+            <p-accordion [multiple]="true" [value]="[]">
+              @for (faq of filteredFaqs; track faq.id) {
+                <p-accordion-panel [value]="faq.id">
+                  <p-accordion-header>{{ faq.title }}</p-accordion-header>
+                  <p-accordion-content>
+                    <div class="faq-content">
+                      <p-tag [value]="getCategoryLabel(faq.category)" severity="secondary" [rounded]="true"></p-tag>
+                      <p class="mb-0 text-muted">{{ faq.content }}</p>
+                    </div>
+                  </p-accordion-content>
+                </p-accordion-panel>
+              }
+            </p-accordion>
+          }
+        </p-tabpanel>
+
+        <!-- ── Contact Support ───────────────────────── -->
+        <p-tabpanel value="2">
+          <div class="contact-section">
+            <div class="contact-info card">
+              <div class="card-body">
+                <h6 class="mb-2">
+                  <i class="ti ti-mail me-1"></i>Get in Touch
+                </h6>
+                <p class="text-muted mb-3">
+                  Have a question or need help with something specific? Send us a message and our
+                  support team will get back to you as soon as possible.
+                </p>
+
+                @if (contactSuccess) {
+                  <p-message severity="success" [text]="contactSuccess" class="mb-3 d-block"></p-message>
+                }
+                @if (contactError) {
+                  <p-message severity="error" [text]="contactError" class="mb-3 d-block"></p-message>
+                }
+
+                <div class="contact-form">
+                  <div class="field">
+                    <label class="form-label fw-semibold" for="contactSubject">Subject</label>
+                    <input id="contactSubject" pInputText class="w-100" [(ngModel)]="contactSubject" placeholder="Brief description of your question" />
+                  </div>
+                  <div class="field mt-3">
+                    <label class="form-label fw-semibold" for="contactMessage">Message</label>
+                    <textarea id="contactMessage" pTextarea class="w-100" rows="5" [(ngModel)]="contactMessage" placeholder="Describe your question or issue in detail. Include screenshots or steps to reproduce if applicable."></textarea>
+                  </div>
+                  <div class="mt-3">
+                    <button pButton label="Submit" icon="ti ti-send" (click)="submitContact()" aria-label="Submit support message"></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="contact-tips card">
+              <div class="card-body">
+                <h6 class="mb-3">Tips for faster support</h6>
+                <ul class="tips-list">
+                  <li>Include your organization name</li>
+                  <li>Describe the steps that led to the issue</li>
+                  <li>Attach screenshots when possible</li>
+                  <li>Mention the browser and device you're using</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </p-tabpanel>
+
+        <!-- ── What's New ────────────────────────────── -->
+        <p-tabpanel value="3">
+          @if (changelog.length === 0) {
+            <div class="empty-state">
+              <h6 class="mb-2">No updates yet</h6>
+              <p class="text-muted mb-0">New features and improvements will be listed here.</p>
+            </div>
+          } @else {
+            <div class="changelog-timeline">
+              @for (entry of changelog; track entry.id) {
+                <div class="changelog-entry">
+                  <div class="changelog-dot"></div>
+                  <div class="changelog-card card">
+                    <div class="card-body">
+                      <div class="changelog-header">
+                        <span class="fw-semibold">{{ entry.title }}</span>
+                        <div class="changelog-meta">
+                          @if (entry.version) {
+                            <span class="changelog-version">v{{ entry.version }}</span>
+                          }
+                          <p-tag [value]="entry.category" [severity]="getChangelogSeverity(entry.category)" [rounded]="true"></p-tag>
+                        </div>
+                      </div>
+                      @if (entry.description) {
+                        <p class="text-muted mb-0 mt-2">{{ entry.description }}</p>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  }
+</section>

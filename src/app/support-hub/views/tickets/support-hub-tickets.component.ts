@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { SupportHubDataService } from '../../services/support-hub-data.service';
@@ -38,6 +38,7 @@ export class SupportHubTicketsComponent implements OnInit {
   private dataService = inject(SupportHubDataService);
   private organizationService = inject(OrganizationService);
   private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('statusTemplate', { static: true }) statusTemplate!: TemplateRef<unknown>;
   @ViewChild('actionsTemplate', { static: true }) actionsTemplate!: TemplateRef<unknown>;
@@ -73,9 +74,11 @@ export class SupportHubTicketsComponent implements OnInit {
         if (!this.selectedOrganizationId && this.organizations.length) {
           this.selectedOrganizationId = this.organizations[0].id ?? '';
         }
+        this.cdr.detectChanges();
       },
       error: () => {
         this.error = this.translate.instant('support.tickets.errors.loadOrganizations');
+        this.cdr.detectChanges();
       },
     });
   }
@@ -86,10 +89,12 @@ export class SupportHubTicketsComponent implements OnInit {
       next: (tickets) => {
         this.tickets = tickets ?? [];
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.error = this.translate.instant('support.tickets.errors.loadTickets');
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -122,9 +127,11 @@ export class SupportHubTicketsComponent implements OnInit {
           this.newStatus = 'Normal';
           this.actionMessage = this.translate.instant('support.tickets.actions.created');
           this.loadTickets();
+          this.cdr.detectChanges();
         },
         error: () => {
           this.error = this.translate.instant('support.tickets.errors.createTicket');
+          this.cdr.detectChanges();
         },
       });
   }
@@ -191,9 +198,11 @@ export class SupportHubTicketsComponent implements OnInit {
           sessions: result.sessionsCreated
         });
         this.loadTickets();
+        this.cdr.detectChanges();
       },
       error: () => {
         this.error = this.translate.instant('support.tickets.errors.seedDemo');
+        this.cdr.detectChanges();
       },
     });
   }

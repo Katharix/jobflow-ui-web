@@ -1,15 +1,31 @@
-.support-settings {
+$border: 1px solid rgba(148, 163, 184, 0.2);
+$radius: 14px;
+
+.sh-settings {
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
-.support-settings__card {
+.sh-settings__card {
   background: #ffffff;
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  border-radius: 16px;
-  padding: 1.3rem;
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
-  display: grid;
-  gap: 0.8rem;
+  border: $border;
+  border-radius: $radius;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+
+  h5 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  p {
+    font-size: 0.8rem;
+    color: var(--jf-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
 }

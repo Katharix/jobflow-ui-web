@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { OrganizationService } from '../../../services/shared/organization.service';
@@ -22,6 +22,7 @@ export class SupportHubBillingComponent implements OnInit {
 
   private readonly organizationService = inject(OrganizationService);
   private readonly supportHubData = inject(SupportHubDataService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   organizations: OrganizationDto[] = [];
   selectedOrganizationId = '';
@@ -47,10 +48,12 @@ export class SupportHubBillingComponent implements OnInit {
         } else {
           this.loading = false;
         }
+        this.cdr.detectChanges();
       },
       error: () => {
         this.organizations = [];
         this.loading = false;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -67,9 +70,11 @@ export class SupportHubBillingComponent implements OnInit {
     this.supportHubData.getOrganizationFinancialSummary(this.selectedOrganizationId).subscribe({
       next: (summary) => {
         this.financialSummary = summary;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.financialSummary = null;
+        this.cdr.detectChanges();
       },
     });
 
@@ -138,12 +143,14 @@ export class SupportHubBillingComponent implements OnInit {
         this.paymentNextCursor = page?.nextCursor ?? null;
         this.paymentsLoading = false;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.payments = [];
         this.paymentNextCursor = null;
         this.paymentsLoading = false;
         this.loading = false;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -156,11 +163,13 @@ export class SupportHubBillingComponent implements OnInit {
         this.disputes = page?.items ?? [];
         this.disputeNextCursor = page?.nextCursor ?? null;
         this.disputesLoading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.disputes = [];
         this.disputeNextCursor = null;
         this.disputesLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }

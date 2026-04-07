@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { SupportHubInviteService } from '../../services/support-hub-invite.service';
@@ -30,6 +30,7 @@ import { MessageModule } from 'primeng/message';
 })
 export class SupportHubPeopleComponent implements OnInit {
   private invitesService = inject(SupportHubInviteService);
+  private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('staffStatusTemplate', { static: true }) staffStatusTemplate!: TemplateRef<unknown>;
 
@@ -75,10 +76,12 @@ export class SupportHubPeopleComponent implements OnInit {
         this.invites = invites.filter((invite) => !invite.redeemedAt);
         this.inviteError = '';
         this.isLoadingInvites = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.inviteError = 'Unable to load invites.';
         this.isLoadingInvites = false;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -93,10 +96,12 @@ export class SupportHubPeopleComponent implements OnInit {
       next: () => {
         this.loadInvites();
         this.isCreatingInvite = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.inviteError = 'Unable to create invite.';
         this.isCreatingInvite = false;
+        this.cdr.detectChanges();
       },
     });
   }
