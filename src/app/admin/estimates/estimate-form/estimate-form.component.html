@@ -53,9 +53,25 @@
         <div class="mb-4">
           <div class="d-flex align-items-center justify-content-between mb-2">
             <span class="estimate-form__section-heading">Line Items</span>
-            <button type="button" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1" (click)="addLine()">
-              <i class="pi pi-plus"></i> Add Line
-            </button>
+            <div class="d-flex align-items-center gap-2">
+              @if (hasPriceBookAccess) {
+                <p-autoComplete
+                  [suggestions]="filteredPriceBookItems"
+                  (completeMethod)="searchPriceBookItems($event)"
+                  (onSelect)="onPriceBookItemSelected($event)"
+                  field="name"
+                  placeholder="Add from Pricebook…"
+                  [minLength]="1"
+                  [forceSelection]="true"
+                  [inputStyleClass]="'form-control form-control-sm'"
+                  [styleClass]="'pricebook-autocomplete'"
+                  size="small"
+                ></p-autoComplete>
+              }
+              <button type="button" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1" (click)="addLine()">
+                <i class="pi pi-plus"></i> Add Line
+              </button>
+            </div>
           </div>
 
           <div class="estimate-form__line-header d-none d-md-grid">

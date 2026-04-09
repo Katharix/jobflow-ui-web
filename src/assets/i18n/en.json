@@ -131,7 +131,8 @@
       },
       "errors": {
         "invalidEmail": "Please enter a valid email address.",
-        "invalidCredentials": "Incorrect email or password.",
+        "invalidCredentials": "Invalid credentials. Reach out to your organization admin or subscribe to create an account.",
+        "noAccountFound": "No account found for this email. Reach out to your organization admin or subscribe to create an account.",
         "userDisabled": "This account is disabled. Contact support for help.",
         "tooManyRequests": "Too many attempts. Please wait a moment and try again.",
         "network": "Network error. Check your connection and try again.",
@@ -591,6 +592,7 @@
         "dueDate": "Due Date",
         "lineItems": "Line Items",
         "addLine": "Add Line",
+        "searchPricebook": "Add from Pricebook…",
         "description": "Description",
         "quantity": "Qty",
         "unitPrice": "Unit Price",

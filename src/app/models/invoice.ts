@@ -47,6 +47,7 @@ export interface OrganizationClient {
 export interface InvoiceLineItem {
    id: string;
    invoiceId: string;
+   priceBookItemId?: string;
    description: string;
    quantity: number;
    unitPrice: number;
@@ -54,6 +55,7 @@ export interface InvoiceLineItem {
 }
 
 export interface CreateInvoiceLineItemRequest {
+   priceBookItemId?: string;
    description: string;
    quantity: number;
    unitPrice: number;

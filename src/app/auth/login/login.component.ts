@@ -63,7 +63,7 @@ export class LoginComponent implements OnInit {
       try {
          await this.authenticateAndSync(async () => {
             await this.authService.login(this.email.trim(), this.password);
-         });
+         }, false);
       } catch (err: unknown) {
          this.error = this.mapFirebaseAuthError(err);
          this.toast.error(this.error || this.translate.instant('auth.login.toastFailed'));
@@ -83,7 +83,7 @@ export class LoginComponent implements OnInit {
       try {
          await this.authenticateAndSync(async () => {
             await this.authService.loginWithGoogle();
-         });
+         }, true);
       } catch (err: unknown) {
          this.error = this.mapFirebaseAuthError(err);
          this.toast.error(this.error || this.translate.instant('auth.login.toastFailed'));
@@ -92,7 +92,7 @@ export class LoginComponent implements OnInit {
       }
    }
 
-   private async authenticateAndSync(authAction: () => Promise<void>): Promise<void> {
+   private async authenticateAndSync(authAction: () => Promise<void>, isGoogleLogin: boolean): Promise<void> {
       try {
          await authAction();
 
@@ -103,19 +103,38 @@ export class LoginComponent implements OnInit {
       } catch (err: unknown) {
          if (this.isBackendAuthError(err)) {
             console.error('Backend login failed:', err);
-            const backendFallback = this.translate.instant('auth.common.backendSyncFailed');
-            const backendTitle = this.translate.instant('auth.common.backendSyncTitle');
-            this.error = this.authService.getBackendErrorMessage(
-               err,
-               backendFallback
-            );
-            this.toast.error(this.error || backendFallback, backendTitle);
 
-            // Keep Firebase and local app session in sync when backend provisioning fails.
-            try {
-               await this.authService.logout();
-            } catch (logoutErr) {
-               console.warn('Logout after backend login failure failed:', logoutErr);
+            if (isGoogleLogin) {
+               // Delete the orphaned Firebase account created by Google sign-in
+               // to prevent zombie accounts that block future registration.
+               try {
+                  await this.authService.deleteCurrentUser();
+               } catch (deleteErr) {
+                  console.warn('Failed to delete orphaned Google account:', deleteErr);
+                  try {
+                     await this.authService.logout();
+                  } catch (logoutErr) {
+                     console.warn('Logout fallback also failed:', logoutErr);
+                  }
+               }
+
+               const noAccountMsg = this.translate.instant('auth.login.errors.noAccountFound');
+               this.error = noAccountMsg;
+               this.toast.error(noAccountMsg, this.translate.instant('auth.common.backendSyncTitle'));
+            } else {
+               const backendFallback = this.translate.instant('auth.common.backendSyncFailed');
+               const backendTitle = this.translate.instant('auth.common.backendSyncTitle');
+               this.error = this.authService.getBackendErrorMessage(
+                  err,
+                  backendFallback
+               );
+               this.toast.error(this.error || backendFallback, backendTitle);
+
+               try {
+                  await this.authService.logout();
+               } catch (logoutErr) {
+                  console.warn('Logout after backend login failure failed:', logoutErr);
+               }
             }
 
             this.orgContext.clearOrganization();

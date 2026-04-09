@@ -49,6 +49,7 @@ export const EstimateStatusLabels: Record<EstimateStatus, string> = {
 export interface EstimateLineItem {
   id: string;
   estimateId: string;
+  priceBookItemId?: string;
   name?: string;
   description?: string;
   quantity?: number;
@@ -57,6 +58,7 @@ export interface EstimateLineItem {
 }
 
 export interface EstimateLineItemRequest {
+  priceBookItemId?: string;
   name: string;
   description: string;
   quantity: number;

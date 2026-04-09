@@ -71,6 +71,14 @@ export const routes: Routes = [
 
          {path: 'pricebook', component: PriceBookComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
          {
+            path: 'pricebook/services',
+            canActivate: [subscriptionGuard],
+            data: {minPlan: 'Flow'},
+            loadComponent: () =>
+               import('./admin/pricebook/pricebook-services/pricebook-services.component')
+                  .then(m => m.PricebookServicesComponent)
+         },
+         {
             path: 'pricebook/items/category/:categoryId',
             canActivate: [subscriptionGuard],
             data: {minPlan: 'Flow'},

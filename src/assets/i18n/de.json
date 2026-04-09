@@ -127,7 +127,8 @@
       },
       "errors": {
         "invalidEmail": "Geben Sie eine gultige E-Mail ein.",
-        "invalidCredentials": "E-Mail oder Passwort falsch.",
+        "invalidCredentials": "Ungultige Anmeldedaten. Wenden Sie sich an Ihren Organisationsadministrator oder abonnieren Sie, um ein Konto zu erstellen.",
+        "noAccountFound": "Kein Konto fur diese E-Mail gefunden. Wenden Sie sich an Ihren Organisationsadministrator oder abonnieren Sie, um ein Konto zu erstellen.",
         "userDisabled": "Dieses Konto ist deaktiviert. Kontaktieren Sie den Support.",
         "tooManyRequests": "Zu viele Versuche. Bitte warten Sie.",
         "network": "Netzwerkfehler. Prufen Sie Ihre Verbindung.",
