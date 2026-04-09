@@ -47,6 +47,10 @@ export class PriceBookItemService {
       return this.api.get<PriceBookItemDto[]>(`${this.baseUrl}/category/${categoryId}`);
    }
 
+   getAllForOrganization(): Observable<PriceBookItemDto[]> {
+      return this.api.get<PriceBookItemDto[]>(`${this.baseUrl}/organization`);
+   }
+
    create(body: CreatePriceBookItemRequest): Observable<PriceBookItemDto> {
       return this.api.post<PriceBookItemDto>(`${this.baseUrl}`, body);
    }

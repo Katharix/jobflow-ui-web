@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { BaseApiService } from '../../services/shared/base-api.service';
 import { ClientHubAuthService } from './client-hub-auth.service';
 import {
@@ -13,6 +13,7 @@ import {
   ClientHubTimelineItem,
   ClientHubDepositResponse,
   UpdateClientHubProfileRequest,
+  OrganizationBranding,
 } from '../models/client-hub.models';
 
 @Injectable({ providedIn: 'root' })
@@ -30,17 +31,17 @@ export class ClientHubService {
   }
 
   getEstimates(): Observable<ClientHubEstimate[]> {
-    return this.api.getWithHeaders<ClientHubEstimate[]>(
+    return this.api.getWithHeaders<unknown>(
       `${this.baseUrl}/estimates`,
       this.getAuthHeaders(),
-    );
+    ).pipe(map((response) => this.normalizeCollection<ClientHubEstimate>(response)));
   }
 
   getEstimateById(id: string): Observable<ClientHubEstimate> {
-    return this.api.getWithHeaders<ClientHubEstimate>(
+    return this.api.getWithHeaders<unknown>(
       `${this.baseUrl}/estimates/${id}`,
       this.getAuthHeaders(),
-    );
+    ).pipe(map((response) => this.normalizeItem<ClientHubEstimate>(response)));
   }
 
   acceptEstimate(id: string): Observable<void> {
@@ -60,38 +61,38 @@ export class ClientHubService {
   }
 
   getInvoices(): Observable<ClientHubInvoice[]> {
-    return this.api.getWithHeaders<ClientHubInvoice[]>(
+    return this.api.getWithHeaders<unknown>(
       `${this.baseUrl}/invoices`,
       this.getAuthHeaders(),
-    );
+    ).pipe(map((response) => this.normalizeCollection<ClientHubInvoice>(response)));
   }
 
   getInvoiceById(id: string): Observable<ClientHubInvoice> {
-    return this.api.getWithHeaders<ClientHubInvoice>(
+    return this.api.getWithHeaders<unknown>(
       `${this.baseUrl}/invoices/${id}`,
       this.getAuthHeaders(),
-    );
+    ).pipe(map((response) => this.normalizeItem<ClientHubInvoice>(response)));
   }
 
   getJobs(): Observable<ClientHubJobSummary[]> {
-    return this.api.getWithHeaders<ClientHubJobSummary[]>(
+    return this.api.getWithHeaders<unknown>(
       `${this.baseUrl}/jobs`,
       this.getAuthHeaders(),
-    );
+    ).pipe(map((response) => this.normalizeCollection<ClientHubJobSummary>(response)));
   }
 
   getJobById(id: string): Observable<ClientHubJobSummary> {
-    return this.api.getWithHeaders<ClientHubJobSummary>(
+    return this.api.getWithHeaders<unknown>(
       `${this.baseUrl}/jobs/${id}`,
       this.getAuthHeaders(),
-    );
+    ).pipe(map((response) => this.normalizeItem<ClientHubJobSummary>(response)));
   }
 
   getJobTimeline(id: string): Observable<ClientHubTimelineItem[]> {
-    return this.api.getWithHeaders<ClientHubTimelineItem[]>(
+    return this.api.getWithHeaders<unknown>(
       `${this.baseUrl}/jobs/${id}/timeline`,
       this.getAuthHeaders(),
-    );
+    ).pipe(map((response) => this.normalizeCollection<ClientHubTimelineItem>(response)));
   }
 
   getJobUpdateAttachment(jobId: string, updateId: string, attachmentId: string): Observable<Blob> {
@@ -132,6 +133,10 @@ export class ClientHubService {
     );
   }
 
+  getOrganizationBranding(organizationId: string): Observable<OrganizationBranding> {
+    return this.api.get<OrganizationBranding>(`OrganizationBranding/${organizationId}`);
+  }
+
   private getAuthHeaders(): HttpHeaders | undefined {
     const token = this.auth.getToken();
     if (!token) return undefined;
@@ -139,5 +144,54 @@ export class ClientHubService {
     return new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
+  }
+
+  private normalizeCollection<T>(response: unknown): T[] {
+    if (Array.isArray(response)) {
+      return response as T[];
+    }
+
+    if (response && typeof response === 'object') {
+      const source = response as Record<string, unknown>;
+      const candidates: unknown[] = [
+        source['items'],
+        source['data'],
+        source['value'],
+        source['result'],
+        response,
+      ];
+
+      for (const candidate of candidates) {
+        if (Array.isArray(candidate)) {
+          return candidate as T[];
+        }
+
+        if (candidate && typeof candidate === 'object' && 'id' in (candidate as Record<string, unknown>)) {
+          return [candidate as T];
+        }
+      }
+    }
+
+    return [];
+  }
+
+  private normalizeItem<T>(response: unknown): T {
+    if (response && typeof response === 'object') {
+      const source = response as Record<string, unknown>;
+      const candidates: unknown[] = [
+        source['data'],
+        source['value'],
+        source['result'],
+        response,
+      ];
+
+      for (const candidate of candidates) {
+        if (candidate && typeof candidate === 'object' && 'id' in (candidate as Record<string, unknown>)) {
+          return candidate as T;
+        }
+      }
+    }
+
+    return response as T;
   }
 }

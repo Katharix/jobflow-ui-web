@@ -1,0 +1,37 @@
+<app-page-header
+  title="Price Book"
+  subtitle="Manage your service offerings and pricing."
+></app-page-header>
+
+<section class="pb-services-overview">
+  <div class="pb-services-overview__intro">
+    <span class="pb-services-overview__eyebrow">Services</span>
+    <h2>All services across your price book</h2>
+    <p>Add, edit, or remove services and set cost and pricing for each.</p>
+  </div>
+  <div class="pb-services-overview__metrics">
+    <div class="pb-services-metric">
+      <span class="pb-services-metric__label">Total services</span>
+      <span class="pb-services-metric__value">{{ items.length }}</span>
+    </div>
+  </div>
+  <div class="pb-services-cta">
+    <div>
+      <p class="pb-services-cta__eyebrow">Quick action</p>
+      <h3>Add a new service</h3>
+      <p>Create a service with cost and pricing details.</p>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="add()">
+      New Service
+    </button>
+  </div>
+</section>
+
+<app-jobflow-grid
+  [data]="items"
+  [columns]="columns"
+  [pageSettings]="pageSettings"
+  [height]="600"
+  [showSearchBar]="true"
+  (commandClick)="onCommandClick($event)"
+></app-jobflow-grid>

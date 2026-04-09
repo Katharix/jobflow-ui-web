@@ -1,64 +1,91 @@
 <div class="container py-4">
   <div class="row justify-content-center">
     <div class="col-lg-10">
-      <div class="card">
-        <div class="card-body">
-          @if (loading) {
-            <div class="text-center py-5">
-              Loading estimate...
-            </div>
-          }
+      @if (loading) {
+        <div class="text-center py-5">Loading estimate...</div>
+      }
 
-          @if (error) {
-            <div class="alert alert-danger mb-0">
-              {{ error }}
-            </div>
-          }
+      @if (error) {
+        <div class="alert alert-danger">{{ error }}</div>
+      }
 
-          @if (!loading && !error && estimate) {
+      @if (!loading && !error && estimate) {
+        <div class="estimate-document">
+          <!-- Branded header -->
+          <div class="estimate-header" [style.backgroundColor]="brandPrimary">
+            <div class="d-flex align-items-center gap-3">
+              @if (branding && branding.logoUrl) {
+                <div class="estimate-logo">
+                  <img [src]="branding.logoUrl" alt="Company logo" />
+                </div>
+              }
+              <div class="text-white">
+                <div class="fw-bold fs-5">{{ brandBusinessName }}</div>
+                @if (branding && branding.tagline) {
+                  <div class="small opacity-75">{{ branding.tagline }}</div>
+                }
+              </div>
+            </div>
+            <div class="text-white text-end">
+              <div class="fw-bold fs-5 text-uppercase">Estimate</div>
+              <div class="small opacity-75"># {{ estimate.estimateNumber }}</div>
+            </div>
+          </div>
+
+          <div class="estimate-body">
+            <!-- Status & dates -->
             <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3">
               <div>
-                <h3 class="mb-1">Estimate #{{ estimate.estimateNumber }}</h3>
-                <div class="text-muted">
-                  {{ organizationName }}
-                </div>
+                <span class="badge fs-6" [style.backgroundColor]="brandSecondary">{{ statusLabel }}</span>
               </div>
-              <div class="text-end">
-                <div class="fw-semibold">Status: {{ statusLabel }}</div>
+              <div class="text-end small">
                 @if (displayDate) {
-                  <div class="text-muted">Date: {{ displayDate | date: 'longDate' }}</div>
+                  <div><span class="text-muted">Date:</span> {{ displayDate | date: 'longDate' }}</div>
                 }
                 @if (estimate.expirationDate) {
-                  <div class="text-muted">
-                    Expires: {{ estimate.expirationDate | date: 'longDate' }}
+                  <div><span class="text-muted">Expires:</span> {{ estimate.expirationDate | date: 'longDate' }}</div>
+                }
+              </div>
+            </div>
+
+            <!-- From / To -->
+            <div class="row mb-4 g-3">
+              <div class="col-md-6">
+                <div class="small fw-semibold text-uppercase mb-1" [style.color]="brandSecondary">From</div>
+                <div class="fw-semibold">{{ brandBusinessName }}</div>
+                @if (estimate.organizationClient?.organization?.address1) {
+                  <div class="small text-muted">
+                    {{ estimate.organizationClient?.organization?.address1 }}
+                    @if (estimate.organizationClient?.organization?.address2) {
+                      <br>{{ estimate.organizationClient?.organization?.address2 }}
+                    }
+                    <br>{{ estimate.organizationClient?.organization?.city }}, {{ estimate.organizationClient?.organization?.state }} {{ estimate.organizationClient?.organization?.zipCode }}
+                  </div>
+                }
+              </div>
+              <div class="col-md-6">
+                <div class="small fw-semibold text-uppercase mb-1" [style.color]="brandSecondary">Estimate To</div>
+                <div class="fw-semibold">{{ clientName }}</div>
+                @if (estimate.organizationClient?.emailAddress) {
+                  <div class="small text-muted">{{ estimate.organizationClient?.emailAddress }}</div>
+                }
+                @if (estimate.organizationClient?.address1) {
+                  <div class="small text-muted">
+                    {{ estimate.organizationClient?.address1 }}
+                    @if (estimate.organizationClient?.address2) {
+                      <br>{{ estimate.organizationClient?.address2 }}
+                    }
+                    <br>{{ estimate.organizationClient?.city }}, {{ estimate.organizationClient?.state }} {{ estimate.organizationClient?.zipCode }}
                   </div>
                 }
               </div>
             </div>
-            <div class="mb-4">
-              <h6 class="text-secondary mb-2">Estimate To</h6>
-              <div>{{ clientName }}</div>
-              @if (estimate.organizationClient?.emailAddress) {
-                <div>{{ estimate.organizationClient?.emailAddress }}</div>
-              }
-              @if (estimate.organizationClient?.address1) {
-                <div>
-                  {{ estimate.organizationClient?.address1 }}
-                  @if (estimate.organizationClient?.address2) {
-                    <span>{{ estimate.organizationClient?.address2 }}</span>
-                  }
-                </div>
-              }
-              @if (estimate.organizationClient?.city || estimate.organizationClient?.state || estimate.organizationClient?.zipCode) {
-                <div>
-                  {{ estimate.organizationClient?.city }}, {{ estimate.organizationClient?.state }} {{ estimate.organizationClient?.zipCode }}
-                </div>
-              }
-            </div>
+
+            <!-- Line items -->
             <div class="table-responsive mb-4">
-              <table class="table table-bordered align-middle">
+              <table class="table estimate-table">
                 <thead>
-                  <tr>
+                  <tr [style.borderBottomColor]="brandPrimary">
                     <th>#</th>
                     <th>Description</th>
                     <th class="text-end">Qty</th>
@@ -77,26 +104,49 @@
                     </tr>
                   }
                 </tbody>
-                <tfoot>
-                  <tr>
-                    <th colspan="4" class="text-end">Subtotal</th>
-                    <th class="text-end">{{ subtotal | currency }}</th>
-                  </tr>
-                  <tr>
-                    <th colspan="4" class="text-end">Total</th>
-                    <th class="text-end">{{ estimate.total | currency }}</th>
-                  </tr>
-                </tfoot>
               </table>
             </div>
-            <div class="d-flex justify-content-end">
+
+            <!-- Totals -->
+            <div class="row">
+              <div class="col-md-5 ms-auto">
+                <table class="table table-sm estimate-totals">
+                  <tbody>
+                    <tr>
+                      <td class="text-muted">Subtotal</td>
+                      <td class="text-end">{{ subtotal | currency }}</td>
+                    </tr>
+                    <tr [style.borderTopColor]="brandPrimary" style="border-top: 2px solid">
+                      <td class="fw-bold">Estimated Total</td>
+                      <td class="text-end fw-bold" [style.color]="brandPrimary">{{ estimate.total | currency }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            @if (estimate.notes) {
+              <div class="mt-3 p-3 bg-light rounded small">
+                <div class="fw-semibold mb-1">Notes</div>
+                <div class="text-muted" style="white-space: pre-line">{{ estimate.notes }}</div>
+              </div>
+            }
+
+            <!-- Footer & actions -->
+            <div class="d-flex flex-wrap align-items-center justify-content-between mt-4 pt-3" [style.borderTopColor]="brandSecondary" style="border-top: 1px solid">
+              <div>
+                @if (brandFooter) {
+                  <p class="text-muted small mb-0">{{ brandFooter }}</p>
+                }
+              </div>
               <button type="button" class="btn btn-outline-primary" (click)="downloadPdf()">
                 Download PDF
               </button>
             </div>
-          }
+          </div>
         </div>
-      </div>
+      }
     </div>
   </div>
 </div>

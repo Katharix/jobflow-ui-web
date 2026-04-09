@@ -59,7 +59,7 @@ export const routes: Routes = [
       canActivateChild: [subscriptionAccessGuard],
       children: [
          {path: '', component: DashboardComponent},
-         {path: 'settings/branding', component: BrandingComponent},
+         {path: 'settings/branding', component: BrandingComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
          {path: 'settings/workflow', component: WorkflowSettingsComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
          {path: 'messaging', component: ChatComponent},
          {path: 'company', component: CompanyComponent, data: { allowExpiredAccess: true }},
@@ -70,6 +70,14 @@ export const routes: Routes = [
          {path: 'scheduling-jobs', component: JobScheduleComponent},
 
          {path: 'pricebook', component: PriceBookComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
+         {
+            path: 'pricebook/services',
+            canActivate: [subscriptionGuard],
+            data: {minPlan: 'Flow'},
+            loadComponent: () =>
+               import('./admin/pricebook/pricebook-services/pricebook-services.component')
+                  .then(m => m.PricebookServicesComponent)
+         },
          {
             path: 'pricebook/items/category/:categoryId',
             canActivate: [subscriptionGuard],

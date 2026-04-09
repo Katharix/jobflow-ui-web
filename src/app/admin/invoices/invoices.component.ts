@@ -19,10 +19,13 @@ import {Estimate, EstimateLineItem} from '../estimates/models/estimate';
 import {EstimateService} from '../estimates/services/estimate.service';
 import {InputTextModule} from 'primeng/inputtext';
 import {InputNumberModule} from 'primeng/inputnumber';
+import {AutoCompleteModule, AutoCompleteSelectEvent} from 'primeng/autocomplete';
 import { Auth } from '@angular/fire/auth';
 import { useNotifierHub, InvoicePaidEvent } from '../services/useNotifierHub';
-import { BehaviorSubject, Subject, Subscription, asyncScheduler, catchError, debounceTime, distinctUntilChanged, observeOn, of, switchMap } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription, asyncScheduler, catchError, debounceTime, distinctUntilChanged, observeOn, of, switchMap, take } from 'rxjs';
 import { InvoiceJobPickerComponent, InvoiceJobPickerRow } from './invoice-job-picker/invoice-job-picker.component';
+import { PriceBookItemDto, PriceBookItemService } from '../pricebook/services/price-book-item.service';
+import { OrganizationContextService } from '../../services/shared/organization-context.service';
 
 @Component({
    selector: 'app-invoices',
@@ -35,6 +38,7 @@ import { InvoiceJobPickerComponent, InvoiceJobPickerRow } from './invoice-job-pi
       TranslateModule,
       InputTextModule,
       InputNumberModule,
+      AutoCompleteModule,
       InvoiceJobPickerComponent,
       PageHeaderComponent,
       JobflowGridComponent,
@@ -56,6 +60,8 @@ export class InvoicesComponent implements OnInit, OnDestroy {
    private workflowSettings = inject(WorkflowSettingsService);
    private auth = inject(Auth);
    private translate = inject(TranslateService);
+   private priceBookService = inject(PriceBookItemService);
+   private orgContext = inject(OrganizationContextService);
 
 
    @ViewChild('clientTemplate', {static: true})
@@ -114,6 +120,10 @@ export class InvoicesComponent implements OnInit, OnDestroy {
    private isEstimatePrefillLoaded = false;
    private isLoadingEstimatePrefill = false;
 
+   priceBookItems: PriceBookItemDto[] = [];
+   filteredPriceBookItems: PriceBookItemDto[] = [];
+   hasPriceBookAccess = false;
+
    private statusLabelMap: Record<number, string> = { ...JobLifecycleStatusLabels };
 
    private notifierHub: ReturnType<typeof useNotifierHub> | null = null;
@@ -135,6 +145,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       this.buildInvoiceForm();
       this.loadWorkflowStatuses();
       this.loadRecentJobs();
+      this.loadPriceBookAccess();
 
       this.loadPageSub = this.loadPage$
          .pipe(
@@ -499,6 +510,23 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       }
    }
 
+   searchPriceBookItems(event: { query: string }): void {
+      const query = (event.query ?? '').toLowerCase();
+      this.filteredPriceBookItems = this.priceBookItems.filter(
+         item => item.name.toLowerCase().includes(query)
+            || (item.description ?? '').toLowerCase().includes(query)
+      );
+   }
+
+   onPriceBookItemSelected(event: AutoCompleteSelectEvent): void {
+      const item: PriceBookItemDto = event.value;
+      this.invoiceLineItems.push(this.newLineItemGroup({
+         priceBookItemId: item.id,
+         description: item.name,
+         unitPrice: item.price
+      }));
+   }
+
    invoiceLineTotal(index: number): number {
       const line = this.invoiceLineItems.at(index);
       const quantity = Number(line.get('quantity')?.value ?? 0);
@@ -518,12 +546,14 @@ export class InvoicesComponent implements OnInit, OnDestroy {
          invoiceDate: string | null;
          dueDate: string | null;
          lineItems: {
+            priceBookItemId: string | null;
             description: string | null;
             quantity: number | null;
             unitPrice: number | null;
          }[];
       };
       const lineItems: CreateInvoiceLineItemRequest[] = (value.lineItems ?? []).map(line => ({
+         priceBookItemId: line.priceBookItemId || undefined,
          description: String(line.description ?? '').trim(),
          quantity: Number(line.quantity ?? 0),
          unitPrice: Number(line.unitPrice ?? 0)
@@ -755,6 +785,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
    private newLineItemGroup(item?: Partial<CreateInvoiceLineItemRequest>): FormGroup {
       return this.fb.group({
+         priceBookItemId: [item?.priceBookItemId ?? null],
          description: [item?.description ?? '', Validators.required],
          quantity: [item?.quantity ?? 1, [Validators.required, Validators.min(0.001)]],
          unitPrice: [item?.unitPrice ?? 0, [Validators.required, Validators.min(0)]]
@@ -820,6 +851,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
    private mapEstimateLineToInvoiceLine(line: EstimateLineItem): CreateInvoiceLineItemRequest {
       return {
+         priceBookItemId: line.priceBookItemId || undefined,
          description: (line.description ?? line.name ?? this.translate.instant('admin.invoices.form.lineItemFallback')).trim(),
          quantity: Number(line.quantity && line.quantity > 0 ? line.quantity : 1),
          unitPrice: Number(line.unitPrice ?? 0)
@@ -981,5 +1013,17 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       }
 
       return null;
+   }
+
+   private loadPriceBookAccess(): void {
+      this.orgContext.hasMinPlan$('Max').pipe(take(1)).subscribe(hasAccess => {
+         this.hasPriceBookAccess = hasAccess;
+         if (hasAccess) {
+            this.priceBookService.getAllForOrganization().subscribe({
+               next: items => this.priceBookItems = items,
+               error: () => this.priceBookItems = []
+            });
+         }
+      });
    }
 }

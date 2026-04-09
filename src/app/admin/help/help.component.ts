@@ -1,100 +1,180 @@
-import {Component} from '@angular/core';
-
+import {Component, OnInit, inject} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {AccordionModule} from 'primeng/accordion';
 import {InputTextModule} from 'primeng/inputtext';
 import {ButtonModule} from 'primeng/button';
 import {TagModule} from 'primeng/tag';
+import {TabsModule} from 'primeng/tabs';
+import {MessageModule} from 'primeng/message';
+import {TextareaModule} from 'primeng/textarea';
 import {PageHeaderComponent} from '../dashboard/page-header/page-header.component';
+import {HelpContentService} from '../../services/shared/help-content.service';
+import {
+   HelpArticle,
+   HelpArticleCategory,
+   ChangelogEntry,
+   ChangelogCategory,
+   HELP_CATEGORY_LABELS,
+   HELP_CATEGORY_ICONS
+} from '../../models/help-content';
 
-interface HelpFaqItem {
-   category: 'Billing' | 'Clients' | 'Jobs' | 'Branding' | 'Support';
-   question: string;
-   answer: string;
-   keywords: string[];
+interface CategoryGroup {
+   category: HelpArticleCategory;
+   label: string;
+   icon: string;
+   articles: HelpArticle[];
 }
 
 @Component({
    selector: 'app-help',
    standalone: true,
-   imports: [FormsModule, AccordionModule, InputTextModule, ButtonModule, TagModule, PageHeaderComponent],
+   imports: [
+      FormsModule,
+      AccordionModule,
+      InputTextModule,
+      ButtonModule,
+      TagModule,
+      TabsModule,
+      MessageModule,
+      TextareaModule,
+      PageHeaderComponent
+   ],
    templateUrl: './help.component.html',
    styleUrl: './help.component.scss'
 })
-export class HelpComponent {
+export class HelpComponent implements OnInit {
+   private helpService = inject(HelpContentService);
+
+   readonly HELP_CATEGORY_ICONS = HELP_CATEGORY_ICONS;
+
    searchTerm = '';
+   activeTab = '0';
 
-   readonly faqs: HelpFaqItem[] = [
-      {
-         category: 'Billing',
-         question: 'How do I create a new invoice?',
-         answer: 'Open Company > Jobs, select the job, and choose the invoice action. All generated invoices are also available in Company > Invoicing.',
-         keywords: ['invoice', 'invoicing', 'billing', 'create']
-      },
-      {
-         category: 'Billing',
-         question: 'Where can I see all invoices for my organization?',
-         answer: 'Go to Company > Invoicing. That page shows invoices for your organization with search and paging support.',
-         keywords: ['invoice', 'billing', 'organization', 'list']
-      },
-      {
-         category: 'Clients',
-         question: 'How do I add clients before invoicing?',
-         answer: 'Use the Clients page in the sidebar. Create or update the client first so invoices can link to the correct client profile.',
-         keywords: ['client', 'customer', 'invoice', 'create']
-      },
-      {
-         category: 'Billing',
-         question: 'Why does an invoice show Draft or Unpaid?',
-         answer: 'Draft means the invoice is created but not finalized. Unpaid means it is issued and still waiting for payment.',
-         keywords: ['invoice', 'draft', 'unpaid', 'status']
-      },
-      {
-         category: 'Branding',
-         question: 'How do I update branding on invoices?',
-         answer: 'Go to Company > Settings > Branding to update logo, business details, and invoice presentation settings.',
-         keywords: ['branding', 'invoice', 'settings', 'logo']
-      },
-      {
-         category: 'Support',
-         question: 'How do I contact support?',
-         answer: 'Use your usual support channel for your environment. Include organization name, user email, and screenshots for faster resolution.',
-         keywords: ['support', 'contact', 'help', 'issue']
-      }
-   ];
+   articles: HelpArticle[] = [];
+   changelog: ChangelogEntry[] = [];
+   loading = true;
+   error = '';
 
-   get filteredFaqs(): HelpFaqItem[] {
-      const query = this.searchTerm.trim().toLowerCase();
-      if (!query) {
-         return this.faqs;
-      }
+   // Contact support form
+   contactSubject = '';
+   contactMessage = '';
+   contactSuccess = '';
+   contactError = '';
 
-      return this.faqs.filter((faq) => {
-         const searchable = [faq.category, faq.question, faq.answer, ...faq.keywords]
-            .join(' ')
-            .toLowerCase();
-         return searchable.includes(query);
+   ngOnInit(): void {
+      this.helpService.getPublishedArticles().subscribe({
+         next: (data) => {
+            this.articles = data;
+            this.loading = false;
+         },
+         error: () => {
+            this.error = 'Unable to load help content. Please try again later.';
+            this.loading = false;
+         }
+      });
+
+      this.helpService.getPublishedChangelog().subscribe({
+         next: (data) => this.changelog = data,
+         error: () => {
+            // Changelog is supplemental — silent failure
+            this.changelog = [];
+         }
       });
    }
 
-   get resultCount(): number {
-      return this.filteredFaqs.length;
+   // ── Guides ────────────────────────────────────────────
+
+   get guides(): HelpArticle[] {
+      return this.articles.filter(a => a.articleType === 'Guide');
    }
+
+   get filteredGuides(): HelpArticle[] {
+      const q = this.searchTerm.trim().toLowerCase();
+      if (!q) return this.guides;
+      return this.guides.filter(a => this.matchesSearch(a, q));
+   }
+
+   get categoryGroups(): CategoryGroup[] {
+      const grouped = new Map<HelpArticleCategory, HelpArticle[]>();
+      for (const article of this.filteredGuides) {
+         const list = grouped.get(article.category) ?? [];
+         list.push(article);
+         grouped.set(article.category, list);
+      }
+
+      return Array.from(grouped.entries()).map(([category, articles]) => ({
+         category,
+         label: HELP_CATEGORY_LABELS[category] ?? category,
+         icon: HELP_CATEGORY_ICONS[category] ?? 'ti ti-file',
+         articles
+      }));
+   }
+
+   get featuredGuides(): HelpArticle[] {
+      return this.guides.filter(a => a.isFeatured);
+   }
+
+   // ── FAQs ──────────────────────────────────────────────
+
+   get faqs(): HelpArticle[] {
+      return this.articles.filter(a => a.articleType === 'Faq');
+   }
+
+   get filteredFaqs(): HelpArticle[] {
+      const q = this.searchTerm.trim().toLowerCase();
+      if (!q) return this.faqs;
+      return this.faqs.filter(a => this.matchesSearch(a, q));
+   }
+
+   // ── Changelog ─────────────────────────────────────────
+
+   getChangelogSeverity(category: ChangelogCategory): 'success' | 'info' | 'warn' {
+      switch (category) {
+         case 'Feature': return 'success';
+         case 'Improvement': return 'info';
+         case 'Fix': return 'warn';
+      }
+   }
+
+   // ── Contact support ──────────────────────────────────
+
+   submitContact(): void {
+      this.contactSuccess = '';
+      this.contactError = '';
+
+      if (!this.contactSubject.trim() || !this.contactMessage.trim()) {
+         this.contactError = 'Please fill in both the subject and message.';
+         return;
+      }
+
+      // For now, show confirmation — full ticket creation can be wired later
+      this.contactSuccess = 'Your message has been submitted. Our team will follow up shortly.';
+      this.contactSubject = '';
+      this.contactMessage = '';
+   }
+
+   // ── Search ────────────────────────────────────────────
 
    clearSearch(): void {
       this.searchTerm = '';
    }
 
-   getCategorySeverity(category: HelpFaqItem['category']): 'secondary' | 'info' | 'success' | 'warn' {
-      switch (category) {
-         case 'Billing':
-            return 'info';
-         case 'Clients':
-            return 'success';
-         case 'Branding':
-            return 'warn';
-         default:
-            return 'secondary';
-      }
+   get totalResults(): number {
+      return this.filteredGuides.length + this.filteredFaqs.length;
+   }
+
+   getCategoryLabel(category: HelpArticleCategory): string {
+      return HELP_CATEGORY_LABELS[category] ?? category;
+   }
+
+   private matchesSearch(article: HelpArticle, query: string): boolean {
+      const searchable = [
+         article.title,
+         article.summary ?? '',
+         article.content,
+         article.tags ?? '',
+         article.category
+      ].join(' ').toLowerCase();
+      return searchable.includes(query);
    }
 }

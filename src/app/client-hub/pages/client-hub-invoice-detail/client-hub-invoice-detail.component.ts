@@ -1,11 +1,13 @@
 
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { timeout } from 'rxjs';
 import { Invoice, InvoiceStatus } from '../../../models/invoice';
 import { PaymentProvider } from '../../../models/customer-payment-profile';
 import { ClientHubAuthService } from '../../services/client-hub-auth.service';
 import { ClientHubService } from '../../services/client-hub.service';
+import { OrganizationBranding } from '../../models/client-hub.models';
 import { environment } from '../../../../environments/environment';
 import { loadStripe, Stripe, StripeElements } from '@stripe/stripe-js';
 import { ClientHubNotifierService, ClientHubInvoicePaidEvent } from '../../services/client-hub-notifier.service';
@@ -24,6 +26,8 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
   private readonly clientHubAuth = inject(ClientHubAuthService);
   private readonly http = inject(HttpClient);
   private readonly notifier = inject(ClientHubNotifierService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly requestTimeoutMs = 15000;
   private readonly invoicePaidHandler = (payload: ClientHubInvoicePaidEvent) => {
     if (payload.invoiceId === this.invoice?.id) {
       this.loadInvoice();
@@ -36,6 +40,7 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
   error: string | null = null;
   paymentError: string | null = null;
   invoice: Invoice | null = null;
+  branding: OrganizationBranding | null = null;
   showPaymentForm = false;
   private stripe?: Stripe | null;
   private elements?: StripeElements;
@@ -44,12 +49,12 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadInvoice();
     this.notifier.onInvoicePaid(this.invoicePaidHandler);
-    void this.notifier.startConnection();
+    this.notifier.startConnection();
   }
 
   ngOnDestroy(): void {
     this.notifier.offInvoicePaid(this.invoicePaidHandler);
-    void this.notifier.stopConnection();
+    this.notifier.stopConnection();
   }
 
   get canPay(): boolean {
@@ -242,15 +247,20 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.error = null;
 
-    this.clientHubService.getInvoiceById(id).subscribe({
+    this.clientHubService.getInvoiceById(id).pipe(
+      timeout(this.requestTimeoutMs),
+    ).subscribe({
       next: (invoice) => {
         this.invoice = invoice;
         this.isLoading = false;
+        this.cdr.detectChanges();
+        this.loadBranding(invoice.organizationId);
       },
       error: (error: HttpErrorResponse) => {
         this.isLoading = false;
+        this.cdr.detectChanges();
 
-        if (error.status === 401 || error.status === 403) {
+        if (this.isAuthError(error)) {
           this.clientHubAuth.handleUnauthorized(this.router, this.router.url);
           return;
         }
@@ -258,6 +268,29 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
         this.error = 'Unable to load this invoice right now.';
       },
     });
+  }
+
+  private isAuthError(error: unknown): error is HttpErrorResponse {
+    return error instanceof HttpErrorResponse
+      && (error.status === 401 || error.status === 403);
+  }
+
+  private loadBranding(organizationId: string): void {
+    this.clientHubService.getOrganizationBranding(organizationId).subscribe({
+      next: (branding) => {
+        this.branding = branding;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // branding is optional — page still works without it
+      },
+    });
+  }
+
+  get orgDisplayName(): string {
+    return this.branding?.businessName?.trim()
+      || this.invoice?.organizationClient?.organization?.organizationName?.trim()
+      || '';
   }
 
   private async initializeStripePayment(clientSecret: string): Promise<void> {

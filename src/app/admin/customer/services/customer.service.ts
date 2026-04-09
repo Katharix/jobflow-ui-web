@@ -91,6 +91,10 @@ export class CustomersService {
       );
    }
 
+   bulkCreateCustomers(payloads: CreateCustomerRequest[]): Observable<Client[]> {
+      return this.api.post<Client[]>(`${this.apiUrl}upsert/multi`, payloads);
+   }
+
    deleteClient(clientId: string): Observable<void> {
       return this.api.delete<void>(`${this.apiUrl}delete?clientId=${clientId}`);
    }

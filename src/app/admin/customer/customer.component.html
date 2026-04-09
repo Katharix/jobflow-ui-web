@@ -43,6 +43,9 @@
         <button type="button" class="btn btn-primary" (click)="openAddClient()">
           Add Client
         </button>
+        <button type="button" class="btn btn-outline-primary" (click)="openBulkAddModal()">
+          Bulk Add
+        </button>
         <button type="button" class="btn btn-outline-primary" (click)="openImportModal()">
           Import Data
         </button>
@@ -248,4 +251,85 @@
     </app-jobflow-modal>
   }
 
+  @if (showBulkAddModal) {
+    <app-jobflow-modal
+      [title]="'Bulk Add Clients'"
+      [size]="'xl'"
+      [showFooter]="false"
+      (cancelled)="closeBulkAddModal()"
+      >
+      <div class="bulk-add-workflow">
+        <p class="text-muted mb-3">Add multiple clients at once. First name is required for each row.</p>
+
+        @if (bulkError) {
+          <div class="alert alert-danger mb-3">{{ bulkError }}</div>
+        }
+
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>First Name *</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip</th>
+                <th style="width: 50px"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of bulkRows; track $index; let i = $index) {
+                <tr>
+                  <td>
+                    <input type="text" class="form-control form-control-sm" [(ngModel)]="row.firstName" placeholder="First name">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control form-control-sm" [(ngModel)]="row.lastName" placeholder="Last name">
+                  </td>
+                  <td>
+                    <input type="email" class="form-control form-control-sm" [(ngModel)]="row.email" placeholder="Email">
+                  </td>
+                  <td>
+                    <input type="tel" class="form-control form-control-sm" [(ngModel)]="row.phone" placeholder="Phone">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control form-control-sm" [(ngModel)]="row.address1" placeholder="Address">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control form-control-sm" [(ngModel)]="row.city" placeholder="City">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control form-control-sm" [(ngModel)]="row.state" placeholder="State" style="width: 70px">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control form-control-sm" [(ngModel)]="row.zipCode" placeholder="Zip" style="width: 80px">
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-sm btn-link text-danger p-0" (click)="removeBulkRow(i)" [disabled]="bulkRows.length <= 1">
+                      &times;
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-flex justify-content-between mt-3">
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="addBulkRow()">
+            + Add Row
+          </button>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary" (click)="closeBulkAddModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" [disabled]="bulkSaving" (click)="submitBulkAdd()">
+              {{ bulkSaving ? 'Saving...' : 'Add Clients' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </app-jobflow-modal>
+  }
 

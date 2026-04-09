@@ -10,8 +10,7 @@ export const clientHubAuthGuard: CanActivateFn = (_route, state) => {
     return true;
   }
 
-  router.navigate(['/client-hub/auth'], {
+  return router.createUrlTree(['/client-hub/auth'], {
     queryParams: { returnUrl: state.url },
   });
-  return false;
 };

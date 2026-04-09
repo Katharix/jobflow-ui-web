@@ -1,7 +1,7 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ClientHubAuthService } from '../../services/client-hub-auth.service';
@@ -34,6 +34,7 @@ export class ClientHubChatComponent implements OnInit, OnDestroy {
   private readonly realtimeService = inject(ClientHubChatRealtimeService);
   private readonly authService = inject(ClientHubAuthService);
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   isLoading = true;
   isLoadingMessages = false;
@@ -162,8 +163,14 @@ export class ClientHubChatComponent implements OnInit, OnDestroy {
     this.chatService.getConversation().subscribe({
       next: async (conversation) => {
         this.conversation = conversation;
-        await this.realtimeService.startConnection();
-        await this.realtimeService.joinConversation(conversation.id);
+
+        try {
+          await this.realtimeService.startConnection();
+          await this.realtimeService.joinConversation(conversation.id);
+        } catch {
+          // realtime is optional; continue loading history
+        }
+
         this.page = 1;
         this.loadMessages(true);
       },
@@ -182,6 +189,7 @@ export class ClientHubChatComponent implements OnInit, OnDestroy {
         this.hasMore = normalized.length === this.pageSize;
         this.isLoadingMessages = false;
         this.isLoading = false;
+        this.cdr.detectChanges();
 
         if (normalized.some((message) => !message.isMine && !message.isRead)) {
           void this.chatService.markRead(this.conversation!.id).subscribe();
@@ -275,6 +283,7 @@ export class ClientHubChatComponent implements OnInit, OnDestroy {
     this.error = 'Unable to load chat right now. Please try again.';
     this.isLoading = false;
     this.isLoadingMessages = false;
+    this.cdr.detectChanges();
   }
 
   private scrollToBottom(): void {

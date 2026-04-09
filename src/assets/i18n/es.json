@@ -127,7 +127,8 @@
       },
       "errors": {
         "invalidEmail": "Ingresa un correo valido.",
-        "invalidCredentials": "Correo o contrasena incorrectos.",
+        "invalidCredentials": "Credenciales invalidas. Contacta al administrador de tu organizacion o suscribete para crear una cuenta.",
+        "noAccountFound": "No se encontro una cuenta para este correo. Contacta al administrador de tu organizacion o suscribete para crear una cuenta.",
         "userDisabled": "Esta cuenta esta deshabilitada. Contacta soporte.",
         "tooManyRequests": "Demasiados intentos. Espera un momento y vuelve a intentar.",
         "network": "Error de red. Revisa tu conexion.",

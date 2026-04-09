@@ -1,6 +1,6 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   EstimateStatus,
@@ -9,7 +9,7 @@ import {
 import { ModalService } from '../../../common/modal/modal.service';
 import { EstimateRevisionFormComponent } from '../../components/estimate-revision-form/estimate-revision-form.component';
 import { EstimateRevisionHistoryComponent } from '../../components/estimate-revision-history/estimate-revision-history.component';
-import { ClientHubEstimate } from '../../models/client-hub.models';
+import { ClientHubEstimate, OrganizationBranding } from '../../models/client-hub.models';
 import { ClientHubAuthService } from '../../services/client-hub-auth.service';
 import { ClientHubService } from '../../services/client-hub.service';
 
@@ -26,6 +26,7 @@ export class ClientHubEstimateDetailComponent implements OnInit {
   private readonly clientHubService = inject(ClientHubService);
   private readonly clientHubAuth = inject(ClientHubAuthService);
   private readonly modal = inject(ModalService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   isLoading = true;
   isSubmitting = false;
@@ -33,6 +34,7 @@ export class ClientHubEstimateDetailComponent implements OnInit {
   actionError: string | null = null;
   actionSuccess: string | null = null;
   estimate: ClientHubEstimate | null = null;
+  branding: OrganizationBranding | null = null;
   revisionRefreshToken = 0;
 
   ngOnInit(): void {
@@ -185,9 +187,12 @@ export class ClientHubEstimateDetailComponent implements OnInit {
       next: (estimate) => {
         this.estimate = estimate;
         this.isLoading = false;
+        this.cdr.detectChanges();
+        this.loadBranding(estimate.organizationId);
       },
       error: (error: HttpErrorResponse) => {
         this.isLoading = false;
+        this.cdr.detectChanges();
 
         if (error.status === 401 || error.status === 403) {
           this.clientHubAuth.handleUnauthorized(this.router, this.router.url);
@@ -215,5 +220,21 @@ export class ClientHubEstimateDetailComponent implements OnInit {
     );
 
     return entry ? (Number(entry[0]) as EstimateStatus) : null;
+  }
+
+  private loadBranding(organizationId: string): void {
+    this.clientHubService.getOrganizationBranding(organizationId).subscribe({
+      next: (branding) => {
+        this.branding = branding;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // branding is optional
+      },
+    });
+  }
+
+  get orgDisplayName(): string {
+    return this.branding?.businessName?.trim() || '';
   }
 }

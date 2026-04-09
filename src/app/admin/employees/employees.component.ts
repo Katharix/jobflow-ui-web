@@ -12,7 +12,7 @@ import {OrganizationDto} from '../../models/organization';
 import {OrganizationContextService} from '../../services/shared/organization-context.service';
 
 import {Employee} from './models/employee';
-import {EmployeeService} from './services/employee.service';
+import {EmployeeService, EmployeeImportPreviewResponse, EmployeeImportJobStatusResponse} from './services/employee.service';
 import {EmployeeRoleService} from '../employee-roles/services/employee-role.service';
 import {EmployeeRole} from '../employee-roles/models/employee-role';
 import {EmployeeInviteService} from './services/employee-invite.service';
@@ -25,8 +25,10 @@ import {
    JobflowGridPageSettings
 } from '../../common/jobflow-grid/jobflow-grid.component';
 import { JobflowDrawerComponent } from '../../common/jobflow-drawer/jobflow-drawer.component';
+import { ModalComponent } from '../../views/shared/modal/modal.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { Subscription, catchError, interval, of, startWith, switchMap } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
    selector: 'app-employees',
@@ -37,12 +39,14 @@ import { Subscription } from 'rxjs';
     LucideAngularModule,
       CommonModule,
       NgClass,
+      FormsModule,
     JobflowGridComponent,
     PageHeaderComponent,
    JobflowDrawerComponent,
     EmployeeFormComponent,
     EmployeeInviteFormComponent,
       DeleteConfirmComponent,
+      ModalComponent,
       TranslateModule
 ]
 })
@@ -84,6 +88,28 @@ export class EmployeesComponent implements OnInit, OnDestroy {
    rolesExist = false;
    checkingRoles = true;
    private onboardingActionHandled = false;
+
+   // Import state
+   showImportModal = false;
+   selectedImportFile: File | null = null;
+   selectedImportFileName = '';
+   selectedSourceSystem = 'generic';
+   importSystems = [
+      {value: 'generic', label: 'Generic CSV'}
+   ];
+   importPreview: EmployeeImportPreviewResponse | null = null;
+   importMappings: Record<string, string | null> = {};
+   importLoading = false;
+   importError: string | null = null;
+   importStatus: EmployeeImportJobStatusResponse | null = null;
+   importJobId: string | null = null;
+   private importPollSub: Subscription | null = null;
+
+   // Bulk-add state
+   showBulkAddModal = false;
+   bulkRows: { firstName: string; lastName: string; email: string; phoneNumber: string; roleId: string }[] = [];
+   bulkSaving = false;
+   bulkError: string | null = null;
 
    public headerActions = [] as { key: string; label: string; icon: string; class: string; click: () => void }[];
 
@@ -130,6 +156,7 @@ export class EmployeesComponent implements OnInit, OnDestroy {
    }
 
    ngOnDestroy(): void {
+      this.stopImportPolling();
       this.translateLangSub?.unsubscribe();
       this.orgSub?.unsubscribe();
       this.queryParamSub?.unsubscribe();
@@ -340,7 +367,8 @@ export class EmployeesComponent implements OnInit, OnDestroy {
    private getActionMap() {
       return {
          invite: () => this.onInviteClick(),
-         add: () => this.onAddEmployeeClick()
+         add: () => this.onAddEmployeeClick(),
+         import: () => this.openImportModal()
       };
    }
 
@@ -550,5 +578,202 @@ export class EmployeesComponent implements OnInit, OnDestroy {
       }
 
       this.summary = summary;
+   }
+
+   // --- Import methods ---
+
+   openImportModal(): void {
+      this.showImportModal = true;
+      this.selectedImportFile = null;
+      this.selectedImportFileName = '';
+      this.importPreview = null;
+      this.importMappings = {};
+      this.importError = null;
+      this.importLoading = false;
+      this.importStatus = null;
+      this.importJobId = null;
+      this.stopImportPolling();
+   }
+
+   closeImportModal2(): void {
+      this.showImportModal = false;
+      this.stopImportPolling();
+   }
+
+   onImportFileSelected(event: Event): void {
+      const file = (event.target as HTMLInputElement).files?.[0] ?? null;
+      this.selectedImportFile = file;
+      this.selectedImportFileName = file?.name ?? '';
+      this.importPreview = null;
+      this.importMappings = {};
+      this.importStatus = null;
+      this.importJobId = null;
+      this.importError = null;
+   }
+
+   loadImportPreview(): void {
+      if (!this.selectedImportFile) {
+         this.importError = 'Choose a CSV file first.';
+         return;
+      }
+
+      this.importLoading = true;
+      this.importError = null;
+      this.importPreview = null;
+
+      this.employeeService.previewEmployeeImport(this.selectedImportFile, this.selectedSourceSystem).subscribe({
+         next: response => {
+            this.importPreview = response;
+            this.importMappings = {...response.suggestedMappings};
+            this.importLoading = false;
+         },
+         error: err => {
+            this.importLoading = false;
+            this.importError = err?.error ?? 'Failed to preview CSV import. Check your file and try again.';
+         }
+      });
+   }
+
+   startImport(): void {
+      if (!this.importPreview?.uploadToken) {
+         this.importError = 'Preview your CSV before starting import.';
+         return;
+      }
+
+      if (!this.hasMappedColumns) {
+         this.importError = 'Map at least one column before importing.';
+         return;
+      }
+
+      this.importLoading = true;
+      this.importError = null;
+
+      this.employeeService.startEmployeeImport({
+         uploadToken: this.importPreview.uploadToken,
+         sourceSystem: this.selectedSourceSystem,
+         columnMappings: this.importMappings
+      }).subscribe({
+         next: response => {
+            this.importLoading = false;
+            this.importJobId = response.jobId;
+            this.beginImportPolling(response.jobId);
+         },
+         error: err => {
+            this.importLoading = false;
+            this.importError = err?.error ?? 'Could not start import.';
+         }
+      });
+   }
+
+   onMappingChange(column: string, value: string): void {
+      this.importMappings[column] = value;
+   }
+
+   get hasMappedColumns(): boolean {
+      return Object.values(this.importMappings).some(value => !!value && value !== 'Ignore');
+   }
+
+   get importProgressPercent(): number {
+      if (!this.importStatus || this.importStatus.totalRows <= 0) {
+         return 0;
+      }
+      return Math.min(100, Math.round((this.importStatus.processedRows / this.importStatus.totalRows) * 100));
+   }
+
+   private beginImportPolling(jobId: string): void {
+      this.stopImportPolling();
+
+      this.importPollSub = interval(1500)
+         .pipe(
+            startWith(0),
+            switchMap(() => this.employeeService.getEmployeeImportStatus(jobId).pipe(
+               catchError(() => of(null))
+            ))
+         )
+         .subscribe(status => {
+            if (!status) return;
+
+            this.importStatus = status;
+
+            if (status.status === 'completed') {
+               this.stopImportPolling();
+               this.importJobId = null;
+               this.loadEmployees();
+               this.toast.success(`Import completed. ${status.succeededRows} employees imported.`);
+            }
+
+            if (status.status === 'failed') {
+               this.stopImportPolling();
+               this.importJobId = null;
+               this.importError = status.errorMessage ?? 'Import failed.';
+               this.toast.error(this.importError);
+            }
+         });
+   }
+
+   private stopImportPolling(): void {
+      this.importPollSub?.unsubscribe();
+      this.importPollSub = null;
+   }
+
+   // --- Bulk-add methods ---
+
+   openBulkAddModal(): void {
+      this.showBulkAddModal = true;
+      this.bulkError = null;
+      this.bulkSaving = false;
+      this.bulkRows = [this.emptyBulkRow(), this.emptyBulkRow(), this.emptyBulkRow()];
+   }
+
+   closeBulkAddModal(): void {
+      this.showBulkAddModal = false;
+   }
+
+   addBulkRow(): void {
+      this.bulkRows = [...this.bulkRows, this.emptyBulkRow()];
+   }
+
+   removeBulkRow(index: number): void {
+      this.bulkRows = this.bulkRows.filter((_, i) => i !== index);
+   }
+
+   submitBulkAdd(): void {
+      const valid = this.bulkRows.filter(r => r.firstName.trim() && r.lastName.trim() && r.roleId);
+      if (valid.length === 0) {
+         this.bulkError = 'At least one row with first name, last name, and role is required.';
+         return;
+      }
+
+      this.bulkSaving = true;
+      this.bulkError = null;
+
+      const payloads = valid.map(r => ({
+         firstName: r.firstName.trim(),
+         lastName: r.lastName.trim(),
+         email: r.email.trim() || undefined,
+         phoneNumber: r.phoneNumber.trim() || undefined,
+         roleId: r.roleId,
+         organizationId: this.organizationId
+      }));
+
+      this.employeeService.bulkCreate(payloads as Partial<Employee>[]).subscribe({
+         next: () => {
+            this.bulkSaving = false;
+            this.showBulkAddModal = false;
+            this.loadEmployees();
+            this.toast.success(
+               this.translate.instant('admin.employees.toast.bulkAdded', { count: valid.length }),
+               this.translate.instant('admin.employees.toast.successTitle')
+            );
+         },
+         error: () => {
+            this.bulkSaving = false;
+            this.bulkError = 'Failed to add employees. Please check your entries and try again.';
+         }
+      });
+   }
+
+   private emptyBulkRow() {
+      return { firstName: '', lastName: '', email: '', phoneNumber: '', roleId: '' };
    }
 }

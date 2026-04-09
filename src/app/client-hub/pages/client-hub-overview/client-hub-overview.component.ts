@@ -1,8 +1,8 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, of, throwError, timeout } from 'rxjs';
 import { ClientHubProfile } from '../../models/client-hub.models';
 import { ClientHubAuthService } from '../../services/client-hub-auth.service';
 import { ClientHubService } from '../../services/client-hub.service';
@@ -18,6 +18,8 @@ export class ClientHubOverviewComponent implements OnInit {
   private readonly clientHubService = inject(ClientHubService);
   private readonly clientHubAuth = inject(ClientHubAuthService);
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly requestTimeoutMs = 15000;
 
   isLoading = true;
   error: string | null = null;
@@ -50,9 +52,23 @@ export class ClientHubOverviewComponent implements OnInit {
     this.error = null;
 
     forkJoin({
-      profile: this.clientHubService.getMe(),
-      estimates: this.clientHubService.getEstimates(),
-      invoices: this.clientHubService.getInvoices(),
+      profile: this.clientHubService.getMe().pipe(
+        timeout(this.requestTimeoutMs),
+      ),
+      estimates: this.clientHubService.getEstimates().pipe(
+        timeout(this.requestTimeoutMs),
+        catchError((error: unknown) => {
+          if (this.isAuthError(error)) return throwError(() => error);
+          return of([]);
+        }),
+      ),
+      invoices: this.clientHubService.getInvoices().pipe(
+        timeout(this.requestTimeoutMs),
+        catchError((error: unknown) => {
+          if (this.isAuthError(error)) return throwError(() => error);
+          return of([]);
+        }),
+      ),
     }).subscribe({
       next: ({ profile, estimates, invoices }) => {
         this.profile = profile;
@@ -63,16 +79,23 @@ export class ClientHubOverviewComponent implements OnInit {
           0,
         );
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {
-        if (error.status === 401 || error.status === 403) {
+        if (this.isAuthError(error)) {
           this.clientHubAuth.handleUnauthorized(this.router, '/client-hub/overview');
           return;
         }
 
         this.error = 'Unable to load your client portal data at the moment.';
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
+  }
+
+  private isAuthError(error: unknown): error is HttpErrorResponse {
+    return error instanceof HttpErrorResponse
+      && (error.status === 401 || error.status === 403);
   }
 }
