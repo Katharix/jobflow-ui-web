@@ -102,6 +102,11 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
    importStatus: ClientImportJobStatusResponse | null = null;
    importJobId: string | null = null;
 
+   // Bulk-add state
+   showBulkAddModal = false;
+   bulkRows: { firstName: string; lastName: string; email: string; phone: string; address1: string; city: string; state: string; zipCode: string }[] = [];
+   bulkSaving = false;
+   bulkError: string | null = null;
 
    private toast = inject(ToastService);
 
@@ -222,7 +227,8 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
    private getActionMap() {
       return {
          add: () => this.openAddClient(),
-         import: () => this.openImportModal()
+         import: () => this.openImportModal(),
+         bulkAdd: () => this.openBulkAddModal()
       };
    }
 
@@ -606,5 +612,65 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
    private fileNameWithTimestamp(prefix: string, extension: string): string {
       const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\..+/, '');
       return `${prefix}-${stamp}.${extension}`;
+   }
+
+   // --- Bulk-add methods ---
+
+   openBulkAddModal(): void {
+      this.showBulkAddModal = true;
+      this.bulkError = null;
+      this.bulkSaving = false;
+      this.bulkRows = [this.emptyBulkRow(), this.emptyBulkRow(), this.emptyBulkRow()];
+   }
+
+   closeBulkAddModal(): void {
+      this.showBulkAddModal = false;
+   }
+
+   addBulkRow(): void {
+      this.bulkRows = [...this.bulkRows, this.emptyBulkRow()];
+   }
+
+   removeBulkRow(index: number): void {
+      this.bulkRows = this.bulkRows.filter((_, i) => i !== index);
+   }
+
+   submitBulkAdd(): void {
+      const valid = this.bulkRows.filter(r => r.firstName.trim());
+      if (valid.length === 0) {
+         this.bulkError = 'At least one row with a first name is required.';
+         return;
+      }
+
+      this.bulkSaving = true;
+      this.bulkError = null;
+
+      const payloads = valid.map(r => ({
+         firstName: r.firstName.trim(),
+         lastName: r.lastName.trim(),
+         emailAddress: r.email.trim() || undefined,
+         phoneNumber: r.phone.trim() || undefined,
+         address1: r.address1.trim() || undefined,
+         city: r.city.trim() || undefined,
+         state: r.state.trim() || undefined,
+         zipCode: r.zipCode.trim() || undefined
+      }));
+
+      this.customers.bulkCreateCustomers(payloads).subscribe({
+         next: () => {
+            this.bulkSaving = false;
+            this.showBulkAddModal = false;
+            this.load();
+            this.toast.success(`${valid.length} client(s) added successfully.`);
+         },
+         error: () => {
+            this.bulkSaving = false;
+            this.bulkError = 'Failed to add clients. Please check your entries and try again.';
+         }
+      });
+   }
+
+   private emptyBulkRow() {
+      return { firstName: '', lastName: '', email: '', phone: '', address1: '', city: '', state: '', zipCode: '' };
    }
 }

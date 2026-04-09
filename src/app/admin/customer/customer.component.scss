@@ -85,7 +85,9 @@
 
    &__actions {
       display: flex;
-      gap: .5rem;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
    }
 }
 

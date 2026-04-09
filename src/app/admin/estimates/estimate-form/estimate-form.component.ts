@@ -5,11 +5,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TextareaModule } from 'primeng/textarea';
+import { AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { take } from 'rxjs';
 import { EstimateService } from '../services/estimate.service';
 import { CustomersService } from '../../customer/services/customer.service';
 import { OrganizationContextService } from '../../../services/shared/organization-context.service';
 import { Client } from '../../customer/models/customer';
+import { PriceBookItemDto, PriceBookItemService } from '../../pricebook/services/price-book-item.service';
 import {
   CreateEstimateRequest,
   Estimate,
@@ -26,7 +28,8 @@ import {
     InputTextModule,
     SelectModule,
     InputNumberModule,
-    TextareaModule
+    TextareaModule,
+    AutoCompleteModule
 ],
   templateUrl: './estimate-form.component.html',
   styleUrl: './estimate-form.component.scss',
@@ -36,6 +39,7 @@ export class EstimateFormComponent implements OnInit {
   private estimateService = inject(EstimateService);
   private customersService = inject(CustomersService);
   private orgContext = inject(OrganizationContextService);
+  private priceBookService = inject(PriceBookItemService);
 
   @Input() estimate: Estimate | null = null;
   @Output() saved = new EventEmitter<Estimate>();
@@ -46,9 +50,14 @@ export class EstimateFormComponent implements OnInit {
   saving = false;
   error: string | null = null;
 
+  priceBookItems: PriceBookItemDto[] = [];
+  filteredPriceBookItems: PriceBookItemDto[] = [];
+  hasPriceBookAccess = false;
+
   ngOnInit(): void {
     this.buildForm();
     this.orgContext.org$.pipe(take(1)).subscribe(() => this.loadCustomers());
+    this.loadPriceBookAccess();
   }
 
   get lineItems(): FormArray {
@@ -78,13 +87,33 @@ export class EstimateFormComponent implements OnInit {
     }
   }
 
+  searchPriceBookItems(event: { query: string }): void {
+    const query = (event.query ?? '').toLowerCase();
+    this.filteredPriceBookItems = this.priceBookItems.filter(
+      item => item.name.toLowerCase().includes(query)
+        || (item.description ?? '').toLowerCase().includes(query)
+    );
+  }
+
+  onPriceBookItemSelected(event: AutoCompleteSelectEvent): void {
+    const item: PriceBookItemDto = event.value;
+    this.lineItems.push(this.newLineGroup({
+      priceBookItemId: item.id,
+      name: item.name,
+      description: item.description ?? item.name,
+      unitPrice: item.price,
+      quantity: 1
+    } as EstimateLineItem));
+  }
+
   save(): void {
     if (this.form.invalid || this.saving) return;
     this.saving = true;
     this.error = null;
 
     const val = this.form.value;
-    const lineItems: EstimateLineItemRequest[] = val.lineItems.map((li: EstimateLineItemRequest) => ({
+    const lineItems: EstimateLineItemRequest[] = val.lineItems.map((li: EstimateLineItemRequest & { priceBookItemId?: string }) => ({
+      priceBookItemId: li.priceBookItemId || undefined,
       name: li.name,
       description: li.description,
       quantity: Number(li.quantity),
@@ -146,6 +175,7 @@ export class EstimateFormComponent implements OnInit {
 
   private newLineGroup(li?: EstimateLineItem): FormGroup {
     return this.fb.group({
+      priceBookItemId: [li?.priceBookItemId ?? null],
       name: [li?.name ?? li?.description ?? '', Validators.required],
       description: [li?.description ?? '', Validators.required],
       quantity: [li?.quantity ?? 1, [Validators.required, Validators.min(0.001)]],
@@ -163,6 +193,18 @@ export class EstimateFormComponent implements OnInit {
             displayName: `${client.firstName ?? ''} ${client.lastName ?? ''}`.trim() || client.emailAddress || 'Unnamed',
           }));
       },
+    });
+  }
+
+  private loadPriceBookAccess(): void {
+    this.orgContext.hasMinPlan$('Max').pipe(take(1)).subscribe(hasAccess => {
+      this.hasPriceBookAccess = hasAccess;
+      if (hasAccess) {
+        this.priceBookService.getAllForOrganization().subscribe({
+          next: items => this.priceBookItems = items,
+          error: () => this.priceBookItems = []
+        });
+      }
     });
   }
 }

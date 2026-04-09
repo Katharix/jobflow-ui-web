@@ -46,6 +46,13 @@ export class AuthService {
     return this.auth.signOut();
   }
 
+  async deleteCurrentUser(): Promise<void> {
+    const user = this.auth.currentUser;
+    if (user) {
+      await user.delete();
+    }
+  }
+
   loginWithFirebase(idToken: string) {
     return this.api.post<LoginWithFirebaseResponse>(`${this.authUrl}login-with-firebase`, { token: idToken });
   }

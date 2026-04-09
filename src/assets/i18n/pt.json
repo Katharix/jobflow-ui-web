@@ -127,7 +127,8 @@
       },
       "errors": {
         "invalidEmail": "Informe um email valido.",
-        "invalidCredentials": "Email ou senha incorretos.",
+        "invalidCredentials": "Credenciais invalidas. Entre em contato com o administrador da sua organizacao ou assine para criar uma conta.",
+        "noAccountFound": "Nenhuma conta encontrada para este email. Entre em contato com o administrador da sua organizacao ou assine para criar uma conta.",
         "userDisabled": "Esta conta esta desativada. Contate o suporte.",
         "tooManyRequests": "Muitas tentativas. Aguarde e tente novamente.",
         "network": "Erro de rede. Verifique sua conexao.",

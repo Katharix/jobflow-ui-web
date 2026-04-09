@@ -127,7 +127,8 @@
       },
       "errors": {
         "invalidEmail": "Entrez un email valide.",
-        "invalidCredentials": "Email ou mot de passe incorrect.",
+        "invalidCredentials": "Identifiants invalides. Contactez l'administrateur de votre organisation ou abonnez-vous pour creer un compte.",
+        "noAccountFound": "Aucun compte trouve pour cet email. Contactez l'administrateur de votre organisation ou abonnez-vous pour creer un compte.",
         "userDisabled": "Ce compte est desactive. Contactez le support.",
         "tooManyRequests": "Trop de tentatives. Attendez puis reessayez.",
         "network": "Erreur reseau. Verifiez votre connexion.",

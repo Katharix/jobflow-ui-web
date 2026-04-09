@@ -197,14 +197,30 @@
               <div class="mb-4">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                   <span class="invoice-form__section-heading">{{ 'admin.invoices.form.lineItems' | translate }}</span>
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
-                    (click)="addInvoiceLine()"
-                    >
-                    <i class="pi pi-plus"></i>
-                    {{ 'admin.invoices.form.addLine' | translate }}
-                  </button>
+                  <div class="d-flex align-items-center gap-2">
+                    @if (hasPriceBookAccess) {
+                      <p-autoComplete
+                        [suggestions]="filteredPriceBookItems"
+                        (completeMethod)="searchPriceBookItems($event)"
+                        (onSelect)="onPriceBookItemSelected($event)"
+                        field="name"
+                        [placeholder]="'admin.invoices.form.searchPricebook' | translate"
+                        [minLength]="1"
+                        [forceSelection]="true"
+                        [inputStyleClass]="'form-control form-control-sm'"
+                        [styleClass]="'pricebook-autocomplete'"
+                        size="small"
+                      ></p-autoComplete>
+                    }
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+                      (click)="addInvoiceLine()"
+                      >
+                      <i class="pi pi-plus"></i>
+                      {{ 'admin.invoices.form.addLine' | translate }}
+                    </button>
+                  </div>
                 </div>
                 <div class="invoice-form__line-header d-none d-md-grid">
                   <span>{{ 'admin.invoices.form.description' | translate }}</span>

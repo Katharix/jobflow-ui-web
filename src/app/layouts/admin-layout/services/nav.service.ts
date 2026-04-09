@@ -52,8 +52,16 @@ export class NavService {
          {label: 'Roles', icon: '', route: '/admin/employees/roles', allowDeepMatch: true}
       ],
       '/admin/pricebook': [
+         {label: 'Materials', icon: '', route: '/admin/pricebook'},
+         {label: 'Services', icon: '', route: '/admin/pricebook/services', allowDeepMatch: true}
+      ],
+      '/admin/pricebook/items': [
          {label: 'Materials', icon: '', route: '/admin/pricebook', allowDeepMatch: true},
-         {label: 'Services', icon: '', route: '/general/edit-profile'}
+         {label: 'Services', icon: '', route: '/admin/pricebook/services', allowDeepMatch: true}
+      ],
+      '/admin/pricebook/services': [
+         {label: 'Materials', icon: '', route: '/admin/pricebook'},
+         {label: 'Services', icon: '', route: '/admin/pricebook/services', allowDeepMatch: true}
       ],
       '/admin/billing-payments': this.billingNavItems,
       '/admin/subscription-management': this.billingNavItems,

@@ -127,7 +127,8 @@
       },
       "errors": {
         "invalidEmail": "Inserisci una email valida.",
-        "invalidCredentials": "Email o password errati.",
+        "invalidCredentials": "Credenziali non valide. Contatta l'amministratore della tua organizzazione o abbonati per creare un account.",
+        "noAccountFound": "Nessun account trovato per questa email. Contatta l'amministratore della tua organizzazione o abbonati per creare un account.",
         "userDisabled": "Questo account e disabilitato. Contatta il supporto.",
         "tooManyRequests": "Troppi tentativi. Attendi e riprova.",
         "network": "Errore di rete. Controlla la connessione.",
