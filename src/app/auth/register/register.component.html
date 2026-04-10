@@ -69,6 +69,51 @@
                 />
               </div>
 
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label" for="firstName">{{ 'auth.register.firstName' | translate }}</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="firstName"
+                    name="firstName"
+                    [placeholder]="'auth.register.firstNamePlaceholder' | translate"
+                    [(ngModel)]="firstName"
+                    required
+                    minlength="1"
+                    #firstNameModel="ngModel"
+                    [readonly]="organizationId && firstName"
+                    [ngClass]="{ 'is-invalid': firstNameModel.invalid && (firstNameModel.touched || submitted) }"
+                    />
+                    @if (firstNameModel.invalid && (firstNameModel.touched || submitted)) {
+                      <div class="text-danger mt-1">
+                        <div>{{ 'auth.register.validation.firstNameRequired' | translate }}</div>
+                      </div>
+                    }
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label" for="lastName">{{ 'auth.register.lastName' | translate }}</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="lastName"
+                      name="lastName"
+                      [placeholder]="'auth.register.lastNamePlaceholder' | translate"
+                      [(ngModel)]="lastName"
+                      required
+                      minlength="1"
+                      #lastNameModel="ngModel"
+                      [readonly]="organizationId && lastName"
+                      [ngClass]="{ 'is-invalid': lastNameModel.invalid && (lastNameModel.touched || submitted) }"
+                      />
+                      @if (lastNameModel.invalid && (lastNameModel.touched || submitted)) {
+                        <div class="text-danger mt-1">
+                          <div>{{ 'auth.register.validation.lastNameRequired' | translate }}</div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+
               <div class="form-group mb-3">
                 <label class="form-label" for="email">{{ 'auth.register.workEmail' | translate }}</label>
                 <input

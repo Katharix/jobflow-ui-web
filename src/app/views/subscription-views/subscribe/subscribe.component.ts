@@ -66,6 +66,8 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
    @ViewChild('form') form?: NgForm;
 
    email = '';
+   firstName = '';
+   lastName = '';
    organizationName = '';
    phoneNumber = '';
    companyAddress = '';
@@ -170,6 +172,8 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
   this.loadingService.show();
 
   const orgData: OrganizationDto = {
+     contactFirstName: this.firstName,
+     contactLastName: this.lastName,
      address1: this.companyAddress,
      address2: this.companyAddress2,
      phoneNumber: this.phoneNumber,

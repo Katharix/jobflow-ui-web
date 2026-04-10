@@ -31,6 +31,10 @@ export class OrganizationService {
     return this.api.post<OrganizationDto>(`${this.organizationUrl}retrieve`, org);
   }
 
+  updateOrganization(request: Partial<OrganizationDto>): Observable<OrganizationDto> {
+    return this.api.put<OrganizationDto>(`${this.organizationUrl}update`, request);
+  }
+
   updateIndustry(industryKey: string | null): Observable<OrganizationDto> {
     return this.api.put<OrganizationDto>(`${this.organizationUrl}industry`, {
       industryKey

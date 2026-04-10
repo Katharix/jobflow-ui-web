@@ -24,6 +24,8 @@ export class UserProfileComponent implements OnInit {
   error: string | null = null;
 
   model: UserProfileUpdateRequest = {
+    firstName: '',
+    lastName: '',
     email: '',
     phoneNumber: '',
     preferredLanguage: 'en',
@@ -49,6 +51,8 @@ export class UserProfileComponent implements OnInit {
     this.userProfileService.getMe().subscribe({
       next: (profile: UserProfile) => {
         this.model = {
+          firstName: profile.firstName ?? '',
+          lastName: profile.lastName ?? '',
           email: profile.email ?? '',
           phoneNumber: profile.phoneNumber ?? '',
           preferredLanguage: profile.preferredLanguage ?? 'en',

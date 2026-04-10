@@ -1,1 +1,199 @@
-<p>company works!</p>
+<div class="company-page">
+  <div class="company-page__header">
+    <h1 class="company-page__title">{{ 'company.title' | translate }}</h1>
+    <p class="company-page__subtitle">{{ 'company.subtitle' | translate }}</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="company-page__loading">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p>{{ 'company.loading' | translate }}</p>
+    </div>
+  } @else {
+    @if (error) {
+      <div class="alert alert-danger">{{ error }}</div>
+    }
+
+    <form #companyForm="ngForm" (ngSubmit)="save(companyForm)" novalidate>
+      <!-- Business Details -->
+      <section class="company-section">
+        <div class="company-section__heading">
+          <h2 class="company-section__title">{{ 'company.sectionBusiness' | translate }}</h2>
+          <p class="company-section__desc">{{ 'company.sectionBusinessDesc' | translate }}</p>
+        </div>
+        <div class="company-section__body">
+          <div class="row g-3">
+            <div class="col-md-7">
+              <label class="form-label" for="organizationName">{{ 'company.organizationName' | translate }}</label>
+              <input
+                id="organizationName"
+                name="organizationName"
+                type="text"
+                class="form-control"
+                [placeholder]="'company.organizationNamePlaceholder' | translate"
+                required
+                [(ngModel)]="model.organizationName"
+                #orgNameModel="ngModel" />
+              @if (orgNameModel.invalid && (orgNameModel.touched || companyForm.submitted)) {
+                <div class="invalid-feedback d-block">{{ 'company.organizationNameError' | translate }}</div>
+              }
+            </div>
+
+            <div class="col-md-5">
+              <label class="form-label" for="organizationTypeId">{{ 'company.organizationType' | translate }}</label>
+              <select
+                id="organizationTypeId"
+                name="organizationTypeId"
+                class="form-select"
+                required
+                [(ngModel)]="model.organizationTypeId"
+                #orgTypeModel="ngModel">
+                <option value="" disabled>{{ 'company.selectType' | translate }}</option>
+                @for (type of organizationTypes; track type.id) {
+                  <option [value]="type.id">{{ type.typeName }}</option>
+                }
+              </select>
+              @if (orgTypeModel.invalid && (orgTypeModel.touched || companyForm.submitted)) {
+                <div class="invalid-feedback d-block">{{ 'company.organizationTypeError' | translate }}</div>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Primary Contact -->
+      <section class="company-section">
+        <div class="company-section__heading">
+          <h2 class="company-section__title">{{ 'company.sectionContact' | translate }}</h2>
+          <p class="company-section__desc">{{ 'company.sectionContactDesc' | translate }}</p>
+        </div>
+        <div class="company-section__body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="contactFirstName">{{ 'company.contactFirstName' | translate }}</label>
+              <input
+                id="contactFirstName"
+                name="contactFirstName"
+                type="text"
+                class="form-control"
+                [placeholder]="'company.contactFirstNamePlaceholder' | translate"
+                [(ngModel)]="model.contactFirstName" />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="contactLastName">{{ 'company.contactLastName' | translate }}</label>
+              <input
+                id="contactLastName"
+                name="contactLastName"
+                type="text"
+                class="form-control"
+                [placeholder]="'company.contactLastNamePlaceholder' | translate"
+                [(ngModel)]="model.contactLastName" />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="emailAddress">{{ 'company.email' | translate }}</label>
+              <input
+                id="emailAddress"
+                name="emailAddress"
+                type="email"
+                class="form-control"
+                placeholder="info@company.com"
+                [(ngModel)]="model.emailAddress" />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="phoneNumber">{{ 'company.phone' | translate }}</label>
+              <input
+                id="phoneNumber"
+                name="phoneNumber"
+                type="tel"
+                class="form-control"
+                placeholder="(555) 123-4567"
+                [(ngModel)]="model.phoneNumber" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Business Address -->
+      <section class="company-section">
+        <div class="company-section__heading">
+          <h2 class="company-section__title">{{ 'company.sectionAddress' | translate }}</h2>
+          <p class="company-section__desc">{{ 'company.sectionAddressDesc' | translate }}</p>
+        </div>
+        <div class="company-section__body">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label" for="address1">{{ 'company.address1' | translate }}</label>
+              <input
+                id="address1"
+                name="address1"
+                type="text"
+                class="form-control"
+                [placeholder]="'company.address1Placeholder' | translate"
+                [(ngModel)]="model.address1" />
+            </div>
+
+            <div class="col-12">
+              <label class="form-label" for="address2">{{ 'company.address2' | translate }}</label>
+              <input
+                id="address2"
+                name="address2"
+                type="text"
+                class="form-control"
+                [placeholder]="'company.address2Placeholder' | translate"
+                [(ngModel)]="model.address2" />
+            </div>
+
+            <div class="col-md-5">
+              <label class="form-label" for="city">{{ 'company.city' | translate }}</label>
+              <input
+                id="city"
+                name="city"
+                type="text"
+                class="form-control"
+                [placeholder]="'company.cityPlaceholder' | translate"
+                [(ngModel)]="model.city" />
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label" for="state">{{ 'company.state' | translate }}</label>
+              <select
+                id="state"
+                name="state"
+                class="form-select"
+                [(ngModel)]="model.state">
+                <option value="">{{ 'company.selectState' | translate }}</option>
+                @for (s of usStates; track s.code) {
+                  <option [value]="s.code">{{ s.name }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label" for="zipCode">{{ 'company.zip' | translate }}</label>
+              <input
+                id="zipCode"
+                name="zipCode"
+                type="text"
+                class="form-control"
+                placeholder="00000"
+                [(ngModel)]="model.zipCode" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Save -->
+      <div class="company-page__footer">
+        <button class="btn btn-primary" type="submit" [disabled]="isSaving">
+          @if (isSaving) {
+            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+          }
+          {{ isSaving ? ('company.saving' | translate) : ('company.save' | translate) }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

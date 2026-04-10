@@ -3,8 +3,12 @@ import { PaymentProvider } from './customer-payment-profile';
 export interface OrganizationDto {
     id?: string;
     organizationName?: string;
+    contactFirstName?: string;
+    contactLastName?: string;
   email?: string;
     firebaseUid?: string;
+    firstName?: string;
+    lastName?: string;
     organizationTypeId?: string;
     userRole?: string;
     emailAddress?: string;
