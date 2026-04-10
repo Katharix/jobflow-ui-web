@@ -11,6 +11,8 @@ import {Client} from "../../customer/models/customer";
 import {InputTextModule} from 'primeng/inputtext';
 import {SelectModule} from 'primeng/select';
 import {RouterLink} from '@angular/router';
+import {JobTemplateService} from '../services/job-template.service';
+import {JobTemplate} from '../models/job-template';
 
 @Component({
    selector: 'app-job-create',
@@ -28,6 +30,7 @@ export class CreateJobComponent implements AfterViewInit, OnChanges, OnDestroy {
    private jobsService = inject(JobsService);
    private customersService = inject(CustomersService);
    private organizationContext = inject(OrganizationContextService);
+   private jobTemplateService = inject(JobTemplateService);
 
    @Output() saved = new EventEmitter<void>();
    @Output() cancelled = new EventEmitter<void>();
@@ -36,7 +39,9 @@ export class CreateJobComponent implements AfterViewInit, OnChanges, OnDestroy {
    organizationId: string | null = null;
 
    readonly customers$ = new BehaviorSubject<(Client & { displayName: string })[]>([]);
+   readonly templates$ = new BehaviorSubject<(JobTemplate & { displayLabel: string })[]>([]);
    selectedCustomerId: string | null = null;
+   selectedTemplateId: string | null = null;
    title = '';
    comments = '';
    invoicingWorkflow: InvoicingWorkflow | null = null;
@@ -58,6 +63,7 @@ export class CreateJobComponent implements AfterViewInit, OnChanges, OnDestroy {
 
             this.organizationId = org.id ?? null;
             this.loadCustomers();
+            this.loadTemplates();
          });
       }, 0);
    }
@@ -103,6 +109,30 @@ export class CreateJobComponent implements AfterViewInit, OnChanges, OnDestroy {
          });
    }
 
+   private loadTemplates(): void {
+      this.jobTemplateService.getByOrganization().subscribe({
+         next: templates => {
+            this.templates$.next(templates.map(t => ({
+               ...t,
+               displayLabel: t.isSystem ? `${t.name} (preset)` : t.name
+            })));
+         },
+         error: () => this.templates$.next([])
+      });
+   }
+
+   onTemplateSelected(templateId: string | null): void {
+      if (!templateId || this.isEditing) return;
+
+      const templates = this.templates$.value;
+      const template = templates.find(t => t.id === templateId);
+      if (!template) return;
+
+      this.title = template.name;
+      this.comments = template.description ?? '';
+      this.invoicingWorkflow = template.defaultInvoicingWorkflow ?? null;
+   }
+
    save(): void {
       if (!this.organizationId || !this.selectedCustomerId || !this.title.trim()) {
          this.error = 'Customer and job title are required.';
@@ -135,6 +165,7 @@ export class CreateJobComponent implements AfterViewInit, OnChanges, OnDestroy {
 
    private resetForm(): void {
       this.selectedCustomerId = null;
+      this.selectedTemplateId = null;
       this.title = '';
       this.comments = '';
       this.invoicingWorkflow = null;

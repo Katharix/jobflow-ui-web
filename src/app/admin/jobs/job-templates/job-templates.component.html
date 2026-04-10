@@ -1,0 +1,223 @@
+<app-page-header
+  title="Job Templates"
+  subtitle="Pre-fill job details to speed up creation"
+></app-page-header>
+
+<section class="templates-overview">
+  <div class="templates-overview__metrics">
+    <article class="templates-card">
+      <p class="templates-card__label">System presets</p>
+      <h3>{{ systemTemplates.length }}</h3>
+      <p class="templates-card__note">Based on your industry</p>
+    </article>
+    <article class="templates-card templates-card--accent">
+      <p class="templates-card__label">Custom templates</p>
+      <h3>{{ customTemplates.length }}</h3>
+      <p class="templates-card__note">Created by your team</p>
+    </article>
+  </div>
+  <div class="templates-cta">
+    <div>
+      <p class="templates-cta__eyebrow">Quick action</p>
+      <h3>Create a template</h3>
+      <p>Define job defaults once and reuse them every time you create a job.</p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="onAddClick()"
+      [disabled]="!canManageTemplates"
+      [title]="!canManageTemplates ? 'Go subscription or higher required' : 'Add template'">
+      Add Template
+    </button>
+  </div>
+</section>
+
+@if (systemTemplates.length) {
+  <section class="templates-section">
+    <div class="templates-section__header">
+      <div>
+        <p class="templates-section__eyebrow">Organization type presets</p>
+        <h3>System templates</h3>
+        <p>Pre-built templates based on your organization type. Select one when creating a job.</p>
+      </div>
+    </div>
+    <div class="templates-list">
+      @for (template of systemTemplates; track template.id) {
+        <article class="template-card">
+          <div>
+            <div class="template-card__meta">
+              <span class="template-card__tag template-card__tag--system">System</span>
+              @if (template.organizationTypeName) {
+                <span class="template-card__industry">{{ template.organizationTypeName }}</span>
+              }
+            </div>
+            <h4>{{ template.name }}</h4>
+            <p>{{ template.description || 'Pre-built job template.' }}</p>
+            @if (template.items.length) {
+              <div class="template-card__chips">
+                @for (item of template.items; track item.name) {
+                  <span class="template-card__chip">{{ item.name }}</span>
+                }
+              </div>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+}
+
+<section class="templates-section">
+  <div class="templates-section__header">
+    <div>
+      <p class="templates-section__eyebrow">Your templates</p>
+      <h3>Custom templates</h3>
+      <p>Build your own templates to match your workflows.</p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-outline-primary"
+      (click)="onAddClick()"
+      [disabled]="!canManageTemplates">
+      Add Template
+    </button>
+  </div>
+  <div class="templates-list">
+    @for (template of customTemplates; track template.id) {
+      <article class="template-card">
+        <div>
+          <div class="template-card__meta">
+            <span class="template-card__tag">Custom</span>
+          </div>
+          <h4>{{ template.name }}</h4>
+          <p>{{ template.description || 'Custom job template.' }}</p>
+          @if (template.items.length) {
+            <div class="template-card__chips">
+              @for (item of template.items; track item.name) {
+                <span class="template-card__chip">{{ item.name }}</span>
+              }
+            </div>
+          }
+        </div>
+        <div class="template-card__actions">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary"
+            (click)="editTemplate(template)">
+            Edit
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger"
+            (click)="deleteTemplate(template)">
+            Delete
+          </button>
+        </div>
+      </article>
+    } @empty {
+      <div class="templates-empty">
+        <h4>No custom templates yet</h4>
+        <p>Create a template to streamline job creation for your team.</p>
+      </div>
+    }
+  </div>
+</section>
+
+@if (showDrawer) {
+  <app-jobflow-drawer
+    [open]="showDrawer"
+    [title]="editingTemplateId ? 'Edit Template' : 'Add Template'"
+    [width]="560"
+    (closed)="closeDrawer()">
+    <div class="template-drawer" [formGroup]="templateForm">
+      <div class="template-drawer__intro">
+        <p class="template-drawer__eyebrow">{{ editingTemplateId ? 'Update template' : 'New template' }}</p>
+        <h3>{{ editingTemplateId ? 'Refine template details' : 'Create a job template' }}</h3>
+        <p>Define job defaults that get pre-filled during job creation.</p>
+      </div>
+
+      <div class="template-drawer__form">
+        <label class="form-label fw-semibold" for="templateName">Template name</label>
+        <input
+          pInputText
+          pSize="small"
+          id="templateName"
+          type="text"
+          formControlName="name"
+          placeholder="e.g. Full home clean, Roof inspection"
+          class="w-100" />
+        @if (templateForm.controls.name.touched && templateForm.controls.name.invalid) {
+          <div class="text-danger small mt-2">Template name is required.</div>
+        }
+
+        <label class="form-label fw-semibold" for="templateDescription">Default job summary</label>
+        <textarea
+          id="templateDescription"
+          rows="3"
+          class="form-control"
+          formControlName="description"
+          placeholder="Instructions, scope of work, or notes for the crew"></textarea>
+
+        <label class="form-label fw-semibold" for="templateWorkflow">Default invoicing workflow</label>
+        <p-select
+          id="templateWorkflow"
+          formControlName="defaultInvoicingWorkflow"
+          [options]="invoicingOptions"
+          optionLabel="label"
+          optionValue="value"
+          size="small"
+          [fluid]="true"
+          placeholder="Choose a workflow" />
+      </div>
+
+      <div class="template-drawer__items">
+        <div class="template-drawer__items-header">
+          <div>
+            <p class="template-drawer__eyebrow">Checklist items</p>
+            <h4>Task checklist</h4>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-primary" (click)="addItem()">
+            Add item
+          </button>
+        </div>
+        <div formArrayName="items">
+          @for (item of templateItems.controls; track $index; let i = $index) {
+            <div class="template-drawer__item" [formGroupName]="i">
+              <input
+                pInputText
+                pSize="small"
+                type="text"
+                formControlName="name"
+                placeholder="Task name"
+                class="w-100" />
+              <input
+                pInputText
+                pSize="small"
+                type="text"
+                formControlName="description"
+                placeholder="Details (optional)"
+                class="w-100" />
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                (click)="removeItem(i)"
+                [disabled]="templateItems.length <= 1">
+                Remove
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="template-drawer__actions">
+        <button type="button" class="btn btn-outline-secondary" (click)="closeDrawer()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveTemplate()">
+          {{ editingTemplateId ? 'Save Changes' : 'Create Template' }}
+        </button>
+      </div>
+    </div>
+  </app-jobflow-drawer>
+}

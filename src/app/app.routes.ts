@@ -103,6 +103,14 @@ export const routes: Routes = [
             component: JobInvoiceComponent
          },
          {
+            path: 'jobs/templates',
+            canActivate: [subscriptionGuard],
+            data: {minPlan: 'Go'},
+            loadComponent: () =>
+               import('./admin/jobs/job-templates/job-templates.component')
+                  .then(m => m.JobTemplatesComponent)
+         },
+         {
             path: 'invoices',
             component: InvoicesComponent
          },

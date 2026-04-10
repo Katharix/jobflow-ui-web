@@ -48,6 +48,50 @@
 
             <div class="row">
               <div class="col-md-6 mb-3">
+                <label class="form-label" for="firstName">{{ 'subscribe.firstName' | translate }}</label>
+                <input
+                  id="firstName"
+                  type="text"
+                  class="form-control"
+                  [placeholder]="'subscribe.placeholders.firstName' | translate"
+                  [(ngModel)]="firstName"
+                  name="firstName"
+                  required
+                  minlength="1"
+                  #firstNameCtrl="ngModel"
+                  [ngClass]="{ 'is-invalid': firstNameCtrl.invalid && (firstNameCtrl.touched || submitted) }"
+                  />
+                  @if (firstNameCtrl.invalid && (firstNameCtrl.touched || submitted)) {
+                    <div class="text-danger small">
+                      <div>{{ 'subscribe.validation.firstNameRequired' | translate }}</div>
+                    </div>
+                  }
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label class="form-label" for="lastName">{{ 'subscribe.lastName' | translate }}</label>
+                  <input
+                    id="lastName"
+                    type="text"
+                    class="form-control"
+                    [placeholder]="'subscribe.placeholders.lastName' | translate"
+                    [(ngModel)]="lastName"
+                    name="lastName"
+                    required
+                    minlength="1"
+                    #lastNameCtrl="ngModel"
+                    [ngClass]="{ 'is-invalid': lastNameCtrl.invalid && (lastNameCtrl.touched || submitted) }"
+                    />
+                    @if (lastNameCtrl.invalid && (lastNameCtrl.touched || submitted)) {
+                      <div class="text-danger small">
+                        <div>{{ 'subscribe.validation.lastNameRequired' | translate }}</div>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
                 <label class="form-label" for="companyName">{{ 'subscribe.companyName' | translate }}</label>
                 <input
                   id="companyName"
