@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -12,10 +12,12 @@ import { Job, JobLifecycleStatus } from '../../jobs/models/job';
    standalone: true,
    imports: [CommonModule],
    templateUrl: './weather-widget.component.html',
-   styleUrl: './weather-widget.component.scss'
+   styleUrl: './weather-widget.component.scss',
+   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WeatherWidgetComponent implements OnInit, OnChanges, OnDestroy {
    private readonly weatherService = inject(WeatherService);
+   private readonly cdr = inject(ChangeDetectorRef);
 
    @Input() jobs: Job[] = [];
    @Input() variant: 'card' | 'navbar' = 'card';
@@ -73,6 +75,7 @@ export class WeatherWidgetComponent implements OnInit, OnChanges, OnDestroy {
          position => {
             this.locationBlocked = false;
             this.loadWeather(position.coords.latitude, position.coords.longitude);
+            this.cdr.markForCheck();
          },
          (err: GeolocationPositionError) => {
             if (err.code === GeolocationPositionError.PERMISSION_DENIED) {
@@ -80,6 +83,7 @@ export class WeatherWidgetComponent implements OnInit, OnChanges, OnDestroy {
             }
             // Without browser coordinates, the service returns an unavailable state.
             this.loadWeather();
+            this.cdr.markForCheck();
          },
          { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
       );
@@ -89,7 +93,10 @@ export class WeatherWidgetComponent implements OnInit, OnChanges, OnDestroy {
       this.weatherService
          .getWeatherDashboard(latitude, longitude)
          .pipe(takeUntil(this.destroy$))
-         .subscribe(weather => this.applyWeather(weather));
+         .subscribe(weather => {
+            this.applyWeather(weather);
+            this.cdr.markForCheck();
+         });
    }
 
    private applyWeather(weather: WeatherDashboardDto): void {

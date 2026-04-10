@@ -1,5 +1,5 @@
 // job-schedule.component.ts
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { PageHeaderComponent } from '../../dashboard/page-header/page-header.component';
@@ -28,7 +28,8 @@ import { Job, JobLifecycleStatus } from '../models/job';
   standalone: true,
   imports: [CommonModule, PageHeaderComponent, JobflowCalendarComponent, JobAssignmentFormComponent, JobflowDrawerComponent],
   templateUrl: './job-schedule.component.html',
-  styleUrls: ['./job-schedule.component.scss']
+  styleUrls: ['./job-schedule.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class JobScheduleComponent implements OnInit {
   private assignments = inject(AssignmentsService);
@@ -39,6 +40,7 @@ export class JobScheduleComponent implements OnInit {
   private weatherService = inject(WeatherService);
   private scheduleSettingsService = inject(ScheduleSettingsService);
   private toast = inject(ToastService);
+  private cdr = inject(ChangeDetectorRef);
 
   // Removed direct calendar ViewChild usage to avoid timing issues
   // @ViewChild(JobflowCalendarComponent)
@@ -79,11 +81,13 @@ export class JobScheduleComponent implements OnInit {
     this.route.paramMap.subscribe((params) => {
       const routeJobId = params.get('jobId') ?? this.route.snapshot.queryParamMap.get('jobId');
       this.applyRouteJobContext(routeJobId);
+      this.cdr.markForCheck();
     });
 
     this.route.queryParamMap.subscribe((queryParams) => {
       const routeJobId = this.route.snapshot.paramMap.get('jobId') ?? queryParams.get('jobId');
       this.applyRouteJobContext(routeJobId);
+      this.cdr.markForCheck();
     });
 
     this.loadScheduleSettings();
@@ -118,6 +122,7 @@ export class JobScheduleComponent implements OnInit {
         ...this.calendarEvents,
         dataSource: events,
       };
+      this.cdr.markForCheck();
     });
   }
 
@@ -158,9 +163,11 @@ export class JobScheduleComponent implements OnInit {
           }
 
           this.loadAssignments(); // your GET already auto-generates via AssignmentGenerator
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.toast.error(error?.error?.description ?? 'Unable to save schedule.');
+          this.cdr.markForCheck();
         }
       });
     } else {
@@ -180,9 +187,11 @@ export class JobScheduleComponent implements OnInit {
             }
 
             this.loadAssignments(); // your GET already auto-generates via AssignmentGenerator
+            this.cdr.markForCheck();
           },
           error: (error) => {
             this.toast.error(error?.error?.description ?? 'Unable to save schedule.');
+            this.cdr.markForCheck();
           }
         });
     }
@@ -213,10 +222,14 @@ export class JobScheduleComponent implements OnInit {
         scheduleType: (e.EntityType as ScheduleType) ?? ScheduleType.Exact,
       })
       .subscribe({
-        next: () => this.loadAssignments(),
+        next: () => {
+          this.loadAssignments();
+          this.cdr.markForCheck();
+        },
         error: (error) => {
           this.toast.error(error?.error?.description ?? 'Unable to reschedule assignment.');
           this.loadAssignments();
+          this.cdr.markForCheck();
         }
       });
   }
@@ -225,9 +238,11 @@ export class JobScheduleComponent implements OnInit {
     this.scheduleSettingsService.getScheduleSettings().subscribe({
       next: (settings) => {
         this.scheduleSettings = settings;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.scheduleSettings = null;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -259,10 +274,12 @@ export class JobScheduleComponent implements OnInit {
           .filter(job => !this.isClosedStatus(job.lifecycleStatus))
           .sort((a, b) => this.compareJobsByUrgency(a, b));
         this.loadingUnassignedJobs = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.unassignedJobs = [];
         this.loadingUnassignedJobs = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -277,10 +294,12 @@ export class JobScheduleComponent implements OnInit {
         this.jobAddress = this.buildJobAddress(job);
         this.addressMissing = !this.jobAddress;
         this.loadWeatherForecast();
+        this.cdr.markForCheck();
       },
       error: () => {
         this.applyPlannerContext();
         this.router.navigate(['/admin/scheduling-jobs']);
+        this.cdr.markForCheck();
       }
     });
   }
@@ -365,12 +384,14 @@ export class JobScheduleComponent implements OnInit {
     switch (status) {
       case JobLifecycleStatus.Approved:
         return 0;
-      case JobLifecycleStatus.InProgress:
+      case JobLifecycleStatus.Booked:
         return 1;
-      case JobLifecycleStatus.Draft:
+      case JobLifecycleStatus.InProgress:
         return 2;
-      default:
+      case JobLifecycleStatus.Draft:
         return 3;
+      default:
+        return 4;
     }
   }
 
@@ -412,6 +433,7 @@ export class JobScheduleComponent implements OnInit {
       .subscribe((weather) => {
         this.applyWeather(weather);
         this.isWeatherLoading = false;
+        this.cdr.markForCheck();
       });
   }
 

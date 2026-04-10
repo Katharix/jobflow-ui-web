@@ -185,7 +185,8 @@ export class InvoicesComponent implements OnInit, OnDestroy {
          });
 
       this.notifierHub = useNotifierHub(this.auth, {
-         onInvoicePaid: (payload) => this.applyInvoicePaid(payload)
+         onInvoicePaid: (payload) => this.applyInvoicePaid(payload),
+         onJobStatusChanged: () => this.load(),
       });
       void this.notifierHub.connect();
 
@@ -621,6 +622,8 @@ export class InvoicesComponent implements OnInit, OnDestroy {
             return 'job-status-chip--cancelled';
          case JobLifecycleStatus.Failed:
             return 'job-status-chip--failed';
+         case JobLifecycleStatus.Booked:
+            return 'job-status-chip--booked';
          default:
             return 'job-status-chip--default';
       }
@@ -628,6 +631,15 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
    formatJobDate(value: string | Date | null | undefined): string {
       return formatDateTime(value);
+   }
+
+   private getEarliestAssignmentStart(job: Job): Date | null {
+      const assignments = job.assignments;
+      if (!assignments?.length) return job.scheduledStart ?? null;
+      const sorted = [...assignments]
+         .filter(a => a.scheduledStart)
+         .sort((a, b) => new Date(a.scheduledStart!).getTime() - new Date(b.scheduledStart!).getTime());
+      return sorted.length ? new Date(sorted[0].scheduledStart!) : null;
    }
 
    formatMoney(value: number): string {
@@ -975,15 +987,21 @@ export class InvoicesComponent implements OnInit, OnDestroy {
    }
 
    private buildJobPickerRows(jobs: Job[]): InvoiceJobPickerRow[] {
-      return jobs.map(job => ({
-         id: job.id,
-         job,
-         title: job.title?.trim() || this.translate.instant('admin.invoices.drawer.untitledJob'),
-         clientName: this.getJobClientName(job),
-         scheduledDateText: this.formatJobDate(job.scheduledStart),
-         statusClass: this.getJobStatusClass(job),
-         statusLabel: this.getJobStatusLabel(job)
-      }));
+      return jobs.map(job => {
+         const earliest = this.getEarliestAssignmentStart(job);
+         return {
+            id: job.id,
+            job,
+            title: job.title?.trim() || this.translate.instant('admin.invoices.drawer.untitledJob'),
+            clientName: this.getJobClientName(job),
+            scheduledDateText: this.formatJobDate(earliest),
+            scheduledDateShort: earliest
+               ? new Date(earliest).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+               : '',
+            statusClass: this.getJobStatusClass(job),
+            statusLabel: this.getJobStatusLabel(job)
+         };
+      });
    }
 
    private cloneJob(job: Job): Job {

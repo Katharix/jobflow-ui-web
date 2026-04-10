@@ -33,6 +33,8 @@ import {AssignmentsService} from "./services/assignments.service";
 import {AssignmentDto} from "./models/assignment";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { BehaviorSubject, Subject, Subscription, catchError, debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
+import { Auth } from '@angular/fire/auth';
+import { useNotifierHub, NotifierHubHandle } from '../services/useNotifierHub';
 
 
 @Component({
@@ -63,7 +65,9 @@ export class JobComponent implements OnInit, OnDestroy {
    private router = inject(Router);
    private route = inject(ActivatedRoute);
    private translate = inject(TranslateService);
+   private auth = inject(Auth);
    private translateLangSub = this.translate.onLangChange.subscribe(() => this.refreshLabels());
+   private notifierHub: NotifierHubHandle | null = null;
 
 
    @ViewChild('jobTitleTemplate', {static: true})
@@ -224,9 +228,16 @@ export class JobComponent implements OnInit, OnDestroy {
             }
          }, 0);
       }, 0);
+
+      this.notifierHub = useNotifierHub(this.auth, {
+         onJobStatusChanged: () => this.load(),
+         onAssignmentChanged: () => this.load(),
+      });
+      void this.notifierHub.connect();
    }
 
    ngOnDestroy(): void {
+      void this.notifierHub?.disconnect();
       this.searchInputSub?.unsubscribe();
       this.loadPageSub?.unsubscribe();
       this.orgSub?.unsubscribe();
@@ -692,6 +703,8 @@ export class JobComponent implements OnInit, OnDestroy {
             return 'chip-cancelled';
          case JobLifecycleStatus.Failed:
             return 'chip-failed';
+         case JobLifecycleStatus.Booked:
+            return 'chip-booked';
          default:
             return 'chip-default';
       }

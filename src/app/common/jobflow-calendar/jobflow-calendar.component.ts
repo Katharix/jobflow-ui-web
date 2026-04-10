@@ -12,7 +12,7 @@ import { FullCalendarModule, FullCalendarComponent } from '@fullcalendar/angular
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { DateClickArg, EventResizeDoneArg, EventReceiveArg } from '@fullcalendar/interaction';
+import { EventResizeDoneArg, EventReceiveArg } from '@fullcalendar/interaction';
 import { LucideAngularModule } from 'lucide-angular';
 import {
   CalendarOptions,
@@ -237,25 +237,6 @@ export class JobflowCalendarComponent {
     this.selectedFilterChange.emit(this.selectedFilter);
   }
 
-  private onDateClick(args: DateClickArg): void {
-    if (this.isReadOnly) return;
-
-    const start = new Date(args.date);
-    const end = args.allDay
-      ? new Date(start.getFullYear(), start.getMonth(), start.getDate() + 1)
-      : new Date(start.getTime() + 30 * 60 * 1000);
-
-    const event: CalendarEvent = {
-      StartTime: start,
-      EndTime: end,
-      Subject: '',
-      EntityType: ScheduleType.Exact,
-      CssClass: this.getEventCssClass(ScheduleType.Exact),
-    };
-
-    this.eventCreate.emit(event);
-  }
-
   private onDateSelect(args: DateSelectArg): void {
     if (this.isReadOnly) return;
 
@@ -465,7 +446,7 @@ export class JobflowCalendarComponent {
       scrollTime: '06:00:00',
       expandRows: true,
       eventContent: (arg) => this.renderEventContent(arg),
-      dayHeaderFormat: { weekday: 'short' },
+      dayHeaderFormat: { weekday: 'short', month: 'numeric', day: 'numeric' },
       titleFormat: { month: 'long', year: 'numeric' },
       eventTimeFormat: {
         hour: 'numeric',
@@ -474,7 +455,6 @@ export class JobflowCalendarComponent {
       },
       height: this.height,
       events,
-      dateClick: (arg) => this.onDateClick(arg),
       select: (arg) => this.onDateSelect(arg),
       eventDrop: (arg) => this.onEventDrop(arg),
       eventResize: (arg) => this.onEventResize(arg),
@@ -513,7 +493,14 @@ export class JobflowCalendarComponent {
   }
 
   private refreshCalendarOptions() {
-    this.calendarOptions = this.buildCalendarOptions();
+    const api = this.fullCalendar?.getApi();
+    if (api) {
+      api.removeAllEvents();
+      const mapped = this.mapEventsForFullCalendar(this.eventSettings?.dataSource ?? []);
+      mapped.forEach(evt => api.addEvent(evt));
+    } else {
+      this.calendarOptions = this.buildCalendarOptions();
+    }
   }
 
   private gotoDate(date: Date) {
