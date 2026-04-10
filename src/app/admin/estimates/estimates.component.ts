@@ -2,6 +2,7 @@ import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@a
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Auth } from '@angular/fire/auth';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../dashboard/page-header/page-header.component';
 import { JobflowGridColumn, JobflowGridComponent, JobflowGridPageSettings } from '../../common/jobflow-grid/jobflow-grid.component';
@@ -10,6 +11,7 @@ import { ToastService } from '../../common/toast/toast.service';
 import { EstimateService } from './services/estimate.service';
 import { EstimateFormComponent } from './estimate-form/estimate-form.component';
 import { Estimate, EstimateStatus } from './models/estimate';
+import { useNotifierHub, NotifierHubHandle } from '../services/useNotifierHub';
 
 @Component({
   selector: 'app-estimates',
@@ -30,6 +32,7 @@ export class EstimatesComponent implements OnInit, OnDestroy {
   private estimateService = inject(EstimateService);
   private router = inject(Router);
   private translate = inject(TranslateService);
+  private auth = inject(Auth);
 
   @ViewChild('clientTemplate', { static: true }) clientTemplate!: TemplateRef<unknown>;
   @ViewChild('statusTemplate', { static: true }) statusTemplate!: TemplateRef<unknown>;
@@ -66,13 +69,21 @@ export class EstimatesComponent implements OnInit, OnDestroy {
 
   private toast = inject(ToastService);
   private translateLangSub = this.translate.onLangChange.subscribe(() => this.refreshLabels());
+  private notifierHub: NotifierHubHandle | null = null;
 
   ngOnInit(): void {
     this.refreshLabels();
     this.load();
+
+    this.notifierHub = useNotifierHub(this.auth, {
+      onEstimateStatusChanged: () => this.load(),
+      onEstimateRevisionRequested: () => this.load(),
+    });
+    void this.notifierHub.connect();
   }
 
   ngOnDestroy(): void {
+    void this.notifierHub?.disconnect();
     this.translateLangSub?.unsubscribe();
   }
 

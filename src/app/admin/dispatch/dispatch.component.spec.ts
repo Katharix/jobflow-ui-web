@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
+import { Auth } from '@angular/fire/auth';
 import { DispatchComponent } from './dispatch.component';
 import { DispatchService } from './services/dispatch.service';
 import { AssignmentsService } from '../jobs/services/assignments.service';
@@ -26,7 +27,8 @@ describe('DispatchComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: DispatchService, useValue: dispatchService },
-        { provide: AssignmentsService, useValue: assignmentsService }
+        { provide: AssignmentsService, useValue: assignmentsService },
+        { provide: Auth, useValue: { currentUser: null } }
       ]
     });
 

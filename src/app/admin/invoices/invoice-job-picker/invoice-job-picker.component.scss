@@ -1,0 +1,174 @@
+.invoice-drawer__job-list {
+   display: grid;
+   gap: .65rem;
+   max-height: 58vh;
+   overflow: auto;
+   padding-right: .2rem;
+}
+
+.invoice-drawer__job-card {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   gap: 1rem;
+   padding: .9rem 1rem;
+   border-radius: .9rem;
+   border: 1px solid #e2e8f0;
+   background: rgba(63, 103, 218, .06);
+   cursor: pointer;
+   transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+
+   &:hover {
+      transform: translateY(-1px);
+      border-color: #94a3b8;
+      box-shadow: 0 12px 24px rgba(15, 23, 42, .12);
+   }
+
+   &:focus-visible {
+      outline: 2px solid var(--bs-primary);
+      outline-offset: 2px;
+   }
+
+   h6 {
+      margin-bottom: .2rem;
+      font-weight: 600;
+   }
+
+   p {
+      margin-bottom: 0;
+      font-size: .85rem;
+      color: #64748b;
+   }
+}
+
+.invoice-drawer__job-card-left {
+   min-width: 0;
+}
+
+.invoice-drawer__job-timeline {
+   position: relative;
+   display: flex;
+   gap: .6rem;
+   margin-top: .5rem;
+   padding-top: .4rem;
+}
+
+.invoice-drawer__job-timeline-rail {
+   position: absolute;
+   top: .35rem;
+   left: 0;
+   right: 0;
+   height: 2px;
+   background: rgba(63, 103, 218, .35);
+}
+
+.invoice-drawer__job-timeline-dot {
+   position: relative;
+   z-index: 1;
+   display: inline-flex;
+   flex-direction: column;
+   align-items: center;
+   gap: .2rem;
+
+   &::before {
+      content: '';
+      width: .55rem;
+      height: .55rem;
+      border-radius: 999px;
+      background: var(--bs-primary);
+      box-shadow: 0 0 0 4px rgba(63, 103, 218, .18);
+   }
+
+   span {
+      font-size: .65rem;
+      font-weight: 600;
+      color: #0f172a;
+   }
+}
+
+.invoice-drawer__job-card-meta {
+   display: flex;
+   align-items: center;
+   gap: .6rem;
+   flex-shrink: 0;
+}
+
+.invoice-drawer__job-card-time {
+   font-size: .75rem;
+   font-weight: 600;
+   color: #0f172a;
+}
+
+.job-status-chip {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   min-width: 92px;
+   border-radius: 999px;
+   padding: .2rem .55rem;
+   font-size: .72rem;
+   font-weight: 700;
+}
+
+.job-status-chip--draft {
+   background: rgba(var(--bs-secondary-rgb), .15);
+   color: var(--bs-secondary);
+}
+
+.job-status-chip--approved {
+   background: rgba(var(--bs-primary-rgb), .15);
+   color: var(--bs-primary);
+}
+
+.job-status-chip--inprogress {
+   background: rgba(var(--bs-info-rgb), .15);
+   color: var(--bs-info-text-emphasis, var(--bs-info));
+}
+
+.job-status-chip--completed {
+   background: rgba(var(--bs-success-rgb), .15);
+   color: var(--bs-success);
+}
+
+.job-status-chip--cancelled,
+.job-status-chip--failed,
+.job-status-chip--default {
+   background: rgba(var(--bs-danger-rgb), .12);
+   color: var(--bs-danger);
+}
+
+.job-status-chip--booked {
+   background: rgba(124, 58, 237, .15);
+   color: #7c3aed;
+}
+
+.invoice-drawer__empty-state {
+   border: 1px dashed var(--bs-border-color);
+   border-radius: .8rem;
+   padding: .9rem;
+   background: rgba(var(--bs-body-bg-rgb), .8);
+
+   h4 {
+      margin: 0;
+      font-size: .96rem;
+      font-weight: 700;
+      color: var(--bs-heading-color);
+   }
+
+   p {
+      margin: .3rem 0 .8rem;
+      color: var(--bs-secondary-color);
+      font-size: .85rem;
+   }
+}
+
+@media (max-width: 767px) {
+   .invoice-drawer__job-card {
+      flex-direction: column;
+      align-items: stretch;
+   }
+
+   .invoice-drawer__job-card-meta {
+      justify-content: flex-end;
+   }
+}

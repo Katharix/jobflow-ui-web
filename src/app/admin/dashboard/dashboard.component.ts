@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { forkJoin, of, Subject } from 'rxjs';
@@ -78,7 +78,8 @@ type InvoiceWithDates = Invoice & {
    standalone: true,
    imports: [CommonModule, RouterModule, TranslateModule, OnboardingChecklistComponent, JobflowCommandCenterComponent],
    templateUrl: './dashboard.component.html',
-   styleUrl: './dashboard.component.scss'
+   styleUrl: './dashboard.component.scss',
+   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements OnInit, OnDestroy {
    private readonly orgContext = inject(OrganizationContextService);
@@ -88,6 +89,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    private readonly invoiceService = inject(InvoiceService);
    private readonly customersService = inject(CustomersService);
    private readonly estimateService = inject(EstimateService);
+   private readonly cdr = inject(ChangeDetectorRef);
 
    private readonly auth = inject(Auth);
    organizationId: string | null = null;
@@ -136,9 +138,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
    private readonly notifierHub = useNotifierHub(this.auth, {
       onEstimateRevisionRequested: (payload) => {
          this.addRevisionActivity(payload);
+         this.cdr.markForCheck();
       },
       onInvoicePaid: () => {
          this.refreshDashboardAfterPayment();
+      },
+      onJobStatusChanged: () => {
+         this.loadDashboard();
+      },
+      onEstimateStatusChanged: () => {
+         this.loadDashboard();
       }
    });
 
@@ -159,10 +168,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
             if (!this.organizationId) {
                this.flowSteps = [];
+               this.cdr.markForCheck();
                return;
             }
 
             this.loadDashboard();
+            this.cdr.markForCheck();
          });
    }
 
@@ -208,6 +219,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
          .pipe(takeUntil(this.destroy$))
          .subscribe(({ jobs, invoices, estimates, customers }) => {
             this.buildDashboardState(jobs, invoices, estimates, customers);
+            this.cdr.markForCheck();
          });
    }
 
@@ -584,6 +596,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                if (org) {
                   this.orgContext.setOrganization(org);
                }
+               this.cdr.markForCheck();
             },
             error: () => {
                this.organizationService.getOrganizationById({ organizationId: this.organizationId! })
@@ -593,6 +606,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                         if (org) {
                            this.orgContext.setOrganization(org);
                         }
+                        this.cdr.markForCheck();
                      }
                   });
             }
@@ -612,9 +626,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
                if (org) {
                   this.orgContext.setOrganization(org);
                }
+               this.cdr.markForCheck();
             },
             error: () => {
                this.onboardingSyncOrgId = null;
+               this.cdr.markForCheck();
             }
          });
    }

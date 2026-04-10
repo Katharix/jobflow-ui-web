@@ -155,7 +155,7 @@
               {{ 'admin.invoices.drawer.backToJobs' | translate }}
             </button>
             <h4>{{ selectedJob.title || ('admin.invoices.drawer.untitledJob' | translate) }}</h4>
-            <p>{{ getJobClientName(selectedJob) }} • {{ formatJobDate(selectedJob.scheduledStart) }}</p>
+            <p>{{ getJobClientName(selectedJob) }} • {{ formatJobDate(selectedJob.assignments?.[0]?.scheduledStart || selectedJob.scheduledStart) }}</p>
             <span class="job-status-chip" [ngClass]="getJobStatusClass(selectedJob)">
               {{ getJobStatusLabel(selectedJob) }}
             </span>
