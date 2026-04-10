@@ -1,3 +1,4 @@
+import { ChangeDetectorRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { Auth } from '@angular/fire/auth';
@@ -28,7 +29,8 @@ describe('DispatchComponent', () => {
       providers: [
         { provide: DispatchService, useValue: dispatchService },
         { provide: AssignmentsService, useValue: assignmentsService },
-        { provide: Auth, useValue: { currentUser: null } }
+        { provide: Auth, useValue: { currentUser: null } },
+        { provide: ChangeDetectorRef, useValue: { markForCheck: jasmine.createSpy('markForCheck') } }
       ]
     });
 
