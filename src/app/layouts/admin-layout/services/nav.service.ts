@@ -25,23 +25,22 @@ export class NavService {
       '/admin/settings/branding': [
          {label: 'Branding', icon: '', route: '/admin/settings/branding'},
          {label: 'Workflow', icon: '', route: '/admin/settings/workflow'},
-         {label: 'Edit Profile', icon: '', route: '/general/edit-profile'}
+         {label: 'Company Profile', icon: '', route: '/admin/company'}
       ],
       '/admin/settings/workflow': [
          {label: 'Branding', icon: '', route: '/admin/settings/branding'},
          {label: 'Workflow', icon: '', route: '/admin/settings/workflow'},
-         {label: 'Edit Profile', icon: '', route: '/general/edit-profile'}
+         {label: 'Company Profile', icon: '', route: '/admin/company'}
       ],
       '/admin/jobs': [
-         {label: 'Jobs', icon: '', route: '/admin/jobs', allowDeepMatch: true}
+         {label: 'Jobs', icon: '', route: '/admin/jobs', allowDeepMatch: true},
+         {label: 'Templates', icon: '', route: '/admin/jobs/templates', allowDeepMatch: true}
       ],
       '/admin/messaging': [
          {label: 'Employees', icon: '', route: '/admin/settings/branding'},
          {label: 'Clients', icon: '', route: '/general/edit-profile'}
       ],
-      '/admin/company': [
-         {label: 'Invoicing', icon: '', route: '/admin/invoices', allowDeepMatch: true}
-      ],
+      '/admin/company': [],
       '/admin/dispatch': [
          {label: 'Dispatch', icon: '', route: '/admin/dispatch'},
          {label: 'Schedule', icon: '', route: '/admin/scheduling-jobs', allowDeepMatch: true},

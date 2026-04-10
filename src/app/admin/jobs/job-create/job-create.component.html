@@ -16,6 +16,25 @@
 
   <div class="jobflow-create__grid">
     <div class="jobflow-create__form">
+
+      @if (!isEditing && (templates$ | async)?.length) {
+        <div class="jobflow-create__section">
+          <label class="form-label" for="jobCreateTemplate">Start from a template</label>
+          <p-select
+            id="jobCreateTemplate"
+            [(ngModel)]="selectedTemplateId"
+            [options]="(templates$ | async) ?? []"
+            optionLabel="displayLabel"
+            optionValue="id"
+            size="small"
+            [fluid]="true"
+            [showClear]="true"
+            placeholder="Choose a template to pre-fill"
+            (onChange)="onTemplateSelected($event.value)" />
+          <small class="text-muted">Pre-fills details so you can start faster.</small>
+        </div>
+      }
+
       <div class="jobflow-create__section">
         <label class="form-label" for="jobCreateCustomer">Customer <span class="text-danger">*</span></label>
         <p-select

@@ -38,6 +38,8 @@ export class RegisterComponent implements OnInit {
    @ViewChild('form') form?: NgForm;
 
    email = '';
+   firstName = '';
+   lastName = '';
    organizationName = '';
    password = '';
    confirmPassword = '';
@@ -86,6 +88,8 @@ export class RegisterComponent implements OnInit {
          next: (data: OrganizationDto) => {
             this.email = data.emailAddress ?? data.email ?? '';
             this.organizationName = data.organizationName ?? '';
+            this.firstName = data.contactFirstName ?? '';
+            this.lastName = data.contactLastName ?? '';
             this.isOrgDataLoading = false;
             this.cdr.detectChanges();
          },
@@ -224,6 +228,12 @@ export class RegisterComponent implements OnInit {
          }
 
          this.email = googleEmail;
+         // Use Google profile name if first/last name not already provided
+         if (!this.firstName && userCredential.user.displayName) {
+            const parts = userCredential.user.displayName.split(' ');
+            this.firstName = parts[0] ?? '';
+            this.lastName = parts.slice(1).join(' ') ?? '';
+         }
          await this.completeRegistration(userCredential.user.uid, googleEmail, role);
       } catch (err: unknown) {
          console.error('Google Registration Error:', err);
@@ -256,6 +266,8 @@ export class RegisterComponent implements OnInit {
          id: this.organizationId ?? '',
          firebaseUid: uid,
          userRole: role,
+         firstName: this.firstName,
+         lastName: this.lastName,
          emailAddress: email
       };
 
