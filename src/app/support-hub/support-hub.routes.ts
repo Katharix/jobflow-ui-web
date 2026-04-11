@@ -9,6 +9,7 @@ import { SupportHubPeopleComponent } from './views/people/support-hub-people.com
 import { SupportHubSettingsComponent } from './views/settings/support-hub-settings.component';
 import { SupportHubBillingComponent } from './views/billing/support-hub-billing.component';
 import { SupportHubContentComponent } from './views/content/support-hub-content.component';
+import { SupportHubAuditLogsComponent } from './views/audit-logs/support-hub-audit-logs.component';
 
 export const SUPPORT_HUB_ROUTES: Routes = [
   {
@@ -31,6 +32,7 @@ export const SUPPORT_HUB_ROUTES: Routes = [
       { path: 'content', component: SupportHubContentComponent },
       { path: 'people', component: SupportHubPeopleComponent },
       { path: 'settings', component: SupportHubSettingsComponent },
+      { path: 'audit-logs', component: SupportHubAuditLogsComponent },
     ],
   },
 ];

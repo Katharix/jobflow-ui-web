@@ -1,0 +1,205 @@
+@use "admin/admin-styles";
+
+$border: 1px solid rgba(188, 191, 204, 0.2);
+$radius: 14px;
+
+.sh-audit {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__filters {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  &__select {
+    min-width: 170px;
+  }
+
+  &__table-wrap {
+    background: #fff;
+    border: $border;
+    border-radius: $radius;
+    overflow-x: auto;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+
+    th,
+    td {
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      border-bottom: $border;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #fafbff;
+      color: #6e7180;
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    tbody tr:hover {
+      background: rgba(63, 103, 218, 0.03);
+    }
+  }
+
+  &__row--fail {
+    background: rgba(220, 53, 69, 0.04);
+  }
+
+  &__cell--time {
+    color: #9da2b3;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__cell--path {
+    max-width: 280px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__cell--user {
+    color: #9da2b3;
+    font-family: monospace;
+    font-size: 0.78rem;
+  }
+
+  &__cell--ip {
+    color: #9da2b3;
+    font-family: monospace;
+    font-size: 0.78rem;
+  }
+
+  &__expand {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6e7180;
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+
+    &:hover {
+      background: rgba(63, 103, 218, 0.08);
+      color: #3f67da;
+    }
+  }
+
+  &__details-row td {
+    padding: 0;
+    background: #fafbff;
+  }
+
+  &__details {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.78rem;
+    color: #6e7180;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 240px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 3rem 1rem;
+    color: #9da2b3;
+
+    i {
+      font-size: 2rem;
+    }
+  }
+
+  &__more {
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 0;
+  }
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2rem;
+    color: #9da2b3;
+  }
+
+  &__spinner {
+    animation: sh-spin 1s linear infinite;
+  }
+}
+
+.sh-method {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+
+  &--get {
+    background: rgba(63, 103, 218, 0.1);
+    color: #3f67da;
+  }
+
+  &--post {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+  }
+
+  &--put {
+    background: rgba(255, 193, 7, 0.15);
+    color: #b88e00;
+  }
+
+  &--delete {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+  }
+}
+
+.sh-status {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+
+  &--ok {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+  }
+
+  &--warn {
+    background: rgba(255, 193, 7, 0.15);
+    color: #b88e00;
+  }
+
+  &--error {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+  }
+}
+
+@keyframes sh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -135,6 +135,11 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/styles"
+              ]
+            },
             "karmaConfig": "karma.conf.cjs",
             "polyfills": [
               "zone.js",

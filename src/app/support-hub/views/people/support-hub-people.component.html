@@ -1,67 +1,150 @@
-<app-page-header
-  title="People"
-  subtitle="Manage internal support staff and verify access levels."
-></app-page-header>
+<app-page-header title="People" subtitle="Manage support hub staff and invitations."></app-page-header>
 
 <section class="sh-people">
-  <div class="sh-toolbar">
-    <div>
-      <h5 class="support-mb-1">Support roster</h5>
-      <p class="support-muted">Invite staff, assign roles, and review activity.</p>
+  <!-- Tabs -->
+  <div class="sh-tabs">
+    <button class="sh-tab" [class.sh-tab--active]="activeTab === 'staff'" (click)="activeTab = 'staff'">
+      Staff <span class="sh-tab__count">{{ staff.length }}</span>
+    </button>
+    <button class="sh-tab" [class.sh-tab--active]="activeTab === 'invites'" (click)="activeTab = 'invites'">
+      Invites <span class="sh-tab__count">{{ invites.length }}</span>
+    </button>
+  </div>
+
+  <!-- Staff Tab -->
+  @if (activeTab === 'staff') {
+    <div class="sh-card">
+      @if (loadingStaff) {
+        <div class="sh-empty"><i class="ti ti-loader-2 sh-spinner"></i> Loading staff…</div>
+      } @else if (!staff.length) {
+        <div class="sh-empty">
+          <i class="ti ti-users-group"></i>
+          <p>No staff members yet. Send an invite to get started.</p>
+        </div>
+      } @else {
+        <table class="sh-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Joined</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (member of staff; track member.id) {
+              <tr [class.sh-row--inactive]="!member.isActive">
+                <td>
+                  <div class="sh-user">
+                    <span class="sh-avatar">{{ initials(member) }}</span>
+                    <span>{{ displayName(member) }}</span>
+                  </div>
+                </td>
+                <td class="sh-cell--muted">{{ member.email || '—' }}</td>
+                <td>
+                  <p-tag [value]="roleLabel(member.role)" [severity]="roleSeverity(member.role)"></p-tag>
+                </td>
+                <td class="sh-cell--muted">{{ member.createdAt | date:'mediumDate' }}</td>
+                <td class="sh-cell--actions">
+                  @if (member.isActive) {
+                    <button class="sh-icon-btn" title="Change role" (click)="openRoleDialog(member)">
+                      <i class="ti ti-switch-horizontal"></i>
+                    </button>
+                    <button class="sh-icon-btn sh-icon-btn--danger" title="Deactivate" (click)="deactivateStaff(member)">
+                      <i class="ti ti-user-off"></i>
+                    </button>
+                  } @else {
+                    <span class="sh-cell--muted">Deactivated</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
     </div>
-    <div class="sh-invite-controls">
-      <p-select
-        [options]="inviteRoleOptions"
-        optionLabel="label"
-        optionValue="value"
-        [(ngModel)]="newInviteRole"
-        styleClass="support-w-100"
-      ></p-select>
-      <button
-        pButton
-        type="button"
-        class="p-button-outlined p-button-secondary"
-        [disabled]="isCreatingInvite"
-        (click)="createInvite()"
-      >{{ isCreatingInvite ? 'Creating...' : 'Create invite' }}</button>
+  }
+
+  <!-- Invites Tab -->
+  @if (activeTab === 'invites') {
+    <div class="sh-card">
+      <div class="sh-invite-bar">
+        <p-select
+          [options]="roleOptions"
+          [(ngModel)]="newInviteRole"
+          optionLabel="label"
+          optionValue="value"
+          styleClass="sh-invite-bar__select"
+        ></p-select>
+        <p-button
+          label="Create invite"
+          icon="ti ti-send"
+          [outlined]="true"
+          [loading]="creatingInvite"
+          (onClick)="createInvite()"
+        ></p-button>
+      </div>
+
+      @if (loadingInvites) {
+        <div class="sh-empty"><i class="ti ti-loader-2 sh-spinner"></i> Loading invites…</div>
+      } @else if (!invites.length) {
+        <div class="sh-empty">
+          <i class="ti ti-mail"></i>
+          <p>No active invites. Create one above to invite a team member.</p>
+        </div>
+      } @else {
+        <table class="sh-table">
+          <thead>
+            <tr>
+              <th>Invite Code</th>
+              <th>Role</th>
+              <th>Created</th>
+              <th>Expires</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (invite of invites; track invite.id) {
+              <tr>
+                <td><code class="sh-code">{{ invite.code }}</code></td>
+                <td>
+                  <p-tag [value]="roleLabel(invite.role)" [severity]="roleSeverity(invite.role)"></p-tag>
+                </td>
+                <td class="sh-cell--muted">{{ invite.createdAt | date:'mediumDate' }}</td>
+                <td>
+                  <span class="sh-expires">{{ expiresIn(invite.expiresAt) }}</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
     </div>
-  </div>
-
-  <div class="sh-panel">
-    <h6 class="support-mb-2">Active invites</h6>
-    @if (isLoadingInvites) {
-      <p class="support-muted support-mb-0">Loading invites...</p>
-    } @else if (inviteError) {
-      <p-message severity="error" [text]="inviteError"></p-message>
-    } @else if (!invites.length) {
-      <p class="support-muted support-mb-0">No active invites yet.</p>
-    } @else {
-      <app-jobflow-grid
-        [data]="invites"
-        [columns]="inviteColumns"
-        [allowPaging]="true"
-        [allowSorting]="true"
-        [allowFiltering]="false"
-        [showSearchBar]="true"
-        [pageSettings]="pageSettings"
-        [height]="320"
-      ></app-jobflow-grid>
-    }
-  </div>
-
-  <ng-template #staffStatusTemplate let-person>
-    <span class="sh-status">{{ person.status }}</span>
-  </ng-template>
-
-  <div class="sh-data">
-    <app-jobflow-grid
-      [data]="staff"
-      [columns]="staffColumns"
-      [allowPaging]="false"
-      [allowSorting]="true"
-      [allowFiltering]="false"
-      [showSearchBar]="false"
-      [height]="320"
-    ></app-jobflow-grid>
-  </div>
+  }
 </section>
+
+<!-- Role Change Dialog -->
+<p-dialog
+  header="Change Role"
+  [(visible)]="showRoleDialog"
+  [modal]="true"
+  [style]="{ width: '380px' }"
+  [closable]="true"
+>
+  @if (roleChangeTarget) {
+    <p class="sh-dialog-text">
+      Update role for <strong>{{ displayName(roleChangeTarget) }}</strong>
+    </p>
+    <p-select
+      [options]="roleOptions"
+      [(ngModel)]="roleChangeValue"
+      optionLabel="label"
+      optionValue="value"
+      styleClass="sh-dialog-select"
+    ></p-select>
+    <div class="sh-dialog-actions">
+      <p-button label="Cancel" [text]="true" (onClick)="showRoleDialog = false"></p-button>
+      <p-button label="Save" [loading]="savingRole" (onClick)="saveRole()"></p-button>
+    </div>
+  }
+</p-dialog>

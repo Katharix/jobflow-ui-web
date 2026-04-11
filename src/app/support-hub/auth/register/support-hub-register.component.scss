@@ -30,14 +30,14 @@
 .support-auth__field .p-password .p-inputtext {
   min-height: 46px;
   border-radius: 12px;
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  border: 1px solid rgba(211, 214, 224, 0.9);
   padding: 0.6rem 0.9rem;
 }
 
 .support-auth__field .p-inputtext:focus,
 .support-auth__field .p-password .p-inputtext:focus {
   box-shadow: none;
-  border-color: rgba(59, 130, 246, 0.6);
+  border-color: rgba(63, 103, 218, 0.6);
 }
 
 .support-auth__field .text-danger {
@@ -63,8 +63,8 @@
   min-height: 46px;
   border-radius: 12px;
   border: none;
-  background: var(--jf-accent, #2563eb);
-  background-color: var(--jf-accent, #2563eb);
+  background: var(--jf-accent, #3F67DA);
+  background-color: var(--jf-accent, #3F67DA);
   color: var(--jf-accent-contrast, #ffffff);
   font-weight: 600;
 }
