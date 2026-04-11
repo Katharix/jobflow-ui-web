@@ -6,22 +6,24 @@
 
 <div class="invoice-drawer__job-list">
   @for (row of rows; track trackByRowId($index, row)) {
-    <article class="invoice-drawer__job-card">
-      <div>
-        <h4>{{ row.title }}</h4>
-        <p>{{ row.clientName }} • {{ row.scheduledDateText }}</p>
+    <article class="invoice-drawer__job-card" (click)="selectJob.emit(row.job)" role="button" tabindex="0" (keydown.enter)="selectJob.emit(row.job)">
+      <div class="invoice-drawer__job-card-left">
+        <h6>{{ row.title }}</h6>
+        <p>{{ row.clientName }}</p>
+        @if (row.scheduledDateText) {
+          <div class="invoice-drawer__job-timeline">
+            <span class="invoice-drawer__job-timeline-rail"></span>
+            <span class="invoice-drawer__job-timeline-dot">
+              <span>{{ row.scheduledDateShort }}</span>
+            </span>
+          </div>
+        }
       </div>
-      <div class="invoice-drawer__job-card-actions">
+      <div class="invoice-drawer__job-card-meta">
+        <span class="invoice-drawer__job-card-time">{{ row.scheduledDateText }}</span>
         <span class="job-status-chip" [ngClass]="row.statusClass">
           {{ row.statusLabel }}
         </span>
-        <button
-          type="button"
-          class="btn btn-primary btn-sm"
-          (click)="selectJob.emit(row.job)"
-          >
-          {{ 'admin.invoices.drawer.selectJob' | translate }}
-        </button>
       </div>
     </article>
   }

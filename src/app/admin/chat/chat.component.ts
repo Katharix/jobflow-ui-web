@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, OnDestroy, ViewChild, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Auth } from '@angular/fire/auth';
 import { NgScrollbar, NgScrollbarModule } from 'ngx-scrollbar';
@@ -91,7 +91,8 @@ interface SmsStatusEvent {
     NgbNavModule,
     NgbTooltipModule
   ],
-  styleUrl: './chat.component.scss'
+  styleUrl: './chat.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChatComponent implements OnInit, OnDestroy {
   private chatService = inject(ChatService);
@@ -99,6 +100,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   private uploadService = inject(FileUploadService);
   private employeeService = inject(EmployeeService);
   private customersService = inject(CustomersService);
+  private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('chatBodyScrollbar', { read: NgScrollbar }) chatBodyScrollbar?: NgScrollbar;
   private auth = inject(Auth);
@@ -145,6 +147,7 @@ export class ChatComponent implements OnInit, OnDestroy {
         }
         this.scrollToBottom();
       }
+      this.cdr.markForCheck();
     });
 
     this.chatService.onSmsStatus((status: SmsStatusEvent) => {
@@ -157,6 +160,7 @@ export class ChatComponent implements OnInit, OnDestroy {
           ? { ...message, smsStatus: status.status as ChatMessage['smsStatus'] }
           : message
       ));
+      this.cdr.markForCheck();
     });
 
     this.chatService.onTyping((payload) => {
@@ -171,8 +175,10 @@ export class ChatComponent implements OnInit, OnDestroy {
       if (this.isRemoteTyping) {
         this.typingIndicatorTimeoutId = window.setTimeout(() => {
           this.isRemoteTyping = false;
+          this.cdr.markForCheck();
         }, 2500);
       }
+      this.cdr.markForCheck();
     });
 
     this.chatService.onReadReceipt((payload) => {
@@ -185,6 +191,7 @@ export class ChatComponent implements OnInit, OnDestroy {
           ? { ...message, isRead: true }
           : message
       ));
+      this.cdr.markForCheck();
     });
   }
 
@@ -208,11 +215,13 @@ export class ChatComponent implements OnInit, OnDestroy {
           this.chatPanelVisible = false;
           this.hasMoreMessages = false;
           this.isRemoteTyping = false;
+          this.cdr.markForCheck();
           return;
         }
 
         this.selectedConversation = matchedConversation;
       }
+      this.cdr.markForCheck();
     });
   }
 
@@ -231,9 +240,11 @@ export class ChatComponent implements OnInit, OnDestroy {
           .filter((contact) => contact.id)
           .sort((left, right) => left.name.localeCompare(right.name));
         this.isLoadingContacts = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.isLoadingContacts = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -294,6 +305,7 @@ export class ChatComponent implements OnInit, OnDestroy {
         error: () => {
           this.attachmentUploadError = 'Unable to upload attachment. Sending message without it.';
           finalizeSend(null);
+          this.cdr.markForCheck();
         }
       });
   }
@@ -454,6 +466,7 @@ export class ChatComponent implements OnInit, OnDestroy {
           ...this.conversations.filter((convo) => convo.id !== normalizedConversation.id)
         ];
         this.selectConversation(normalizedConversation);
+        this.cdr.markForCheck();
       });
       return;
     }
@@ -467,6 +480,7 @@ export class ChatComponent implements OnInit, OnDestroy {
         ...this.conversations.filter((convo) => convo.id !== normalizedConversation.id)
       ];
       this.selectConversation(normalizedConversation);
+      this.cdr.markForCheck();
     });
   }
 
@@ -647,9 +661,11 @@ export class ChatComponent implements OnInit, OnDestroy {
           if (reset) {
             this.scrollToBottom();
           }
+          this.cdr.markForCheck();
         },
         error: (error: HttpErrorResponse) => {
           this.isLoadingMessages = false;
+          this.cdr.markForCheck();
 
           if (error.status === 403) {
             this.handleConversationAccessDenied(this.selectedConversation?.id);

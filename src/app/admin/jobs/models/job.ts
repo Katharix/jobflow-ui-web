@@ -31,7 +31,8 @@ export enum JobLifecycleStatus {
    InProgress = 2,
    Completed = 3,
    Cancelled = 4,
-   Failed = 5
+   Failed = 5,
+   Booked = 6
 }
 
 export const JobLifecycleStatusLabels: Record<JobLifecycleStatus, string> = {
@@ -40,5 +41,6 @@ export const JobLifecycleStatusLabels: Record<JobLifecycleStatus, string> = {
    [JobLifecycleStatus.InProgress]: 'In Progress',
    [JobLifecycleStatus.Completed]: 'Completed',
    [JobLifecycleStatus.Cancelled]: 'Cancelled',
-   [JobLifecycleStatus.Failed]: 'Failed'
+   [JobLifecycleStatus.Failed]: 'Failed',
+   [JobLifecycleStatus.Booked]: 'Booked'
 };

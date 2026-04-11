@@ -10,6 +10,7 @@ export interface InvoiceJobPickerRow {
    title: string;
    clientName: string;
    scheduledDateText: string;
+   scheduledDateShort: string;
    statusClass: string;
    statusLabel: string;
 }
@@ -19,6 +20,7 @@ export interface InvoiceJobPickerRow {
    standalone: true,
    imports: [CommonModule, RouterModule, TranslateModule],
    templateUrl: './invoice-job-picker.component.html',
+   styleUrl: './invoice-job-picker.component.scss',
    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InvoiceJobPickerComponent {

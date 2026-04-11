@@ -10,9 +10,28 @@ export interface EstimateRevisionRequestedEvent {
   message: string;
 }
 
+export interface JobStatusChangedEvent {
+  jobId: string;
+  jobTitle: string;
+  status: number | string;
+}
+
+export interface AssignmentChangedEvent {
+  jobId: string;
+  assignmentId: string;
+}
+
+export interface EstimateStatusChangedEvent {
+  estimateId: string;
+  status: string;
+}
+
 export interface NotifierHubCallbacks {
   onEstimateRevisionRequested?: (payload: EstimateRevisionRequestedEvent) => void;
   onInvoicePaid?: (payload: InvoicePaidEvent) => void;
+  onJobStatusChanged?: (payload: JobStatusChangedEvent) => void;
+  onAssignmentChanged?: (payload: AssignmentChangedEvent) => void;
+  onEstimateStatusChanged?: (payload: EstimateStatusChangedEvent) => void;
   onError?: (error: unknown) => void;
 }
 
@@ -50,6 +69,18 @@ export function useNotifierHub(auth: Auth, callbacks: NotifierHubCallbacks = {})
 
         connection.on('InvoicePaid', (payload: InvoicePaidEvent) => {
           callbacks.onInvoicePaid?.(payload);
+        });
+
+        connection.on('JobStatusChanged', (payload: JobStatusChangedEvent) => {
+          callbacks.onJobStatusChanged?.(payload);
+        });
+
+        connection.on('AssignmentChanged', (payload: AssignmentChangedEvent) => {
+          callbacks.onAssignmentChanged?.(payload);
+        });
+
+        connection.on('EstimateStatusChanged', (payload: EstimateStatusChangedEvent) => {
+          callbacks.onEstimateStatusChanged?.(payload);
         });
       }
 

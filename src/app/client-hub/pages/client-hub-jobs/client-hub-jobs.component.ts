@@ -57,6 +57,8 @@ export class ClientHubJobsComponent implements OnInit {
         return 'is-inprogress';
       case JobLifecycleStatus.Approved:
         return 'is-approved';
+      case JobLifecycleStatus.Booked:
+        return 'is-booked';
       case JobLifecycleStatus.Cancelled:
       case JobLifecycleStatus.Failed:
         return 'is-danger';

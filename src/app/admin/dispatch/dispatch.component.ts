@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { Auth } from '@angular/fire/auth';
 import { Draggable } from '@fullcalendar/interaction';
 import { PageHeaderComponent } from '../dashboard/page-header/page-header.component';
 import { JobflowCalendarComponent } from '../../common/jobflow-calendar/jobflow-calendar.component';
@@ -12,6 +13,7 @@ import { AssignmentsService } from '../jobs/services/assignments.service';
 import { Employee } from '../employees/models/employee';
 import { DispatchService } from './services/dispatch.service';
 import { DispatchUnscheduledJob } from './models/dispatch';
+import { useNotifierHub, NotifierHubHandle } from '../services/useNotifierHub';
 
 interface DispatchOverviewRow {
   employeeName: string;
@@ -25,11 +27,14 @@ interface DispatchOverviewRow {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, PageHeaderComponent, JobflowCalendarComponent, JobflowDrawerComponent],
   templateUrl: './dispatch.component.html',
-  styleUrl: './dispatch.component.scss'
+  styleUrl: './dispatch.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DispatchComponent implements AfterViewInit, OnDestroy {
   private dispatch = inject(DispatchService);
   private assignmentsService = inject(AssignmentsService);
+  private auth = inject(Auth);
+  private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('unscheduledList')
   unscheduledList?: ElementRef<HTMLElement>;
@@ -69,9 +74,15 @@ export class DispatchComponent implements AfterViewInit, OnDestroy {
   draftJobId: string | null = null;
 
   private draggable?: Draggable;
+  private notifierHub: NotifierHubHandle | null = null;
 
   constructor() {
     this.loadBoard();
+    this.notifierHub = useNotifierHub(this.auth, {
+      onAssignmentChanged: () => this.loadBoard(),
+      onJobStatusChanged: () => this.loadBoard(),
+    });
+    void this.notifierHub.connect();
   }
 
   ngAfterViewInit(): void {
@@ -79,6 +90,7 @@ export class DispatchComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    void this.notifierHub?.disconnect();
     if (this.draggable?.destroy) {
       this.draggable.destroy();
     }
@@ -125,7 +137,10 @@ export class DispatchComponent implements AfterViewInit, OnDestroy {
       scheduledStart: event.StartTime,
       scheduledEnd: event.EndTime,
       scheduleType: ScheduleType.Exact
-    }).subscribe(() => this.loadBoard());
+    }).subscribe(() => {
+      this.loadBoard();
+      this.cdr.markForCheck();
+    });
   }
 
   onCalendarEventSelect(event: CalendarEvent): void {
@@ -153,7 +168,10 @@ export class DispatchComponent implements AfterViewInit, OnDestroy {
       scheduledStart: event.StartTime,
       scheduledEnd: event.EndTime,
       scheduleType: ScheduleType.Exact
-    }).subscribe(() => this.loadBoard());
+    }).subscribe(() => {
+      this.loadBoard();
+      this.cdr.markForCheck();
+    });
   }
 
   closeDrawer(): void {
@@ -176,6 +194,7 @@ export class DispatchComponent implements AfterViewInit, OnDestroy {
     }).subscribe(() => {
       this.closeDrawer();
       this.loadBoard();
+      this.cdr.markForCheck();
     });
   }
 
@@ -214,9 +233,13 @@ export class DispatchComponent implements AfterViewInit, OnDestroy {
     assigneeUpdate.subscribe(() => {
       notesUpdate.subscribe(() => {
         if (statusUpdate) {
-          statusUpdate.subscribe(() => this.loadBoard());
+          statusUpdate.subscribe(() => {
+            this.loadBoard();
+            this.cdr.markForCheck();
+          });
         } else {
           this.loadBoard();
+          this.cdr.markForCheck();
         }
       });
     });
@@ -245,6 +268,7 @@ export class DispatchComponent implements AfterViewInit, OnDestroy {
 
       this.refreshBoardView();
       this.refreshDraggable();
+      this.cdr.markForCheck();
     });
   }
 
