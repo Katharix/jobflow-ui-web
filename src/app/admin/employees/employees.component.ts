@@ -508,12 +508,11 @@ export class EmployeesComponent implements OnInit, OnDestroy {
          return true;
       }
 
-      const roleId = (employee as Employee & { roleId?: string; roleName?: string }).roleId ?? employee.role;
-      if (roleId && roleId === this.selectedRoleFilter) {
+      if (employee.role && employee.role === this.selectedRoleFilter) {
          return true;
       }
 
-      const roleName = (employee as Employee & { roleName?: string }).roleName ?? employee.role;
+      const roleName = employee.roleName ?? employee.role;
       if (!roleName) {
          return false;
       }

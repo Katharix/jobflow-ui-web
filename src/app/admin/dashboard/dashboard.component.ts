@@ -19,6 +19,7 @@ import { EstimateService } from '../estimates/services/estimate.service';
 import { Estimate, EstimateStatus, EstimateStatusLabels } from '../estimates/models/estimate';
 import { Invoice, InvoiceStatus } from '../../models/invoice';
 import { useNotifierHub } from '../services/useNotifierHub';
+import { ToastService } from '../../common/toast/toast.service';
 import {
    CommandCenterAction,
    CommandCenterFlowStep,
@@ -29,7 +30,9 @@ type DashboardClientActivityType =
    | 'estimate-accepted'
    | 'estimate-declined'
    | 'estimate-revision-requested'
-   | 'invoice-paid';
+   | 'invoice-paid'
+   | 'client-chat-message'
+   | 'client-job-update';
 
 interface DashboardKpi {
    id: string;
@@ -90,6 +93,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    private readonly customersService = inject(CustomersService);
    private readonly estimateService = inject(EstimateService);
    private readonly cdr = inject(ChangeDetectorRef);
+   private readonly toast = inject(ToastService);
 
    private readonly auth = inject(Auth);
    organizationId: string | null = null;
@@ -127,6 +131,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    flowSteps: CommandCenterFlowStep[] = [];
    clientActivity: DashboardClientActivity[] = [];
    private revisionActivity: DashboardClientActivity[] = [];
+   private realtimeActivity: DashboardClientActivity[] = [];
    private latestEstimates: Estimate[] = [];
    private latestInvoices: Invoice[] = [];
 
@@ -138,16 +143,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
    private readonly notifierHub = useNotifierHub(this.auth, {
       onEstimateRevisionRequested: (payload) => {
          this.addRevisionActivity(payload);
+         this.toast.info(`Revision #${payload.revisionNumber} requested`, 'Estimate Revision');
          this.cdr.markForCheck();
       },
-      onInvoicePaid: () => {
+      onInvoicePaid: (payload) => {
+         this.toast.success(`Invoice payment of $${payload.amountPaid?.toFixed(2) ?? '0.00'} received`, 'Payment Received');
          this.refreshDashboardAfterPayment();
       },
-      onJobStatusChanged: () => {
+      onJobStatusChanged: (payload) => {
+         this.toast.info(`Job "${payload.jobTitle}" status changed`, 'Job Updated');
          this.loadDashboard();
       },
-      onEstimateStatusChanged: () => {
+      onEstimateStatusChanged: (payload) => {
+         const statusLabel = payload.status === 'Accepted' || payload.status === '3' ? 'accepted' : 'declined';
+         const toastFn = statusLabel === 'accepted' ? this.toast.success.bind(this.toast) : this.toast.warning.bind(this.toast);
+         toastFn(`Estimate ${statusLabel}`, 'Estimate Update');
          this.loadDashboard();
+      },
+      onClientChatMessage: (payload) => {
+         this.addChatMessageActivity(payload);
+         this.toast.info(`${payload.clientName}: ${payload.messagePreview}`, 'New Message');
+         this.cdr.markForCheck();
+      },
+      onClientJobUpdate: (payload) => {
+         this.addJobUpdateActivity(payload);
+         this.toast.info(`${payload.clientName} posted an update on "${payload.jobTitle}"`, 'Job Update');
+         this.cdr.markForCheck();
       }
    });
 
@@ -303,6 +324,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
             return 'Estimate declined';
          case 'estimate-revision-requested':
             return 'Estimate revision requested';
+         case 'client-chat-message':
+            return 'Message received';
+         case 'client-job-update':
+            return 'Job update';
          default:
             return 'Invoice paid';
       }
@@ -315,6 +340,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
          case 'estimate-declined':
             return 'is-danger';
          case 'estimate-revision-requested':
+            return 'is-info';
+         case 'client-chat-message':
+            return 'is-info';
+         case 'client-job-update':
             return 'is-info';
          default:
             return 'is-primary';
@@ -516,7 +545,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
    private mergeClientActivity(): DashboardClientActivity[] {
       const base = this.buildClientActivity(this.latestEstimates, this.latestInvoices);
-      return [...this.revisionActivity, ...base]
+      return [...this.realtimeActivity, ...this.revisionActivity, ...base]
          .sort((left, right) => this.dateScore(right.occurredAt) - this.dateScore(left.occurredAt))
          .slice(0, 8);
    }
@@ -577,6 +606,38 @@ export class DashboardComponent implements OnInit, OnDestroy {
       };
 
       this.revisionActivity = [activity, ...this.revisionActivity].slice(0, 8);
+
+      this.clientActivity = this.mergeClientActivity();
+   }
+
+   private addChatMessageActivity(payload: { clientId: string; clientName: string; messagePreview: string; sentAt: string }): void {
+      const id = `chat-${payload.clientId}-${payload.sentAt}`;
+      if (this.realtimeActivity.some(item => item.id === id)) return;
+
+      this.realtimeActivity = [{
+         id,
+         type: 'client-chat-message' as const,
+         title: `Message from ${payload.clientName}`,
+         detail: payload.messagePreview || 'New message received.',
+         occurredAt: payload.sentAt,
+         route: '/admin/messages'
+      }, ...this.realtimeActivity].slice(0, 8);
+
+      this.clientActivity = this.mergeClientActivity();
+   }
+
+   private addJobUpdateActivity(payload: { jobId: string; jobTitle: string; clientId: string; clientName: string; message: string; occurredAt: string }): void {
+      const id = `job-update-${payload.jobId}-${payload.occurredAt}`;
+      if (this.realtimeActivity.some(item => item.id === id)) return;
+
+      this.realtimeActivity = [{
+         id,
+         type: 'client-job-update' as const,
+         title: `${payload.clientName} updated "${payload.jobTitle}"`,
+         detail: payload.message || 'Client posted a job update.',
+         occurredAt: payload.occurredAt,
+         route: '/admin/jobs'
+      }, ...this.realtimeActivity].slice(0, 8);
 
       this.clientActivity = this.mergeClientActivity();
    }

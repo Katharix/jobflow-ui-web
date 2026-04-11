@@ -7,5 +7,6 @@ export interface Employee {
   email?: string;
   phoneNumber?: string;
   role?: string;
+  roleName?: string;
   isActive: boolean;
 }

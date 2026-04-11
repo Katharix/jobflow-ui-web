@@ -229,6 +229,7 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
       this.paymentError = 'Unable to confirm payment right now.';
     } finally {
       this.isConfirming = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -308,6 +309,7 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
 
       this.elements = this.stripe.elements({ clientSecret });
       this.showPaymentForm = true;
+      this.cdr.detectChanges();
 
       setTimeout(() => {
         if (!this.elements || !this.paymentElementContainer?.nativeElement) return;
