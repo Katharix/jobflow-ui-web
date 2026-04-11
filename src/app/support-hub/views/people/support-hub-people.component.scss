@@ -1,51 +1,214 @@
-$border: 1px solid rgba(148, 163, 184, 0.2);
+@use "admin/admin-styles";
+
+$border: 1px solid rgba(188, 191, 204, 0.2);
 $radius: 14px;
 
 .sh-people {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
-.sh-toolbar {
+// Tabs
+.sh-tabs {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  background: #ffffff;
+  gap: 0.25rem;
+  border-bottom: $border;
+  padding-bottom: 0;
+}
+
+.sh-tab {
+  background: none;
+  border: none;
+  padding: 0.6rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #9da2b3;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+
+  &:hover {
+    color: #6e7180;
+  }
+
+  &--active {
+    color: #3f67da;
+    border-bottom-color: #3f67da;
+  }
+
+  &__count {
+    font-weight: 400;
+    opacity: 0.7;
+    margin-left: 0.3rem;
+  }
+}
+
+// Card
+.sh-card {
+  background: #fff;
   border: $border;
   border-radius: $radius;
-  padding: 1.15rem 1.25rem;
+  overflow: hidden;
 }
 
-.sh-invite-controls {
+// Table
+.sh-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+
+  th,
+  td {
+    padding: 0.65rem 0.9rem;
+    text-align: left;
+    border-bottom: $border;
+    white-space: nowrap;
+  }
+
+  th {
+    background: #fafbff;
+    color: #6e7180;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  tbody tr:hover {
+    background: rgba(63, 103, 218, 0.03);
+  }
+}
+
+.sh-row--inactive {
+  opacity: 0.5;
+}
+
+// User cell
+.sh-user {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sh-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(63, 103, 218, 0.1);
+  color: #3f67da;
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.sh-cell--muted {
+  color: #9da2b3;
+}
+
+.sh-cell--actions {
+  display: flex;
+  gap: 0.35rem;
+  justify-content: flex-end;
+}
+
+.sh-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #6e7180;
+  font-size: 0.95rem;
+
+  &:hover {
+    background: rgba(63, 103, 218, 0.08);
+    color: #3f67da;
+  }
+
+  &--danger:hover {
+    background: rgba(220, 53, 69, 0.08);
+    color: #dc3545;
+  }
+}
+
+// Invite bar
+.sh-invite-bar {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  padding: 0.9rem;
+  border-bottom: $border;
+
+  &__select {
+    min-width: 150px;
+  }
 }
 
-.sh-panel {
-  background: #ffffff;
-  border: $border;
-  border-radius: $radius;
-  padding: 1.25rem;
+// Code
+.sh-code {
+  background: #fafbff;
+  border: 1px solid rgba(188, 191, 204, 0.25);
+  border-radius: 6px;
+  padding: 0.2rem 0.5rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  color: #3f67da;
+  letter-spacing: 0.05em;
 }
 
-.sh-data {
-  background: #ffffff;
-  border: $border;
-  border-radius: $radius;
-  padding: 1.15rem;
+.sh-expires {
+  font-size: 0.78rem;
+  color: #9da2b3;
 }
 
-.sh-status {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.3rem 0.6rem;
-  border-radius: 999px;
-  white-space: nowrap;
-  background: rgba(16, 185, 129, 0.14);
-  color: #059669;
+// Empty
+.sh-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1rem;
+  color: #9da2b3;
+
+  i {
+    font-size: 1.8rem;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.sh-spinner {
+  animation: sh-spin 1s linear infinite;
+}
+
+@keyframes sh-spin {
+  to { transform: rotate(360deg); }
+}
+
+// Dialog
+.sh-dialog-text {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  color: #6e7180;
+}
+
+.sh-dialog-select {
+  width: 100%;
+}
+
+.sh-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
 }

@@ -1,24 +1,144 @@
 <app-page-header
-  title="Support Hub Settings"
-  subtitle="Configure policies, escalation paths, and security defaults."
+  title="Settings"
+  subtitle="Manage your preferences and account details."
 ></app-page-header>
 
-<section class="sh-settings">
-  <div class="sh-settings__card">
-    <h5>Access policies</h5>
-    <p>Define role requirements, MFA readiness, and device trust checks.</p>
-    <button pButton type="button" class="p-button-outlined p-button-secondary">Manage policies</button>
+<div class="sh-settings">
+
+  <!-- Profile -->
+  <section class="sh-card">
+    <div class="sh-card__header">
+      <i class="ti ti-user-circle"></i>
+      <h5>Profile</h5>
+    </div>
+    <div class="sh-card__body">
+      <div class="sh-profile">
+        <div class="sh-profile__avatar">{{ userDisplayName | slice:0:2 | uppercase }}</div>
+        <div class="sh-profile__info">
+          <div class="sh-profile__row">
+            <span class="sh-profile__label">Name</span>
+            <span class="sh-profile__value">{{ userDisplayName }}</span>
+          </div>
+          <div class="sh-profile__row">
+            <span class="sh-profile__label">Email</span>
+            <span class="sh-profile__value">{{ userEmail }}</span>
+          </div>
+          <div class="sh-profile__row">
+            <span class="sh-profile__label">Role</span>
+            <span class="sh-profile__value sh-profile__role">{{ userRole }}</span>
+          </div>
+          @if (lastSignIn) {
+            <div class="sh-profile__row">
+              <span class="sh-profile__label">Last sign-in</span>
+              <span class="sh-profile__value">{{ lastSignIn | date:'medium' }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Notifications -->
+  <section class="sh-card">
+    <div class="sh-card__header">
+      <i class="ti ti-bell"></i>
+      <h5>Notifications</h5>
+    </div>
+    <div class="sh-card__body">
+      <div class="sh-toggle-row">
+        <div class="sh-toggle-row__text">
+          <span class="sh-toggle-row__label">New ticket created</span>
+          <span class="sh-toggle-row__hint">Get notified when a new support ticket is filed.</span>
+        </div>
+        <p-toggleswitch [(ngModel)]="prefs.notifyOnNewTicket" />
+      </div>
+      <div class="sh-toggle-row">
+        <div class="sh-toggle-row__text">
+          <span class="sh-toggle-row__label">Ticket escalation</span>
+          <span class="sh-toggle-row__hint">Alert when a ticket is escalated to Urgent or High.</span>
+        </div>
+        <p-toggleswitch [(ngModel)]="prefs.notifyOnEscalation" />
+      </div>
+      <div class="sh-toggle-row">
+        <div class="sh-toggle-row__text">
+          <span class="sh-toggle-row__label">Session started</span>
+          <span class="sh-toggle-row__hint">Notify when a live support session begins.</span>
+        </div>
+        <p-toggleswitch [(ngModel)]="prefs.notifyOnSessionStart" />
+      </div>
+      <div class="sh-toggle-row">
+        <div class="sh-toggle-row__text">
+          <span class="sh-toggle-row__label">Chat messages</span>
+          <span class="sh-toggle-row__hint">Receive alerts for new client chat messages.</span>
+        </div>
+        <p-toggleswitch [(ngModel)]="prefs.notifyOnChatMessage" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Ticket Defaults -->
+  <section class="sh-card">
+    <div class="sh-card__header">
+      <i class="ti ti-ticket"></i>
+      <h5>Ticket defaults</h5>
+    </div>
+    <div class="sh-card__body">
+      <div class="sh-field">
+        <label class="sh-field__label" for="defaultPriority">Default priority</label>
+        <p-select
+          inputId="defaultPriority"
+          [options]="priorityOptions"
+          [(ngModel)]="prefs.defaultTicketPriority"
+          optionLabel="label"
+          optionValue="value"
+          styleClass="sh-dropdown"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard -->
+  <section class="sh-card">
+    <div class="sh-card__header">
+      <i class="ti ti-refresh"></i>
+      <h5>Dashboard</h5>
+    </div>
+    <div class="sh-card__body">
+      <div class="sh-field">
+        <label class="sh-field__label" for="autoRefresh">Auto-refresh interval</label>
+        <p-select
+          inputId="autoRefresh"
+          [options]="refreshOptions"
+          [(ngModel)]="prefs.autoRefreshInterval"
+          optionLabel="label"
+          optionValue="value"
+          styleClass="sh-dropdown"
+        />
+        <span class="sh-field__hint">How often the dashboard data reloads automatically.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Actions -->
+  <div class="sh-settings__actions">
+    <button
+      pButton
+      type="button"
+      class="p-button-outlined p-button-secondary"
+      label="Reset to defaults"
+      (click)="resetPrefs()"
+    >Reset to defaults</button>
+    <button
+      pButton
+      type="button"
+      label="Save preferences"
+      (click)="savePrefs()"
+    >Save preferences</button>
+    @if (saved) {
+      <span class="sh-settings__saved">
+        <i class="ti ti-check"></i> Saved
+      </span>
+    }
   </div>
 
-  <div class="sh-settings__card">
-    <h5>Escalation routing</h5>
-    <p>Route urgent tickets to senior staff or on-call rotations.</p>
-    <button pButton type="button" class="p-button-outlined p-button-secondary">Configure routing</button>
-  </div>
-
-  <div class="sh-settings__card">
-    <h5>Audit logs</h5>
-    <p>Review access, screen-share, and data export history.</p>
-    <button pButton type="button" class="p-button-outlined p-button-secondary">View logs</button>
-  </div>
-</section>
+</div>

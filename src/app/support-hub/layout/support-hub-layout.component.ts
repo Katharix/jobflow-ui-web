@@ -46,6 +46,7 @@ export class SupportHubLayoutComponent implements OnInit {
       items: [
         { label: 'Help Content', route: '/support-hub/content', icon: 'ti ti-book' },
         { label: 'People', route: '/support-hub/people', icon: 'ti ti-users-group' },
+        { label: 'Audit Logs', route: '/support-hub/audit-logs', icon: 'ti ti-file-text' },
         { label: 'Settings', route: '/support-hub/settings', icon: 'ti ti-settings' },
       ]
     }

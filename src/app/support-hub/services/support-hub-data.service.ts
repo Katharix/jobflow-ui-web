@@ -3,6 +3,8 @@ import { Observable } from 'rxjs';
 import { BaseApiService } from '../../services/shared/base-api.service';
 import { SupportHubTicket } from '../models/support-hub-ticket';
 import { SupportHubSession } from '../models/support-hub-session';
+import { SupportHubAuditLog } from '../models/support-hub-audit-log';
+import { SupportHubStaffMember } from '../models/support-hub-staff';
 
 interface SupportHubScreenResponse {
   sessionId: string;
@@ -108,5 +110,35 @@ export class SupportHubDataService {
     }
 
     return this.api.get<CursorPagedResponse<SupportHubPaymentEvent>>(`${this.apiUrl}/organizations/${organizationId}/payments`, params);
+  }
+
+  getAuditLogs(filters?: {
+    cursor?: string;
+    pageSize?: number;
+    fromUtc?: string;
+    toUtc?: string;
+    category?: string;
+    success?: boolean;
+  }): Observable<CursorPagedResponse<SupportHubAuditLog>> {
+    const params: Record<string, string> = {};
+    if (filters?.pageSize) params['pageSize'] = `${filters.pageSize}`;
+    if (filters?.cursor) params['cursor'] = filters.cursor;
+    if (filters?.fromUtc) params['fromUtc'] = filters.fromUtc;
+    if (filters?.toUtc) params['toUtc'] = filters.toUtc;
+    if (filters?.category) params['category'] = filters.category;
+    if (filters?.success !== undefined) params['success'] = `${filters.success}`;
+    return this.api.get<CursorPagedResponse<SupportHubAuditLog>>(`${this.apiUrl}/audit-logs`, params);
+  }
+
+  getStaff(): Observable<SupportHubStaffMember[]> {
+    return this.api.get<SupportHubStaffMember[]>(`${this.apiUrl}/staff`);
+  }
+
+  updateStaffRole(id: string, role: string): Observable<void> {
+    return this.api.put<void>(`${this.apiUrl}/staff/${id}/role`, { role });
+  }
+
+  deactivateStaff(id: string): Observable<void> {
+    return this.api.put<void>(`${this.apiUrl}/staff/${id}/deactivate`, {});
   }
 }
