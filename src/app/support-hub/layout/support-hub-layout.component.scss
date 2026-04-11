@@ -1,26 +1,21 @@
 @use "admin/admin-styles";
 
 $sidebar-width: 256px;
-$sidebar-bg: #0f172a;
-$sidebar-text: #cbd5e1;
-$sidebar-text-dim: rgba(203, 213, 225, 0.5);
+$sidebar-bg: #1E1E24;
+$sidebar-text: #BCBFCC;
+$sidebar-text-dim: rgba(188, 191, 204, 0.5);
 
 .support-hub {
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: $sidebar-width 1fr;
-  transition: grid-template-columns 0.25s ease;
-
-  &--collapsed {
-    grid-template-columns: 0px 1fr;
-
-    .support-hub__sidebar {
-      transform: translateX(-100%);
-    }
-  }
+  font-size: 0.875rem;
 }
 
 .support-hub__sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: $sidebar-width;
+  height: 100%;
   background: $sidebar-bg;
   color: $sidebar-text;
   padding: 1.5rem 1rem;
@@ -29,7 +24,12 @@ $sidebar-text-dim: rgba(203, 213, 225, 0.5);
   gap: 0.5rem;
   overflow-y: auto;
   overflow-x: hidden;
+  z-index: 1040;
   transition: transform 0.25s ease;
+
+  .support-hub--collapsed & {
+    transform: translateX(-100%);
+  }
 }
 
 .support-hub__brand {
@@ -37,7 +37,7 @@ $sidebar-text-dim: rgba(203, 213, 225, 0.5);
   align-items: center;
   gap: 0.75rem;
   padding: 0.25rem 0.5rem 1rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  border-bottom: 1px solid rgba(188, 191, 204, 0.12);
   margin-bottom: 0.5rem;
 
   img { height: 30px; }
@@ -51,7 +51,7 @@ $sidebar-text-dim: rgba(203, 213, 225, 0.5);
   display: block;
   font-weight: 700;
   font-size: 0.95rem;
-  color: #f1f5f9;
+  color: #EDEFF7;
 }
 
 .support-hub__brand-subtitle {
@@ -86,7 +86,7 @@ $sidebar-text-dim: rgba(203, 213, 225, 0.5);
   padding: 0.55rem 0.75rem;
   border-radius: 10px;
   color: $sidebar-text;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 500;
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
@@ -94,8 +94,8 @@ $sidebar-text-dim: rgba(203, 213, 225, 0.5);
   i { font-size: 1.15rem; }
 
   &:hover {
-    background: rgba(148, 163, 184, 0.1);
-    color: #f1f5f9;
+    background: rgba(188, 191, 204, 0.1);
+    color: #EDEFF7;
   }
 
   &.is-active {
@@ -111,7 +111,7 @@ $sidebar-text-dim: rgba(203, 213, 225, 0.5);
   flex-direction: column;
   gap: 0.75rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(148, 163, 184, 0.12);
+  border-top: 1px solid rgba(188, 191, 204, 0.12);
 }
 
 .support-hub__user {
@@ -143,7 +143,7 @@ $sidebar-text-dim: rgba(203, 213, 225, 0.5);
   display: block;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #f1f5f9;
+  color: #EDEFF7;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -194,8 +194,8 @@ $sidebar-text-dim: rgba(203, 213, 225, 0.5);
   i { font-size: 1.1rem; }
 
   &:hover {
-    background: rgba(239, 68, 68, 0.12);
-    color: #fca5a5;
+    background: rgba(188, 191, 204, 0.1);
+    color: #EDEFF7;
   }
 }
 
@@ -203,7 +203,13 @@ $sidebar-text-dim: rgba(203, 213, 225, 0.5);
   display: flex;
   flex-direction: column;
   min-width: 0;
-  background: #f8fafc;
+  margin-left: $sidebar-width;
+  background: #FAFBFF;
+  transition: margin-left 0.25s ease;
+
+  .support-hub--collapsed & {
+    margin-left: 0;
+  }
 }
 
 .support-hub__topbar {
@@ -213,7 +219,7 @@ $sidebar-text-dim: rgba(203, 213, 225, 0.5);
   gap: 1rem;
   padding: 0.75rem 2rem;
   background: #ffffff;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  border-bottom: 1px solid rgba(188, 191, 204, 0.15);
 }
 
 .support-hub__toggle {
@@ -231,7 +237,7 @@ $sidebar-text-dim: rgba(203, 213, 225, 0.5);
 
   i { font-size: 1.25rem; }
 
-  &:hover { background: rgba(148, 163, 184, 0.12); }
+  &:hover { background: rgba(188, 191, 204, 0.12); }
 }
 
 .support-hub__topbar-right {

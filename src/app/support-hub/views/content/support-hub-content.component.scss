@@ -1,4 +1,4 @@
-$border: 1px solid rgba(148, 163, 184, 0.2);
+$border: 1px solid rgba(188, 191, 204, 0.2);
 $radius: 14px;
 
 .sh-content {
@@ -58,7 +58,7 @@ $radius: 14px;
   transition: box-shadow 0.15s;
 
   &:hover {
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    box-shadow: 0 2px 8px rgba(30, 30, 36, 0.06);
   }
 }
 
@@ -110,8 +110,8 @@ $radius: 14px;
   letter-spacing: 0.04em;
   padding: 0.2rem 0.45rem;
   border-radius: 999px;
-  background: rgba(59, 130, 246, 0.1);
-  color: #2563eb;
+  background: rgba(63, 103, 218, 0.1);
+  color: #3F67DA;
 }
 
 .sh-badge-version {
@@ -119,12 +119,12 @@ $radius: 14px;
   font-weight: 700;
   padding: 0.2rem 0.45rem;
   border-radius: 999px;
-  background: rgba(148, 163, 184, 0.2);
-  color: #64748b;
+  background: rgba(188, 191, 204, 0.2);
+  color: #6E7180;
 }
 
 .sh-empty {
-  border: 1px dashed rgba(148, 163, 184, 0.3);
+  border: 1px dashed rgba(188, 191, 204, 0.3);
   border-radius: $radius;
   padding: 2rem;
   text-align: center;

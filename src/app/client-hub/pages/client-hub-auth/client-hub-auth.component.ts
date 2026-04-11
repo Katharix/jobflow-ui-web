@@ -175,6 +175,7 @@ export class ClientHubAuthComponent implements OnInit {
       next: (jwt) => this.completeSignIn(jwt),
       error: (err: unknown) => {
         this.isConsumingToken = false;
+        this.stripTokenFromUrl();
 
         if (err instanceof HttpErrorResponse && [400, 401, 404, 410].includes(err.status)) {
           this.error = this.invalidLinkErrorMessage;
@@ -184,6 +185,14 @@ export class ClientHubAuthComponent implements OnInit {
         this.error = this.redeemErrorMessage;
       },
     });
+  }
+
+  private stripTokenFromUrl(): void {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('token');
+    url.searchParams.delete('jwt');
+    url.searchParams.delete('accessToken');
+    window.history.replaceState({}, '', url.pathname + url.search);
   }
 
   private completeSignIn(token: string): void {

@@ -1,4 +1,4 @@
-$border: 1px solid rgba(148, 163, 184, 0.2);
+$border: 1px solid rgba(188, 191, 204, 0.2);
 $radius: 14px;
 
 .sh-sessions {
@@ -68,9 +68,9 @@ $radius: 14px;
   white-space: nowrap;
 
   &--live     { background: rgba(16, 185, 129, 0.14); color: #059669; }
-  &--queued   { background: rgba(59, 130, 246, 0.1);  color: #2563eb; }
+  &--queued   { background: rgba(63, 103, 218, 0.1);  color: #3F67DA; }
   &--followup { background: rgba(249, 115, 22, 0.14); color: #c2410c; }
-  &--ended    { background: rgba(148, 163, 184, 0.2); color: #64748b; }
+  &--ended    { background: rgba(188, 191, 204, 0.2); color: #6E7180; }
 }
 
 .sh-modal {
@@ -87,7 +87,7 @@ $radius: 14px;
   border: 0;
   padding: 0;
   cursor: pointer;
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(30, 30, 36, 0.55);
 }
 
 .sh-modal__panel {
@@ -98,7 +98,7 @@ $radius: 14px;
   width: min(520px, 90vw);
   display: grid;
   gap: 1rem;
-  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.2);
+  box-shadow: 0 24px 50px rgba(30, 30, 36, 0.2);
 }
 
 .sh-modal__header {
@@ -119,10 +119,10 @@ $radius: 14px;
   border-radius: 10px;
   padding: 0.7rem 1rem;
   text-align: left;
-  background: #f8fafc;
+  background: #FAFBFF;
   cursor: pointer;
   transition: background 0.15s;
 
-  &:hover { background: #e2e8f0; }
+  &:hover { background: #D3D6E0; }
 }
 
