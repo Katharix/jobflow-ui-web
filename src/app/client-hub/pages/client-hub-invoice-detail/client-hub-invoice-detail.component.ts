@@ -67,7 +67,14 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
   }
 
   get paymentProvider(): PaymentProvider {
-    return this.invoice?.paymentProvider ?? PaymentProvider.Stripe;
+    const raw = this.invoice?.paymentProvider as PaymentProvider | string | undefined;
+    if (raw === PaymentProvider.Stripe || raw === PaymentProvider.Square) return raw;
+    if (typeof raw === 'string') {
+      const normalized = raw.trim().toLowerCase();
+      if (normalized === 'square') return PaymentProvider.Square;
+      if (normalized === 'stripe') return PaymentProvider.Stripe;
+    }
+    return PaymentProvider.Stripe;
   }
 
   get paymentProviderLabel(): string {
