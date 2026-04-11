@@ -40,7 +40,7 @@ jobs:
         run: npm run build:staging
 
       - name: Deploy to Firebase Hosting (staging)
-        uses: w9jds/firebase-action@master
+        uses: w9jds/firebase-action@46a04d83eb19539c893cc86fce57ecbd82ba3111 # v15.14.0
         with:
           args: deploy --only hosting --project staging
         env:
