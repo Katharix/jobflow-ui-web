@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - release-*
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag to deploy (format: release-*)"
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -18,8 +24,10 @@ jobs:
     steps:
       - name: Resolve release tag
         id: release-tag
+        env:
+          RELEASE_REF: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag || github.ref_name }}
         run: |
-          echo "value=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          echo "value=$RELEASE_REF" >> "$GITHUB_OUTPUT"
 
       - name: Publish version table
         env:
@@ -42,7 +50,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
   deploy-prod:
-    name: Deploy to Production (${{ github.ref_name }})
+    name: Deploy to Production (${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag || github.ref_name }})
     needs: version-overview
     runs-on: ubuntu-latest
     permissions:
@@ -55,12 +63,12 @@ jobs:
       - name: Checkout tagged release
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag || github.ref_name }}
           fetch-depth: 0
 
       - name: Validate release tag is on master
         env:
-          RELEASE_REF: ${{ github.ref_name }}
+          RELEASE_REF: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag || github.ref_name }}
         run: |
           TAG_SHA="$(git rev-list -n 1 "$RELEASE_REF" 2>/dev/null || true)"
           if [ -z "$TAG_SHA" ]; then
@@ -96,8 +104,10 @@ jobs:
 
       - name: Resolve production deployed version
         id: prod-version
+        env:
+          RELEASE_REF: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag || github.ref_name }}
         run: |
-          echo "value=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          echo "value=$RELEASE_REF" >> "$GITHUB_OUTPUT"
 
       - name: Record production deployed version
         uses: actions/github-script@v7
@@ -134,8 +144,10 @@ jobs:
     steps:
       - name: Resolve release tag
         id: release-tag
+        env:
+          RELEASE_REF: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag || github.ref_name }}
         run: |
-          echo "value=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          echo "value=$RELEASE_REF" >> "$GITHUB_OUTPUT"
 
       - name: Publish final deployment table
         env:
