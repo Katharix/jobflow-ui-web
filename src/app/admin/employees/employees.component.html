@@ -3,6 +3,22 @@
   [subtitle]="'admin.employees.subtitle' | translate"
 ></app-page-header>
 
+<ng-template #actionsTemplate let-employee>
+  <div class="employees-actions">
+    <button type="button" class="btn btn-sm btn-link" (click)="onEditEmployee(employee)">
+      {{ 'admin.employees.actions.edit' | translate }}
+    </button>
+    <button type="button" class="btn btn-sm btn-link text-danger" (click)="onDeleteEmployee(employee)">
+      {{ 'admin.employees.actions.delete' | translate }}
+    </button>
+  </div>
+</ng-template>
+<ng-template #inviteStatusTemplate let-employee>
+  <span class="invite-status" [ngClass]="getInviteStatusClass(employee)">
+    {{ getInviteStatusLabel(employee) }}
+  </span>
+</ng-template>
+
 <!-- Loading or Checking Roles -->
 @if (checkingRoles) {
   <div class="text-center py-5">
@@ -108,21 +124,6 @@
   </section>
 
   <div class="employees-grid">
-    <ng-template #actionsTemplate let-employee>
-      <div class="employees-actions">
-        <button type="button" class="btn btn-sm btn-link" (click)="onEditEmployee(employee)">
-          {{ 'admin.employees.actions.edit' | translate }}
-        </button>
-        <button type="button" class="btn btn-sm btn-link text-danger" (click)="onDeleteEmployee(employee)">
-          {{ 'admin.employees.actions.delete' | translate }}
-        </button>
-      </div>
-    </ng-template>
-    <ng-template #inviteStatusTemplate let-employee>
-      <span class="invite-status" [ngClass]="getInviteStatusClass(employee)">
-        {{ getInviteStatusLabel(employee) }}
-      </span>
-    </ng-template>
     <app-jobflow-grid
       [data]="filteredEmployees"
       [columns]="columns"

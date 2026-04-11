@@ -26,12 +26,30 @@ export interface EstimateStatusChangedEvent {
   status: string;
 }
 
+export interface ClientChatMessageEvent {
+  clientId: string;
+  clientName: string;
+  messagePreview: string;
+  sentAt: string;
+}
+
+export interface ClientJobUpdateEvent {
+  jobId: string;
+  jobTitle: string;
+  clientId: string;
+  clientName: string;
+  message: string;
+  occurredAt: string;
+}
+
 export interface NotifierHubCallbacks {
   onEstimateRevisionRequested?: (payload: EstimateRevisionRequestedEvent) => void;
   onInvoicePaid?: (payload: InvoicePaidEvent) => void;
   onJobStatusChanged?: (payload: JobStatusChangedEvent) => void;
   onAssignmentChanged?: (payload: AssignmentChangedEvent) => void;
   onEstimateStatusChanged?: (payload: EstimateStatusChangedEvent) => void;
+  onClientChatMessage?: (payload: ClientChatMessageEvent) => void;
+  onClientJobUpdate?: (payload: ClientJobUpdateEvent) => void;
   onError?: (error: unknown) => void;
 }
 
@@ -81,6 +99,14 @@ export function useNotifierHub(auth: Auth, callbacks: NotifierHubCallbacks = {})
 
         connection.on('EstimateStatusChanged', (payload: EstimateStatusChangedEvent) => {
           callbacks.onEstimateStatusChanged?.(payload);
+        });
+
+        connection.on('ClientChatMessage', (payload: ClientChatMessageEvent) => {
+          callbacks.onClientChatMessage?.(payload);
+        });
+
+        connection.on('ClientJobUpdate', (payload: ClientJobUpdateEvent) => {
+          callbacks.onClientJobUpdate?.(payload);
         });
       }
 
