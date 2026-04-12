@@ -99,7 +99,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    organizationId: string | null = null;
    organizationName = 'your organization';
    currentDateTime = '';
-   showOnboardingChecklist = true;
+   showOnboardingChecklist = false;
    private checklistCompleted = false;
    readonly welcomeSubtext = 'Here\'s your command center for today-start with what matters most.';
 

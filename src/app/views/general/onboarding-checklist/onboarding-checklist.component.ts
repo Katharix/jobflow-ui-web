@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TimelineModule } from 'primeng/timeline';
@@ -12,7 +12,7 @@ import { OnboardingService, OnboardingStepDto } from './services/onboarding.serv
    templateUrl: './onboarding-checklist.component.html',
    styleUrls: ['./onboarding-checklist.component.scss']
 })
-export class OnboardingChecklistComponent implements OnChanges {
+export class OnboardingChecklistComponent implements OnChanges, OnInit {
    private onboardingService = inject(OnboardingService);
    private router = inject(Router);
 
@@ -23,6 +23,12 @@ export class OnboardingChecklistComponent implements OnChanges {
    steps: OnboardingStepDto[] = [];
    nextStep: OnboardingStepDto | null = null;
    private completionSynced = false;
+
+   ngOnInit(): void {
+      if (this.organizationId && this.steps.length === 0) {
+         this.load();
+      }
+   }
 
    ngOnChanges(changes: SimpleChanges): void {
       if (changes['organizationId'] && this.organizationId) {
