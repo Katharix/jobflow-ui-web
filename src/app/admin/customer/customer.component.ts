@@ -51,6 +51,8 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
    private cursorStack: string[] = [];
    clientsLoading = false;
    totalClientCount: number | null = null;
+   private withEmailCount: number | null = null;
+   private withPhoneCount: number | null = null;
    columns: JobflowGridColumn[] = [];
    searchText = '';
    sortBy = 'createdAt';
@@ -182,6 +184,8 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
             this.items = page.items ?? [];
             this.nextCursor = page.nextCursor ?? null;
             this.totalClientCount = page.totalCount ?? null;
+            this.withEmailCount = page.withEmailCount ?? null;
+            this.withPhoneCount = page.withPhoneCount ?? null;
             this.refreshMetrics();
          });
 
@@ -538,9 +542,9 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
    }
 
    private refreshMetrics(): void {
-      const clientsWithEmail = this.items.filter(client => !!client.emailAddress?.trim()).length;
-      const clientsWithPhone = this.items.filter(client => !!client.phoneNumber?.trim()).length;
       const totalClients = this.totalClientCount ?? this.items.length;
+      const clientsWithEmail = this.withEmailCount ?? this.items.filter(client => !!client.emailAddress?.trim()).length;
+      const clientsWithPhone = this.withPhoneCount ?? this.items.filter(client => !!client.phoneNumber?.trim()).length;
 
       this.metrics$.next({
          totalClients,
