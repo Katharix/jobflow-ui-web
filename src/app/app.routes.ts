@@ -5,39 +5,8 @@ import {HomeComponent} from './views/home/home.component';
 import {authGuard} from './core/guards/auth.guard';
 import {subscriptionGuard} from './core/guards/subscription.guard';
 import {subscriptionAccessGuard} from './core/guards/subscription-access.guard';
-import {DashboardComponent} from './admin/dashboard/dashboard.component';
-import {SubscribeComponent} from './views/subscription-views/subscribe/subscribe.component';
 import {AuthLayoutComponent} from './layouts/auth-layout/auth-layout.component';
-import {InvoiceComponent} from './views/general/invoice/invoice.component';
 import {GeneralLayoutComponent} from './layouts/general-layout/general-layout.component';
-import {OnboardingChecklistComponent} from './views/general/onboarding-checklist/onboarding-checklist.component';
-import {BrandingComponent} from './admin/branding/branding.component';
-import {ChatComponent} from './admin/chat/chat.component';
-import {CompanyComponent} from './admin/company/company.component';
-import {EmployeesComponent} from './admin/employees/employees.component';
-import {PriceBookComponent} from './admin/pricebook/pricebook.component';
-import {JobScheduleComponent} from './admin/jobs/job-schedule/job-schedule.component';
-import {EmployeeRolesComponent} from './admin/employee-roles/employee-roles.component';
-import {CustomerComponent} from "./admin/customer/customer.component";
-import {JobInvoiceComponent} from "./admin/jobs/job-invoice/job-invoice.component";
-import {
-   ConnectPaymentComponent
-} from "./views/general/onboarding-checklist/onboarding-steps/connect-payment/connect-payment.component";
-import { OnboardingQuickStartComponent } from './views/general/onboarding-checklist/onboarding-steps/quick-start/quick-start.component';
-import {JobComponent} from "./admin/jobs/job.component";
-import {InvoicesComponent} from "./admin/invoices/invoices.component";
-import {HelpComponent} from "./admin/help/help.component";
-import {EstimatesComponent} from "./admin/estimates/estimates.component";
-import {EstimateComponent} from "./views/general/estimate/estimate.component";
-import {NotFoundComponent} from "./views/general/not-found/not-found.component";
-import {TermsComponent} from "./views/general/terms/terms.component";
-import {PrivacyComponent} from "./views/general/privacy/privacy.component";
-import {BillingPaymentsComponent} from './admin/billing-payments/billing-payments.component';
-import { SubscriptionManagementComponent } from './admin/subscription-management/subscription-management.component';
-import { DispatchComponent } from './admin/dispatch/dispatch.component';
-import { WorkflowSettingsComponent } from './admin/settings/workflow-settings/workflow-settings.component';
-import { UserProfileComponent } from './views/general/user-profile/user-profile.component';
-import { SubscriptionRequiredComponent } from './views/subscription-views/subscription-required/subscription-required.component';
 
 
 export const routes: Routes = [
@@ -46,8 +15,8 @@ export const routes: Routes = [
       component: PublicLayoutComponent,
       children: [
          {path: '', component: HomeComponent},
-         {path: 'terms', component: TermsComponent},
-         {path: 'privacy', component: PrivacyComponent}
+         {path: 'terms', loadComponent: () => import('./views/general/terms/terms.component').then(m => m.TermsComponent)},
+         {path: 'privacy', loadComponent: () => import('./views/general/privacy/privacy.component').then(m => m.PrivacyComponent)}
       ]
    },
    {path: 'i', loadChildren: () => import('./views/general/invite-accept/invite.routes').then(m => m.INVITE_ROUTES)},
@@ -58,18 +27,43 @@ export const routes: Routes = [
       canActivate: [authGuard],
       canActivateChild: [subscriptionAccessGuard],
       children: [
-         {path: '', component: DashboardComponent},
-         {path: 'settings/branding', component: BrandingComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
-         {path: 'settings/workflow', component: WorkflowSettingsComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
-         {path: 'messaging', component: ChatComponent},
-         {path: 'company', component: CompanyComponent, data: { allowExpiredAccess: true }},
+         {path: '', loadComponent: () => import('./admin/dashboard/dashboard.component').then(m => m.DashboardComponent)},
+         {
+            path: 'settings/branding',
+            canActivate: [subscriptionGuard],
+            data: {minPlan: 'Flow'},
+            loadComponent: () => import('./admin/branding/branding.component').then(m => m.BrandingComponent)
+         },
+         {
+            path: 'settings/workflow',
+            canActivate: [subscriptionGuard],
+            data: {minPlan: 'Flow'},
+            loadComponent: () => import('./admin/settings/workflow-settings/workflow-settings.component').then(m => m.WorkflowSettingsComponent)
+         },
+         {path: 'messaging', loadComponent: () => import('./admin/chat/chat.component').then(m => m.ChatComponent)},
+         {path: 'company', loadComponent: () => import('./admin/company/company.component').then(m => m.CompanyComponent), data: { allowExpiredAccess: true }},
 
-         {path: 'employees', component: EmployeesComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
-         {path: 'employees/roles', component: EmployeeRolesComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
+         {
+            path: 'employees',
+            canActivate: [subscriptionGuard],
+            data: {minPlan: 'Flow'},
+            loadComponent: () => import('./admin/employees/employees.component').then(m => m.EmployeesComponent)
+         },
+         {
+            path: 'employees/roles',
+            canActivate: [subscriptionGuard],
+            data: {minPlan: 'Flow'},
+            loadComponent: () => import('./admin/employee-roles/employee-roles.component').then(m => m.EmployeeRolesComponent)
+         },
 
-         {path: 'scheduling-jobs', component: JobScheduleComponent},
+         {path: 'scheduling-jobs', loadComponent: () => import('./admin/jobs/job-schedule/job-schedule.component').then(m => m.JobScheduleComponent)},
 
-         {path: 'pricebook', component: PriceBookComponent, canActivate: [subscriptionGuard], data: {minPlan: 'Flow'}},
+         {
+            path: 'pricebook',
+            canActivate: [subscriptionGuard],
+            data: {minPlan: 'Flow'},
+            loadComponent: () => import('./admin/pricebook/pricebook.component').then(m => m.PriceBookComponent)
+         },
          {
             path: 'pricebook/services',
             canActivate: [subscriptionGuard],
@@ -88,19 +82,19 @@ export const routes: Routes = [
          },
          {
             path: 'clients/create',
-            component: CustomerComponent
+            loadComponent: () => import('./admin/customer/customer.component').then(m => m.CustomerComponent)
          },
          {
             path: 'jobs',
-            component: JobComponent
+            loadComponent: () => import('./admin/jobs/job.component').then(m => m.JobComponent)
          },
          {
             path: 'jobs/:jobId/schedule',
-            component: JobScheduleComponent
+            loadComponent: () => import('./admin/jobs/job-schedule/job-schedule.component').then(m => m.JobScheduleComponent)
          },
          {
             path: 'jobs/:jobId/invoice',
-            component: JobInvoiceComponent
+            loadComponent: () => import('./admin/jobs/job-invoice/job-invoice.component').then(m => m.JobInvoiceComponent)
          },
          {
             path: 'jobs/templates',
@@ -112,37 +106,37 @@ export const routes: Routes = [
          },
          {
             path: 'invoices',
-            component: InvoicesComponent
+            loadComponent: () => import('./admin/invoices/invoices.component').then(m => m.InvoicesComponent)
          },
          {
             path: 'estimates',
-            component: EstimatesComponent
+            loadComponent: () => import('./admin/estimates/estimates.component').then(m => m.EstimatesComponent)
          },
          {
             path: 'help',
-            component: HelpComponent
+            loadComponent: () => import('./admin/help/help.component').then(m => m.HelpComponent)
          },
          {
             path: 'dispatch',
-            component: DispatchComponent
+            loadComponent: () => import('./admin/dispatch/dispatch.component').then(m => m.DispatchComponent)
          },
          {
             path: 'connectedpayment',
-            component: ConnectPaymentComponent
+            loadComponent: () => import('./views/general/onboarding-checklist/onboarding-steps/connect-payment/connect-payment.component').then(m => m.ConnectPaymentComponent)
          },
          {
             path: 'onboarding/quick-start',
-            component: OnboardingQuickStartComponent,
             canActivate: [subscriptionGuard],
-            data: { minPlan: 'Go' }
+            data: { minPlan: 'Go' },
+            loadComponent: () => import('./views/general/onboarding-checklist/onboarding-steps/quick-start/quick-start.component').then(m => m.OnboardingQuickStartComponent)
          },
          {
             path: 'billing-payments',
-            component: BillingPaymentsComponent
+            loadComponent: () => import('./admin/billing-payments/billing-payments.component').then(m => m.BillingPaymentsComponent)
          },
          {
             path: 'subscription-management',
-            component: SubscriptionManagementComponent
+            loadComponent: () => import('./admin/subscription-management/subscription-management.component').then(m => m.SubscriptionManagementComponent)
          }
       ]
    },
@@ -154,8 +148,8 @@ export const routes: Routes = [
       children: [
          {
             path: '',
-            component: UserProfileComponent,
-            data: { minPlan: 'Go' }
+            data: { minPlan: 'Go' },
+            loadComponent: () => import('./views/general/user-profile/user-profile.component').then(m => m.UserProfileComponent)
          }
       ]
    },
@@ -167,7 +161,7 @@ export const routes: Routes = [
       children: [
          {
             path: '',
-            component: OnboardingChecklistComponent
+            loadComponent: () => import('./views/general/onboarding-checklist/onboarding-checklist.component').then(m => m.OnboardingChecklistComponent)
          }
       ]
    },
@@ -187,33 +181,33 @@ export const routes: Routes = [
       path: 'subscribe',
       component: AuthLayoutComponent,
       children: [
-         {path: '', component: SubscribeComponent},
+         {path: '', loadComponent: () => import('./views/subscription-views/subscribe/subscribe.component').then(m => m.SubscribeComponent)},
       ]
    },
    {
       path: 'subscription-required',
       component: GeneralLayoutComponent,
       children: [
-         { path: '', component: SubscriptionRequiredComponent }
+         {path: '', loadComponent: () => import('./views/subscription-views/subscription-required/subscription-required.component').then(m => m.SubscriptionRequiredComponent)}
       ]
    },
    {
       path: 'invoice/view/:id',
       component: GeneralLayoutComponent,
       children: [
-         {path: '', component: InvoiceComponent},
+         {path: '', loadComponent: () => import('./views/general/invoice/invoice.component').then(m => m.InvoiceComponent)},
       ]
    },
    {
       path: 'estimate/view/:id',
       component: GeneralLayoutComponent,
       children: [
-         {path: '', component: EstimateComponent},
+         {path: '', loadComponent: () => import('./views/general/estimate/estimate.component').then(m => m.EstimateComponent)},
       ]
    },
    {
       path: '**',
-      component: NotFoundComponent
+      loadComponent: () => import('./views/general/not-found/not-found.component').then(m => m.NotFoundComponent)
    }
 ];
 

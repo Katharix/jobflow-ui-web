@@ -36,8 +36,6 @@ import {BehaviorSubject, Subscription, Subject, catchError, debounceTime, distin
    styleUrls: ['./customer.component.scss'],
 })
 export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
-   private readonly clientPageSize = 50;
-
    private customers = inject(CustomersService);
    private orgContext = inject(OrganizationContextService);
    private router = inject(Router);
@@ -47,16 +45,15 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
 
    organizationId: string | null = null;
    items: Client[] = [];
-   nextCursor: string | null = null;
-   private cursorStack: string[] = [];
    clientsLoading = false;
-   totalClientCount: number | null = null;
+   totalClientCount = 0;
    private withEmailCount: number | null = null;
    private withPhoneCount: number | null = null;
    columns: JobflowGridColumn[] = [];
    searchText = '';
    sortBy = 'createdAt';
    sortDirection: 'asc' | 'desc' = 'desc';
+   currentPage = 0;
    private readonly initialMetrics = {
       totalClients: 0,
       clientsWithEmail: 0,
@@ -79,7 +76,7 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
    private suppressNextDrawerClosedHandler = false;
    private importPollSub: Subscription | null = null;
    private readonly searchInput$ = new Subject<string>();
-   private readonly loadPage$ = new Subject<string | undefined>();
+   private readonly loadPage$ = new Subject<number>();
    private searchInputSub: Subscription | null = null;
    private loadPageSub: Subscription | null = null;
    private orgSub: Subscription | null = null;
@@ -158,16 +155,17 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
       }
    ];
 
-   pageSettings: JobflowGridPageSettings = {pageSize: 20, pageSizes: [10, 20, 50, 100]};
+   pageSettings: JobflowGridPageSettings = {pageSize: 50, pageSizes: [20, 50, 100]};
 
    ngOnInit(): void {
       this.loadPageSub = this.loadPage$
          .pipe(
-            switchMap((cursor) => {
+            switchMap((page) => {
                this.clientsLoading = true;
+               const offset = page * (this.pageSettings.pageSize ?? 50);
                return this.customers.getAllByOrganizationPaged({
-                  cursor,
-                  pageSize: this.clientPageSize,
+                  cursor: offset > 0 ? btoa(`off|${offset}`) : undefined,
+                  pageSize: this.pageSettings.pageSize ?? 50,
                   missingEmailOnly: this.showMissingEmailOnly,
                   search: this.searchText,
                   sortBy: this.sortBy,
@@ -182,8 +180,7 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
             }
 
             this.items = page.items ?? [];
-            this.nextCursor = page.nextCursor ?? null;
-            this.totalClientCount = page.totalCount ?? null;
+            this.totalClientCount = page.totalCount ?? 0;
             this.withEmailCount = page.withEmailCount ?? null;
             this.withPhoneCount = page.withPhoneCount ?? null;
             this.refreshMetrics();
@@ -238,31 +235,22 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
 
    load() {
       this.metrics$.next(this.initialMetrics);
-      this.cursorStack = [];
+      this.currentPage = 0;
       this.loadClientPage();
    }
 
-   private loadClientPage(cursor?: string): void {
-      this.loadPage$.next(cursor);
+   private loadClientPage(): void {
+      this.loadPage$.next(this.currentPage);
    }
 
-   get canGoBack(): boolean {
-      return this.cursorStack.length > 0;
-   }
-
-   onNextPage(): void {
-      if (!this.nextCursor || this.clientsLoading) return;
-      this.cursorStack.push(this.nextCursor);
-      this.loadClientPage(this.nextCursor);
-   }
-
-   onPrevPage(): void {
-      if (!this.canGoBack || this.clientsLoading) return;
-      this.cursorStack.pop();
-      const previousCursor = this.cursorStack.length > 0
-         ? this.cursorStack[this.cursorStack.length - 1]
-         : undefined;
-      this.loadClientPage(previousCursor);
+   onPageChange(event: { page: number; pageSize: number }): void {
+      if (event.pageSize !== this.pageSettings.pageSize) {
+         this.pageSettings = { ...this.pageSettings, pageSize: event.pageSize };
+         this.currentPage = 0;
+      } else {
+         this.currentPage = event.page;
+      }
+      this.loadClientPage();
    }
 
    get filteredItems(): Client[] {
@@ -542,7 +530,7 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
    }
 
    private refreshMetrics(): void {
-      const totalClients = this.totalClientCount ?? this.items.length;
+      const totalClients = this.totalClientCount;
       const clientsWithEmail = this.withEmailCount ?? this.items.filter(client => !!client.emailAddress?.trim()).length;
       const clientsWithPhone = this.withPhoneCount ?? this.items.filter(client => !!client.phoneNumber?.trim()).length;
 
