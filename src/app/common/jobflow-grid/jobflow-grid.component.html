@@ -44,11 +44,15 @@
       [rows]="pageSize"
       [rowsPerPageOptions]="pageSizes"
       [sortMode]="'multiple'"
-      [globalFilterFields]="globalFilterFields"
+      [globalFilterFields]="serverSide ? [] : globalFilterFields"
       [tableStyle]="{ 'min-width': '100%' }"
       [scrollable]="true"
       [scrollHeight]="gridHeight"
+      [loading]="loading"
+      [lazy]="serverSide"
+      [totalRecords]="serverSide ? totalRecords : 0"
       (onSort)="onSortChange($event)"
+      (onLazyLoad)="onLazyLoad($any($event))"
       >
       <ng-template pTemplate="header">
         <tr>

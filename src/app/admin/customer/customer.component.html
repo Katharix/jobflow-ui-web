@@ -73,11 +73,6 @@
     </div>
 
     <div class="clientflow-grid">
-      <div class="list-pagination-controls mb-2">
-        <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBack || clientsLoading" (click)="onPrevPage()">Previous</button>
-        <button type="button" class="btn btn-sm btn-outline-primary" [disabled]="!nextCursor || clientsLoading" (click)="onNextPage()">Next</button>
-      </div>
-
       <ng-template #clientNameTemplate let-client>
         <div class="client-cell">
           <div class="client-title">{{ client.firstName }} {{ client.lastName }}</div>
@@ -90,9 +85,13 @@
         [columns]="columns"
         [pageSettings]="pageSettings"
         [showSearchBar]="true"
+        [serverSide]="true"
+        [totalRecords]="totalClientCount"
+        [loading]="clientsLoading"
         (commandClick)="onCommandClick($event)"
         (searchChange)="onGridSearchChange($event)"
         (sortChange)="onGridSortChange($event)"
+        (pageChange)="onPageChange($event)"
       ></app-jobflow-grid>
     </div>
   </section>
