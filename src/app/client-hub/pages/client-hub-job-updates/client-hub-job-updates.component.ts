@@ -5,7 +5,7 @@ import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import {
   ClientHubEstimate,
   ClientHubJobSummary,
@@ -106,14 +106,10 @@ export class ClientHubJobUpdatesComponent implements OnInit, OnDestroy {
     forkJoin({
       job: this.clientHubService.getJobById(id),
       timeline: this.clientHubService.getJobTimeline(id),
-      estimates: this.clientHubService.getEstimates(),
     }).subscribe({
-      next: ({ job, timeline, estimates }) => {
+      next: ({ job, timeline }) => {
         this.job = job;
         this.timeline = timeline ?? [];
-        this.pendingEstimates = (estimates ?? []).filter(
-          (estimate) => this.resolveEstimateStatus(estimate.status) === EstimateStatus.Sent,
-        );
         this.loadAttachmentPreviews(job.id, this.timeline);
         this.isLoading = false;
       },
@@ -126,6 +122,14 @@ export class ClientHubJobUpdatesComponent implements OnInit, OnDestroy {
 
         this.error = 'Unable to load updates right now.';
       },
+    });
+
+    this.clientHubService.getEstimates().pipe(
+      catchError(() => of([] as ClientHubEstimate[])),
+    ).subscribe((estimates) => {
+      this.pendingEstimates = (estimates ?? []).filter(
+        (estimate) => this.resolveEstimateStatus(estimate.status) === EstimateStatus.Sent,
+      );
     });
   }
 

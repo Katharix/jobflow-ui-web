@@ -31,7 +31,9 @@ export class ClientHubInvoicesComponent implements OnInit {
     this.load();
   }
 
-  statusLabel(status: InvoiceStatus | number): string {
+  statusLabel(status: InvoiceStatus | number | string): string {
+    const normalized = this.resolveStatus(status);
+
     const map: Record<number, string> = {
       [InvoiceStatus.Draft]: 'Draft',
       [InvoiceStatus.Sent]: 'Sent',
@@ -40,14 +42,13 @@ export class ClientHubInvoicesComponent implements OnInit {
       [InvoiceStatus.Unpaid]: 'Unpaid',
     };
 
-    const key = Number(status);
-    return map[key] ?? 'Unknown';
+    return map[normalized] ?? 'Unknown';
   }
 
-  statusClass(status: InvoiceStatus | number): string {
-    const key = Number(status);
+  statusClass(status: InvoiceStatus | number | string): string {
+    const normalized = this.resolveStatus(status);
 
-    switch (key) {
+    switch (normalized) {
       case InvoiceStatus.Paid:
         return 'is-paid';
       case InvoiceStatus.Overdue:
@@ -59,6 +60,23 @@ export class ClientHubInvoicesComponent implements OnInit {
       default:
         return 'is-draft';
     }
+  }
+
+  private resolveStatus(status: InvoiceStatus | number | string): number {
+    if (typeof status === 'number') return status;
+
+    const asNumber = Number(status);
+    if (!Number.isNaN(asNumber)) return asNumber;
+
+    const stringMap: Record<string, InvoiceStatus> = {
+      draft: InvoiceStatus.Draft,
+      sent: InvoiceStatus.Sent,
+      paid: InvoiceStatus.Paid,
+      overdue: InvoiceStatus.Overdue,
+      unpaid: InvoiceStatus.Unpaid,
+    };
+
+    return stringMap[String(status).toLowerCase()] ?? -1;
   }
 
   formatDate(value?: string): string {
