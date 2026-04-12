@@ -50,6 +50,7 @@
       [scrollHeight]="gridHeight"
       [loading]="loading"
       [lazy]="serverSide"
+      [lazyLoadOnInit]="false"
       [totalRecords]="serverSide ? totalRecords : 0"
       (onSort)="onSortChange($event)"
       (onLazyLoad)="onLazyLoad($any($event))"
