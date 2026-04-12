@@ -96,7 +96,6 @@ export class JobflowGridComponent {
    @Input() serverSide = false;
    @Input() totalRecords = 0;
    @Input() loading = false;
-   private lazyInitFired = false;
 
    /** Events */
    @Output() commandClick = new EventEmitter<JobflowGridCommandClickEventArgs>();
@@ -201,11 +200,6 @@ export class JobflowGridComponent {
 
    onLazyLoad(event: Record<string, unknown>): void {
       if (!this.serverSide) return;
-      // Skip the automatic lazy-load on init — the parent triggers the first load via its own lifecycle
-      if (!this.lazyInitFired) {
-         this.lazyInitFired = true;
-         return;
-      }
       const first = (event['first'] as number) ?? 0;
       const rows = (event['rows'] as number) ?? this.pageSize;
       const page = Math.floor(first / rows);

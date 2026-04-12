@@ -25,7 +25,7 @@ import {
    ClientImportPreviewResponse,
    CustomersService
 } from "./services/customer.service";
-import {BehaviorSubject, Subscription, Subject, catchError, debounceTime, distinctUntilChanged, interval, of, startWith, switchMap} from 'rxjs';
+import {BehaviorSubject, Subscription, Subject, catchError, debounceTime, distinctUntilChanged, EMPTY, interval, of, startWith, switchMap} from 'rxjs';
 
 
 @Component({
@@ -170,7 +170,12 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
                   search: this.searchText,
                   sortBy: this.sortBy,
                   sortDirection: this.sortDirection
-               });
+               }).pipe(
+                  catchError(() => {
+                     this.clientsLoading = false;
+                     return EMPTY;
+                  })
+               );
             })
          )
          .subscribe(page => {
