@@ -92,11 +92,18 @@ export class JobflowGridComponent {
    @Input() allowFiltering = true;
    @Input() enableStickyHeader = true;
 
+   /** Server-side mode: disables PrimeNG built-in paginator/filter, delegates to parent */
+   @Input() serverSide = false;
+   @Input() totalRecords = 0;
+   @Input() loading = false;
+   private lazyInitFired = false;
+
    /** Events */
    @Output() commandClick = new EventEmitter<JobflowGridCommandClickEventArgs>();
    @Output() toolbarClick = new EventEmitter<JobflowGridToolbarClickEventArgs>();
    @Output() searchChange = new EventEmitter<string>();
    @Output() sortChange = new EventEmitter<JobflowGridSortChangeEvent>();
+   @Output() pageChange = new EventEmitter<{ page: number; pageSize: number }>();
 
    readonly defaultPageSize = 20;
 
@@ -165,13 +172,17 @@ export class JobflowGridComponent {
 
    onSearchChange(): void {
       const nextSearch = this.searchText?.trim() ?? '';
-      this.table?.filterGlobal(nextSearch, 'contains');
+      if (!this.serverSide) {
+         this.table?.filterGlobal(nextSearch, 'contains');
+      }
       this.searchChange.emit(nextSearch);
    }
 
    clearSearch(): void {
       this.searchText = '';
-      this.table?.clear();
+      if (!this.serverSide) {
+         this.table?.clear();
+      }
       this.searchChange.emit('');
    }
 
@@ -186,6 +197,19 @@ export class JobflowGridComponent {
          field: primaryField,
          direction: order === 1 ? 'asc' : 'desc'
       });
+   }
+
+   onLazyLoad(event: Record<string, unknown>): void {
+      if (!this.serverSide) return;
+      // Skip the automatic lazy-load on init — the parent triggers the first load via its own lifecycle
+      if (!this.lazyInitFired) {
+         this.lazyInitFired = true;
+         return;
+      }
+      const first = (event['first'] as number) ?? 0;
+      const rows = (event['rows'] as number) ?? this.pageSize;
+      const page = Math.floor(first / rows);
+      this.pageChange.emit({ page, pageSize: rows });
    }
 
    getCellValue(row: unknown, col: JobflowGridColumn): unknown {
