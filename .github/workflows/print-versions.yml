@@ -3,7 +3,7 @@ name: Print Versions
 on:
   workflow_dispatch:
   workflow_run:
-    types: [requested, in_progress, completed]
+    types: [completed]
     workflows:
       - CI
       - Deploy Angular to Firebase Hosting
