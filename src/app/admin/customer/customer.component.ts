@@ -163,6 +163,7 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
             switchMap((page) => {
                this.clientsLoading = true;
                const offset = page * (this.pageSettings.pageSize ?? 50);
+               console.log('[CUSTOMER] loadPage$ switchMap', { page, offset, cursor: offset > 0 ? btoa(`off|${offset}`) : undefined });
                return this.customers.getAllByOrganizationPaged({
                   cursor: offset > 0 ? btoa(`off|${offset}`) : undefined,
                   pageSize: this.pageSettings.pageSize ?? 50,
@@ -171,7 +172,8 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
                   sortBy: this.sortBy,
                   sortDirection: this.sortDirection
                }).pipe(
-                  catchError(() => {
+                  catchError((err) => {
+                     console.error('[CUSTOMER] API error', err);
                      this.clientsLoading = false;
                      return EMPTY;
                   })
@@ -180,6 +182,7 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
          )
          .subscribe(page => {
             this.clientsLoading = false;
+            console.log('[CUSTOMER] API response', { itemCount: page?.items?.length, totalCount: page?.totalCount, firstItem: page?.items?.[0] });
             if (!page) {
                return;
             }
