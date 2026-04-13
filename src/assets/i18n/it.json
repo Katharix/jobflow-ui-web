@@ -933,7 +933,8 @@
       "labels": {
         "employee": "Dipendente",
         "unknownRole": "Ruolo sconosciuto",
-        "missing": "-"
+        "missing": "-",
+        "notNeeded": "Non necessario"
       },
       "toast": {
         "rolesRequired": "Devi creare almeno un ruolo prima di aggiungere dipendenti.",

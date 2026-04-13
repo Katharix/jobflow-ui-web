@@ -488,7 +488,9 @@ export class EmployeesComponent implements OnInit, OnDestroy {
    getInviteStatusLabel(employee: Employee): string {
       const invite = this.findInviteByEmployee(employee);
       if (!invite) {
-         return this.translate.instant('admin.employees.labels.missing');
+         return employee.userId
+            ? this.translate.instant('admin.employees.labels.notNeeded')
+            : this.translate.instant('admin.employees.labels.missing');
       }
 
       return this.getInviteStatusLabelForInvite(invite);
