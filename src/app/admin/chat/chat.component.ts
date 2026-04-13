@@ -196,32 +196,43 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.typingTimeoutId) {
+      window.clearTimeout(this.typingTimeoutId);
+    }
+    if (this.typingIndicatorTimeoutId) {
+      window.clearTimeout(this.typingIndicatorTimeoutId);
+    }
     if (this.selectedConversation) {
       this.chatService.leaveConversation(this.selectedConversation.id);
     }
   }
 
   loadConversations() {
-    this.http.get<ChatConversation[]>(`${this.apiBaseUrl}/chat/conversations`).subscribe((convos) => {
-      const selectedConversationId = this.selectedConversation?.id;
-      this.conversations = convos.map((convo) => this.normalizeConversation(convo));
+    this.http.get<ChatConversation[]>(`${this.apiBaseUrl}/chat/conversations`).subscribe({
+      next: (convos) => {
+        const selectedConversationId = this.selectedConversation?.id;
+        this.conversations = convos.map((convo) => this.normalizeConversation(convo));
 
-      if (selectedConversationId) {
-        const matchedConversation = this.conversations.find((convo) => convo.id === selectedConversationId) ?? null;
+        if (selectedConversationId) {
+          const matchedConversation = this.conversations.find((convo) => convo.id === selectedConversationId) ?? null;
 
-        if (!matchedConversation) {
-          this.selectedConversation = null;
-          this.messages = [];
-          this.chatPanelVisible = false;
-          this.hasMoreMessages = false;
-          this.isRemoteTyping = false;
-          this.cdr.markForCheck();
-          return;
+          if (!matchedConversation) {
+            this.selectedConversation = null;
+            this.messages = [];
+            this.chatPanelVisible = false;
+            this.hasMoreMessages = false;
+            this.isRemoteTyping = false;
+            this.cdr.markForCheck();
+            return;
+          }
+
+          this.selectedConversation = matchedConversation;
         }
-
-        this.selectedConversation = matchedConversation;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.cdr.markForCheck();
       }
-      this.cdr.markForCheck();
     });
   }
 
@@ -459,7 +470,27 @@ export class ChatComponent implements OnInit, OnDestroy {
 
       this.http.post<ChatConversation>(`${this.apiBaseUrl}/chat/conversations`, {
         participantIds: [contact.userId]
-      }).subscribe((newConvo) => {
+      }).subscribe({
+        next: (newConvo) => {
+          const normalizedConversation = this.normalizeConversation(newConvo);
+          this.conversations = [
+            normalizedConversation,
+            ...this.conversations.filter((convo) => convo.id !== normalizedConversation.id)
+          ];
+          this.selectConversation(normalizedConversation);
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.cdr.markForCheck();
+        }
+      });
+      return;
+    }
+
+    this.http.post<ChatConversation>(`${this.apiBaseUrl}/chat/conversations/client`, {
+      organizationClientId: contact.id
+    }).subscribe({
+      next: (newConvo) => {
         const normalizedConversation = this.normalizeConversation(newConvo);
         this.conversations = [
           normalizedConversation,
@@ -467,20 +498,10 @@ export class ChatComponent implements OnInit, OnDestroy {
         ];
         this.selectConversation(normalizedConversation);
         this.cdr.markForCheck();
-      });
-      return;
-    }
-
-    this.http.post<ChatConversation>(`${this.apiBaseUrl}/chat/conversations/client`, {
-      organizationClientId: contact.id
-    }).subscribe((newConvo) => {
-      const normalizedConversation = this.normalizeConversation(newConvo);
-      this.conversations = [
-        normalizedConversation,
-        ...this.conversations.filter((convo) => convo.id !== normalizedConversation.id)
-      ];
-      this.selectConversation(normalizedConversation);
-      this.cdr.markForCheck();
+      },
+      error: () => {
+        this.cdr.markForCheck();
+      }
     });
   }
 

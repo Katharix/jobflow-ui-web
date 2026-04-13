@@ -1,5 +1,6 @@
 import {CommonModule} from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, ViewChild, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, OnInit, ViewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {FormsModule, NgForm} from '@angular/forms';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {Organization, OrganizationRequest, OrganizationDto} from '../../models/organization';
@@ -34,6 +35,7 @@ export class RegisterComponent implements OnInit {
    private translate = inject(TranslateService);
    private authService = inject(AuthService);
    private cdr = inject(ChangeDetectorRef);
+   private destroyRef = inject(DestroyRef);
 
    @ViewChild('form') form?: NgForm;
 
@@ -67,7 +69,10 @@ export class RegisterComponent implements OnInit {
       }
 
       this.route.queryParamMap
-         .pipe(map(params => this.normalizeOrganizationId(params.get('organizationId'))))
+         .pipe(
+            map(params => this.normalizeOrganizationId(params.get('organizationId'))),
+            takeUntilDestroyed(this.destroyRef)
+         )
          .subscribe((orgId) => {
             if (orgId && orgId !== this.organizationId) {
                this.organizationId = orgId;
