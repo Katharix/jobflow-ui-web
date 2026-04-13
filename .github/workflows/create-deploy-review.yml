@@ -25,7 +25,7 @@ jobs:
             const { owner, repo } = context.repo;
             const run = context.payload.workflow_run;
             const sha = run.head_sha;
-            const branch = run.head_branch || 'master';
+            const branch = run.head_branch || 'main';
 
             // Verify the staging deploy job actually ran
             const jobs = await github.rest.actions.listJobsForWorkflowRun({

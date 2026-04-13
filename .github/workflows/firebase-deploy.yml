@@ -7,7 +7,7 @@ on:
     types:
       - completed
     branches:
-      - master
+      - main
 
 permissions:
   contents: read
@@ -16,7 +16,7 @@ permissions:
 jobs:
   deploy-staging:
     name: Deploy to Staging (${{ github.event.workflow_run.head_sha }})
-    if: ${{ github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' }}
+    if: ${{ github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
     runs-on: ubuntu-latest
     environment:
       name: Staging
@@ -77,7 +77,7 @@ jobs:
 
   create-release-tag:
     name: Create Release Tag
-    if: ${{ github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' }}
+    if: ${{ github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
     needs: deploy-staging
     runs-on: ubuntu-latest
     permissions:
