@@ -115,14 +115,28 @@ export class JobAssignmentFormComponent implements OnInit, OnChanges {
    }
 
    ngOnChanges(changes: SimpleChanges): void {
-      if (!changes['scheduleSettings'] || !this.form) {
+      if (!this.form) {
          return;
       }
 
-      const nextDefault = this.scheduleSettings?.defaultWindowMinutes;
-      if (typeof nextDefault === 'number' && nextDefault > 0) {
-         this.form.get('windowMinutes')?.setValue(nextDefault, { emitEvent: false });
+      if (changes['scheduledStart'] || changes['scheduledEnd']) {
+         const start = changes['scheduledStart']?.currentValue ?? this.scheduledStart;
+         const end = changes['scheduledEnd']?.currentValue ?? this.scheduledEnd;
+         if (start) {
+            this.form.get('scheduledStart')?.setValue(start, { emitEvent: false });
+         }
+         if (end) {
+            this.form.get('scheduledEnd')?.setValue(end, { emitEvent: false });
+         }
          this.syncWindowEnd();
+      }
+
+      if (changes['scheduleSettings']) {
+         const nextDefault = this.scheduleSettings?.defaultWindowMinutes;
+         if (typeof nextDefault === 'number' && nextDefault > 0) {
+            this.form.get('windowMinutes')?.setValue(nextDefault, { emitEvent: false });
+            this.syncWindowEnd();
+         }
       }
    }
 

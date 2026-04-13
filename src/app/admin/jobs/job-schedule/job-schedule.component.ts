@@ -1,5 +1,5 @@
 // job-schedule.component.ts
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { PageHeaderComponent } from '../../dashboard/page-header/page-header.component';
@@ -14,6 +14,7 @@ import { catchError } from 'rxjs/operators';
 import { mapAssignmentsToCalendarEvents } from '../../../common/jobflow-calendar/utils/assignment-calendar-mapper';
 import { ScheduleType } from '../models/assignment';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Draggable } from '@fullcalendar/interaction';
 import { JobAssignmentFormComponent } from '../job-assignments-form/job-assignments-form.component';
 import { JobflowDrawerComponent } from '../../../common/jobflow-drawer/jobflow-drawer.component';
 import { RecurrenceRuleUpsertRequest } from '../models/recurrence-rule';
@@ -31,7 +32,7 @@ import { Job, JobLifecycleStatus } from '../models/job';
   styleUrls: ['./job-schedule.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class JobScheduleComponent implements OnInit {
+export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
   private assignments = inject(AssignmentsService);
   private recurrenceRules = inject(RecurrenceRulesService);
   private jobs = inject(JobsService);
@@ -48,6 +49,11 @@ export class JobScheduleComponent implements OnInit {
 
   @ViewChild(JobAssignmentFormComponent)
   assignmentFormComponent!: JobAssignmentFormComponent;
+
+  @ViewChild('suggestedJobsList')
+  suggestedJobsList?: ElementRef<HTMLElement>;
+
+  private draggable?: Draggable;
 
   calendarEvents = { dataSource: [] as CalendarEvent[] };
   selectedDate = new Date();
@@ -93,6 +99,14 @@ export class JobScheduleComponent implements OnInit {
     this.loadScheduleSettings();
     this.loadAssignments();
     this.loadUnassignedJobs();
+  }
+
+  ngAfterViewInit(): void {
+    this.refreshDraggable();
+  }
+
+  ngOnDestroy(): void {
+    this.draggable?.destroy();
   }
 
   onCalendarDateChange(date: Date): void {
@@ -275,11 +289,13 @@ export class JobScheduleComponent implements OnInit {
           .sort((a, b) => this.compareJobsByUrgency(a, b));
         this.loadingUnassignedJobs = false;
         this.cdr.markForCheck();
+        setTimeout(() => this.refreshDraggable());
       },
       error: () => {
         this.unassignedJobs = [];
         this.loadingUnassignedJobs = false;
         this.cdr.markForCheck();
+        setTimeout(() => this.refreshDraggable());
       }
     });
   }
@@ -490,6 +506,53 @@ export class JobScheduleComponent implements OnInit {
       .filter(Boolean);
 
     return parts.join(', ');
+  }
+
+  onExternalEventCreate(event: CalendarEvent): void {
+    if (!event.JobId) {
+      return;
+    }
+
+    this.currentJobId = event.JobId;
+
+    const matchingJob = this.unassignedJobs.find(j => j.id === event.JobId);
+    if (matchingJob) {
+      this.jobTitle = matchingJob.title;
+      this.clientName = [matchingJob.organizationClient?.firstName, matchingJob.organizationClient?.lastName]
+        .filter(Boolean)
+        .join(' ');
+      this.jobAddress = this.buildJobAddress(matchingJob);
+      this.addressMissing = !this.jobAddress;
+      this.loadWeatherForecast();
+    }
+
+    this.draftEvent = event;
+    this.selectedDate = event.StartTime;
+    this.updateSelectedDayForecast();
+    this.showAssignmentModal = true;
+    this.cdr.markForCheck();
+  }
+
+  private refreshDraggable(): void {
+    if (!this.suggestedJobsList?.nativeElement) {
+      return;
+    }
+
+    this.draggable?.destroy();
+
+    this.draggable = new Draggable(this.suggestedJobsList.nativeElement, {
+      itemSelector: '.suggestions-list__item',
+      eventData: (eventEl) => {
+        const jobId = eventEl.getAttribute('data-job-id') ?? undefined;
+        const title = eventEl.getAttribute('data-title') ?? 'Unscheduled job';
+
+        return {
+          title,
+          duration: '01:00',
+          extendedProps: { JobId: jobId },
+        };
+      },
+    });
   }
 }
 
