@@ -198,13 +198,12 @@ export class JobflowGridComponent {
       });
    }
 
-   onLazyLoad(event: Record<string, unknown>): void {
-      console.log('[GRID] onLazyLoad fired', { serverSide: this.serverSide, first: event['first'], rows: event['rows'] });
+   onPageEvent(event: { first?: number; rows?: number }): void {
       if (!this.serverSide) return;
-      const first = (event['first'] as number) ?? 0;
-      const rows = (event['rows'] as number) ?? this.pageSize;
+      const first = event.first ?? 0;
+      const rows = event.rows ?? this.pageSize;
       const page = Math.floor(first / rows);
-      console.log('[GRID] emitting pageChange', { page, pageSize: rows });
+      console.log('[GRID] onPage fired', { first, rows, page });
       this.pageChange.emit({ page, pageSize: rows });
    }
 
