@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { Component, DestroyRef, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
@@ -20,6 +21,7 @@ type ScheduleMode = 'OneTime' | 'Recurring';
 })
 export class JobAssignmentFormComponent implements OnInit, OnChanges {
    private fb = inject(FormBuilder);
+   private destroyRef = inject(DestroyRef);
 
 
    scheduleModeOptions = [
@@ -104,13 +106,13 @@ export class JobAssignmentFormComponent implements OnInit, OnChanges {
       });
 
       this.configureRecurrenceValidators();
-      this.form.get('scheduleMode')?.valueChanges.subscribe(() => this.configureRecurrenceValidators());
-      this.form.get('pattern')?.valueChanges.subscribe(() => this.configureRecurrenceValidators());
-      this.form.get('endType')?.valueChanges.subscribe(() => this.configureRecurrenceValidators());
+      this.form.get('scheduleMode')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.configureRecurrenceValidators());
+      this.form.get('pattern')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.configureRecurrenceValidators());
+      this.form.get('endType')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.configureRecurrenceValidators());
 
-      this.form.get('scheduleType')?.valueChanges.subscribe(() => this.syncWindowEnd());
-      this.form.get('scheduledStart')?.valueChanges.subscribe(() => this.syncWindowEnd());
-      this.form.get('windowMinutes')?.valueChanges.subscribe(() => this.syncWindowEnd());
+      this.form.get('scheduleType')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.syncWindowEnd());
+      this.form.get('scheduledStart')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.syncWindowEnd());
+      this.form.get('windowMinutes')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.syncWindowEnd());
       this.syncWindowEnd();
    }
 

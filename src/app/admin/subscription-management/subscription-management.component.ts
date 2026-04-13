@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { take } from 'rxjs';
@@ -35,6 +36,7 @@ export class SubscriptionManagementComponent implements OnInit {
   private readonly orgContext = inject(OrganizationContextService);
   private readonly organizationService = inject(OrganizationService);
   private readonly toast = inject(ToastService);
+  private readonly destroyRef = inject(DestroyRef);
 
   planCards: PlanCard[] = plans
     .filter((plan) => plan.name === 'Go' || plan.name === 'Flow' || plan.name === 'Max')
@@ -63,7 +65,7 @@ export class SubscriptionManagementComponent implements OnInit {
   refreshing = false;
 
   ngOnInit(): void {
-    this.orgContext.org$.subscribe(org => {
+    this.orgContext.org$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(org => {
       this.organization = org;
       this.subscriptionStatus = org?.subscriptionStatus ?? '';
       this.subscriptionPlan = org?.subscriptionPlanName ?? '';

@@ -1,5 +1,6 @@
 import { NgClass } from '@angular/common';
-import { AfterViewInit, Component, DOCUMENT, ElementRef, OnInit, Renderer2, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, DOCUMENT, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -27,12 +28,13 @@ import { OrganizationDto } from '../../../models/organization';
   templateUrl: './admin-sidebar.component.html',
   styleUrl: './admin-sidebar.component.scss',
 })
-export class AdminSidebarComponent implements OnInit, AfterViewInit {
+export class AdminSidebarComponent implements OnInit, AfterViewInit, OnDestroy {
   private document = inject<Document>(DOCUMENT);
   private renderer = inject(Renderer2);
   private router = inject(Router);
   private logoutService = inject(LogoutService);
   private orgContext = inject(OrganizationContextService);
+  private destroyRef = inject(DestroyRef);
 
   @ViewChild('sidebarMenu') sidebarMenu: ElementRef;
 
@@ -41,9 +43,11 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
   onboardingComplete = false;
   showLogoutModal = false;
   private menuInstance: MetisMenu | null = null;
+  private desktopMediumMql: MediaQueryList | null = null;
+  private mqlHandler = (e: MediaQueryListEvent) => this.iconSidebar(e.target as MediaQueryList);
 
   ngOnInit(): void {
-    this.orgContext.org$.subscribe(org => {
+    this.orgContext.org$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(org => {
       if (!org) {
         this.menuItems = [];
         return;
@@ -60,9 +64,13 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
     });
 
     // Sidebar-folded on desktop (992px–1199px)
-    const desktopMedium = window.matchMedia('(min-width:992px) and (max-width: 1199px)');
-    desktopMedium.addEventListener('change', () => this.iconSidebar(desktopMedium));
-    this.iconSidebar(desktopMedium);
+    this.desktopMediumMql = window.matchMedia('(min-width:992px) and (max-width: 1199px)');
+    this.desktopMediumMql.addEventListener('change', this.mqlHandler);
+    this.iconSidebar(this.desktopMediumMql);
+  }
+
+  ngOnDestroy(): void {
+    this.desktopMediumMql?.removeEventListener('change', this.mqlHandler);
   }
 
   ngAfterViewInit() {

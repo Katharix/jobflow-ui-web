@@ -1,4 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {RouterLink} from '@angular/router';
@@ -49,6 +50,7 @@ export class BrandingComponent implements OnInit {
    private brandingService = inject(OrganizationBrandingService);
    private uploadService = inject(FileUploadService);
    private translate = inject(TranslateService);
+   private destroyRef = inject(DestroyRef);
 
    organization!: OrganizationDto;
    brandingForm!: FormGroup;
@@ -71,7 +73,7 @@ export class BrandingComponent implements OnInit {
    }
 
    ngOnInit(): void {
-      this.orgContext.org$.subscribe(org => {
+      this.orgContext.org$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(org => {
          if (!org) {
             return;
          }
