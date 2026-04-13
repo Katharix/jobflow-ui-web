@@ -182,7 +182,14 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
          )
          .subscribe(page => {
             this.clientsLoading = false;
-            console.log('[CUSTOMER] API response', { itemCount: page?.items?.length, totalCount: page?.totalCount, firstItem: page?.items?.[0] });
+            const f = page?.items?.[0];
+            const l = page?.items?.[page.items.length - 1];
+            console.log('[CUSTOMER] API response', {
+               itemCount: page?.items?.length,
+               totalCount: page?.totalCount,
+               first: f ? `${f.firstName} ${f.lastName}` : 'none',
+               last: l ? `${l.firstName} ${l.lastName}` : 'none',
+            });
             if (!page) {
                return;
             }
