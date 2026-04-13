@@ -53,7 +53,7 @@
       [lazyLoadOnInit]="false"
       [totalRecords]="serverSide ? totalRecords : 0"
       (onSort)="onSortChange($event)"
-      (onLazyLoad)="onLazyLoad($any($event))"
+      (onPage)="onPageEvent($event)"
       >
       <ng-template pTemplate="header">
         <tr>
