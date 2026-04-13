@@ -4,6 +4,7 @@ import {FormsModule} from "@angular/forms";
 import {Table, TableModule} from 'primeng/table';
 import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
+import {PaginatorModule} from 'primeng/paginator';
 
 export interface JobflowGridSortChangeEvent {
    field?: string;
@@ -65,7 +66,7 @@ export interface JobflowGridPageSettings {
 @Component({
    selector: 'app-jobflow-grid',
    standalone: true,
-   imports: [CommonModule, TableModule, ButtonModule, InputTextModule, FormsModule],
+   imports: [CommonModule, TableModule, ButtonModule, InputTextModule, FormsModule, PaginatorModule],
    templateUrl: './jobflow-grid.component.html'
 })
 export class JobflowGridComponent {
@@ -198,13 +199,11 @@ export class JobflowGridComponent {
       });
    }
 
-   onPageEvent(event: { first?: number; rows?: number }): void {
+   onServerPageChange(event: { first: number; rows: number }): void {
       if (!this.serverSide) return;
-      const first = event.first ?? 0;
-      const rows = event.rows ?? this.pageSize;
-      const page = Math.floor(first / rows);
-      console.log('[GRID] onPage fired', { first, rows, page });
-      this.pageChange.emit({ page, pageSize: rows });
+      const page = Math.floor(event.first / event.rows);
+      console.log('[GRID] onServerPageChange', { first: event.first, rows: event.rows, page });
+      this.pageChange.emit({ page, pageSize: event.rows });
    }
 
    getCellValue(row: unknown, col: JobflowGridColumn): unknown {
