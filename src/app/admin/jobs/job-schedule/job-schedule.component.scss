@@ -62,6 +62,11 @@
 	border-color: #7aa2d8;
 	background: #f0f6ff;
 	transform: translateY(-1px);
+	cursor: grab;
+}
+
+.suggestions-list__item:active {
+	cursor: grabbing;
 }
 
 .suggestions-list__item strong {

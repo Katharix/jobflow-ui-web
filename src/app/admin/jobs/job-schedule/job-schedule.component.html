@@ -16,13 +16,15 @@
 
     <p class="suggestions-card__state" [class.d-none]="loadingUnassignedJobs || unassignedJobs.length > 0">Everything is already assigned for now.</p>
 
-    <ul class="suggestions-list" [class.d-none]="loadingUnassignedJobs || unassignedJobs.length === 0">
+    <ul #suggestedJobsList class="suggestions-list" [class.d-none]="loadingUnassignedJobs || unassignedJobs.length === 0">
       @for (job of unassignedJobs; track job.id) {
         <li>
           <button
             type="button"
             class="suggestions-list__item"
             [class.suggestions-list__item--active]="job.id === currentJobId"
+            [attr.data-job-id]="job.id"
+            [attr.data-title]="job.title"
             (click)="selectSuggestedJob(job)"
           >
             <strong>{{ job.title }}</strong>
@@ -48,9 +50,11 @@
     <app-jobflow-calendar
       [(selectedDate)]="selectedDate"
       [eventSettings]="calendarEvents"
+      [allowExternalDrop]="true"
       (selectedDateChange)="onCalendarDateChange($event)"
       (eventCreate)="onCalendarEventCreate($event)"
       (eventChange)="onCalendarEventUpdate($event)"
+      (externalEventCreate)="onExternalEventCreate($event)"
     >
     </app-jobflow-calendar>
   </div>
