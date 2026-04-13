@@ -4,7 +4,6 @@ import {FormsModule} from "@angular/forms";
 import {Table, TableModule} from 'primeng/table';
 import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
-import {PaginatorModule} from 'primeng/paginator';
 
 export interface JobflowGridSortChangeEvent {
    field?: string;
@@ -66,7 +65,7 @@ export interface JobflowGridPageSettings {
 @Component({
    selector: 'app-jobflow-grid',
    standalone: true,
-   imports: [CommonModule, TableModule, ButtonModule, InputTextModule, FormsModule, PaginatorModule],
+   imports: [CommonModule, TableModule, ButtonModule, InputTextModule, FormsModule],
    templateUrl: './jobflow-grid.component.html'
 })
 export class JobflowGridComponent {
@@ -97,6 +96,9 @@ export class JobflowGridComponent {
    @Input() serverSide = false;
    @Input() totalRecords = 0;
    @Input() loading = false;
+
+   /** Server-side pagination state */
+   currentServerPage = 0;
 
    /** Events */
    @Output() commandClick = new EventEmitter<JobflowGridCommandClickEventArgs>();
@@ -199,11 +201,31 @@ export class JobflowGridComponent {
       });
    }
 
-   onServerPageChange(event: { first: number; rows: number }): void {
-      if (!this.serverSide) return;
-      const page = Math.floor(event.first / event.rows);
-      console.log('[GRID] onServerPageChange', { first: event.first, rows: event.rows, page });
-      this.pageChange.emit({ page, pageSize: event.rows });
+   get totalPages(): number {
+      return this.pageSize > 0 ? Math.ceil(this.totalRecords / this.pageSize) : 0;
+   }
+
+   get visiblePages(): number[] {
+      const total = this.totalPages;
+      const current = this.currentServerPage;
+      const pages: number[] = [];
+      const start = Math.max(0, current - 2);
+      const end = Math.min(total - 1, current + 2);
+      for (let i = start; i <= end; i++) {
+         pages.push(i);
+      }
+      return pages;
+   }
+
+   goToPage(page: number): void {
+      if (page < 0 || page >= this.totalPages || page === this.currentServerPage) return;
+      this.currentServerPage = page;
+      this.pageChange.emit({ page, pageSize: this.pageSize });
+   }
+
+   onServerPageSizeChange(newSize: number): void {
+      this.currentServerPage = 0;
+      this.pageChange.emit({ page: 0, pageSize: newSize });
    }
 
    getCellValue(row: unknown, col: JobflowGridColumn): unknown {

@@ -115,12 +115,54 @@
       </ng-template>
     </p-table>
 
-    @if (serverSide && allowPaging) {
-      <p-paginator
-        [rows]="pageSize"
-        [totalRecords]="totalRecords"
-        [rowsPerPageOptions]="pageSizes"
-        (onPageChange)="onServerPageChange($any($event))"
-      ></p-paginator>
+    @if (serverSide && allowPaging && totalPages > 1) {
+      <div class="d-flex align-items-center justify-content-between py-2 px-1">
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-muted small">Rows per page:</span>
+          <select class="form-select form-select-sm" style="width: auto;"
+            [ngModel]="pageSize"
+            (ngModelChange)="onServerPageSizeChange($event)">
+            @for (size of pageSizes; track size) {
+              <option [ngValue]="size">{{ size }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="d-flex align-items-center gap-1">
+          <button class="btn btn-sm btn-outline-secondary"
+            [disabled]="currentServerPage === 0"
+            (click)="goToPage(0)">
+            <i class="pi pi-angle-double-left"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-secondary"
+            [disabled]="currentServerPage === 0"
+            (click)="goToPage(currentServerPage - 1)">
+            <i class="pi pi-angle-left"></i>
+          </button>
+
+          @for (p of visiblePages; track p) {
+            <button class="btn btn-sm"
+              [ngClass]="p === currentServerPage ? 'btn-primary' : 'btn-outline-secondary'"
+              (click)="goToPage(p)">
+              {{ p + 1 }}
+            </button>
+          }
+
+          <button class="btn btn-sm btn-outline-secondary"
+            [disabled]="currentServerPage >= totalPages - 1"
+            (click)="goToPage(currentServerPage + 1)">
+            <i class="pi pi-angle-right"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-secondary"
+            [disabled]="currentServerPage >= totalPages - 1"
+            (click)="goToPage(totalPages - 1)">
+            <i class="pi pi-angle-double-right"></i>
+          </button>
+
+          <span class="text-muted small ms-2">
+            {{ currentServerPage * pageSize + 1 }}&ndash;{{ (currentServerPage + 1) * pageSize > totalRecords ? totalRecords : (currentServerPage + 1) * pageSize }} of {{ totalRecords }}
+          </span>
+        </div>
+      </div>
     }
   </div>
