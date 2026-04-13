@@ -199,10 +199,12 @@ export class JobflowGridComponent {
    }
 
    onLazyLoad(event: Record<string, unknown>): void {
+      console.log('[GRID] onLazyLoad fired', { serverSide: this.serverSide, first: event['first'], rows: event['rows'] });
       if (!this.serverSide) return;
       const first = (event['first'] as number) ?? 0;
       const rows = (event['rows'] as number) ?? this.pageSize;
       const page = Math.floor(first / rows);
+      console.log('[GRID] emitting pageChange', { page, pageSize: rows });
       this.pageChange.emit({ page, pageSize: rows });
    }
 
