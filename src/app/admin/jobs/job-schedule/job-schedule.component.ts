@@ -76,6 +76,7 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
   scheduleSettings: ScheduleSettingsDto | null = null;
   unassignedJobs: Job[] = [];
   loadingUnassignedJobs = false;
+  private isRouteScoped = false;
 
   get isJobScoped(): boolean {
     return !!this.currentJobId;
@@ -120,7 +121,7 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
     const end = endOfWeek(this.selectedDate);
 
     this.assignments.getAssignments(start, end).subscribe((assignments) => {
-      const jobAssignments = this.currentJobId
+      const jobAssignments = this.isRouteScoped && this.currentJobId
         ? assignments.filter((assignment) => assignment.jobId === this.currentJobId)
         : assignments;
       const clientJobInfo = jobAssignments[0];
@@ -262,6 +263,7 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   selectSuggestedJob(job: Job): void {
+    this.isRouteScoped = false;
     this.currentJobId = job.id;
     this.jobTitle = job.title;
     this.clientName = [job.organizationClient?.firstName, job.organizationClient?.lastName]
@@ -327,7 +329,14 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const normalizedJobId = routeJobId!;
+
+    // Skip if already set (e.g. from selectSuggestedJob)
+    if (normalizedJobId === this.currentJobId) {
+      return;
+    }
+
     this.currentJobId = normalizedJobId;
+    this.isRouteScoped = true;
 
     const matchingSuggested = this.unassignedJobs.find(job => job.id === normalizedJobId);
     if (matchingSuggested) {
@@ -347,6 +356,7 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private applyPlannerContext(): void {
     this.currentJobId = null;
+    this.isRouteScoped = false;
     this.jobTitle = 'Schedule jobs';
     this.clientName = 'Select a suggested job to start scheduling.';
     this.addressMissing = true;
