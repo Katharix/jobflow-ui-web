@@ -1,5 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import {filter, distinctUntilChanged} from 'rxjs/operators';
+import {Subscription} from 'rxjs';
 
 import {LucideAngularModule} from 'lucide-angular';
 import {Product} from './models/product';
@@ -28,12 +29,14 @@ import {PageHeaderComponent} from '../dashboard/page-header/page-header.componen
    templateUrl: './pricebook.component.html',
    styleUrls: ['./pricebook.component.scss']
 })
-export class PriceBookComponent implements OnInit {
+export class PriceBookComponent implements OnInit, OnDestroy {
    private priceBookCategoryService = inject(PriceBookCategoryService);
    private organizationContext = inject(OrganizationContextService);
    private toast = inject(ToastService);
    private modal = inject(ModalService);
    private route = inject(ActivatedRoute);
+   private orgSub?: Subscription;
+   private routeSub?: Subscription;
 
    organizationId: string | null = null;
    private onboardingActionHandled = false;
@@ -54,17 +57,8 @@ export class PriceBookComponent implements OnInit {
    error: string | null = null;
    organization: OrganizationDto
 
-   constructor() {
-      this.organizationContext.org$.subscribe(org => {
-         if (org) {
-            this.organization = org;
-            this.organizationId = org.id ?? null;
-         }
-      });
-   }
-
    ngOnInit(): void {
-      this.organizationContext.org$
+      this.orgSub = this.organizationContext.org$
          .pipe(
             filter((org): org is OrganizationDto => !!org && !!org.id),
             distinctUntilChanged((a, b) => a.id === b.id)
@@ -75,13 +69,18 @@ export class PriceBookComponent implements OnInit {
             this.loadCategories();
          });
 
-      this.route.queryParamMap.subscribe(params => {
+      this.routeSub = this.route.queryParamMap.subscribe(params => {
          if (this.onboardingActionHandled) return;
          if (params.get('onboardingAction') !== 'open-pricebook-modal') return;
 
          this.openAddMaterialDialog();
          this.onboardingActionHandled = true;
       });
+   }
+
+   ngOnDestroy(): void {
+      this.orgSub?.unsubscribe();
+      this.routeSub?.unsubscribe();
    }
 
    private loadCategories(): void {

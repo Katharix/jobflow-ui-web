@@ -460,14 +460,28 @@
         "total": "Summe",
         "balance": "Saldo",
         "status": "Status",
-        "actions": "Aktionen"
+        "actions": "Aktionen",
+        "refundAmount": "Erstattungsbetrag"
       },
       "status": {
         "draft": "Entwurf",
         "sent": "Gesendet",
         "paid": "Bezahlt",
         "overdue": "Uberfallig",
+        "unpaid": "Unbezahlt",
+        "refunded": "Erstattet",
         "unknown": "Unbekannt"
+      },
+      "refund": {
+        "button": "Erstatten",
+        "submitting": "Wird gesendet...",
+        "reasonPlaceholder": "Erstattungsgrund (optional)",
+        "invalidAmount": "Geben Sie einen gultigen Erstattungsbetrag ein.",
+        "invalidTitle": "Ungultige Erstattung",
+        "success": "Erstattung fur Rechnung {{invoiceNumber}} eingereicht.",
+        "successTitle": "Erstattung eingereicht",
+        "error": "Erstattung kann derzeit nicht eingereicht werden.",
+        "errorTitle": "Erstattung fehlgeschlagen"
       },
       "toast": {
         "invoiceSent": "Ihre Rechnung wurde an den Kunden gesendet.",

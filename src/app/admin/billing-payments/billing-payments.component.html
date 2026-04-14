@@ -257,7 +257,7 @@
                 <th>{{ 'admin.billing.table.client' | translate }}</th>
                 <th>{{ 'admin.billing.table.paid' | translate }}</th>
                 <th class="text-end">{{ 'admin.billing.table.total' | translate }}</th>
-                <th class="text-end">Refund amount</th>
+                <th class="text-end">{{ 'admin.billing.table.refundAmount' | translate }}</th>
                 <th>{{ 'admin.billing.table.status' | translate }}</th>
                 <th class="text-end">{{ 'admin.billing.table.actions' | translate }}</th>
               </tr>
@@ -286,7 +286,7 @@
                         type="text"
                         class="form-control form-control-sm"
                         style="max-width: 220px;"
-                        placeholder="Refund reason (optional)"
+                        [placeholder]="'admin.billing.refund.reasonPlaceholder' | translate"
                         [(ngModel)]="invoiceRefundReasons[invoice.id]"
                       />
                       <button class="btn btn-sm btn-outline-secondary" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.view' | translate }}</button>
@@ -295,7 +295,7 @@
                         [disabled]="!canRefundInvoice(invoice) || refundingInvoiceId === invoice.id"
                         (click)="onIssueRefundForInvoice(invoice)"
                       >
-                        {{ refundingInvoiceId === invoice.id ? 'Submitting...' : 'Refund' }}
+                        {{ refundingInvoiceId === invoice.id ? ('admin.billing.refund.submitting' | translate) : ('admin.billing.refund.button' | translate) }}
                       </button>
                     </div>
                   </td>

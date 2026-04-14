@@ -460,14 +460,28 @@
         "total": "Total",
         "balance": "Solde",
         "status": "Statut",
-        "actions": "Actions"
+        "actions": "Actions",
+        "refundAmount": "Montant du remboursement"
       },
       "status": {
         "draft": "Brouillon",
         "sent": "Envoyee",
         "paid": "Payee",
         "overdue": "En retard",
+        "unpaid": "Impayé",
+        "refunded": "Remboursee",
         "unknown": "Inconnu"
+      },
+      "refund": {
+        "button": "Rembourser",
+        "submitting": "Envoi en cours...",
+        "reasonPlaceholder": "Motif du remboursement (facultatif)",
+        "invalidAmount": "Saisissez un montant de remboursement valide.",
+        "invalidTitle": "Demande de remboursement invalide",
+        "success": "Remboursement soumis pour la facture {{invoiceNumber}}.",
+        "successTitle": "Remboursement soumis",
+        "error": "Impossible de soumettre le remboursement pour le moment.",
+        "errorTitle": "Echec du remboursement"
       },
       "toast": {
         "invoiceSent": "Votre facture a ete envoyee au client.",

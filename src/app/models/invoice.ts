@@ -11,6 +11,7 @@ export interface Invoice {
    dueDate: string;
    totalAmount: number;
    amountPaid: number;
+   amountRefunded: number;
    balanceDue: number;
    stripeInvoiceId?: string;
    paymentProvider?: PaymentProvider;
@@ -26,7 +27,8 @@ export enum InvoiceStatus {
    Sent = 1,
    Paid = 2,
    Overdue = 3,
-   Unpaid
+   Unpaid,
+   Refunded
 }
 
 export interface OrganizationClient {

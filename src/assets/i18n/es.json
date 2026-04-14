@@ -460,14 +460,28 @@
         "total": "Total",
         "balance": "Saldo",
         "status": "Estado",
-        "actions": "Acciones"
+        "actions": "Acciones",
+        "refundAmount": "Monto de reembolso"
       },
       "status": {
         "draft": "Borrador",
         "sent": "Enviada",
         "paid": "Pagada",
         "overdue": "Vencida",
+        "unpaid": "Sin pagar",
+        "refunded": "Reembolsada",
         "unknown": "Desconocido"
+      },
+      "refund": {
+        "button": "Reembolsar",
+        "submitting": "Enviando...",
+        "reasonPlaceholder": "Motivo del reembolso (opcional)",
+        "invalidAmount": "Ingrese un monto de reembolso valido.",
+        "invalidTitle": "Solicitud de reembolso invalida",
+        "success": "Reembolso enviado para la factura {{invoiceNumber}}.",
+        "successTitle": "Reembolso enviado",
+        "error": "No se puede enviar el reembolso en este momento.",
+        "errorTitle": "Reembolso fallido"
       },
       "toast": {
         "invoiceSent": "La factura se envio al cliente.",

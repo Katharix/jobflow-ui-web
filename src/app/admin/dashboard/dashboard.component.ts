@@ -406,7 +406,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
          .reduce((sum, item) => sum + this.resolvePaidAmount(item.invoice), 0);
 
       const outstandingBalance = resolvedInvoices
-         .filter(item => item.status !== InvoiceStatus.Paid)
+         .filter(item => item.status !== InvoiceStatus.Paid && item.status !== InvoiceStatus.Refunded)
          .reduce((sum, item) => sum + (item.invoice.balanceDue ?? 0), 0);
 
       const overdueBalance = overdueInvoices
@@ -731,6 +731,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
             return InvoiceStatus.Overdue;
          case 'unpaid':
             return InvoiceStatus.Unpaid;
+         case 'refunded':
+            return InvoiceStatus.Refunded;
          default:
             return InvoiceStatus.Draft;
       }

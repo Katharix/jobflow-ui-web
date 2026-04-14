@@ -132,6 +132,7 @@ export class JobComponent implements OnInit, OnDestroy {
    previewAssignment: AssignmentDto | null = null;
    updatingStatus = false;
    updatingAssignees = false;
+   private destroyed = false;
 
 
    pageSettings: JobflowGridPageSettings = {
@@ -214,29 +215,32 @@ export class JobComponent implements OnInit, OnDestroy {
       });
 
       setTimeout(() => {
+         if (this.destroyed) return;
          this.hasRendered = true;
-         setTimeout(() => this.loadWorkflowStatuses(), 0);
-         setTimeout(() => this.loadEmployees(), 0);
+         setTimeout(() => { if (!this.destroyed) this.loadWorkflowStatuses(); }, 0);
+         setTimeout(() => { if (!this.destroyed) this.loadEmployees(); }, 0);
          setTimeout(() => {
+            if (this.destroyed) return;
             this.planSub = this.orgContext.hasMinPlan$('Flow').subscribe(canShare => {
                this.canShareUpdates = canShare;
             });
          }, 0);
          setTimeout(() => {
-            if (this.organizationId) {
+            if (!this.destroyed && this.organizationId) {
                this.load();
             }
          }, 0);
       }, 0);
 
       this.notifierHub = useNotifierHub(this.auth, {
-         onJobStatusChanged: () => this.load(),
+         onJobStatusChanged: () => { if (!this.updatingStatus) this.load(); },
          onAssignmentChanged: () => this.load(),
       });
       void this.notifierHub.connect();
    }
 
    ngOnDestroy(): void {
+      this.destroyed = true;
       void this.notifierHub?.disconnect();
       this.searchInputSub?.unsubscribe();
       this.loadPageSub?.unsubscribe();
@@ -522,6 +526,7 @@ export class JobComponent implements OnInit, OnDestroy {
                   lifecycleStatus: updated.lifecycleStatus
                };
                this.selectedJob = this.items[index];
+               this.recomputeDerivedState();
             }
             this.updatingStatus = false;
          },
