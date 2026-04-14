@@ -933,7 +933,8 @@
       "labels": {
         "employee": "Funcionario",
         "unknownRole": "Funcao desconhecida",
-        "missing": "-"
+        "missing": "-",
+        "notNeeded": "Não necessário"
       },
       "toast": {
         "rolesRequired": "Voce deve criar ao menos uma funcao antes de adicionar funcionarios.",
