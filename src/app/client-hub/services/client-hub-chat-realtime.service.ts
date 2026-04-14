@@ -109,6 +109,14 @@ export class ClientHubChatRealtimeService {
     this.ensureConnection().on('Typing', callback);
   }
 
+  offAll(): void {
+    const conn = this.hubConnection;
+    if (!conn) return;
+    conn.off('ReceiveMessage');
+    conn.off('ReadReceipt');
+    conn.off('Typing');
+  }
+
   sendTyping(conversationId: string, isTyping: boolean): Promise<void> {
     const connection = this.ensureConnection();
 

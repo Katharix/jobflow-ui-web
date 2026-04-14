@@ -59,6 +59,7 @@ export class ClientHubChatComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.realtimeService.offAll();
     if (this.typingTimeoutId) {
       window.clearTimeout(this.typingTimeoutId);
     }

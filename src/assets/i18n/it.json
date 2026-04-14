@@ -460,14 +460,28 @@
         "total": "Totale",
         "balance": "Saldo",
         "status": "Stato",
-        "actions": "Azioni"
+        "actions": "Azioni",
+        "refundAmount": "Importo del rimborso"
       },
       "status": {
         "draft": "Bozza",
         "sent": "Inviata",
         "paid": "Pagata",
         "overdue": "Scaduta",
+        "unpaid": "Non pagato",
+        "refunded": "Rimborsata",
         "unknown": "Sconosciuto"
+      },
+      "refund": {
+        "button": "Rimborsa",
+        "submitting": "Invio in corso...",
+        "reasonPlaceholder": "Motivo del rimborso (facoltativo)",
+        "invalidAmount": "Inserisci un importo di rimborso valido.",
+        "invalidTitle": "Richiesta di rimborso non valida",
+        "success": "Rimborso inviato per la fattura {{invoiceNumber}}.",
+        "successTitle": "Rimborso inviato",
+        "error": "Impossibile inviare il rimborso al momento.",
+        "errorTitle": "Rimborso non riuscito"
       },
       "toast": {
         "invoiceSent": "La fattura e stata inviata al cliente.",

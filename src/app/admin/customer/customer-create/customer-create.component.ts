@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, DestroyRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {CustomersService} from "../services/customer.service";
 import {ToastService} from "../../../common/toast/toast.service";
 import {OrganizationContextService} from "../../../services/shared/organization-context.service";
@@ -20,6 +21,7 @@ export class CustomerCreateComponent implements OnChanges {
    private customers = inject(CustomersService);
    private orgContext = inject(OrganizationContextService);
    private toast = inject(ToastService);
+   private destroyRef = inject(DestroyRef);
 
    @Input() client: Client | null = null;
    @Output() saved = new EventEmitter<void>();
@@ -40,7 +42,7 @@ export class CustomerCreateComponent implements OnChanges {
    error: string | null = null;
 
    constructor() {
-      this.orgContext.org$.subscribe(org => {
+      this.orgContext.org$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(org => {
          this.organizationId = org?.id ?? null;
       });
    }

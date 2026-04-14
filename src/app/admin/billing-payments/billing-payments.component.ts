@@ -71,12 +71,14 @@ export class BillingPaymentsComponent implements OnInit {
   }
 
   get paidInvoices(): Invoice[] {
-    return this.invoices.filter(invoice => invoice.status === InvoiceStatus.Paid);
+    return this.invoices.filter(invoice =>
+      invoice.status === InvoiceStatus.Paid || invoice.status === InvoiceStatus.Refunded
+    );
   }
 
   get totalOutstanding(): number {
     return this.invoices
-      .filter(invoice => invoice.status !== InvoiceStatus.Paid)
+      .filter(invoice => invoice.status !== InvoiceStatus.Paid && invoice.status !== InvoiceStatus.Refunded)
       .reduce((sum, invoice) => sum + (invoice.balanceDue ?? 0), 0);
   }
 
@@ -102,6 +104,10 @@ export class BillingPaymentsComponent implements OnInit {
         return this.translate.instant('admin.billing.status.paid');
       case InvoiceStatus.Overdue:
         return this.translate.instant('admin.billing.status.overdue');
+      case InvoiceStatus.Unpaid:
+        return this.translate.instant('admin.billing.status.unpaid');
+      case InvoiceStatus.Refunded:
+        return this.translate.instant('admin.billing.status.refunded');
       default:
         return this.translate.instant('admin.billing.status.unknown');
     }
@@ -115,8 +121,11 @@ export class BillingPaymentsComponent implements OnInit {
         return 'badge bg-danger';
       case InvoiceStatus.Sent:
         return 'badge bg-warning text-dark';
+      case InvoiceStatus.Unpaid:
+        return 'badge bg-warning text-dark';
+      case InvoiceStatus.Refunded:
+        return 'badge bg-info';
       case InvoiceStatus.Draft:
-        return 'badge bg-secondary';
       default:
         return 'badge bg-secondary';
     }
@@ -182,7 +191,10 @@ export class BillingPaymentsComponent implements OnInit {
     const enteredAmount = this.invoiceRefundAmounts[invoice.id];
     const amount = enteredAmount ?? invoice.amountPaid ?? invoice.totalAmount;
     if (!amount || amount <= 0) {
-      this.toast.error('Enter a valid refund amount for this invoice.', 'Invalid refund request');
+      this.toast.error(
+        this.translate.instant('admin.billing.refund.invalidAmount'),
+        this.translate.instant('admin.billing.refund.invalidTitle')
+      );
       return;
     }
 
@@ -197,13 +209,19 @@ export class BillingPaymentsComponent implements OnInit {
       reason: this.invoiceRefundReasons[invoice.id]?.trim() || undefined,
     }).subscribe({
       next: () => {
-        this.toast.success(`Refund submitted for invoice ${invoice.invoiceNumber}.`, 'Refund submitted');
+        this.toast.success(
+          this.translate.instant('admin.billing.refund.success', { invoiceNumber: invoice.invoiceNumber }),
+          this.translate.instant('admin.billing.refund.successTitle')
+        );
         this.refundingInvoiceId = null;
         this.loadInvoices();
         this.loadPaymentData();
       },
       error: () => {
-        this.toast.error('Unable to submit refund right now.', 'Refund failed');
+        this.toast.error(
+          this.translate.instant('admin.billing.refund.error'),
+          this.translate.instant('admin.billing.refund.errorTitle')
+        );
         this.refundingInvoiceId = null;
       }
     });
@@ -220,7 +238,9 @@ export class BillingPaymentsComponent implements OnInit {
   }
 
   canRefundInvoice(invoice: Invoice): boolean {
-    return invoice.status === InvoiceStatus.Paid && !!this.getRefundPaymentId(invoice);
+    return (invoice.status === InvoiceStatus.Paid || invoice.status === InvoiceStatus.Sent)
+      && invoice.amountPaid > 0
+      && !!this.getRefundPaymentId(invoice);
   }
 
   private currentProvider(): PaymentProvider {
@@ -340,9 +360,9 @@ export class BillingPaymentsComponent implements OnInit {
     this.invoiceService.getByOrganization().subscribe({
       next: (invoices) => {
         this.invoices = invoices ?? [];
-        const paidInvoices = this.invoices.filter(invoice => invoice.status === InvoiceStatus.Paid);
+        const refundableInvoices = this.invoices.filter(invoice => this.canRefundInvoice(invoice));
         this.invoiceRefundAmounts = Object.fromEntries(
-          paidInvoices.map(invoice => [invoice.id, invoice.amountPaid || invoice.totalAmount])
+          refundableInvoices.map(invoice => [invoice.id, invoice.amountPaid || invoice.totalAmount])
         );
         this.loading = false;
       },

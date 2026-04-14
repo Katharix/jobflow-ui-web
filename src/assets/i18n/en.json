@@ -524,14 +524,28 @@
         "total": "Total",
         "balance": "Balance",
         "status": "Status",
-        "actions": "Actions"
+        "actions": "Actions",
+        "refundAmount": "Refund amount"
       },
       "status": {
         "draft": "Draft",
         "sent": "Sent",
         "paid": "Paid",
         "overdue": "Overdue",
+        "unpaid": "Unpaid",
+        "refunded": "Refunded",
         "unknown": "Unknown"
+      },
+      "refund": {
+        "button": "Refund",
+        "submitting": "Submitting...",
+        "reasonPlaceholder": "Refund reason (optional)",
+        "invalidAmount": "Enter a valid refund amount for this invoice.",
+        "invalidTitle": "Invalid refund request",
+        "success": "Refund submitted for invoice {{invoiceNumber}}.",
+        "successTitle": "Refund submitted",
+        "error": "Unable to submit refund right now.",
+        "errorTitle": "Refund failed"
       },
       "toast": {
         "invoiceSent": "Your invoice has been sent to the client.",

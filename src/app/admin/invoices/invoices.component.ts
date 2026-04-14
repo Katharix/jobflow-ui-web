@@ -85,9 +85,11 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
    summary = {
       total: 0,
+      draft: 0,
       sent: 0,
       paid: 0,
       overdue: 0,
+      unpaid: 0,
       totalBilled: 0,
       balanceDue: 0
    };
@@ -181,7 +183,6 @@ export class InvoicesComponent implements OnInit, OnDestroy {
             this.items = page.items ?? [];
             this.totalInvoiceCount = page.totalCount ?? null;
             this.nextCursor = page.nextCursor ?? null;
-            this.updateSummary(this.items);
          });
 
       this.notifierHub = useNotifierHub(this.auth, {
@@ -317,12 +318,15 @@ export class InvoicesComponent implements OnInit, OnDestroy {
          return this.totalInvoiceCount ?? this.summary.total;
       }
 
-      const target = this.statusFilters.find(filter => filter.key === key);
-      if (!target?.status && target?.status !== 0) {
-         return 0;
-      }
+      const countMap: Record<string, number> = {
+         draft: this.summary.draft,
+         sent: this.summary.sent,
+         paid: this.summary.paid,
+         overdue: this.summary.overdue,
+         unpaid: this.summary.unpaid,
+      };
 
-      return this.items.filter(invoice => this.resolveStatus(invoice.status) === target.status).length;
+      return countMap[key] ?? 0;
    }
 
    private buildColumns(): void {
@@ -387,6 +391,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       }
 
       this.loadPage$.next(cursor);
+      this.loadSummary();
    }
 
    get canGoBack(): boolean {
@@ -435,7 +440,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
          target.paidAt = payload.paidAt;
       }
 
-      this.updateSummary(this.items);
+      this.loadSummary();
    }
 
    loadRecentJobs(): void {
@@ -748,27 +753,23 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       }).format(normalizedValue);
    }
 
-   private updateSummary(invoices: Invoice[]): void {
-      const summary = {
-         total: invoices.length,
-         sent: 0,
-         paid: 0,
-         overdue: 0,
-         totalBilled: 0,
-         balanceDue: 0
-      };
-
-      for (const invoice of invoices) {
-         const status = this.resolveStatus(invoice.status);
-         if (status === InvoiceStatus.Sent) summary.sent += 1;
-         if (status === InvoiceStatus.Paid) summary.paid += 1;
-         if (status === InvoiceStatus.Overdue) summary.overdue += 1;
-         summary.totalBilled += Number(invoice.totalAmount ?? 0);
-         summary.balanceDue += Number(invoice.balanceDue ?? 0);
-      }
-
-      this.summary = summary;
-      this.summary$.next(summary);
+   private loadSummary(): void {
+      this.invoiceService.getSummary().subscribe({
+         next: (dto) => {
+            this.summary = {
+               total: dto.invoiceCount,
+               draft: dto.draftCount,
+               sent: dto.sentCount,
+               paid: dto.paidCount,
+               overdue: dto.overdueCount,
+               unpaid: dto.sentCount + dto.overdueCount,
+               totalBilled: dto.totalBilled,
+               balanceDue: dto.balanceDue
+            };
+            this.summary$.next(this.summary);
+         },
+         error: () => { /* summary is non-critical; keep stale values */ }
+      });
    }
 
    private buildInvoiceForm(): void {

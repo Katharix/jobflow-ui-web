@@ -13,6 +13,18 @@ export interface InvoicePagedQueryOptions {
   sortDirection?: 'asc' | 'desc';
 }
 
+export interface InvoiceSummaryDto {
+  invoiceCount: number;
+  draftCount: number;
+  sentCount: number;
+  paidCount: number;
+  overdueCount: number;
+  refundedCount: number;
+  totalBilled: number;
+  balanceDue: number;
+  outstanding: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -69,5 +81,9 @@ export class InvoiceService {
 
   getPdf(id: string): Observable<Blob> {
     return this.api.getBlob(`${this.invoiceUrl}${id}/pdf`);
+  }
+
+  getSummary(): Observable<InvoiceSummaryDto> {
+    return this.api.get<InvoiceSummaryDto>(`${this.invoiceUrl}organization/summary`);
   }
 }
