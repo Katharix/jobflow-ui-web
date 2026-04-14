@@ -59,26 +59,30 @@ export class BillingPaymentsComponent implements OnInit {
   }
 
   get draftInvoices(): Invoice[] {
-    return this.invoices.filter(invoice => invoice.status === InvoiceStatus.Draft);
+    return this.invoices.filter(invoice => this.resolveStatus(invoice.status) === InvoiceStatus.Draft);
   }
 
   get sentInvoices(): Invoice[] {
-    return this.invoices.filter(invoice => invoice.status === InvoiceStatus.Sent);
+    return this.invoices.filter(invoice => this.resolveStatus(invoice.status) === InvoiceStatus.Sent);
   }
 
   get overdueInvoices(): Invoice[] {
-    return this.invoices.filter(invoice => invoice.status === InvoiceStatus.Overdue);
+    return this.invoices.filter(invoice => this.resolveStatus(invoice.status) === InvoiceStatus.Overdue);
   }
 
   get paidInvoices(): Invoice[] {
-    return this.invoices.filter(invoice =>
-      invoice.status === InvoiceStatus.Paid || invoice.status === InvoiceStatus.Refunded
-    );
+    return this.invoices.filter(invoice => {
+      const s = this.resolveStatus(invoice.status);
+      return s === InvoiceStatus.Paid || s === InvoiceStatus.Refunded;
+    });
   }
 
   get totalOutstanding(): number {
     return this.invoices
-      .filter(invoice => invoice.status !== InvoiceStatus.Paid && invoice.status !== InvoiceStatus.Refunded)
+      .filter(invoice => {
+        const s = this.resolveStatus(invoice.status);
+        return s !== InvoiceStatus.Paid && s !== InvoiceStatus.Refunded;
+      })
       .reduce((sum, invoice) => sum + (invoice.balanceDue ?? 0), 0);
   }
 
@@ -95,7 +99,7 @@ export class BillingPaymentsComponent implements OnInit {
   }
 
   getStatusLabel(status: InvoiceStatus): string {
-    switch (status) {
+    switch (this.resolveStatus(status)) {
       case InvoiceStatus.Draft:
         return this.translate.instant('admin.billing.status.draft');
       case InvoiceStatus.Sent:
@@ -114,7 +118,7 @@ export class BillingPaymentsComponent implements OnInit {
   }
 
   getStatusClass(status: InvoiceStatus): string {
-    switch (status) {
+    switch (this.resolveStatus(status)) {
       case InvoiceStatus.Paid:
         return 'badge bg-success';
       case InvoiceStatus.Overdue:
@@ -238,9 +242,30 @@ export class BillingPaymentsComponent implements OnInit {
   }
 
   canRefundInvoice(invoice: Invoice): boolean {
-    return (invoice.status === InvoiceStatus.Paid || invoice.status === InvoiceStatus.Sent)
+    const s = this.resolveStatus(invoice.status);
+    return (s === InvoiceStatus.Paid || s === InvoiceStatus.Sent)
       && invoice.amountPaid > 0
       && !!this.getRefundPaymentId(invoice);
+  }
+
+  private resolveStatus(rawStatus: InvoiceStatus | number | string): InvoiceStatus | null {
+    if (typeof rawStatus === 'number' && InvoiceStatus[rawStatus] !== undefined) {
+      return rawStatus as InvoiceStatus;
+    }
+
+    if (typeof rawStatus === 'string') {
+      const enumValue = InvoiceStatus[rawStatus as keyof typeof InvoiceStatus];
+      if (typeof enumValue === 'number') {
+        return enumValue;
+      }
+
+      const numericValue = Number(rawStatus);
+      if (!Number.isNaN(numericValue) && InvoiceStatus[numericValue] !== undefined) {
+        return numericValue as InvoiceStatus;
+      }
+    }
+
+    return null;
   }
 
   private currentProvider(): PaymentProvider {
