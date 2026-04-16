@@ -109,25 +109,27 @@ export class TurnstileWidgetComponent implements AfterViewInit, OnChanges, OnDes
     }
 
     try {
-      await ensureTurnstileScriptLoaded();
+      await this.zone.runOutsideAngular(() => ensureTurnstileScriptLoaded());
 
       if (!window.turnstile) {
         this.zone.run(() => this.errored.emit());
         return;
       }
 
-      this.widgetId = window.turnstile.render(this.containerRef.nativeElement, {
-        sitekey: this.siteKey,
-        action: this.action,
-        callback: (token: string) => {
-          this.zone.run(() => this.resolved.emit(token));
-        },
-        'expired-callback': () => {
-          this.zone.run(() => this.expired.emit());
-        },
-        'error-callback': () => {
-          this.zone.run(() => this.errored.emit());
-        }
+      this.zone.runOutsideAngular(() => {
+        this.widgetId = window.turnstile!.render(this.containerRef.nativeElement, {
+          sitekey: this.siteKey,
+          action: this.action,
+          callback: (token: string) => {
+            this.zone.run(() => this.resolved.emit(token));
+          },
+          'expired-callback': () => {
+            this.zone.run(() => this.expired.emit());
+          },
+          'error-callback': () => {
+            this.zone.run(() => this.errored.emit());
+          }
+        });
       });
     } catch {
       this.zone.run(() => this.errored.emit());
