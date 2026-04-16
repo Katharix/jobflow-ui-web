@@ -76,7 +76,7 @@ export const appConfig: ApplicationConfig = {
          OverlayModule,
          PortalModule,
          TranslateModule.forRoot({
-            defaultLanguage: 'en',
+            fallbackLang: 'en',
             loader: provideTranslateHttpLoader({
                prefix: './assets/i18n/',
                suffix: '.json'
