@@ -22,46 +22,6 @@ declare global {
   }
 }
 
-const TURNSTILE_SCRIPT_ID = 'jobflow-turnstile-api';
-const TURNSTILE_SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-
-let turnstileScriptPromise: Promise<void> | null = null;
-
-function ensureTurnstileScriptLoaded(): Promise<void> {
-  if (typeof window === 'undefined' || typeof document === 'undefined') {
-    return Promise.reject(new Error('Turnstile requires a browser environment.'));
-  }
-
-  if (window.turnstile) {
-    return Promise.resolve();
-  }
-
-  if (turnstileScriptPromise) {
-    return turnstileScriptPromise;
-  }
-
-  turnstileScriptPromise = new Promise<void>((resolve, reject) => {
-    const existingScript = document.getElementById(TURNSTILE_SCRIPT_ID) as HTMLScriptElement | null;
-
-    if (existingScript) {
-      existingScript.addEventListener('load', () => resolve(), { once: true });
-      existingScript.addEventListener('error', () => reject(new Error('Failed to load Turnstile script.')), { once: true });
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.id = TURNSTILE_SCRIPT_ID;
-    script.src = TURNSTILE_SCRIPT_SRC;
-    script.async = true;
-    script.defer = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error('Failed to load Turnstile script.'));
-    document.head.appendChild(script);
-  });
-
-  return turnstileScriptPromise;
-}
-
 @Component({
   selector: 'app-jobflow-turnstile',
   standalone: true,
@@ -85,7 +45,7 @@ export class TurnstileWidgetComponent implements AfterViewInit, OnChanges, OnDes
 
   ngAfterViewInit(): void {
     this.viewReady = true;
-    void this.renderWidget();
+    this.renderWidget();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -95,7 +55,7 @@ export class TurnstileWidgetComponent implements AfterViewInit, OnChanges, OnDes
 
     if (changes['siteKey'] || changes['action']) {
       this.removeWidget();
-      void this.renderWidget();
+      this.renderWidget();
     }
   }
 
@@ -103,37 +63,27 @@ export class TurnstileWidgetComponent implements AfterViewInit, OnChanges, OnDes
     this.removeWidget();
   }
 
-  private async renderWidget(): Promise<void> {
-    if (!this.siteKey) {
+  private renderWidget(): void {
+    if (!this.siteKey || !window.turnstile) {
+      this.errored.emit();
       return;
     }
 
-    try {
-      await this.zone.runOutsideAngular(() => ensureTurnstileScriptLoaded());
-
-      if (!window.turnstile) {
-        this.zone.run(() => this.errored.emit());
-        return;
-      }
-
-      this.zone.runOutsideAngular(() => {
-        this.widgetId = window.turnstile!.render(this.containerRef.nativeElement, {
-          sitekey: this.siteKey,
-          action: this.action,
-          callback: (token: string) => {
-            this.zone.run(() => this.resolved.emit(token));
-          },
-          'expired-callback': () => {
-            this.zone.run(() => this.expired.emit());
-          },
-          'error-callback': () => {
-            this.zone.run(() => this.errored.emit());
-          }
-        });
+    this.zone.runOutsideAngular(() => {
+      this.widgetId = window.turnstile!.render(this.containerRef.nativeElement, {
+        sitekey: this.siteKey,
+        action: this.action,
+        callback: (token: string) => {
+          this.zone.run(() => this.resolved.emit(token));
+        },
+        'expired-callback': () => {
+          this.zone.run(() => this.expired.emit());
+        },
+        'error-callback': () => {
+          this.zone.run(() => this.errored.emit());
+        }
       });
-    } catch {
-      this.zone.run(() => this.errored.emit());
-    }
+    });
   }
 
   private removeWidget(): void {
