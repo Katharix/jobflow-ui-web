@@ -22,5 +22,5 @@ export const environment = {
       successUrl: 'http://localhost:4200/auth/register',
    },
    stripePublicKey: 'pk_test_51SobefPJ5wQELwxdrEqMzIyiPmxISvVrNua4BX7UgY5iQsx1Xasl7655KSERJ8K8GPw2CQVGFz2AjflvYGjztJlO00s8bwhu2S',
-   turnstileSiteKey: '0x4AAAAAACs7ehVs9_8KtriE'
+   turnstileSiteKey: '1x00000000000000000000AA'
 };
