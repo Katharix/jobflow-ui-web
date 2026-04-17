@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { take } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TabsModule } from 'primeng/tabs';
 import { PageHeaderComponent } from '../dashboard/page-header/page-header.component';
 import { Invoice, InvoiceStatus } from '../../models/invoice';
 import { InvoiceService } from '../invoices/services/invoice.service';
@@ -20,7 +21,7 @@ import { PaymentProvider } from '../../models/customer-payment-profile';
 @Component({
   selector: 'app-billing-payments',
   standalone: true,
-  imports: [CommonModule, RouterLink, PageHeaderComponent, TranslateModule, FormsModule],
+  imports: [CommonModule, RouterLink, PageHeaderComponent, TranslateModule, FormsModule, TabsModule],
   templateUrl: './billing-payments.component.html',
   styleUrl: './billing-payments.component.scss'
 })
@@ -33,6 +34,8 @@ export class BillingPaymentsComponent implements OnInit {
   private readonly organizationService = inject(OrganizationService);
   private readonly toast = inject(ToastService);
   private readonly translate = inject(TranslateService);
+
+  activeTab = 'overview';
 
   invoices: Invoice[] = [];
   history: PaymentHistoryItem[] = [];
@@ -53,9 +56,26 @@ export class BillingPaymentsComponent implements OnInit {
   loading = true;
   error: string | null = null;
 
+  isStripeConnected = false;
+  isSquareConnected = false;
+
   ngOnInit(): void {
+    this.orgContext.org$.pipe(take(1)).subscribe(org => {
+      this.isStripeConnected = !!org?.isStripeConnected;
+      this.isSquareConnected = !!org?.isSquareConnected;
+    });
     this.loadInvoices();
     this.loadPaymentData();
+  }
+
+  get activeProvider(): string {
+    if (this.isStripeConnected) return 'Stripe';
+    if (this.isSquareConnected) return 'Square';
+    return 'None';
+  }
+
+  get hasPaymentProvider(): boolean {
+    return this.isStripeConnected || this.isSquareConnected;
   }
 
   get draftInvoices(): Invoice[] {

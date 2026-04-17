@@ -3,307 +3,502 @@
   [subtitle]="'admin.billing.subtitle' | translate"
 ></app-page-header>
 
-<section class="billing-layout">
-  <div class="billing-summary">
-    <div class="billing-summary__card">
-      <span>{{ 'admin.billing.summary.outstanding' | translate }}</span>
-      <strong>{{ totalOutstanding | currency }}</strong>
+<section class="bp">
+  <!-- ── Summary strip ────────────────────────────────── -->
+  <div class="bp-summary">
+    <div class="bp-summary__card">
+      <span class="bp-summary__label">{{ 'admin.billing.summary.outstanding' | translate }}</span>
+      <strong class="bp-summary__value">{{ totalOutstanding | currency }}</strong>
     </div>
-    <div class="billing-summary__card">
-      <span>{{ 'admin.billing.summary.draft' | translate }}</span>
-      <strong>{{ totalDrafts }}</strong>
+    <div class="bp-summary__card bp-summary__card--warn">
+      <span class="bp-summary__label">{{ 'admin.billing.summary.overdue' | translate }}</span>
+      <strong class="bp-summary__value">{{ totalOverdue }}</strong>
     </div>
-    <div class="billing-summary__card">
-      <span>{{ 'admin.billing.summary.sent' | translate }}</span>
-      <strong>{{ totalSent }}</strong>
+    <div class="bp-summary__card">
+      <span class="bp-summary__label">{{ 'admin.billing.summary.draft' | translate }}</span>
+      <strong class="bp-summary__value">{{ totalDrafts }}</strong>
     </div>
-    <div class="billing-summary__card">
-      <span>{{ 'admin.billing.summary.overdue' | translate }}</span>
-      <strong>{{ totalOverdue }}</strong>
+    <div class="bp-summary__card">
+      <span class="bp-summary__label">{{ 'admin.billing.summary.sent' | translate }}</span>
+      <strong class="bp-summary__value">{{ totalSent }}</strong>
+    </div>
+    <div class="bp-summary__card" [class.bp-summary__card--success]="hasPaymentProvider">
+      <span class="bp-summary__label">Payment provider</span>
+      <strong class="bp-summary__value">{{ activeProvider }}</strong>
     </div>
   </div>
 
-  <div class="billing-actions">
-    <a class="btn btn-primary" routerLink="/admin/connectedpayment">{{ 'admin.billing.actions.manageConnection' | translate }}</a>
-    <a class="btn btn-outline-primary" routerLink="/admin/invoices">{{ 'admin.billing.actions.openInvoices' | translate }}</a>
-  </div>
+  <!-- ── Tabs ─────────────────────────────────────────── -->
+  <p-tabs [(value)]="activeTab">
+    <p-tablist>
+      <p-tab value="overview">Overview</p-tab>
+      <p-tab value="invoices">Invoices</p-tab>
+      <p-tab value="activity">Activity</p-tab>
+      <p-tab value="setup">Payment Setup</p-tab>
+    </p-tablist>
 
-  <section class="billing-section">
-    <div class="billing-section__header">
-      <div>
-        <h3>Recent Payment Activity</h3>
-        <p>Latest successful, failed, refund, and subscription events.</p>
-      </div>
-      <div class="billing-page-controls">
-        <button class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBackHistory || historyLoading" (click)="onPrevHistoryPage()">Previous</button>
-        <button class="btn btn-sm btn-outline-primary" [disabled]="!historyNextCursor || historyLoading" (click)="onNextHistoryPage()">Next</button>
-      </div>
-    </div>
-    @if (historyLoading) {
-      <div class="billing-empty">Loading payment activity...</div>
-    }
-    <div class="billing-empty" [class.d-none]="historyLoading || history.length > 0">No payment activity available yet.</div>
-    <div class="table-responsive" [class.d-none]="historyLoading || history.length === 0">
-      <table class="table align-middle mb-0">
-        <thead>
-          <tr>
-            <th>When</th>
-            <th>Event</th>
-            <th>Status</th>
-            <th>Payment ID</th>
-            <th class="text-end">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (event of history; track event.id) {
-            <tr>
-              <td>{{ event.paidAt | date: 'medium' }}</td>
-              <td>{{ event.eventType }}</td>
-              <td>{{ event.status }}</td>
-              <td>{{ event.stripePaymentIntentId || '-' }}</td>
-              <td class="text-end">{{ toDollarFromMinor(event.amountPaid) | currency:event.currency }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
+    <p-tabpanels>
+      <!-- ═══ Overview ════════════════════════════════ -->
+      <p-tabpanel value="overview">
+        <div class="bp-overview">
+          <!-- Left: quick stats -->
+          <div class="bp-overview__main">
+            <div class="bp-panel">
+              <div class="bp-panel__header">
+                <h3>Financial snapshot</h3>
+              </div>
+              <div class="bp-kpi-grid">
+                <div class="bp-kpi">
+                  <span class="bp-kpi__label">Gross collected</span>
+                  <strong class="bp-kpi__value">{{ (financialSummary?.grossCollected ?? 0) / 100 | currency }}</strong>
+                </div>
+                <div class="bp-kpi">
+                  <span class="bp-kpi__label">Refunded</span>
+                  <strong class="bp-kpi__value">{{ (financialSummary?.refunded ?? 0) / 100 | currency }}</strong>
+                </div>
+                <div class="bp-kpi">
+                  <span class="bp-kpi__label">Net collected</span>
+                  <strong class="bp-kpi__value">{{ (financialSummary?.netCollected ?? 0) / 100 | currency }}</strong>
+                </div>
+                <div class="bp-kpi">
+                  <span class="bp-kpi__label">Invoices</span>
+                  <strong class="bp-kpi__value">{{ financialSummary?.invoiceCount ?? 0 }}</strong>
+                </div>
+              </div>
+            </div>
 
-  <section class="billing-section">
-    <div class="billing-section__header">
-      <div>
-        <h3>Disputes</h3>
-        <p>Chargebacks and dispute lifecycle events from your payment providers.</p>
-      </div>
-      <div class="billing-page-controls">
-        <button class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBackDisputes || disputesLoading" (click)="onPrevDisputesPage()">Previous</button>
-        <button class="btn btn-sm btn-outline-primary" [disabled]="!disputeNextCursor || disputesLoading" (click)="onNextDisputesPage()">Next</button>
-      </div>
-    </div>
-    @if (disputesLoading) {
-      <div class="billing-empty">Loading disputes...</div>
-    }
-    <div class="billing-empty" [class.d-none]="disputesLoading || disputes.length > 0">No disputes found.</div>
-    <div class="table-responsive" [class.d-none]="disputesLoading || disputes.length === 0">
-      <table class="table align-middle mb-0">
-        <thead>
-          <tr>
-            <th>When</th>
-            <th>Event</th>
-            <th>Status</th>
-            <th>Customer</th>
-            <th class="text-end">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (dispute of disputes; track dispute.id) {
-            <tr>
-              <td>{{ dispute.paidAt | date: 'medium' }}</td>
-              <td>{{ dispute.eventType }}</td>
-              <td>{{ dispute.status }}</td>
-              <td>{{ dispute.customerId || '-' }}</td>
-              <td class="text-end">{{ toDollarFromMinor(dispute.amountPaid) | currency:dispute.currency }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  @if (loading) {
-    <p class="billing-state">{{ 'admin.billing.state.loading' | translate }}</p>
-  }
-  @if (error) {
-    <p class="billing-state billing-state--error">{{ error }}</p>
-  }
-
-  @if (!loading && !error) {
-    <section class="billing-section">
-      <div class="billing-section__header">
-        <div>
-          <h3>{{ 'admin.billing.sections.draft.title' | translate }}</h3>
-          <p>{{ 'admin.billing.sections.draft.subtitle' | translate }}</p>
-        </div>
-        <span>{{ totalDrafts }} {{ 'admin.billing.sections.total' | translate }}</span>
-      </div>
-      <div class="billing-empty" [class.d-none]="draftInvoices.length > 0">{{ 'admin.billing.empty.draft' | translate }}</div>
-      <div class="table-responsive" [class.d-none]="draftInvoices.length === 0">
-          <table class="table align-middle mb-0">
-            <thead>
-              <tr>
-                <th>{{ 'admin.billing.table.invoice' | translate }}</th>
-                <th>{{ 'admin.billing.table.client' | translate }}</th>
-                <th>{{ 'admin.billing.table.due' | translate }}</th>
-                <th class="text-end">{{ 'admin.billing.table.total' | translate }}</th>
-                <th class="text-end">{{ 'admin.billing.table.balance' | translate }}</th>
-                <th>{{ 'admin.billing.table.status' | translate }}</th>
-                <th class="text-end">{{ 'admin.billing.table.actions' | translate }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (invoice of draftInvoices; track invoice) {
-                <tr>
-                  <td>{{ invoice.invoiceNumber }}</td>
-                  <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
-                  <td>{{ invoice.dueDate | date: 'mediumDate' }}</td>
-                  <td class="text-end">{{ invoice.totalAmount | currency }}</td>
-                  <td class="text-end">{{ invoice.balanceDue | currency }}</td>
-                  <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
-                  <td class="text-end">
-                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.preview' | translate }}</button>
-                    <button class="btn btn-sm btn-primary" (click)="sendInvoice(invoice)">{{ 'admin.billing.actions.sendInvoice' | translate }}</button>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-    </section>
-    <section class="billing-section">
-      <div class="billing-section__header">
-        <div>
-          <h3>{{ 'admin.billing.sections.sent.title' | translate }}</h3>
-          <p>{{ 'admin.billing.sections.sent.subtitle' | translate }}</p>
-        </div>
-        <span>{{ totalSent }} {{ 'admin.billing.sections.total' | translate }}</span>
-      </div>
-      <div class="billing-empty" [class.d-none]="sentInvoices.length > 0">{{ 'admin.billing.empty.sent' | translate }}</div>
-      <div class="table-responsive" [class.d-none]="sentInvoices.length === 0">
-          <table class="table align-middle mb-0">
-            <thead>
-              <tr>
-                <th>{{ 'admin.billing.table.invoice' | translate }}</th>
-                <th>{{ 'admin.billing.table.client' | translate }}</th>
-                <th>{{ 'admin.billing.table.due' | translate }}</th>
-                <th class="text-end">{{ 'admin.billing.table.total' | translate }}</th>
-                <th class="text-end">{{ 'admin.billing.table.balance' | translate }}</th>
-                <th>{{ 'admin.billing.table.status' | translate }}</th>
-                <th class="text-end">{{ 'admin.billing.table.actions' | translate }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (invoice of sentInvoices; track invoice) {
-                <tr>
-                  <td>{{ invoice.invoiceNumber }}</td>
-                  <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
-                  <td>{{ invoice.dueDate | date: 'mediumDate' }}</td>
-                  <td class="text-end">{{ invoice.totalAmount | currency }}</td>
-                  <td class="text-end">{{ invoice.balanceDue | currency }}</td>
-                  <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
-                  <td class="text-end">
-                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.collectNow' | translate }}</button>
-                    <button class="btn btn-sm btn-outline-primary" (click)="sendReminder(invoice)">{{ 'admin.billing.actions.sendReminder' | translate }}</button>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-    </section>
-    <section class="billing-section">
-      <div class="billing-section__header">
-        <div>
-          <h3>{{ 'admin.billing.sections.overdue.title' | translate }}</h3>
-          <p>{{ 'admin.billing.sections.overdue.subtitle' | translate }}</p>
-        </div>
-        <span>{{ totalOverdue }} {{ 'admin.billing.sections.total' | translate }}</span>
-      </div>
-      <div class="billing-empty" [class.d-none]="overdueInvoices.length > 0">{{ 'admin.billing.empty.overdue' | translate }}</div>
-      <div class="table-responsive" [class.d-none]="overdueInvoices.length === 0">
-          <table class="table align-middle mb-0">
-            <thead>
-              <tr>
-                <th>{{ 'admin.billing.table.invoice' | translate }}</th>
-                <th>{{ 'admin.billing.table.client' | translate }}</th>
-                <th>{{ 'admin.billing.table.due' | translate }}</th>
-                <th class="text-end">{{ 'admin.billing.table.total' | translate }}</th>
-                <th class="text-end">{{ 'admin.billing.table.balance' | translate }}</th>
-                <th>{{ 'admin.billing.table.status' | translate }}</th>
-                <th class="text-end">{{ 'admin.billing.table.actions' | translate }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (invoice of overdueInvoices; track invoice) {
-                <tr>
-                  <td>{{ invoice.invoiceNumber }}</td>
-                  <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
-                  <td>{{ invoice.dueDate | date: 'mediumDate' }}</td>
-                  <td class="text-end">{{ invoice.totalAmount | currency }}</td>
-                  <td class="text-end">{{ invoice.balanceDue | currency }}</td>
-                  <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
-                  <td class="text-end">
-                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.collectNow' | translate }}</button>
-                    <button class="btn btn-sm btn-outline-primary" (click)="sendReminder(invoice)">{{ 'admin.billing.actions.sendReminder' | translate }}</button>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-    </section>
-    <section class="billing-section" [class.d-none]="paidInvoices.length === 0">
-        <div class="billing-section__header">
-          <div>
-            <h3>{{ 'admin.billing.sections.paid.title' | translate }}</h3>
-            <p>{{ 'admin.billing.sections.paid.subtitle' | translate }}</p>
+            @if (!loading && overdueInvoices.length > 0) {
+              <div class="bp-panel bp-panel--warn">
+                <div class="bp-panel__header">
+                  <h3>Overdue invoices</h3>
+                  <span class="bp-badge bp-badge--danger">{{ overdueInvoices.length }}</span>
+                </div>
+                <div class="table-responsive">
+                  <table class="bp-table">
+                    <thead>
+                      <tr>
+                        <th>Invoice</th>
+                        <th>Client</th>
+                        <th>Due</th>
+                        <th class="text-end">Balance</th>
+                        <th class="text-end">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (invoice of overdueInvoices | slice:0:5; track invoice) {
+                        <tr>
+                          <td>{{ invoice.invoiceNumber }}</td>
+                          <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
+                          <td>{{ invoice.dueDate | date:'mediumDate' }}</td>
+                          <td class="text-end">{{ invoice.balanceDue | currency }}</td>
+                          <td class="text-end">
+                            <button class="btn btn-sm btn-outline-primary" (click)="sendReminder(invoice)">Send reminder</button>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            }
           </div>
-          <span>{{ paidInvoices.length }} {{ 'admin.billing.sections.total' | translate }}</span>
+
+          <!-- Right: payment options sidebar (Jobber-inspired) -->
+          <aside class="bp-overview__sidebar">
+            <div class="bp-panel">
+              <div class="bp-panel__header">
+                <h3>Payment options</h3>
+              </div>
+              <div class="bp-options">
+                @if (hasPaymentProvider) {
+                  <div class="bp-options__row">
+                    <span class="bp-options__label">Provider</span>
+                    <strong>{{ activeProvider }}</strong>
+                  </div>
+                  <div class="bp-options__row">
+                    <span class="bp-options__label">Debit / Credit cards</span>
+                    <span>Visa, Mastercard, Amex</span>
+                  </div>
+                  <div class="bp-options__divider"></div>
+                  <h4 class="bp-options__heading">Features included</h4>
+                  <ul class="bp-options__features">
+                    <li>Client Hub payments</li>
+                    <li>Real-time payment status</li>
+                    <li>Partial payments</li>
+                    <li>Refund management</li>
+                    <li>Webhook event tracking</li>
+                  </ul>
+                } @else {
+                  <div class="bp-options__empty">
+                    <p>Connect a payment provider to start accepting payments.</p>
+                    <a class="btn btn-primary btn-sm" routerLink="/admin/connectedpayment">Connect now</a>
+                  </div>
+                }
+              </div>
+            </div>
+            <div class="bp-panel__actions">
+              <a class="btn btn-outline-primary btn-sm w-100" routerLink="/admin/connectedpayment">Manage connection</a>
+              <a class="btn btn-outline-secondary btn-sm w-100" routerLink="/admin/invoices">All invoices</a>
+            </div>
+          </aside>
         </div>
-        <div class="table-responsive">
-          <table class="table align-middle mb-0">
-            <thead>
-              <tr>
-                <th>{{ 'admin.billing.table.invoice' | translate }}</th>
-                <th>{{ 'admin.billing.table.client' | translate }}</th>
-                <th>{{ 'admin.billing.table.paid' | translate }}</th>
-                <th class="text-end">{{ 'admin.billing.table.total' | translate }}</th>
-                <th class="text-end">{{ 'admin.billing.table.refundAmount' | translate }}</th>
-                <th>{{ 'admin.billing.table.status' | translate }}</th>
-                <th class="text-end">{{ 'admin.billing.table.actions' | translate }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (invoice of paidInvoices | slice:0:8; track invoice) {
-                <tr>
-                  <td>{{ invoice.invoiceNumber }}</td>
-                  <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
-                  <td>{{ invoice.invoiceDate | date: 'mediumDate' }}</td>
-                  <td class="text-end">{{ invoice.totalAmount | currency }}</td>
-                  <td class="text-end" style="min-width: 180px;">
-                    <input
-                      type="number"
-                      class="form-control form-control-sm"
-                      [disabled]="!canRefundInvoice(invoice)"
-                      min="0.01"
-                      step="0.01"
-                      [(ngModel)]="invoiceRefundAmounts[invoice.id]"
-                    />
-                  </td>
-                  <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
-                  <td class="text-end">
-                    <div class="d-flex justify-content-end gap-2">
-                      <input
-                        type="text"
-                        class="form-control form-control-sm"
-                        style="max-width: 220px;"
-                        [placeholder]="'admin.billing.refund.reasonPlaceholder' | translate"
-                        [(ngModel)]="invoiceRefundReasons[invoice.id]"
-                      />
-                      <button class="btn btn-sm btn-outline-secondary" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.view' | translate }}</button>
-                      <button
-                        class="btn btn-sm btn-primary"
-                        [disabled]="!canRefundInvoice(invoice) || refundingInvoiceId === invoice.id"
-                        (click)="onIssueRefundForInvoice(invoice)"
-                      >
-                        {{ refundingInvoiceId === invoice.id ? ('admin.billing.refund.submitting' | translate) : ('admin.billing.refund.button' | translate) }}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
+      </p-tabpanel>
+
+      <!-- ═══ Invoices ════════════════════════════════ -->
+      <p-tabpanel value="invoices">
+        @if (loading) {
+          <p class="bp-state">{{ 'admin.billing.state.loading' | translate }}</p>
+        }
+        @if (error) {
+          <p class="bp-state bp-state--error">{{ error }}</p>
+        }
+
+        @if (!loading && !error) {
+          <!-- Draft -->
+          <div class="bp-panel">
+            <div class="bp-panel__header">
+              <h3>{{ 'admin.billing.sections.draft.title' | translate }}</h3>
+              <span class="bp-badge">{{ totalDrafts }}</span>
+            </div>
+            @if (draftInvoices.length === 0) {
+              <div class="bp-empty">{{ 'admin.billing.empty.draft' | translate }}</div>
+            } @else {
+              <div class="table-responsive">
+                <table class="bp-table">
+                  <thead>
+                    <tr>
+                      <th>{{ 'admin.billing.table.invoice' | translate }}</th>
+                      <th>{{ 'admin.billing.table.client' | translate }}</th>
+                      <th>{{ 'admin.billing.table.due' | translate }}</th>
+                      <th class="text-end">{{ 'admin.billing.table.total' | translate }}</th>
+                      <th class="text-end">{{ 'admin.billing.table.balance' | translate }}</th>
+                      <th>{{ 'admin.billing.table.status' | translate }}</th>
+                      <th class="text-end">{{ 'admin.billing.table.actions' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (invoice of draftInvoices; track invoice) {
+                      <tr>
+                        <td>{{ invoice.invoiceNumber }}</td>
+                        <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
+                        <td>{{ invoice.dueDate | date:'mediumDate' }}</td>
+                        <td class="text-end">{{ invoice.totalAmount | currency }}</td>
+                        <td class="text-end">{{ invoice.balanceDue | currency }}</td>
+                        <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
+                        <td class="text-end">
+                          <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.preview' | translate }}</button>
+                          <button class="btn btn-sm btn-primary" (click)="sendInvoice(invoice)">{{ 'admin.billing.actions.sendInvoice' | translate }}</button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+
+          <!-- Sent -->
+          <div class="bp-panel">
+            <div class="bp-panel__header">
+              <h3>{{ 'admin.billing.sections.sent.title' | translate }}</h3>
+              <span class="bp-badge">{{ totalSent }}</span>
+            </div>
+            @if (sentInvoices.length === 0) {
+              <div class="bp-empty">{{ 'admin.billing.empty.sent' | translate }}</div>
+            } @else {
+              <div class="table-responsive">
+                <table class="bp-table">
+                  <thead>
+                    <tr>
+                      <th>{{ 'admin.billing.table.invoice' | translate }}</th>
+                      <th>{{ 'admin.billing.table.client' | translate }}</th>
+                      <th>{{ 'admin.billing.table.due' | translate }}</th>
+                      <th class="text-end">{{ 'admin.billing.table.total' | translate }}</th>
+                      <th class="text-end">{{ 'admin.billing.table.balance' | translate }}</th>
+                      <th>{{ 'admin.billing.table.status' | translate }}</th>
+                      <th class="text-end">{{ 'admin.billing.table.actions' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (invoice of sentInvoices; track invoice) {
+                      <tr>
+                        <td>{{ invoice.invoiceNumber }}</td>
+                        <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
+                        <td>{{ invoice.dueDate | date:'mediumDate' }}</td>
+                        <td class="text-end">{{ invoice.totalAmount | currency }}</td>
+                        <td class="text-end">{{ invoice.balanceDue | currency }}</td>
+                        <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
+                        <td class="text-end">
+                          <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.collectNow' | translate }}</button>
+                          <button class="btn btn-sm btn-outline-primary" (click)="sendReminder(invoice)">{{ 'admin.billing.actions.sendReminder' | translate }}</button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+
+          <!-- Overdue -->
+          <div class="bp-panel">
+            <div class="bp-panel__header">
+              <h3>{{ 'admin.billing.sections.overdue.title' | translate }}</h3>
+              <span class="bp-badge bp-badge--danger">{{ totalOverdue }}</span>
+            </div>
+            @if (overdueInvoices.length === 0) {
+              <div class="bp-empty">{{ 'admin.billing.empty.overdue' | translate }}</div>
+            } @else {
+              <div class="table-responsive">
+                <table class="bp-table">
+                  <thead>
+                    <tr>
+                      <th>{{ 'admin.billing.table.invoice' | translate }}</th>
+                      <th>{{ 'admin.billing.table.client' | translate }}</th>
+                      <th>{{ 'admin.billing.table.due' | translate }}</th>
+                      <th class="text-end">{{ 'admin.billing.table.total' | translate }}</th>
+                      <th class="text-end">{{ 'admin.billing.table.balance' | translate }}</th>
+                      <th>{{ 'admin.billing.table.status' | translate }}</th>
+                      <th class="text-end">{{ 'admin.billing.table.actions' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (invoice of overdueInvoices; track invoice) {
+                      <tr>
+                        <td>{{ invoice.invoiceNumber }}</td>
+                        <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
+                        <td>{{ invoice.dueDate | date:'mediumDate' }}</td>
+                        <td class="text-end">{{ invoice.totalAmount | currency }}</td>
+                        <td class="text-end">{{ invoice.balanceDue | currency }}</td>
+                        <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
+                        <td class="text-end">
+                          <button class="btn btn-sm btn-outline-secondary me-2" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.collectNow' | translate }}</button>
+                          <button class="btn btn-sm btn-outline-primary" (click)="sendReminder(invoice)">{{ 'admin.billing.actions.sendReminder' | translate }}</button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+
+          <!-- Paid / Refunded -->
+          @if (paidInvoices.length > 0) {
+            <div class="bp-panel">
+              <div class="bp-panel__header">
+                <h3>{{ 'admin.billing.sections.paid.title' | translate }}</h3>
+                <span class="bp-badge bp-badge--success">{{ paidInvoices.length }}</span>
+              </div>
+              <div class="table-responsive">
+                <table class="bp-table">
+                  <thead>
+                    <tr>
+                      <th>{{ 'admin.billing.table.invoice' | translate }}</th>
+                      <th>{{ 'admin.billing.table.client' | translate }}</th>
+                      <th>{{ 'admin.billing.table.paid' | translate }}</th>
+                      <th class="text-end">{{ 'admin.billing.table.total' | translate }}</th>
+                      <th class="text-end">{{ 'admin.billing.table.refundAmount' | translate }}</th>
+                      <th>{{ 'admin.billing.table.status' | translate }}</th>
+                      <th class="text-end">{{ 'admin.billing.table.actions' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (invoice of paidInvoices | slice:0:8; track invoice) {
+                      <tr>
+                        <td>{{ invoice.invoiceNumber }}</td>
+                        <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
+                        <td>{{ invoice.invoiceDate | date:'mediumDate' }}</td>
+                        <td class="text-end">{{ invoice.totalAmount | currency }}</td>
+                        <td class="text-end" style="min-width: 180px;">
+                          <input
+                            type="number"
+                            class="form-control form-control-sm"
+                            [disabled]="!canRefundInvoice(invoice)"
+                            min="0.01"
+                            step="0.01"
+                            [(ngModel)]="invoiceRefundAmounts[invoice.id]"
+                          />
+                        </td>
+                        <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
+                        <td class="text-end">
+                          <div class="d-flex justify-content-end gap-2">
+                            <input
+                              type="text"
+                              class="form-control form-control-sm"
+                              style="max-width: 220px;"
+                              [placeholder]="'admin.billing.refund.reasonPlaceholder' | translate"
+                              [(ngModel)]="invoiceRefundReasons[invoice.id]"
+                            />
+                            <button class="btn btn-sm btn-outline-secondary" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.view' | translate }}</button>
+                            <button
+                              class="btn btn-sm btn-primary"
+                              [disabled]="!canRefundInvoice(invoice) || refundingInvoiceId === invoice.id"
+                              (click)="onIssueRefundForInvoice(invoice)"
+                            >
+                              {{ refundingInvoiceId === invoice.id ? ('admin.billing.refund.submitting' | translate) : ('admin.billing.refund.button' | translate) }}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          }
+        }
+      </p-tabpanel>
+
+      <!-- ═══ Activity ════════════════════════════════ -->
+      <p-tabpanel value="activity">
+        <!-- Payment History -->
+        <div class="bp-panel">
+          <div class="bp-panel__header">
+            <div>
+              <h3>Recent payment activity</h3>
+              <p>Latest successful, failed, refund, and subscription events.</p>
+            </div>
+            <div class="bp-pager">
+              <button class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBackHistory || historyLoading" (click)="onPrevHistoryPage()">Previous</button>
+              <button class="btn btn-sm btn-outline-primary" [disabled]="!historyNextCursor || historyLoading" (click)="onNextHistoryPage()">Next</button>
+            </div>
+          </div>
+          @if (historyLoading) {
+            <div class="bp-empty">Loading payment activity...</div>
+          } @else if (history.length === 0) {
+            <div class="bp-empty">No payment activity available yet.</div>
+          } @else {
+            <div class="table-responsive">
+              <table class="bp-table">
+                <thead>
+                  <tr>
+                    <th>When</th>
+                    <th>Event</th>
+                    <th>Status</th>
+                    <th>Payment ID</th>
+                    <th class="text-end">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (event of history; track event.id) {
+                    <tr>
+                      <td>{{ event.paidAt | date:'medium' }}</td>
+                      <td>{{ event.eventType }}</td>
+                      <td>{{ event.status }}</td>
+                      <td>{{ event.stripePaymentIntentId || '-' }}</td>
+                      <td class="text-end">{{ toDollarFromMinor(event.amountPaid) | currency:event.currency }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
         </div>
-      </section>
-  }
+
+        <!-- Disputes -->
+        <div class="bp-panel">
+          <div class="bp-panel__header">
+            <div>
+              <h3>Disputes</h3>
+              <p>Chargebacks and dispute lifecycle events from your payment providers.</p>
+            </div>
+            <div class="bp-pager">
+              <button class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBackDisputes || disputesLoading" (click)="onPrevDisputesPage()">Previous</button>
+              <button class="btn btn-sm btn-outline-primary" [disabled]="!disputeNextCursor || disputesLoading" (click)="onNextDisputesPage()">Next</button>
+            </div>
+          </div>
+          @if (disputesLoading) {
+            <div class="bp-empty">Loading disputes...</div>
+          } @else if (disputes.length === 0) {
+            <div class="bp-empty">No disputes found.</div>
+          } @else {
+            <div class="table-responsive">
+              <table class="bp-table">
+                <thead>
+                  <tr>
+                    <th>When</th>
+                    <th>Event</th>
+                    <th>Status</th>
+                    <th>Customer</th>
+                    <th class="text-end">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (dispute of disputes; track dispute.id) {
+                    <tr>
+                      <td>{{ dispute.paidAt | date:'medium' }}</td>
+                      <td>{{ dispute.eventType }}</td>
+                      <td>{{ dispute.status }}</td>
+                      <td>{{ dispute.customerId || '-' }}</td>
+                      <td class="text-end">{{ toDollarFromMinor(dispute.amountPaid) | currency:dispute.currency }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      </p-tabpanel>
+
+      <!-- ═══ Payment Setup ═══════════════════════════ -->
+      <p-tabpanel value="setup">
+        <div class="bp-setup">
+          <div class="bp-panel">
+            <div class="bp-panel__header">
+              <h3>Connected payment accounts</h3>
+            </div>
+            <p class="bp-setup__desc">
+              Connect Stripe or Square to accept client payments through invoices and the Client Hub.
+            </p>
+
+            <div class="bp-provider-grid">
+              <!-- Stripe -->
+              <div class="bp-provider" [class.bp-provider--active]="isStripeConnected">
+                <div class="bp-provider__header">
+                  <strong>Stripe</strong>
+                  @if (isStripeConnected) {
+                    <span class="bp-badge bp-badge--success">Connected</span>
+                  }
+                </div>
+                <p>Credit cards, ACH bank transfers, Apple Pay, Google Pay. Full webhook event tracking.</p>
+                <a class="btn btn-sm" [class.btn-outline-secondary]="isStripeConnected" [class.btn-primary]="!isStripeConnected" routerLink="/admin/connectedpayment">
+                  {{ isStripeConnected ? 'Manage Stripe' : 'Connect Stripe' }}
+                </a>
+              </div>
+
+              <!-- Square -->
+              <div class="bp-provider" [class.bp-provider--active]="isSquareConnected">
+                <div class="bp-provider__header">
+                  <strong>Square</strong>
+                  @if (isSquareConnected) {
+                    <span class="bp-badge bp-badge--success">Connected</span>
+                  }
+                </div>
+                <p>Card payments, Square POS integration, and in-person Tap to Pay.</p>
+                <a class="btn btn-sm" [class.btn-outline-secondary]="isSquareConnected" [class.btn-primary]="!isSquareConnected" routerLink="/admin/connectedpayment">
+                  {{ isSquareConnected ? 'Manage Square' : 'Connect Square' }}
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Features included -->
+          <div class="bp-panel">
+            <div class="bp-panel__header">
+              <h3>Features included</h3>
+            </div>
+            <ul class="bp-feature-list">
+              <li>Client Hub (online payment portal)</li>
+              <li>Real-time payment status updates</li>
+              <li>Partial payments</li>
+              <li>Refund management</li>
+              <li>Webhook event tracking</li>
+              <li>Multiple provider support (Stripe + Square)</li>
+            </ul>
+          </div>
+        </div>
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
 </section>
