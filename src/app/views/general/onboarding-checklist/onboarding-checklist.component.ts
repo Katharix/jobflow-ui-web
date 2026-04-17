@@ -1,34 +1,38 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, computed, DestroyRef, EventEmitter, inject, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { TimelineModule } from 'primeng/timeline';
 import { TranslateModule } from '@ngx-translate/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { OnboardingService, OnboardingStepDto } from './services/onboarding.service';
 
 @Component({
    selector: 'app-jobflow-onboarding-checklist',
    standalone: true,
-   imports: [CommonModule, TimelineModule, TranslateModule],
+   imports: [CommonModule, TranslateModule],
    templateUrl: './onboarding-checklist.component.html',
    styleUrls: ['./onboarding-checklist.component.scss']
 })
-export class OnboardingChecklistComponent implements OnChanges, OnInit {
+export class OnboardingChecklistComponent implements OnChanges {
    private onboardingService = inject(OnboardingService);
+   private destroyRef = inject(DestroyRef);
    private router = inject(Router);
 
    @Input() organizationId: string | null = null;
    @Output() allCompleted = new EventEmitter<void>();
 
-
-   steps: OnboardingStepDto[] = [];
-   nextStep: OnboardingStepDto | null = null;
+   steps = signal<OnboardingStepDto[]>([]);
    private completionSynced = false;
 
-   ngOnInit(): void {
-      if (this.organizationId && this.steps.length === 0) {
-         this.load();
-      }
-   }
+   readonly completedCount = computed(() => this.steps().filter(s => s.isCompleted).length);
+   readonly allStepsCompleted = computed(() => {
+      const s = this.steps();
+      return s.length > 0 && this.completedCount() === s.length;
+   });
+   readonly nextStep = computed(() => this.steps().find(s => !s.isCompleted) ?? null);
+   readonly progress = computed(() => {
+      const s = this.steps();
+      return s.length > 0 ? Math.round((this.completedCount() / s.length) * 100) : 0;
+   });
 
    ngOnChanges(changes: SimpleChanges): void {
       if (changes['organizationId'] && this.organizationId) {
@@ -39,40 +43,32 @@ export class OnboardingChecklistComponent implements OnChanges, OnInit {
    private load(): void {
       this.onboardingService
          .getChecklist(this.organizationId!)
+         .pipe(takeUntilDestroyed(this.destroyRef))
          .subscribe(steps => {
-            this.steps = steps.sort((a, b) => a.order - b.order);
-            this.nextStep = this.steps.find(s => !s.isCompleted) ?? null;
-            if (this.allStepsCompleted) {
+            this.steps.set(steps.sort((a, b) => a.order - b.order));
+            if (this.allStepsCompleted()) {
                this.allCompleted.emit();
 
                if (!this.completionSynced) {
                   this.completionSynced = true;
-                  this.onboardingService.completeOnboarding().subscribe({
-                     error: () => {
-                        this.completionSynced = false;
-                     }
-                  });
+                  this.onboardingService.completeOnboarding()
+                     .pipe(takeUntilDestroyed(this.destroyRef))
+                     .subscribe({
+                        error: () => { this.completionSynced = false; }
+                     });
                }
             }
          });
    }
 
-   get completedCount(): number {
-      return this.steps.filter(step => step.isCompleted).length;
-   }
-
-   get allStepsCompleted(): boolean {
-      return this.steps.length > 0 && this.completedCount === this.steps.length;
-   }
-
    getStepState(step: OnboardingStepDto): 'completed' | 'current' | 'upcoming' {
       if (step.isCompleted) return 'completed';
-      if (this.nextStep?.key === step.key) return 'current';
+      if (this.nextStep()?.key === step.key) return 'current';
       return 'upcoming';
    }
 
    isStepLocked(step: OnboardingStepDto): boolean {
-      return !step.isCompleted && this.nextStep?.key !== step.key;
+      return !step.isCompleted && this.nextStep()?.key !== step.key;
    }
 
    canOpenStep(step: OnboardingStepDto): boolean {

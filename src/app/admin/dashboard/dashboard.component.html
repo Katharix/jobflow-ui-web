@@ -6,9 +6,9 @@
       <button
         type="button"
         class="dashboard-tabs__btn"
-        [class.dashboard-tabs__btn--active]="activeTab === 'first-steps'"
-        (click)="setActiveTab('first-steps')"
-        >{{ 'dashboard.tabFirstSteps' | translate }}</button>
+        [class.dashboard-tabs__btn--active]="activeTab === 'setup-guide'"
+        (click)="setActiveTab('setup-guide')"
+        >{{ 'dashboard.tabSetupGuide' | translate }}</button>
     }
     <button
       type="button"
@@ -19,7 +19,7 @@
   </nav>
 
   <!-- First Steps Tab -->
-  @if (activeTab === 'first-steps' && showOnboardingChecklist) {
+  @if (activeTab === 'setup-guide' && showOnboardingChecklist) {
     <section class="dashboard-first-steps">
       <app-jobflow-onboarding-checklist
         [organizationId]="organizationId"
