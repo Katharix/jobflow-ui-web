@@ -137,6 +137,12 @@ export const routes: Routes = [
          {
             path: 'subscription-management',
             loadComponent: () => import('./admin/subscription-management/subscription-management.component').then(m => m.SubscriptionManagementComponent)
+         },
+         {
+            path: 'reporting',
+            canActivate: [subscriptionGuard],
+            data: { minPlan: 'Max' },
+            loadComponent: () => import('./admin/reporting/reporting.component').then(m => m.ReportingComponent)
          }
       ]
    },

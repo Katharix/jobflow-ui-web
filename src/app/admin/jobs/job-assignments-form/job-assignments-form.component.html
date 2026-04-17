@@ -1,22 +1,5 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-  <div class="mb-3">
-    <span class="form-label fw-semibold text-muted">Weather for this date</span>
-    <div class="d-flex align-items-start gap-2">
-      <i [class]="weatherStatusIcon" [ngClass]="weatherStatusClass"></i>
-      <div>
-        <div>{{ weatherMessage }}</div>
-        @if (!addressMissing && !locationUnavailable) {
-          <small class="text-muted">
-            {{ weatherLocation }}@if (weatherIsApproximate) {
-            <span> · approx</span>
-          }
-        </small>
-      }
-    </div>
-  </div>
-</div>
-
 <div class="mb-3">
   <label class="form-label fw-semibold text-muted" for="scheduleMode">Schedule Mode</label>
   <p-select inputId="scheduleMode" formControlName="scheduleMode" [options]="scheduleModeOptions" optionLabel="label" optionValue="value" size="small" [fluid]="true" />

@@ -1,16 +1,14 @@
 // job-schedule.component.ts
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { PageHeaderComponent } from '../../dashboard/page-header/page-header.component';
 import { JobflowCalendarComponent } from '../../../common/jobflow-calendar/jobflow-calendar.component';
 import { CalendarEvent } from '../../../common/jobflow-calendar/models/calendar-event';
+import { CalendarDateClickInfo } from '../../../common/jobflow-calendar/jobflow-calendar.component';
+import { LucideAngularModule } from 'lucide-angular';
 import { AssignmentsService } from '../services/assignments.service';
 import { JobsService } from '../services/jobs.service';
-import { WeatherService } from '../../../services/shared/weather.service';
-import { WeatherDashboardDto, WeatherForecastDay } from '../../../models/weather';
-import { of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import { mapAssignmentsToCalendarEvents } from '../../../common/jobflow-calendar/utils/assignment-calendar-mapper';
 import { ScheduleType } from '../models/assignment';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -27,7 +25,7 @@ import { Job, JobLifecycleStatus } from '../models/job';
 @Component({
   selector: 'app-job-schedule',
   standalone: true,
-  imports: [CommonModule, PageHeaderComponent, JobflowCalendarComponent, JobAssignmentFormComponent, JobflowDrawerComponent],
+  imports: [CommonModule, PageHeaderComponent, JobflowCalendarComponent, JobAssignmentFormComponent, JobflowDrawerComponent, LucideAngularModule],
   templateUrl: './job-schedule.component.html',
   styleUrls: ['./job-schedule.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -38,7 +36,6 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
   private jobs = inject(JobsService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private weatherService = inject(WeatherService);
   private scheduleSettingsService = inject(ScheduleSettingsService);
   private toast = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
@@ -63,20 +60,18 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
   showAssignmentModal = false;
   draftEvent: CalendarEvent | null = null;
   private returnToCommandCenter = false;
-  weatherLocation = 'Local area';
-  weatherIsApproximate = false;
-  weatherIconClass = 'pi pi-cloud';
-  weatherConditionText = 'Forecast unavailable';
-  weatherForecast: WeatherForecastDay[] = [];
-  selectedDayForecast: WeatherForecastDay | null = null;
   jobAddress = '';
   addressMissing = false;
-  locationUnavailable = false;
-  isWeatherLoading = false;
   scheduleSettings: ScheduleSettingsDto | null = null;
   unassignedJobs: Job[] = [];
   loadingUnassignedJobs = false;
   private isRouteScoped = false;
+
+  // Calendar view
+  calendarView: 'Day' | 'Week' | 'Month' = 'Month';
+
+  // Date context menu
+  contextMenu = { visible: false, x: 0, y: 0, date: null as Date | null, dateLabel: '' };
 
   get isJobScoped(): boolean {
     return !!this.currentJobId;
@@ -112,13 +107,11 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onCalendarDateChange(date: Date): void {
     this.selectedDate = date;
-    this.updateSelectedDayForecast();
     this.loadAssignments();
   }
 
   loadAssignments(): void {
-    const start = startOfWeek(this.selectedDate);
-    const end = endOfWeek(this.selectedDate);
+    const { start, end } = getVisibleRange(this.selectedDate, this.calendarView);
 
     this.assignments.getAssignments(start, end).subscribe((assignments) => {
       const jobAssignments = this.isRouteScoped && this.currentJobId
@@ -149,7 +142,6 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.draftEvent = e;
     this.selectedDate = e.StartTime;
-    this.updateSelectedDayForecast();
     this.showAssignmentModal = true;
   }
 
@@ -249,6 +241,75 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
+  onCalendarViewChange(view: string): void {
+    this.calendarView = view as 'Day' | 'Week' | 'Month';
+  }
+
+  // --- Date context menu ---
+
+  onDateCellClick(info: CalendarDateClickInfo): void {
+    const label = info.date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+    this.contextMenu = { visible: true, x: info.x, y: info.y, date: info.date, dateLabel: label };
+    this.cdr.markForCheck();
+  }
+
+  closeContextMenu(): void {
+    this.contextMenu = { ...this.contextMenu, visible: false };
+    this.cdr.markForCheck();
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    if (this.contextMenu.visible) {
+      this.closeContextMenu();
+    }
+  }
+
+  contextMenuNewJob(): void {
+    const date = this.contextMenu.date;
+    this.closeContextMenu();
+    if (date) {
+      this.router.navigate(['/admin/jobs/new'], { queryParams: { scheduledStart: date.toISOString() } });
+    }
+  }
+
+  contextMenuScheduleOnDate(): void {
+    const date = this.contextMenu.date;
+    this.closeContextMenu();
+    if (!date) return;
+
+    if (!this.currentJobId) {
+      this.toast.info('Select a job from Suggested jobs first.');
+      return;
+    }
+
+    const start = new Date(date);
+    start.setHours(9, 0, 0, 0);
+    const end = new Date(start);
+    end.setHours(10, 0, 0, 0);
+
+    this.draftEvent = {
+      Id: crypto.randomUUID(),
+      Subject: this.jobTitle || 'New assignment',
+      StartTime: start,
+      EndTime: end,
+    } as CalendarEvent;
+    this.selectedDate = start;
+    this.showAssignmentModal = true;
+    this.cdr.markForCheck();
+  }
+
+  contextMenuShowDayView(): void {
+    const date = this.contextMenu.date;
+    this.closeContextMenu();
+    if (date) {
+      this.selectedDate = date;
+      this.calendarView = 'Day';
+      this.loadAssignments();
+      this.cdr.markForCheck();
+    }
+  }
+
   private loadScheduleSettings(): void {
     this.scheduleSettingsService.getScheduleSettings().subscribe({
       next: (settings) => {
@@ -271,7 +332,6 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
       .join(' ');
     this.jobAddress = this.buildJobAddress(job);
     this.addressMissing = !this.jobAddress;
-    this.loadWeatherForecast();
     this.loadAssignments();
 
     this.router.navigate([], {
@@ -311,7 +371,6 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
           .join(' ');
         this.jobAddress = this.buildJobAddress(job);
         this.addressMissing = !this.jobAddress;
-        this.loadWeatherForecast();
         this.cdr.markForCheck();
       },
       error: () => {
@@ -346,7 +405,6 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
         .join(' ');
       this.jobAddress = this.buildJobAddress(matchingSuggested);
       this.addressMissing = !this.jobAddress;
-      this.loadWeatherForecast();
       this.loadAssignments();
       return;
     }
@@ -360,10 +418,6 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
     this.jobTitle = 'Schedule jobs';
     this.clientName = 'Select a suggested job to start scheduling.';
     this.addressMissing = true;
-    this.locationUnavailable = true;
-    this.weatherConditionText = 'Select a job to view forecast';
-    this.weatherIconClass = 'pi pi-calendar';
-    this.selectedDayForecast = null;
     this.loadAssignments();
   }
 
@@ -438,71 +492,6 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
     return Number.isFinite(value) ? value : Number.POSITIVE_INFINITY;
   }
 
-  private loadWeatherForecast(): void {
-    this.isWeatherLoading = true;
-
-    if (this.addressMissing) {
-      this.locationUnavailable = true;
-      this.isWeatherLoading = false;
-      return;
-    }
-
-    this.fetchWeatherByAddress(this.jobAddress);
-  }
-
-  private fetchWeatherByAddress(address: string): void {
-    this.weatherService
-      .getWeatherDashboardByAddress(address)
-      .pipe(
-        catchError(() => of(this.unavailableWeather()))
-      )
-      .subscribe((weather) => {
-        this.applyWeather(weather);
-        this.isWeatherLoading = false;
-        this.cdr.markForCheck();
-      });
-  }
-
-  private applyWeather(weather: WeatherDashboardDto): void {
-    if (weather.currentCondition === 'unavailable') {
-      this.locationUnavailable = true;
-      this.weatherConditionText = 'Forecast unavailable';
-      this.weatherIconClass = 'pi pi-map-marker';
-      this.selectedDayForecast = null;
-      return;
-    }
-
-    this.locationUnavailable = false;
-    this.weatherLocation = weather.location || 'Local area';
-    this.weatherIsApproximate = weather.isApproximate;
-    this.weatherConditionText = weather.currentCondition || 'Forecast unavailable';
-    this.weatherIconClass = weather.currentIconClass || 'pi pi-cloud';
-    this.weatherForecast = weather.forecast ?? [];
-    this.updateSelectedDayForecast();
-  }
-
-  private updateSelectedDayForecast(forecastOverride?: WeatherForecastDay[]): void {
-    const forecast = forecastOverride ?? this.weatherForecast;
-    if (!forecast.length) {
-      this.selectedDayForecast = null;
-      return;
-    }
-
-    const selectedKey = this.selectedDate.toISOString().slice(0, 10);
-    this.selectedDayForecast = forecast.find(day => day.date === selectedKey) ?? null;
-  }
-
-  private unavailableWeather(): WeatherDashboardDto {
-    return {
-      location: '',
-      isApproximate: false,
-      currentTempF: 0,
-      currentCondition: 'unavailable',
-      currentIconClass: 'pi pi-map-marker',
-      forecast: []
-    };
-  }
-
   private buildJobAddress(job: { organizationClient?: { address1?: string; address2?: string; city?: string; state?: string; zipCode?: string } }): string {
     const client = job.organizationClient;
     const parts = [
@@ -533,12 +522,10 @@ export class JobScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
         .join(' ');
       this.jobAddress = this.buildJobAddress(matchingJob);
       this.addressMissing = !this.jobAddress;
-      this.loadWeatherForecast();
     }
 
     this.draftEvent = event;
     this.selectedDate = event.StartTime;
-    this.updateSelectedDayForecast();
     this.showAssignmentModal = true;
     this.cdr.markForCheck();
   }
@@ -579,4 +566,24 @@ function startOfWeek(date: Date): Date {
 function endOfWeek(date: Date): Date {
   const start = startOfWeek(date);
   return new Date(start.getFullYear(), start.getMonth(), start.getDate() + 7);
+}
+
+function startOfMonth(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+function endOfMonth(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
+}
+
+function getVisibleRange(date: Date, view: string): { start: Date; end: Date } {
+  switch (view) {
+    case 'Month':
+      // FullCalendar's month view shows from the Sunday before month start to the Saturday after month end
+      return { start: startOfWeek(startOfMonth(date)), end: endOfWeek(endOfMonth(date)) };
+    case 'Day':
+      return { start: startOfWeek(date), end: endOfWeek(date) };
+    default:
+      return { start: startOfWeek(date), end: endOfWeek(date) };
+  }
 }

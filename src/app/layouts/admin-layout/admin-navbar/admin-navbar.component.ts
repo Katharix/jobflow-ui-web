@@ -7,7 +7,6 @@ import {OrganizationDto} from '../../../models/organization';
 import {NavItem} from '../../../models/nav-item';
 import {filter} from 'rxjs/operators';
 import {NavService} from "../services/nav.service";
-import { WeatherWidgetComponent } from '../../../admin/dashboard/weather-widget/weather-widget.component';
 
 
 @Component({
@@ -16,8 +15,7 @@ import { WeatherWidgetComponent } from '../../../admin/dashboard/weather-widget/
    imports: [
     NgbDropdownModule,
     RouterLink,
-    RouterModule,
-    WeatherWidgetComponent
+    RouterModule
 ],
    templateUrl: './admin-navbar.component.html',
    styleUrl: './admin-navbar.component.scss',

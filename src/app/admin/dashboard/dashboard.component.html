@@ -1,81 +1,176 @@
-<section class="dashboard-page dashboard-page--gentelella">
-  <section class="dashboard-welcome">
-    <div class="dashboard-welcome__message">
-      <h1>{{ 'dashboard.welcomeTitle' | translate:{ organization: organizationName } }}</h1>
-      <p>{{ 'dashboard.welcomeSubtitle' | translate }}</p>
-    </div>
+<section class="dashboard-page">
 
-    <div class="dashboard-welcome__meta">
-      <strong>{{ currentDateTime }}</strong>
-    </div>
-  </section>
-
-  <section class="dashboard-mini-tiles">
-    @for (tile of miniTiles; track tile) {
-      <article
-        class="mini-tile"
-        [ngClass]="tile.tone ? 'mini-tile--' + tile.tone : ''"
-        >
-        <p>{{ tile.label }}</p>
-        <strong>{{ tile.value }}</strong>
-        <span>{{ tile.detail }}</span>
-        @if (tile.route) {
-          <a [routerLink]="tile.route">{{ 'dashboard.view' | translate }}</a>
-        }
-      </article>
-    }
-  </section>
-
-  <section class="dashboard-grid">
-
+  <!-- Tab Toggle -->
+  <nav class="dashboard-tabs">
     @if (showOnboardingChecklist) {
-      <article class="dashboard-panel dashboard-panel--onboarding">
-        <div class="dashboard-panel__header">
-          <h2>{{ 'dashboard.onboardingTitle' | translate }}</h2>
-          <span>{{ 'dashboard.onboardingSubtitle' | translate }}</span>
-        </div>
-        <app-jobflow-onboarding-checklist
-          [organizationId]="organizationId"
-          (allCompleted)="onChecklistCompleted()"
-        ></app-jobflow-onboarding-checklist>
-      </article>
+      <button
+        type="button"
+        class="dashboard-tabs__btn"
+        [class.dashboard-tabs__btn--active]="activeTab === 'first-steps'"
+        (click)="setActiveTab('first-steps')"
+        >{{ 'dashboard.tabFirstSteps' | translate }}</button>
     }
+    <button
+      type="button"
+      class="dashboard-tabs__btn"
+      [class.dashboard-tabs__btn--active]="activeTab === 'dashboard'"
+      (click)="setActiveTab('dashboard')"
+      >{{ 'dashboard.tabDashboard' | translate }}</button>
+  </nav>
 
-    <article
-      class="dashboard-panel dashboard-panel--activity"
-      [ngClass]="{ 'dashboard-panel--activity-full': !showOnboardingChecklist }"
-      >
-      <div class="dashboard-panel__header">
-        <h2>{{ 'dashboard.clientActivityTitle' | translate }}</h2>
-        <span>{{ 'dashboard.clientActivitySubtitle' | translate }}</span>
-      </div>
+  <!-- First Steps Tab -->
+  @if (activeTab === 'first-steps' && showOnboardingChecklist) {
+    <section class="dashboard-first-steps">
+      <app-jobflow-onboarding-checklist
+        [organizationId]="organizationId"
+        (allCompleted)="onChecklistCompleted()"
+      ></app-jobflow-onboarding-checklist>
+    </section>
+  }
 
-      <ul class="dashboard-activity-list" [class.d-none]="clientActivity.length === 0">
-        @for (activity of clientActivity; track activity) {
-          <li class="dashboard-activity-item">
-            <div class="dashboard-activity-item__top">
-              <span class="dashboard-activity-badge" [ngClass]="getActivityClass(activity.type)">
-                {{ getActivityLabel(activity.type) }}
-              </span>
-              <time>{{ formatActivityDate(activity.occurredAt) }}</time>
+  <!-- Dashboard Tab -->
+  @if (activeTab === 'dashboard') {
+
+    <!-- Greeting Header -->
+    <header class="dashboard-header">
+      <div class="dashboard-header__date">{{ currentDateTime }}</div>
+      <h1 class="dashboard-header__greeting">{{ greetingText }}</h1>
+    </header>
+
+    <!-- Workflow Cards -->
+    <section class="dashboard-section">
+      <h2 class="dashboard-section__title">{{ 'dashboard.workflowTitle' | translate }}</h2>
+      @if (loadingWorkflow) {
+        <div class="dashboard-loader">
+          <div class="dashboard-loader__cards">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+          </div>
+        </div>
+      } @else {
+        <div class="workflow-cards">
+          @for (card of workflowCards; track card.id) {
+            <a class="workflow-card workflow-card--{{ card.tone }}" [routerLink]="card.route">
+              <span class="workflow-card__count">{{ card.count }}</span>
+              <span class="workflow-card__label">{{ card.label }}</span>
+              <span class="workflow-card__detail">{{ card.detail }}</span>
+            </a>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- Today's Appointments -->
+    <section class="dashboard-section">
+      <h2 class="dashboard-section__title">{{ 'dashboard.appointmentsTitle' | translate }}</h2>
+      @if (loadingAppointments) {
+        <div class="dashboard-loader">
+          <div class="skeleton-bar"></div>
+        </div>
+      } @else {
+        <div class="appointments-strip">
+          <div class="appointments-strip__stat">
+            <span class="appointments-strip__value">{{ appointmentStats.total }}</span>
+            <span class="appointments-strip__label">Total</span>
+          </div>
+          <div class="appointments-strip__stat appointments-strip__stat--active">
+            <span class="appointments-strip__value">{{ appointmentStats.active }}</span>
+            <span class="appointments-strip__label">Active</span>
+          </div>
+          <div class="appointments-strip__stat appointments-strip__stat--completed">
+            <span class="appointments-strip__value">{{ appointmentStats.completed }}</span>
+            <span class="appointments-strip__label">Completed</span>
+          </div>
+          <div class="appointments-strip__stat appointments-strip__stat--overdue">
+            <span class="appointments-strip__value">{{ appointmentStats.overdue }}</span>
+            <span class="appointments-strip__label">Overdue</span>
+          </div>
+          <div class="appointments-strip__stat">
+            <span class="appointments-strip__value">{{ appointmentStats.remaining }}</span>
+            <span class="appointments-strip__label">Remaining</span>
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- Business Performance -->
+    <section class="dashboard-section">
+      <h2 class="dashboard-section__title">{{ 'dashboard.performanceTitle' | translate }}</h2>
+      @if (loadingPerformance) {
+        <div class="dashboard-loader">
+          <div class="dashboard-loader__cards">
+            <div class="skeleton-card skeleton-card--wide"></div>
+            <div class="skeleton-card skeleton-card--wide"></div>
+          </div>
+        </div>
+      } @else {
+        <div class="performance-grid">
+          <article class="performance-card">
+            <h3 class="performance-card__title">{{ 'dashboard.receivablesTitle' | translate }}</h3>
+            <div class="performance-card__rows">
+              <div class="performance-card__row">
+                <span>{{ 'dashboard.revenue30d' | translate }}</span>
+                <strong class="tone-success">{{ miniTiles[0]?.value }}</strong>
+              </div>
+              <div class="performance-card__row">
+                <span>{{ 'dashboard.outstanding' | translate }}</span>
+                <strong class="tone-warning">{{ miniTiles[1]?.value }}</strong>
+              </div>
+              <div class="performance-card__row">
+                <span>{{ 'dashboard.overdue' | translate }}</span>
+                <strong class="tone-danger">{{ miniTiles[2]?.value }}</strong>
+              </div>
             </div>
-            <p>{{ activity.title }}</p>
-            <small>{{ activity.detail }}</small>
-            <a [routerLink]="activity.route">{{ 'dashboard.open' | translate }}</a>
-          </li>
-        }
-      </ul>
-      <p class="dashboard-empty-state mb-0" [class.d-none]="clientActivity.length > 0">{{ 'dashboard.clientActivityEmpty' | translate }}</p>
+          </article>
 
-    </article>
+          <article class="performance-card">
+            <h3 class="performance-card__title">{{ 'dashboard.upcomingJobsTitle' | translate }}</h3>
+            <div class="performance-card__rows">
+              <div class="performance-card__row">
+                <span>{{ 'dashboard.openJobs' | translate }}</span>
+                <strong>{{ kpiMetrics.openJobs }}</strong>
+              </div>
+              <div class="performance-card__row">
+                <span>{{ 'dashboard.needsScheduling' | translate }}</span>
+                <strong class="tone-warning">{{ kpiMetrics.jobsWithoutSchedule }}</strong>
+              </div>
+              <div class="performance-card__row">
+                <span>{{ 'dashboard.inProgress' | translate }}</span>
+                <strong class="tone-success">{{ kpiMetrics.jobsInProgress }}</strong>
+              </div>
+            </div>
+          </article>
+        </div>
+      }
+    </section>
 
-  </section>
+    <!-- Client Activity -->
+    <section class="dashboard-section">
+      <h2 class="dashboard-section__title">{{ 'dashboard.clientActivityTitle' | translate }}</h2>
+      @if (clientActivity.length === 0) {
+        <p class="dashboard-empty-state">{{ 'dashboard.clientActivityEmpty' | translate }}</p>
+      } @else {
+        <ul class="dashboard-activity-list">
+          @for (activity of clientActivity; track activity.id) {
+            <li class="dashboard-activity-item">
+              <div class="dashboard-activity-item__top">
+                <span class="dashboard-activity-badge" [ngClass]="getActivityClass(activity.type)">
+                  {{ getActivityLabel(activity.type) }}
+                </span>
+                <time>{{ formatActivityDate(activity.occurredAt) }}</time>
+              </div>
+              <p>{{ activity.title }}</p>
+              <small>{{ activity.detail }}</small>
+              <a [routerLink]="activity.route">{{ 'dashboard.open' | translate }}</a>
+            </li>
+          }
+        </ul>
+      }
+    </section>
 
-  <section class="dashboard-secondary" id="dashboard-command-center">
-    <app-jobflow-command-center
-      [primaryActions]="primaryActions"
-      [flowSteps]="flowSteps"
-    ></app-jobflow-command-center>
-  </section>
+
+  }
 </section>
 

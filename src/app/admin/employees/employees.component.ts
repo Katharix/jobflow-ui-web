@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, TemplateRef, ViewChild, inject} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef, ViewChild, inject, signal} from '@angular/core';
 import {CommonModule, NgClass} from '@angular/common';
 
 import {ActivatedRoute, Router} from '@angular/router';
@@ -86,7 +86,7 @@ export class EmployeesComponent implements OnInit, OnDestroy {
    columns: JobflowGridColumn[] = [];
    pageSettings: JobflowGridPageSettings = {pageSize: 10, pageSizes: [10, 20, 50]};
    rolesExist = false;
-   checkingRoles = true;
+   checkingRoles = signal(true);
    private onboardingActionHandled = false;
 
    // Import state
@@ -138,13 +138,13 @@ export class EmployeesComponent implements OnInit, OnDestroy {
          } else {
             this.organizationId = null;
             this.rolesExist = false;
-            this.checkingRoles = false;
+            this.checkingRoles.set(false);
          }
       });
 
-      this.translateLangSub = this.translate.onLangChange.subscribe(() => this.refreshLabels());
-
       this.refreshLabels();
+
+      this.translateLangSub = this.translate.onLangChange.subscribe(() => this.refreshLabels());
 
       this.queryParamSub = this.route.queryParamMap.subscribe(params => {
          if (this.onboardingActionHandled) return;
@@ -204,17 +204,17 @@ export class EmployeesComponent implements OnInit, OnDestroy {
 
    checkRolesBeforeLoad(): void {
       if (!this.organizationId) {
-         this.checkingRoles = false;
+         this.checkingRoles.set(false);
          return;
       }
 
-      this.checkingRoles = true;
+      this.checkingRoles.set(true);
       this.employeeRoleService.getByOrganization().subscribe({
          next: (roles) => {
             this.rolesExist = roles.length > 0;
             this.summary.roles = roles.length;
             this.roles = roles;
-            this.checkingRoles = false;
+            this.checkingRoles.set(false);
 
             if (!this.rolesExist) {
                return;
@@ -225,7 +225,7 @@ export class EmployeesComponent implements OnInit, OnDestroy {
          },
          error: (err) => {
             console.error('Error checking employee roles', err);
-            this.checkingRoles = false;
+            this.checkingRoles.set(false);
          }
       });
    }

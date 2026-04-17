@@ -1,6 +1,6 @@
 <app-page-header
-  [title]="'Job Assignments'"
-  [subtitle]="isJobScoped ? ('Schedule and manage assignments for ' + jobTitle) : 'Plan the week and choose a job to schedule'"
+  [title]="'Schedule'"
+  [subtitle]="isJobScoped ? ('Schedule and manage assignments for ' + jobTitle) : 'Plan, schedule, and manage your work'"
 ></app-page-header>
 
 <section class="schedule-shell mt-3">
@@ -38,31 +38,51 @@
   </aside>
 
   <div class="calendar-panel">
-    <div class="planner-banner" [class.planner-banner--scoped]="isJobScoped">
-      <div>
-        <h3>{{ isJobScoped ? jobTitle : 'Weekly planner' }}</h3>
-        <p>
-          {{ isJobScoped ? (clientName || 'Selected client') : 'Use Suggested jobs to pick work and drop it onto the calendar.' }}
-        </p>
-      </div>
-    </div>
-
     <app-jobflow-calendar
       [(selectedDate)]="selectedDate"
+      [calendarView]="calendarView"
+      [views]="['Day', 'Week', 'Month']"
       [eventSettings]="calendarEvents"
       [allowExternalDrop]="true"
       (selectedDateChange)="onCalendarDateChange($event)"
+      (calendarViewChange)="onCalendarViewChange($event)"
       (eventCreate)="onCalendarEventCreate($event)"
       (eventChange)="onCalendarEventUpdate($event)"
       (externalEventCreate)="onExternalEventCreate($event)"
+      (dateClick)="onDateCellClick($event)"
     >
     </app-jobflow-calendar>
   </div>
 </section>
 
+<!-- Date Context Menu -->
+@if (contextMenu.visible) {
+  <div
+    class="date-context-menu"
+    [style.left.px]="contextMenu.x"
+    [style.top.px]="contextMenu.y"
+    (mouseleave)="closeContextMenu()"
+  >
+    <div class="date-context-menu__header">Add to {{ contextMenu.dateLabel }}</div>
+    <button type="button" class="date-context-menu__item" (click)="contextMenuNewJob()">
+      <lucide-icon name="briefcase" size="16"></lucide-icon>
+      <span>New Job</span>
+    </button>
+    <button type="button" class="date-context-menu__item" (click)="contextMenuScheduleOnDate()">
+      <lucide-icon name="calendar-plus" size="16"></lucide-icon>
+      <span>Schedule Assignment</span>
+    </button>
+    <hr class="date-context-menu__divider">
+    <button type="button" class="date-context-menu__item" (click)="contextMenuShowDayView()">
+      <lucide-icon name="layout-list" size="16"></lucide-icon>
+      <span>Show on Day View</span>
+    </button>
+  </div>
+}
+
 @if (!isJobScoped) {
   <div class="schedule-hint">
-    Pick a suggested job to open its scheduling drawer and weather details.
+    Pick a suggested job to open its scheduling drawer.
   </div>
 }
 
@@ -77,12 +97,6 @@
     [scheduledStart]="draftEvent?.StartTime ?? selectedDate"
     [scheduledEnd]="draftEvent?.EndTime ?? addThirtyMinutes(selectedDate)"
     [scheduleSettings]="scheduleSettings"
-    [selectedDayForecast]="selectedDayForecast"
-    [isWeatherLoading]="isWeatherLoading"
-    [addressMissing]="addressMissing"
-    [locationUnavailable]="locationUnavailable"
-    [weatherLocation]="weatherLocation"
-    [weatherIsApproximate]="weatherIsApproximate"
     (submitted)="onAssignmentSave($event)"
   >
   </app-job-assignment-form>

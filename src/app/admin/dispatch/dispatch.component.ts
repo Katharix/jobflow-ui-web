@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { Draggable } from '@fullcalendar/interaction';
 import { PageHeaderComponent } from '../dashboard/page-header/page-header.component';
-import { JobflowCalendarComponent } from '../../common/jobflow-calendar/jobflow-calendar.component';
+import { JobflowCalendarComponent, CalendarDateClickInfo } from '../../common/jobflow-calendar/jobflow-calendar.component';
 import { JobflowDrawerComponent } from '../../common/jobflow-drawer/jobflow-drawer.component';
+import { LucideAngularModule } from 'lucide-angular';
 import { CalendarEvent } from '../../common/jobflow-calendar/models/calendar-event';
 import { AssignmentDto, AssignmentStatus, ScheduleType } from '../jobs/models/assignment';
 import { AssignmentsService } from '../jobs/services/assignments.service';
@@ -25,7 +26,7 @@ interface DispatchOverviewRow {
 @Component({
   selector: 'app-dispatch',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, PageHeaderComponent, JobflowCalendarComponent, JobflowDrawerComponent],
+  imports: [CommonModule, FormsModule, RouterLink, PageHeaderComponent, JobflowCalendarComponent, JobflowDrawerComponent, LucideAngularModule],
   templateUrl: './dispatch.component.html',
   styleUrl: './dispatch.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -73,6 +74,9 @@ export class DispatchComponent implements AfterViewInit, OnDestroy {
   draftSlot: CalendarEvent | null = null;
   draftJobId: string | null = null;
 
+  calendarView: 'Day' | 'Week' | 'Month' = 'Month';
+  contextMenu = { visible: false, x: 0, y: 0, date: null as Date | null, dateLabel: '' };
+
   private draggable?: Draggable;
   private notifierHub: NotifierHubHandle | null = null;
 
@@ -108,6 +112,62 @@ export class DispatchComponent implements AfterViewInit, OnDestroy {
   onCalendarDateChange(date: Date): void {
     this.selectedDate = date;
     this.loadBoard();
+  }
+
+  onCalendarViewChange(view: string): void {
+    this.calendarView = view as 'Day' | 'Week' | 'Month';
+  }
+
+  // --- Date context menu ---
+
+  onDateCellClick(info: CalendarDateClickInfo): void {
+    const label = info.date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+    this.contextMenu = { visible: true, x: info.x, y: info.y, date: info.date, dateLabel: label };
+    this.cdr.markForCheck();
+  }
+
+  closeContextMenu(): void {
+    this.contextMenu = { ...this.contextMenu, visible: false };
+    this.cdr.markForCheck();
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    if (this.contextMenu.visible) {
+      this.closeContextMenu();
+    }
+  }
+
+  contextMenuScheduleOnDate(): void {
+    const date = this.contextMenu.date;
+    this.closeContextMenu();
+    if (!date) return;
+
+    const start = new Date(date);
+    start.setHours(9, 0, 0, 0);
+    const end = new Date(start);
+    end.setHours(10, 0, 0, 0);
+
+    this.drawerMode = 'schedule';
+    this.draftSlot = {
+      StartTime: start,
+      EndTime: end,
+      Subject: 'New assignment',
+    } as CalendarEvent;
+    this.draftJobId = null;
+    this.drawerOpen = true;
+    this.cdr.markForCheck();
+  }
+
+  contextMenuShowDayView(): void {
+    const date = this.contextMenu.date;
+    this.closeContextMenu();
+    if (date) {
+      this.selectedDate = date;
+      this.calendarView = 'Day';
+      this.loadBoard();
+      this.cdr.markForCheck();
+    }
   }
 
   onEmployeeFilterChange(value: string): void {
@@ -257,18 +317,23 @@ export class DispatchComponent implements AfterViewInit, OnDestroy {
   }
 
   private loadBoard(): void {
-    const start = this.startOfWeek(this.selectedDate);
-    const end = this.endOfWeek(this.selectedDate);
+    const { start, end } = this.getVisibleRange(this.selectedDate, this.calendarView);
 
-    this.dispatch.getBoard(start, end).subscribe(board => {
-      this.employees = board.employees ?? [];
-      this.assignments = board.assignments ?? [];
-      this.unscheduledJobs = board.unscheduledJobs ?? [];
-      this.openTickets = this.unscheduledJobs.length;
+    this.dispatch.getBoard(start, end).subscribe({
+      next: (board) => {
+        this.employees = board.employees ?? [];
+        this.assignments = board.assignments ?? [];
+        this.unscheduledJobs = board.unscheduledJobs ?? [];
+        this.openTickets = this.unscheduledJobs.length;
 
-      this.refreshBoardView();
-      this.refreshDraggable();
-      this.cdr.markForCheck();
+        this.refreshBoardView();
+        this.refreshDraggable();
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('[Dispatch] Failed to load board:', err);
+        this.cdr.markForCheck();
+      }
     });
   }
 
@@ -458,6 +523,21 @@ export class DispatchComponent implements AfterViewInit, OnDestroy {
     end.setDate(end.getDate() + 6);
     end.setHours(23, 59, 59, 999);
     return end;
+  }
+
+  private startOfMonth(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), 1);
+  }
+
+  private endOfMonth(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
+  }
+
+  private getVisibleRange(date: Date, view: string): { start: Date; end: Date } {
+    if (view === 'Month') {
+      return { start: this.startOfWeek(this.startOfMonth(date)), end: this.endOfWeek(this.endOfMonth(date)) };
+    }
+    return { start: this.startOfWeek(date), end: this.endOfWeek(date) };
   }
 
   private addThirtyMinutes(date: Date): Date {

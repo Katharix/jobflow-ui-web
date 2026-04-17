@@ -286,6 +286,62 @@
   height: 3.4rem;
 }
 
+/* ---- Month (dayGrid) view enhancements ---- */
+
+.jobflow-scheduler .fc .fc-daygrid-body {
+  border-top: 1px solid #e5e7eb;
+}
+
+.jobflow-scheduler .fc .fc-daygrid-day {
+  min-height: 6.5rem;
+  transition: background-color 0.12s ease;
+}
+
+.jobflow-scheduler .fc .fc-daygrid-day-frame {
+  padding: 0.25rem;
+  min-height: 100%;
+}
+
+.jobflow-scheduler .fc .fc-daygrid-day-top {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.15rem 0.2rem;
+}
+
+.jobflow-scheduler .fc .fc-daygrid-day-events {
+  margin-top: 0.15rem;
+}
+
+.jobflow-scheduler .fc .fc-daygrid-event-harness {
+  margin-bottom: 0.15rem;
+}
+
+.jobflow-scheduler .fc .fc-daygrid-day.fc-day-other {
+  background: #f9fafb;
+}
+
+.jobflow-scheduler .fc .fc-daygrid-day.fc-day-other .fc-daygrid-day-number {
+  color: #cbd5e1;
+}
+
+.jobflow-scheduler .fc .fc-daygrid-more-link {
+  display: inline-block;
+  margin: 0.2rem 0.25rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.4rem;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.12s ease, color 0.12s ease;
+
+  &:hover {
+    background: #e0e7ff;
+    color: #3730a3;
+  }
+}
+
 .jobflow-scheduler.dispatch .fc .fc-timegrid-col-frame:hover,
 .jobflow-scheduler.dispatch .fc .fc-daygrid-day-frame:hover {
   background: rgba(148, 163, 184, 0.08);
@@ -406,12 +462,24 @@
 }
 
 .jobflow-event-card.is-compact {
-  padding: 0.28rem 0.4rem;
-  border-radius: 0.6rem;
+  padding: 0.22rem 0.45rem;
+  border-radius: 0.45rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: auto;
+}
+
+.jobflow-event-card.is-compact .jobflow-event-card__title {
+  font-size: 0.7rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .jobflow-event-card.is-compact .jobflow-event-card__time,
-.jobflow-event-card.is-compact .jobflow-event-card__meta {
+.jobflow-event-card.is-compact .jobflow-event-card__meta,
+.jobflow-event-card.is-compact .jobflow-event-card__status {
   display: none;
 }
 
@@ -423,12 +491,16 @@
   height: 1.8rem;
   margin: 0.4rem;
   border-radius: 0.5rem;
+  font-size: 0.82rem;
   font-weight: 700;
+  color: #334155;
+  transition: background-color 0.12s ease, color 0.12s ease;
 }
 
 .jobflow-scheduler .fc .fc-day-today .fc-daygrid-day-number {
-  background: #dbeafe;
-  color: #1e3a8a;
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
 }
 
 .jobflow-scheduler .fc .fc-timegrid-axis {
