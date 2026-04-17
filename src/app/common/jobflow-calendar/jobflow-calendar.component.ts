@@ -13,6 +13,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { EventResizeDoneArg, EventReceiveArg } from '@fullcalendar/interaction';
+import { DateClickArg } from '@fullcalendar/interaction';
 import { LucideAngularModule } from 'lucide-angular';
 import {
   CalendarOptions,
@@ -27,6 +28,12 @@ import { CalendarEvent } from './models/calendar-event';
 import { ScheduleType } from '../../admin/jobs/models/assignment';
 
 export type CalendarMode = 'dispatch' | 'context';
+
+export interface CalendarDateClickInfo {
+  date: Date;
+  x: number;
+  y: number;
+}
 
 interface JobflowCalendarEventSettings {
   fields?: Record<string, { name: string } | string>;
@@ -60,6 +67,7 @@ export class JobflowCalendarComponent {
   @Output() eventChange = new EventEmitter<CalendarEvent>();
   @Output() eventSelect = new EventEmitter<CalendarEvent>();
   @Output() externalEventCreate = new EventEmitter<CalendarEvent>();
+  @Output() dateClick = new EventEmitter<CalendarDateClickInfo>();
   @Input() allowExternalDrop = false;
 
   @ViewChild('fullCalendar')
@@ -428,6 +436,7 @@ export class JobflowCalendarComponent {
   private buildCalendarOptions(): CalendarOptions {
     const mappedView = this.toFullCalendarView(this.calendarView);
     const events = this.mapEventsForFullCalendar(this.eventSettings?.dataSource ?? []);
+    const isMonthView = mappedView === 'dayGridMonth';
 
     return {
       plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -453,7 +462,7 @@ export class JobflowCalendarComponent {
         minute: '2-digit',
         meridiem: 'short',
       },
-      height: this.height,
+      height: isMonthView ? 'auto' : this.height,
       events,
       select: (arg) => this.onDateSelect(arg),
       eventDrop: (arg) => this.onEventDrop(arg),
@@ -461,6 +470,7 @@ export class JobflowCalendarComponent {
       eventClick: (arg: EventClickArg) => this.onEventClick(arg),
       droppable: this.allowExternalDrop,
       eventReceive: (arg: EventReceiveArg) => this.onExternalEventReceive(arg),
+      dateClick: (arg: DateClickArg) => this.onDateClick(arg),
       datesSet: (arg: DatesSetArg) => {
         const currentStart = (arg.view as { currentStart?: Date }).currentStart;
         const visibleDate = this.normalizeSelectedDate(currentStart ?? arg.start, this.fromFullCalendarView(arg.view.type));
@@ -483,6 +493,15 @@ export class JobflowCalendarComponent {
     if (event) {
       this.eventSelect.emit(event);
     }
+  }
+
+  private onDateClick(args: DateClickArg): void {
+    const rect = (args.dayEl as HTMLElement).getBoundingClientRect();
+    this.dateClick.emit({
+      date: new Date(args.date),
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height,
+    });
   }
 
   private onExternalEventReceive(args: EventReceiveArg): void {
@@ -513,7 +532,9 @@ export class JobflowCalendarComponent {
   private changeView(view: string) {
     const api = this.fullCalendar?.getApi();
     if (api) {
-      api.changeView(this.toFullCalendarView(view));
+      const fcView = this.toFullCalendarView(view);
+      api.changeView(fcView);
+      api.setOption('height', fcView === 'dayGridMonth' ? 'auto' : this.height);
     }
   }
 

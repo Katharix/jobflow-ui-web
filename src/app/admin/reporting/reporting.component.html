@@ -1,0 +1,182 @@
+<div class="reporting-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1>Reporting</h1>
+      <p class="subtitle">Business performance overview</p>
+    </div>
+    <div class="header-right">
+      <select class="range-select" [(ngModel)]="selectedRange" (ngModelChange)="onRangeChange()">
+        <option value="30d">Last 30 Days</option>
+        <option value="90d">Last 90 Days</option>
+        <option value="6m">Last 6 Months</option>
+        <option value="1y">Last Year</option>
+      </select>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="skeleton-grid">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="skeleton-card">
+          <div class="skeleton-line title"></div>
+          <div class="skeleton-line value"></div>
+          <div class="skeleton-line detail"></div>
+        </div>
+      }
+      <div class="skeleton-chart-card span-2">
+        <div class="skeleton-line title"></div>
+        <div class="skeleton-chart"></div>
+      </div>
+      <div class="skeleton-chart-card span-2">
+        <div class="skeleton-line title"></div>
+        <div class="skeleton-chart"></div>
+      </div>
+    </div>
+  }
+
+  @if (!loading && dashboard) {
+    <!-- Revenue KPI Cards -->
+    <section class="kpi-section">
+      <div class="kpi-card">
+        <span class="kpi-label">Total Billed</span>
+        <span class="kpi-value">{{ formatCurrency(dashboard.revenue.totalBilled) }}</span>
+        <span class="kpi-detail">{{ dashboard.revenue.invoiceCount }} invoices</span>
+      </div>
+      <div class="kpi-card accent-green">
+        <span class="kpi-label">Total Collected</span>
+        <span class="kpi-value">{{ formatCurrency(dashboard.revenue.totalCollected) }}</span>
+        <span class="kpi-detail">{{ dashboard.revenue.paidCount }} paid</span>
+      </div>
+      <div class="kpi-card accent-orange">
+        <span class="kpi-label">Outstanding</span>
+        <span class="kpi-value">{{ formatCurrency(dashboard.revenue.totalOutstanding) }}</span>
+        <span class="kpi-detail">{{ dashboard.revenue.overdueCount }} overdue</span>
+      </div>
+      <div class="kpi-card accent-blue">
+        <span class="kpi-label">Completion Rate</span>
+        <span class="kpi-value">{{ formatPercent(dashboard.jobPerformance.completionRate) }}</span>
+        <span class="kpi-detail">{{ dashboard.jobPerformance.completedCount }}/{{ dashboard.jobPerformance.totalJobs }} jobs</span>
+      </div>
+    </section>
+
+    <!-- Charts Row 1: Revenue + Job Status -->
+    <section class="charts-row">
+      <div class="chart-card wide">
+        <h3>Revenue Trend</h3>
+        <div class="chart-container">
+          <canvas baseChart
+            [data]="revenueChartData"
+            [options]="revenueChartOptions"
+            type="bar">
+          </canvas>
+        </div>
+      </div>
+      <div class="chart-card narrow">
+        <h3>Job Status Breakdown</h3>
+        <div class="chart-container doughnut">
+          <canvas baseChart
+            [data]="jobStatusChartData"
+            [options]="jobStatusChartOptions"
+            type="doughnut">
+          </canvas>
+        </div>
+        <div class="status-stats">
+          <div class="stat-row">
+            <span class="dot draft"></span>
+            <span>Draft</span>
+            <strong>{{ dashboard.jobPerformance.draftCount }}</strong>
+          </div>
+          <div class="stat-row">
+            <span class="dot booked"></span>
+            <span>Booked</span>
+            <strong>{{ dashboard.jobPerformance.bookedCount }}</strong>
+          </div>
+          <div class="stat-row">
+            <span class="dot in-progress"></span>
+            <span>In Progress</span>
+            <strong>{{ dashboard.jobPerformance.inProgressCount }}</strong>
+          </div>
+          <div class="stat-row">
+            <span class="dot completed"></span>
+            <span>Completed</span>
+            <strong>{{ dashboard.jobPerformance.completedCount }}</strong>
+          </div>
+          <div class="stat-row">
+            <span class="dot cancelled"></span>
+            <span>Cancelled</span>
+            <strong>{{ dashboard.jobPerformance.cancelledCount }}</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Row 2: Job Trend + Employee Utilization -->
+    <section class="charts-row">
+      <div class="chart-card wide">
+        <h3>Job Trend</h3>
+        <p class="chart-subtitle">Avg completion: {{ dashboard.jobPerformance.avgCompletionDays }} days</p>
+        <div class="chart-container">
+          <canvas baseChart
+            [data]="jobTrendChartData"
+            [options]="jobTrendChartOptions"
+            type="line">
+          </canvas>
+        </div>
+      </div>
+      <div class="chart-card wide">
+        <h3>Employee Utilization</h3>
+        <div class="chart-container utilization">
+          @if (dashboard.employeeUtilization.length === 0) {
+            <div class="empty-state">
+              <p>No employee assignment data for this period</p>
+            </div>
+          } @else {
+            <canvas baseChart
+              [data]="utilizationChartData"
+              [options]="utilizationChartOptions"
+              type="bar">
+            </canvas>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Client Insights Table -->
+    <section class="table-section">
+      <div class="chart-card full">
+        <h3>Top Clients</h3>
+        @if (dashboard.topClients.length === 0) {
+          <div class="empty-state">
+            <p>No client data for this period</p>
+          </div>
+        } @else {
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Client</th>
+                  <th class="right">Jobs</th>
+                  <th class="right">Revenue</th>
+                  <th class="right">Outstanding</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (client of dashboard.topClients; track client.clientId) {
+                  <tr>
+                    <td>{{ client.clientName }}</td>
+                    <td class="right">{{ client.jobCount }}</td>
+                    <td class="right">{{ formatCurrency(client.totalRevenue) }}</td>
+                    <td class="right" [class.overdue]="client.outstandingBalance > 0">
+                      {{ formatCurrency(client.outstandingBalance) }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </section>
+  }
+</div>

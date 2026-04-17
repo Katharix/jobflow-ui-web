@@ -11,6 +11,7 @@ import { OrganizationService } from '../../services/shared/organization.service'
 import { OnboardingService } from '../../views/general/onboarding-checklist/services/onboarding.service';
 import { InvoiceService } from '../invoices/services/invoice.service';
 import { OnboardingChecklistComponent } from '../../views/general/onboarding-checklist/onboarding-checklist.component';
+import { UserProfileService } from '../../services/shared/user-profile.service';
 import { JobsService } from '../jobs/services/jobs.service';
 import { Job, JobLifecycleStatus } from '../jobs/models/job';
 import { CustomersService } from '../customer/services/customer.service';
@@ -20,11 +21,6 @@ import { Estimate, EstimateStatus, EstimateStatusLabels } from '../estimates/mod
 import { Invoice, InvoiceStatus } from '../../models/invoice';
 import { useNotifierHub } from '../services/useNotifierHub';
 import { ToastService } from '../../common/toast/toast.service';
-import {
-   CommandCenterAction,
-   CommandCenterFlowStep,
-   JobflowCommandCenterComponent
-} from './jobflow-command-center/jobflow-command-center.component';
 
 type DashboardClientActivityType =
    | 'estimate-accepted'
@@ -76,10 +72,29 @@ type InvoiceWithDates = Invoice & {
    paidAt?: string;
 };
 
+type DashboardTab = 'first-steps' | 'dashboard';
+
+interface WorkflowCard {
+   id: string;
+   label: string;
+   count: number;
+   detail: string;
+   tone: 'orange' | 'red' | 'green' | 'blue';
+   route: string;
+}
+
+interface AppointmentStats {
+   total: number;
+   active: number;
+   completed: number;
+   overdue: number;
+   remaining: number;
+}
+
 @Component({
    selector: 'app-dashboard',
    standalone: true,
-   imports: [CommonModule, RouterModule, TranslateModule, OnboardingChecklistComponent, JobflowCommandCenterComponent],
+   imports: [CommonModule, RouterModule, TranslateModule, OnboardingChecklistComponent],
    templateUrl: './dashboard.component.html',
    styleUrl: './dashboard.component.scss',
    changeDetection: ChangeDetectionStrategy.OnPush
@@ -88,6 +103,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
    private readonly orgContext = inject(OrganizationContextService);
    private readonly organizationService = inject(OrganizationService);
    private readonly onboardingService = inject(OnboardingService);
+   private readonly userProfileService = inject(UserProfileService);
    private readonly jobsService = inject(JobsService);
    private readonly invoiceService = inject(InvoiceService);
    private readonly customersService = inject(CustomersService);
@@ -101,41 +117,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
    currentDateTime = '';
    showOnboardingChecklist = false;
    private checklistCompleted = false;
-   readonly welcomeSubtext = 'Here\'s your command center for today-start with what matters most.';
+
+   activeTab: DashboardTab = 'dashboard';
+   userFirstName = '';
+   greetingText = '';
+   loadingWorkflow = true;
+   loadingAppointments = true;
+   loadingPerformance = true;
+
+   workflowCards: WorkflowCard[] = [];
+   appointmentStats: AppointmentStats = { total: 0, active: 0, completed: 0, overdue: 0, remaining: 0 };
 
    miniTiles: DashboardKpi[] = [];
 
-   readonly primaryActions: CommandCenterAction[] = [
-      {
-         label: 'Create a job',
-         description: 'Launch the job intake drawer instantly',
-         route: '/admin/jobs',
-         icon: 'pi pi-briefcase',
-         queryParams: {
-            onboardingAction: 'open-job-drawer',
-            returnTo: 'dashboard-command-center'
-         }
-      },
-      {
-         label: 'Add customer',
-         description: 'Capture client details before job intake',
-         route: '/admin/clients/create',
-         icon: 'pi pi-user-plus',
-         queryParams: {
-            onboardingAction: 'open-client-drawer',
-            returnTo: 'dashboard-command-center'
-         }
-      }
-   ];
 
-   flowSteps: CommandCenterFlowStep[] = [];
    clientActivity: DashboardClientActivity[] = [];
    private revisionActivity: DashboardClientActivity[] = [];
    private realtimeActivity: DashboardClientActivity[] = [];
    private latestEstimates: Estimate[] = [];
    private latestInvoices: Invoice[] = [];
 
-   private kpiMetrics: DashboardKpiMetrics = this.buildEmptyKpiMetrics();
+   kpiMetrics: DashboardKpiMetrics = this.buildEmptyKpiMetrics();
 
    private readonly destroy$ = new Subject<void>();
    private clockIntervalId: ReturnType<typeof setInterval> | null = null;
@@ -174,6 +176,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
    ngOnInit(): void {
       this.startClock();
+      this.updateGreeting();
+      this.loadUserProfile();
       void this.notifierHub.connect();
 
       this.orgContext.org$
@@ -183,12 +187,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.organizationName = org?.organizationName?.trim() || 'your organization';
             this.showOnboardingChecklist = !(org?.onboardingComplete ?? false) && !this.checklistCompleted;
 
+            if (this.showOnboardingChecklist) {
+               this.activeTab = 'first-steps';
+            } else {
+               this.activeTab = 'dashboard';
+            }
+
             if (this.organizationId && this.showOnboardingChecklist) {
                this.syncOnboardingCompletion(this.organizationId);
             }
 
             if (!this.organizationId) {
-               this.flowSteps = [];
+               this.loadingWorkflow = false;
+               this.loadingAppointments = false;
+               this.loadingPerformance = false;
                this.cdr.markForCheck();
                return;
             }
@@ -213,6 +225,37 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return `Welcome, ${this.organizationName}`;
    }
 
+   setActiveTab(tab: DashboardTab): void {
+      this.activeTab = tab;
+   }
+
+   private loadUserProfile(): void {
+      this.userProfileService.getMe()
+         .pipe(
+            catchError(() => of(null)),
+            takeUntil(this.destroy$)
+         )
+         .subscribe(profile => {
+            this.userFirstName = profile?.firstName?.trim() || '';
+            this.updateGreeting();
+            this.cdr.markForCheck();
+         });
+   }
+
+   private updateGreeting(): void {
+      const hour = new Date().getHours();
+      let timeOfDay: string;
+      if (hour < 12) {
+         timeOfDay = 'morning';
+      } else if (hour < 17) {
+         timeOfDay = 'afternoon';
+      } else {
+         timeOfDay = 'evening';
+      }
+      const name = this.userFirstName || this.organizationName;
+      this.greetingText = `Good ${timeOfDay}, ${name}`;
+   }
+
 
    private startClock(): void {
       this.updateCurrentDateTime();
@@ -231,6 +274,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
    }
 
    private loadDashboard(): void {
+      this.loadingWorkflow = true;
+      this.loadingAppointments = true;
+      this.loadingPerformance = true;
+
       forkJoin({
          jobs: this.jobsService.getAllJobs().pipe(catchError(() => of([] as Job[]))),
          invoices: this.invoiceService.getByOrganization().pipe(catchError(() => of([] as Invoice[]))),
@@ -240,80 +287,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
          .pipe(takeUntil(this.destroy$))
          .subscribe(({ jobs, invoices, estimates, customers }) => {
             this.buildDashboardState(jobs, invoices, estimates, customers);
+            this.loadingWorkflow = false;
+            this.loadingAppointments = false;
+            this.loadingPerformance = false;
             this.cdr.markForCheck();
          });
    }
 
    private buildDashboardState(jobs: Job[], invoices: Invoice[], estimates: Estimate[], customers: Client[]): void {
-      const openJobs = jobs.filter(job => !this.isJobDone(job));
-      const jobsWithoutSchedule = openJobs
-         .filter(job => !job.hasAssignments)
-         .slice(0, 6);
-
-      const invoiceAttention = invoices
-         .filter(invoice => (invoice.balanceDue ?? 0) > 0)
-         .slice(0, 6);
-
-      const draftJobs = jobs.filter(job => job.lifecycleStatus === JobLifecycleStatus.Draft);
-
       this.latestEstimates = estimates;
       this.latestInvoices = invoices;
       this.clientActivity = this.mergeClientActivity();
 
       this.kpiMetrics = this.computeKpiMetrics(jobs, invoices, estimates, customers);
       this.miniTiles = this.buildMiniTiles();
-
-      this.flowSteps = [
-         {
-            step: 'Step 1',
-            title: 'Capture customer details',
-            description: 'Begin with a complete client profile so every job starts with clean context.',
-            metric: `${this.toCount(customers.length)} total customers`,
-            ctaLabel: 'Add customer',
-            route: '/admin/clients/create',
-            queryParams: {
-               onboardingAction: 'open-client-drawer',
-               returnTo: 'dashboard-command-center'
-            },
-            status: customers.length === 0 ? 'attention' : 'ready'
-         },
-         {
-            step: 'Step 2',
-            title: 'Create job brief',
-            description: 'Define job title and client quickly, then move directly into execution.',
-            metric: `${this.toCount(draftJobs.length)} draft jobs`,
-            ctaLabel: 'Start new job',
-            route: '/admin/jobs',
-            queryParams: {
-               onboardingAction: 'open-job-drawer',
-               returnTo: 'dashboard-command-center'
-            },
-            status: draftJobs.length > 0 ? 'ready' : 'attention'
-         },
-         {
-            step: 'Step 3',
-            title: 'Lock the schedule',
-            description: 'Convert unscheduled jobs into committed calendar slots.',
-            metric: `${this.toCount(jobsWithoutSchedule.length)} waiting to schedule`,
-            ctaLabel: 'Open jobs board',
-            route: '/admin/jobs',
-            queryParams: { returnTo: 'dashboard-command-center' },
-            status: jobsWithoutSchedule.length > 0 ? 'attention' : 'clear'
-         },
-         {
-            step: 'Step 4',
-            title: 'Invoice and collect',
-            description: 'Select the right job, then send an invoice without breaking flow.',
-            metric: `${this.toCount(invoiceAttention.length)} invoices need follow-up`,
-            ctaLabel: 'Select job',
-            route: '/admin/invoices',
-            queryParams: {
-               onboardingAction: 'select-job-for-invoice',
-               returnTo: 'dashboard-command-center'
-            },
-            status: invoiceAttention.length > 0 ? 'attention' : 'clear'
-         }
-      ];
+      this.workflowCards = this.buildWorkflowCards(estimates, jobs, invoices);
+      this.appointmentStats = this.buildAppointmentStats(jobs);
    }
 
    getActivityLabel(type: DashboardClientActivityType): string {
@@ -472,6 +461,76 @@ export class DashboardComponent implements OnInit, OnDestroy {
             route: '/admin/jobs'
          }
       ];
+   }
+
+   private buildWorkflowCards(estimates: Estimate[], jobs: Job[], invoices: Invoice[]): WorkflowCard[] {
+      const pendingEstimates = estimates.filter(e => {
+         const status = this.resolveEstimateStatus(e.status);
+         return status !== EstimateStatus.Accepted && status !== EstimateStatus.Declined;
+      });
+      const acceptedEstimates = estimates.filter(e => this.resolveEstimateStatus(e.status) === EstimateStatus.Accepted);
+      const openJobs = jobs.filter(j => !this.isJobDone(j));
+      const unpaidInvoices = invoices.filter(i => {
+         const status = this.resolveInvoiceStatus(i.status);
+         return status !== InvoiceStatus.Paid && status !== InvoiceStatus.Refunded;
+      });
+
+      return [
+         {
+            id: 'wf-estimates',
+            label: 'Estimates',
+            count: pendingEstimates.length,
+            detail: `${acceptedEstimates.length} accepted`,
+            tone: 'orange',
+            route: '/admin/estimates'
+         },
+         {
+            id: 'wf-quotes',
+            label: 'Quotes',
+            count: acceptedEstimates.length,
+            detail: `${this.formatCurrency(this.kpiMetrics.acceptedEstimateValue)} value`,
+            tone: 'red',
+            route: '/admin/estimates'
+         },
+         {
+            id: 'wf-jobs',
+            label: 'Jobs',
+            count: openJobs.length,
+            detail: `${this.kpiMetrics.jobsInProgress} in progress`,
+            tone: 'green',
+            route: '/admin/jobs'
+         },
+         {
+            id: 'wf-invoices',
+            label: 'Invoices',
+            count: unpaidInvoices.length,
+            detail: `${this.formatCurrency(this.kpiMetrics.outstandingBalance)} outstanding`,
+            tone: 'blue',
+            route: '/admin/invoices'
+         }
+      ];
+   }
+
+   private buildAppointmentStats(jobs: Job[]): AppointmentStats {
+      const assignments = jobs.flatMap(job => job.assignments ?? []);
+      const today = new Date();
+      const todayAssignments = assignments.filter(a => this.isSameDay(a.scheduledStart, today));
+      const active = todayAssignments.filter(a => this.assignmentStatusIs(a.status, 'inprogress'));
+      const completed = todayAssignments.filter(a => this.assignmentStatusIs(a.status, 'completed'));
+      const overdue = todayAssignments.filter(a => {
+         if (this.assignmentStatusIs(a.status, 'completed') || this.assignmentStatusIs(a.status, 'canceled') || this.assignmentStatusIs(a.status, 'skipped')) return false;
+         if (!a.scheduledEnd) return false;
+         return new Date(a.scheduledEnd).getTime() < Date.now();
+      });
+      const remaining = todayAssignments.length - active.length - completed.length - overdue.length;
+
+      return {
+         total: todayAssignments.length,
+         active: active.length,
+         completed: completed.length,
+         overdue: overdue.length,
+         remaining: Math.max(0, remaining)
+      };
    }
 
    private isSameDay(value: Date | string | undefined, compare: Date): boolean {

@@ -78,16 +78,20 @@
 
           <app-jobflow-calendar
             [(selectedDate)]="selectedDate"
+            [calendarView]="calendarView"
+            [views]="['Day', 'Week', 'Month']"
             [eventSettings]="calendarEvents"
             [filters]="employeeFilters"
             [selectedFilter]="selectedEmployeeId"
             [allowExternalDrop]="true"
             (selectedDateChange)="onCalendarDateChange($event)"
+            (calendarViewChange)="onCalendarViewChange($event)"
             (selectedFilterChange)="onEmployeeFilterChange($event)"
             (eventCreate)="onCalendarEventCreate($event)"
             (eventChange)="onCalendarEventUpdate($event)"
             (eventSelect)="onCalendarEventSelect($event)"
             (externalEventCreate)="onExternalEventCreate($event)"
+            (dateClick)="onDateCellClick($event)"
             >
           </app-jobflow-calendar>
         </div>
@@ -182,6 +186,27 @@
     </div>
   </div>
 </section>
+
+<!-- Date Context Menu -->
+@if (contextMenu.visible) {
+  <div
+    class="date-context-menu"
+    [style.left.px]="contextMenu.x"
+    [style.top.px]="contextMenu.y"
+    (mouseleave)="closeContextMenu()"
+  >
+    <div class="date-context-menu__header">Add to {{ contextMenu.dateLabel }}</div>
+    <button type="button" class="date-context-menu__item" (click)="contextMenuScheduleOnDate()">
+      <lucide-icon name="calendar-plus" size="16"></lucide-icon>
+      <span>Schedule Assignment</span>
+    </button>
+    <hr class="date-context-menu__divider">
+    <button type="button" class="date-context-menu__item" (click)="contextMenuShowDayView()">
+      <lucide-icon name="layout-list" size="16"></lucide-icon>
+      <span>Show on Day View</span>
+    </button>
+  </div>
+}
 
 <app-jobflow-drawer
   [open]="drawerOpen"

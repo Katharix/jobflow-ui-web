@@ -94,10 +94,6 @@ The activity feed is a live, scrolling list of events happening across your orga
 - Job status changes
 - Client activity and engagement
 
-### Weather Widget
-
-A weather widget displays the local forecast, which is especially useful for field service businesses where scheduling is weather-dependent.
-
 ### How It Benefits Your Organization
 
 - **Instant visibility** — Know the health of your business the moment you log in. No digging through reports.

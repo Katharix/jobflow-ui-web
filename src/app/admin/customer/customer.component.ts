@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -40,6 +40,7 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
    private orgContext = inject(OrganizationContextService);
    private router = inject(Router);
    private route = inject(ActivatedRoute);
+   private cdr = inject(ChangeDetectorRef);
    @ViewChild('clientNameTemplate')
    clientNameTemplate!: TemplateRef<Client>;
 
@@ -220,6 +221,7 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
 
    ngAfterViewInit(): void {
       this.buildColumns();
+      this.cdr.detectChanges();
    }
 
    ngOnDestroy(): void {

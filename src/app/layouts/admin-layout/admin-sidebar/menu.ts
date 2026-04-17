@@ -20,5 +20,5 @@ export const MENU: MenuItem[] = [
    { label: 'Employees', labelKey: 'nav.employees', icon: 'users-round', link: '/admin/employees', minPlan: 'Flow' },
    { label: 'Price Book', labelKey: 'nav.priceBook', icon: 'book-open-text', link: '/admin/pricebook', minPlan: 'Max' },
    { label: 'Billing & Payments', labelKey: 'nav.billingPayments', icon: 'banknote', link: '/admin/billing-payments' },
-   { label: 'Reporting', labelKey: 'nav.reporting', icon: 'chart-no-axes-combined', link: '/apps/chat', minPlan: 'Max' }
+   { label: 'Reporting', labelKey: 'nav.reporting', icon: 'chart-no-axes-combined', link: '/admin/reporting', minPlan: 'Max' }
 ];

@@ -8,7 +8,6 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { TextareaModule } from 'primeng/textarea';
 import { ScheduleType } from '../models/assignment';
 import { RecurrenceRuleUpsertRequest } from '../models/recurrence-rule';
-import { WeatherForecastDay } from '../../../models/weather';
 import { ScheduleSettingsDto } from '../../settings/models/schedule-settings';
 
 type ScheduleMode = 'OneTime' | 'Recurring';
@@ -49,12 +48,6 @@ export class JobAssignmentFormComponent implements OnInit, OnChanges {
    @Input() scheduledStart!: Date;
    @Input() scheduledEnd!: Date;
    @Input() scheduleSettings: ScheduleSettingsDto | null = null;
-   @Input() selectedDayForecast: WeatherForecastDay | null = null;
-   @Input() isWeatherLoading = false;
-   @Input() addressMissing = false;
-   @Input() locationUnavailable = false;
-   @Input() weatherLocation = 'Job location';
-   @Input() weatherIsApproximate = false;
 
    @Output() submitted = new EventEmitter<{
       jobId: string;
@@ -288,46 +281,5 @@ export class JobAssignmentFormComponent implements OnInit, OnChanges {
 
       const end = new Date(start.getTime() + windowMinutes * 60000);
       this.form.get('scheduledEnd')?.setValue(end, { emitEvent: false });
-   }
-
-   get weatherMessage(): string {
-      if (this.isWeatherLoading) {
-         return 'Loading forecast for the job location...';
-      }
-
-      if (this.addressMissing) {
-         return 'Add a job address to view the forecast for this date.';
-      }
-
-      if (this.locationUnavailable) {
-         return 'Forecast unavailable for the job address.';
-      }
-
-      if (!this.selectedDayForecast) {
-         return 'Forecast not available for the selected date yet.';
-      }
-
-      const temps = `${this.selectedDayForecast.highTempF}° / ${this.selectedDayForecast.lowTempF}°`;
-      const precip = this.selectedDayForecast.precipitationChance >= 20
-         ? ` · ${this.selectedDayForecast.precipitationChance}% rain`
-         : '';
-
-      return `${this.selectedDayForecast.condition} — ${temps}${precip}.`;
-   }
-
-   get weatherSeverity(): 'clear' | 'warning' {
-      if (!this.selectedDayForecast) {
-         return 'clear';
-      }
-
-      return this.selectedDayForecast.precipitationChance >= 50 ? 'warning' : 'clear';
-   }
-
-   get weatherStatusIcon(): string {
-      return this.weatherSeverity === 'warning' ? 'pi pi-exclamation-triangle' : 'pi pi-check-circle';
-   }
-
-   get weatherStatusClass(): string {
-      return this.weatherSeverity === 'warning' ? 'text-warning' : 'text-success';
    }
 }
