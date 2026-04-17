@@ -1,61 +1,75 @@
 @if (!allStepsCompleted()) {
   <section class="onboarding">
     <header class="onboarding__header">
-      <div>
-        <h3 class="onboarding__title">{{ 'onboarding.title' | translate }}</h3>
-        <p class="onboarding__subtitle">{{ 'onboarding.subtitle' | translate }}</p>
-      </div>
-      @if (steps().length) {
-        <span class="onboarding__badge">
-          {{ 'onboarding.summary' | translate:{ completed: completedCount(), total: steps().length } }}
-        </span>
-      }
+      <h3 class="onboarding__title">{{ 'onboarding.title' | translate }}</h3>
+      <p class="onboarding__subtitle">{{ 'onboarding.subtitle' | translate }}</p>
     </header>
-
-    @if (steps().length) {
-      <div class="onboarding__progress">
-        <div class="onboarding__progress-bar" [style.width.%]="progress()"></div>
-      </div>
-    }
 
     @if (!steps().length) {
       <div class="onboarding__empty">{{ 'onboarding.empty' | translate }}</div>
     }
 
     @if (steps().length) {
-      <ol class="onboarding__steps">
-        @for (step of steps(); track step.key) {
-          <li class="step" [class]="'step--' + getStepState(step)">
-            <div class="step__marker">
-              @if (step.isCompleted) {
-                <svg class="step__icon" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              } @else if (getStepState(step) === 'current') {
-                <span class="step__dot step__dot--active"></span>
-              } @else {
-                <span class="step__dot"></span>
-              }
+      <div class="onboarding__progress-row">
+        <div class="onboarding__progress">
+          <div class="onboarding__progress-bar" [style.width.%]="progress()"></div>
+        </div>
+        <span class="onboarding__badge">
+          {{ 'onboarding.summary' | translate:{ completed: completedCount(), total: steps().length } }}
+        </span>
+      </div>
+
+      <div class="onboarding__grid">
+        @for (step of visibleSteps(); track step.key) {
+          <article
+            class="card"
+            [class]="'card--' + getStepState(step)"
+            [class.card--clickable]="canOpenStep(step)"
+            [attr.tabindex]="canOpenStep(step) ? 0 : null"
+            [attr.role]="canOpenStep(step) ? 'button' : null"
+            (click)="onStepClick(step)"
+            (keydown.enter)="onStepClick(step)"
+            [title]="getStepActionTitleKey(step) | translate">
+
+            <!-- Completed badge -->
+            @if (step.isCompleted) {
+              <span class="card__check">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <circle cx="10" cy="10" r="10" fill="#1abb9c"/>
+                  <path d="M6 10.5l2.8 2.8L14 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            }
+
+            <!-- Text area -->
+            <p class="card__desc">{{ getStepDescriptionKey(step) | translate }}</p>
+            <h4 class="card__title">{{ step.title }}</h4>
+
+            <!-- Illustration area -->
+            <div class="card__illustration">
+              <div class="card__icon-wrap">
+                <lucide-icon [name]="getStepIcon(step)" [size]="28" [strokeWidth]="1.5"></lucide-icon>
+              </div>
             </div>
-            <div class="step__body">
-              <h4 class="step__title">{{ step.title }}</h4>
-              <p class="step__desc">{{ getStepDescriptionKey(step) | translate }}</p>
-            </div>
-            <div class="step__action">
-              @if (step.isCompleted) {
-                <span class="step__done">{{ 'onboarding.action.completed' | translate }}</span>
-              } @else {
-                <button
-                  type="button"
-                  class="step__btn"
-                  [disabled]="!canOpenStep(step)"
-                  [title]="getStepActionTitleKey(step) | translate"
-                  (click)="onStepClick(step)">
-                  {{ 'onboarding.action.complete' | translate }}
-                </button>
-              }
-            </div>
-          </li>
+          </article>
         }
-      </ol>
+      </div>
+
+      @if (hiddenCount() > 0) {
+        <button type="button" class="onboarding__toggle" (click)="toggleExpanded()">
+          @if (expanded()) {
+            {{ 'onboarding.showLess' | translate }}
+            <svg class="onboarding__chevron onboarding__chevron--up" viewBox="0 0 16 16" fill="none">
+              <path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          } @else {
+            {{ 'onboarding.showMore' | translate:{ count: hiddenCount() } }}
+            <svg class="onboarding__chevron" viewBox="0 0 16 16" fill="none">
+              <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          }
+        </button>
+      }
     }
   </section>
 }
