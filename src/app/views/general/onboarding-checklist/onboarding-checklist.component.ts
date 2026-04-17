@@ -1,14 +1,17 @@
 import { Component, computed, DestroyRef, EventEmitter, inject, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { LucideAngularModule } from 'lucide-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { OnboardingService, OnboardingStepDto } from './services/onboarding.service';
+
+const VISIBLE_COUNT = 3;
 
 @Component({
    selector: 'app-jobflow-onboarding-checklist',
    standalone: true,
-   imports: [CommonModule, TranslateModule],
+   imports: [CommonModule, LucideAngularModule, TranslateModule],
    templateUrl: './onboarding-checklist.component.html',
    styleUrls: ['./onboarding-checklist.component.scss']
 })
@@ -16,11 +19,13 @@ export class OnboardingChecklistComponent implements OnChanges {
    private onboardingService = inject(OnboardingService);
    private destroyRef = inject(DestroyRef);
    private router = inject(Router);
+   private translate = inject(TranslateService);
 
    @Input() organizationId: string | null = null;
    @Output() allCompleted = new EventEmitter<void>();
 
    steps = signal<OnboardingStepDto[]>([]);
+   expanded = signal(false);
    private completionSynced = false;
 
    readonly completedCount = computed(() => this.steps().filter(s => s.isCompleted).length);
@@ -33,6 +38,11 @@ export class OnboardingChecklistComponent implements OnChanges {
       const s = this.steps();
       return s.length > 0 ? Math.round((this.completedCount() / s.length) * 100) : 0;
    });
+   readonly visibleSteps = computed(() => {
+      const s = this.steps();
+      return this.expanded() ? s : s.slice(0, VISIBLE_COUNT);
+   });
+   readonly hiddenCount = computed(() => Math.max(0, this.steps().length - VISIBLE_COUNT));
 
    ngOnChanges(changes: SimpleChanges): void {
       if (changes['organizationId'] && this.organizationId) {
@@ -83,11 +93,27 @@ export class OnboardingChecklistComponent implements OnChanges {
          : 'onboarding.stepNoRouteTitle';
    }
 
-   getMarkerIcon(step: OnboardingStepDto): string {
-      const state = this.getStepState(step);
-      if (state === 'completed') return 'pi pi-check';
-      if (state === 'current') return 'pi pi-arrow-right';
-      return 'pi pi-circle-fill';
+   toggleExpanded(): void {
+      this.expanded.set(!this.expanded());
+   }
+
+   getStepIcon(step: OnboardingStepDto): string {
+      const key = (step.key ?? '').toLowerCase();
+      const title = (step.title ?? '').toLowerCase();
+      const text = `${key} ${title}`;
+
+      if (text.includes('quick-start') || text.includes('onboarding path') || text.includes('industry')) return 'rocket';
+      if (text.includes('payment') || text.includes('stripe') || text.includes('square')) return 'credit-card';
+      if (text.includes('branding') || text.includes('brand')) return 'palette';
+      if (text.includes('company') || text.includes('organization')) return 'building';
+      if (text.includes('employee role') || text.includes('roles')) return 'shield';
+      if (text.includes('employee')) return 'users';
+      if (text.includes('pricebook') || text.includes('price book')) return 'tag';
+      if (text.includes('customer') || text.includes('client')) return 'user-plus';
+      if (text.includes('schedule')) return 'calendar';
+      if (text.includes('job')) return 'briefcase';
+      if (text.includes('invoice')) return 'file-text';
+      return 'circle';
    }
 
    getStepRoute(step: OnboardingStepDto): string | null {

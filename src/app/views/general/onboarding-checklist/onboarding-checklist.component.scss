@@ -5,48 +5,37 @@
 
 // ── Header ──────────────────────────────────────────────
 .onboarding__header {
-   display: flex;
-   justify-content: space-between;
-   align-items: flex-start;
-   gap: 0.75rem;
    margin-bottom: 0.6rem;
 }
 
 .onboarding__title {
    margin: 0;
-   font-size: 0.95rem;
+   font-size: 1.05rem;
    font-weight: 700;
    color: #2a3f54;
-   letter-spacing: 0.01em;
+   letter-spacing: -0.01em;
 }
 
 .onboarding__subtitle {
    margin: 0.25rem 0 0;
-   font-size: 0.75rem;
-   line-height: 1.4;
+   font-size: 0.8rem;
+   line-height: 1.45;
    color: #6c7a89;
 }
 
-.onboarding__badge {
-   display: inline-flex;
+// ── Progress Row ────────────────────────────────────────
+.onboarding__progress-row {
+   display: flex;
    align-items: center;
-   min-height: 1.6rem;
-   padding: 0.15rem 0.55rem;
-   border-radius: 10rem;
-   background-color: rgba(28, 134, 255, 0.08);
-   color: #1c86ff;
-   font-size: 0.7rem;
-   font-weight: 600;
-   white-space: nowrap;
-   border: 1px solid rgba(28, 134, 255, 0.15);
+   gap: 0.65rem;
+   margin-bottom: 1rem;
 }
 
-// ── Progress Bar ────────────────────────────────────────
 .onboarding__progress {
-   height: 0.3rem;
+   flex: 1;
+   height: 0.35rem;
    border-radius: 10rem;
    background: #eef1f6;
-   margin-bottom: 0.85rem;
    overflow: hidden;
 }
 
@@ -57,139 +46,166 @@
    transition: width 0.4s ease;
 }
 
+.onboarding__badge {
+   flex-shrink: 0;
+   font-size: 0.7rem;
+   font-weight: 600;
+   color: #6c7a89;
+   white-space: nowrap;
+}
+
 // ── Empty State ─────────────────────────────────────────
 .onboarding__empty {
-   padding: 0.8rem;
+   padding: 1rem;
    border: 1px dashed #d9dee8;
-   border-radius: 0.45rem;
+   border-radius: 0.55rem;
    color: #6c7a89;
    font-size: 0.82rem;
+   text-align: center;
 }
 
-// ── Step List ───────────────────────────────────────────
-.onboarding__steps {
-   list-style: none;
-   margin: 0;
-   padding: 0;
-   display: flex;
-   flex-direction: column;
-   gap: 0.45rem;
-}
+// ── Card Grid ───────────────────────────────────────────
+.onboarding__grid {
+   display: grid;
+   grid-template-columns: repeat(3, 1fr);
+   gap: 0.75rem;
 
-// ── Step Item ───────────────────────────────────────────
-.step {
-   display: flex;
-   align-items: center;
-   gap: 0.7rem;
-   padding: 0.6rem 0.75rem;
-   border-radius: 0.5rem;
-   border: 1px solid #e6e9f0;
-   background: #fff;
-   transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.step--current {
-   border-color: rgba(28, 134, 255, 0.35);
-   box-shadow: 0 0 0 2px rgba(28, 134, 255, 0.08);
-}
-
-.step--completed {
-   background: #f8faf9;
-   border-color: #e0ebe6;
-}
-
-.step--upcoming {
-   opacity: 0.6;
-}
-
-// ── Marker ──────────────────────────────────────────────
-.step__marker {
-   flex-shrink: 0;
-   width: 1.5rem;
-   height: 1.5rem;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-}
-
-.step__icon {
-   width: 1.15rem;
-   height: 1.15rem;
-   color: #1abb9c;
-}
-
-.step__dot {
-   width: 0.55rem;
-   height: 0.55rem;
-   border-radius: 50%;
-   background: #cbd2dc;
-
-   &--active {
-      width: 0.65rem;
-      height: 0.65rem;
-      background: #1c86ff;
-      box-shadow: 0 0 0 3px rgba(28, 134, 255, 0.2);
+   @media (max-width: 960px) {
+      grid-template-columns: repeat(2, 1fr);
+   }
+   @media (max-width: 600px) {
+      grid-template-columns: 1fr;
    }
 }
 
-// ── Body ────────────────────────────────────────────────
-.step__body {
-   flex: 1;
-   min-width: 0;
+// ── Card ────────────────────────────────────────────────
+.card {
+   position: relative;
+   display: flex;
+   flex-direction: column;
+   border-radius: 0.6rem;
+   border: 1px solid #e4e8ef;
+   background: #fff;
+   overflow: hidden;
+   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.step__title {
+.card--clickable {
+   cursor: pointer;
+
+   &:hover {
+      border-color: rgba(28, 134, 255, 0.4);
+      box-shadow: 0 2px 8px rgba(28, 134, 255, 0.08);
+   }
+}
+
+.card--current {
+   border-color: rgba(28, 134, 255, 0.35);
+}
+
+.card--completed {
+   border-color: rgba(26, 187, 156, 0.3);
+}
+
+.card--upcoming {
+   opacity: 0.55;
+   pointer-events: none;
+}
+
+// ── Card Check Badge ────────────────────────────────────
+.card__check {
+   position: absolute;
+   top: 0.6rem;
+   right: 0.6rem;
+   width: 1.35rem;
+   height: 1.35rem;
+   z-index: 1;
+
+   svg {
+      width: 100%;
+      height: 100%;
+   }
+}
+
+// ── Card Text ───────────────────────────────────────────
+.card__desc {
    margin: 0;
-   font-size: 0.8rem;
-   font-weight: 600;
+   padding: 0.85rem 0.85rem 0;
+   font-size: 0.72rem;
+   line-height: 1.4;
+   color: #8999a8;
+   min-height: 2.4rem;
+}
+
+.card__title {
+   margin: 0;
+   padding: 0.3rem 0.85rem 0.7rem;
+   font-size: 0.85rem;
+   font-weight: 700;
    color: #2a3f54;
    line-height: 1.3;
 }
 
-.step--completed .step__title {
-   color: #6c7a89;
-   text-decoration: line-through;
-   text-decoration-color: rgba(108, 122, 137, 0.4);
+// ── Card Illustration ───────────────────────────────────
+.card__illustration {
+   flex: 1;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   min-height: 5.5rem;
+   background: linear-gradient(180deg, #f4f7fa 0%, #eaf0f6 100%);
+   border-top: 1px solid #eef1f6;
 }
 
-.step__desc {
-   margin: 0.15rem 0 0;
-   font-size: 0.7rem;
-   line-height: 1.35;
-   color: #8999a8;
+.card__icon-wrap {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   width: 3.2rem;
+   height: 3.2rem;
+   border-radius: 0.7rem;
+   background: #fff;
+   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+   color: #4a6fa5;
 }
 
-// ── Action ──────────────────────────────────────────────
-.step__action {
-   flex-shrink: 0;
-}
-
-.step__done {
-   font-size: 0.68rem;
-   font-weight: 600;
+.card--completed .card__icon-wrap {
    color: #1abb9c;
-   white-space: nowrap;
 }
 
-.step__btn {
-   border: 0;
-   border-radius: 0.4rem;
-   padding: 0.35rem 0.7rem;
-   font-size: 0.7rem;
+.card--current .card__icon-wrap {
+   color: #1c86ff;
+}
+
+// ── View More Toggle ────────────────────────────────────
+.onboarding__toggle {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 0.35rem;
+   width: 100%;
+   margin-top: 0.55rem;
+   padding: 0.6rem;
+   border: 1px solid #e4e8ef;
+   border-radius: 0.55rem;
+   background: #f8f9fb;
+   color: #4a6fa5;
+   font-size: 0.78rem;
    font-weight: 600;
-   background: #1c86ff;
-   color: #fff;
    cursor: pointer;
-   white-space: nowrap;
-   transition: opacity 0.15s ease;
+   transition: background 0.15s ease;
 
-   &:not(:disabled):hover {
-      opacity: 0.9;
+   &:hover {
+      background: #eef2f8;
    }
+}
 
-   &:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
+.onboarding__chevron {
+   width: 0.85rem;
+   height: 0.85rem;
+
+   &--up {
+      transform: rotate(0);
    }
 }
 

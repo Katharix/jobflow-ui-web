@@ -95,10 +95,12 @@
     "cancel": "Cancel"
   },
   "onboarding": {
-    "title": "Getting started",
-    "subtitle": "Complete these steps to start scheduling jobs and getting paid.",
+    "title": "Explore features built for you",
+    "subtitle": "Let's pick up from where you left off — we've laid out the next steps of your custom plan.",
     "summary": "{{completed}}/{{total}} completed",
-    "empty": "Your onboarding steps will appear here once they are available.",
+    "empty": "Your setup steps will appear here once they are available.",
+    "showMore": "View {{count}} more",
+    "showLess": "Show less",
     "action": {
       "completed": "Task Completed",
       "complete": "Complete step"
