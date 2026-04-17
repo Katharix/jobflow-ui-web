@@ -72,7 +72,7 @@ type InvoiceWithDates = Invoice & {
    paidAt?: string;
 };
 
-type DashboardTab = 'first-steps' | 'dashboard';
+type DashboardTab = 'setup-guide' | 'dashboard';
 
 interface WorkflowCard {
    id: string;
@@ -188,7 +188,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.showOnboardingChecklist = !(org?.onboardingComplete ?? false) && !this.checklistCompleted;
 
             if (this.showOnboardingChecklist) {
-               this.activeTab = 'first-steps';
+               this.activeTab = 'setup-guide';
             } else {
                this.activeTab = 'dashboard';
             }

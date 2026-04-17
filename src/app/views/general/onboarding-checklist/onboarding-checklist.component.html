@@ -1,52 +1,61 @@
-@if (!allStepsCompleted) {
-  <section class="onboarding-checklist">
-    <div class="onboarding-checklist__header">
+@if (!allStepsCompleted()) {
+  <section class="onboarding">
+    <header class="onboarding__header">
       <div>
-        <h3>{{ 'onboarding.title' | translate }}</h3>
-        <p class="subtitle">{{ 'onboarding.subtitle' | translate }}</p>
+        <h3 class="onboarding__title">{{ 'onboarding.title' | translate }}</h3>
+        <p class="onboarding__subtitle">{{ 'onboarding.subtitle' | translate }}</p>
       </div>
-      @if (steps.length) {
-        <div class="onboarding-checklist__summary">
-          {{ 'onboarding.summary' | translate:{ completed: completedCount, total: steps.length } }}
-        </div>
+      @if (steps().length) {
+        <span class="onboarding__badge">
+          {{ 'onboarding.summary' | translate:{ completed: completedCount(), total: steps().length } }}
+        </span>
       }
-    </div>
-    @if (!steps.length) {
-      <div class="onboarding-checklist__empty">
-        {{ 'onboarding.empty' | translate }}
+    </header>
+
+    @if (steps().length) {
+      <div class="onboarding__progress">
+        <div class="onboarding__progress-bar" [style.width.%]="progress()"></div>
       </div>
     }
-    @if (steps.length) {
-      <div class="onboarding-checklist__timeline">
-        <p-timeline
-          [value]="steps"
-          layout="horizontal"
-          align="top"
-          styleClass="jobflow-onboarding-timeline"
-          >
-          <ng-template pTemplate="marker" let-step>
-            <span class="timeline-marker" [ngClass]="'timeline-marker--' + getStepState(step)">
-              <i [class]="getMarkerIcon(step)"></i>
-            </span>
-          </ng-template>
-          <ng-template pTemplate="content" let-step>
-            <article class="timeline-card" [ngClass]="'timeline-card--' + getStepState(step)">
-              <h4 class="timeline-card__title">{{ step.title }}</h4>
-              <p class="timeline-card__description">{{ getStepDescriptionKey(step) | translate }}</p>
-              <button
-                type="button"
-                class="timeline-card__action"
-                [ngClass]="{ 'timeline-card__action--completed': step.isCompleted }"
-                [disabled]="!canOpenStep(step)"
-                (click)="onStepClick(step)"
-                [title]="getStepActionTitleKey(step) | translate"
-                >
-                {{ getStepActionLabelKey(step) | translate }}
-              </button>
-            </article>
-          </ng-template>
-        </p-timeline>
-      </div>
+
+    @if (!steps().length) {
+      <div class="onboarding__empty">{{ 'onboarding.empty' | translate }}</div>
+    }
+
+    @if (steps().length) {
+      <ol class="onboarding__steps">
+        @for (step of steps(); track step.key) {
+          <li class="step" [class]="'step--' + getStepState(step)">
+            <div class="step__marker">
+              @if (step.isCompleted) {
+                <svg class="step__icon" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              } @else if (getStepState(step) === 'current') {
+                <span class="step__dot step__dot--active"></span>
+              } @else {
+                <span class="step__dot"></span>
+              }
+            </div>
+            <div class="step__body">
+              <h4 class="step__title">{{ step.title }}</h4>
+              <p class="step__desc">{{ getStepDescriptionKey(step) | translate }}</p>
+            </div>
+            <div class="step__action">
+              @if (step.isCompleted) {
+                <span class="step__done">{{ 'onboarding.action.completed' | translate }}</span>
+              } @else {
+                <button
+                  type="button"
+                  class="step__btn"
+                  [disabled]="!canOpenStep(step)"
+                  [title]="getStepActionTitleKey(step) | translate"
+                  (click)="onStepClick(step)">
+                  {{ 'onboarding.action.complete' | translate }}
+                </button>
+              }
+            </div>
+          </li>
+        }
+      </ol>
     }
   </section>
 }

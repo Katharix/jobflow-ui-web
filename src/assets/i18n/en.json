@@ -123,7 +123,7 @@
     }
   },
   "dashboard": {
-    "tabFirstSteps": "First Steps",
+    "tabSetupGuide": "Setup Guide",
     "tabDashboard": "Dashboard",
     "welcomeTitle": "Welcome, {{organization}}",
     "welcomeSubtitle": "Here is your command center for today-start with what matters most.",
