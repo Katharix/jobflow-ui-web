@@ -137,7 +137,7 @@
 
 .dispatch-overview__meta {
   font-size: 0.72rem;
-  color: var(--bs-warning-text-emphasis, #664d03);
+  color: var(--bs-warning-text-emphasis, #FFA630);
 }
 
 .dispatch-overview__chips {
@@ -214,13 +214,13 @@
 }
 
 :host ::ng-deep .dispatch-conflict .jobflow-event-card {
-  border-color: #fb923c;
-  box-shadow: 0 12px 20px rgba(251, 146, 60, 0.2);
+  border-color: #FFA630;
+  box-shadow: 0 12px 20px rgba(255, 166, 48, 0.2);
 }
 
 :host ::ng-deep .dispatch-conflict .jobflow-event-card__status {
-  background: #ffedd5;
-  color: #7c2d12;
+  background: rgba(255, 166, 48, 0.12);
+  color: #FFA630;
 }
 
 /* ---- Date Context Menu ---- */
@@ -229,9 +229,9 @@
   position: fixed;
   z-index: 1050;
   background: #ffffff;
-  border: 1px solid #dce5f0;
+  border: 1px solid #D3D6E0;
   border-radius: 12px;
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 12px 32px rgba(30, 30, 36, 0.12), 0 4px 12px rgba(30, 30, 36, 0.06);
   min-width: 210px;
   padding: 0.35rem 0;
   animation: contextMenuFadeIn 0.12s ease-out;
@@ -252,8 +252,8 @@
   padding: 0.5rem 0.85rem 0.4rem;
   font-size: 0.82rem;
   font-weight: 600;
-  color: #475569;
-  border-bottom: 1px solid #e2e8f0;
+  color: #6E7180;
+  border-bottom: 1px solid #D3D6E0;
   margin-bottom: 0.25rem;
 }
 
@@ -266,28 +266,28 @@
   background: none;
   padding: 0.5rem 0.85rem;
   font-size: 0.9rem;
-  color: #1e293b;
+  color: #1E1E24;
   cursor: pointer;
   text-align: left;
   transition: background-color 0.12s ease;
 
   &:hover {
-    background: #f0f6ff;
-    color: #2563eb;
+    background: rgba(63, 103, 218, 0.06);
+    color: #3F67DA;
   }
 
   lucide-icon {
     flex-shrink: 0;
-    color: #64748b;
+    color: #9DA2B3;
   }
 
   &:hover lucide-icon {
-    color: #2563eb;
+    color: #3F67DA;
   }
 }
 
 .date-context-menu__divider {
   border: none;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #D3D6E0;
   margin: 0.25rem 0;
 }

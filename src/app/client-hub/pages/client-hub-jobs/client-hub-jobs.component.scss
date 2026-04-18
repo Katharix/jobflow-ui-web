@@ -22,7 +22,7 @@
 
 .job-update-card__meta {
   margin: 0.35rem 0 0;
-  color: #5d7386;
+  color: #6E7180;
   font-size: 0.82rem;
 }
 
@@ -32,36 +32,36 @@
   border-radius: 999px;
   font-size: 0.7rem;
   font-weight: 700;
-  background: #f1f5f9;
-  color: #475569;
+  background: rgba(110, 113, 128, 0.1);
+  color: #6E7180;
 }
 
 .job-update-card__status.is-completed {
-  background: #ecfdf5;
-  color: #047857;
+  background: rgba(45, 137, 139, 0.1);
+  color: #2D898B;
 }
 
 .job-update-card__status.is-inprogress {
-  background: #fff7ed;
-  color: #d97706;
+  background: rgba(255, 166, 48, 0.1);
+  color: #FFA630;
 }
 
 .job-update-card__status.is-approved {
-  background: #eef2ff;
-  color: #3f67da;
+  background: rgba(63, 103, 218, 0.1);
+  color: #3F67DA;
 }
 
 .job-update-card__status.is-booked {
-  background: #ede9fe;
-  color: #7c3aed;
+  background: rgba(133, 149, 209, 0.12);
+  color: #8595D1;
 }
 
 .job-update-card__status.is-danger {
-  background: #fef2f2;
-  color: #dc2626;
+  background: rgba(224, 54, 22, 0.1);
+  color: #E03616;
 }
 
 .empty-state {
   padding: 1.2rem;
-  color: #5d7386;
+  color: #6E7180;
 }

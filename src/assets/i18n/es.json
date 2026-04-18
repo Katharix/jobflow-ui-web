@@ -621,13 +621,16 @@
       "errors": {
         "load": "No se pudieron cargar las facturas.",
         "loadJobs": "No se pudieron cargar los trabajos.",
-        "create": "No se pudo crear la factura. Revisa los detalles."
+        "create": "No se pudo crear la factura. Revisa los detalles.",
+        "update": "No se pudo actualizar la factura. Revisa los detalles."
       },
       "toast": {
         "loadFailed": "Error al cargar facturas",
         "loadJobsFailed": "Error al cargar trabajos para facturar",
         "created": "Factura creada correctamente.",
-        "createFailed": "No se pudo crear la factura."
+        "createFailed": "No se pudo crear la factura.",
+        "updated": "Factura actualizada correctamente.",
+        "updateFailed": "No se pudo actualizar la factura."
       },
       "labels": {
         "unknownClient": "Cliente desconocido",

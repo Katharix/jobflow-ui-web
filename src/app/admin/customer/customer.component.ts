@@ -133,24 +133,24 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
       {
          type: 'Edit',
          buttonOption: {
-            cssClass: 'e-flat e-primary',
-            iconCss: 'e-icons e-edit',
+            cssClass: 'jf-action jf-action--primary',
+            iconCss: 'pi pi-pencil',
             content: 'Edit'
          }
       },
       {
          type: 'SendLink',
          buttonOption: {
-            cssClass: 'e-flat e-info',
-            iconCss: 'e-icons e-send',
-            content: 'Email Client Hub Link'
+            cssClass: 'jf-action jf-action--secondary',
+            iconCss: 'pi pi-send',
+            content: 'Email Link'
          }
       },
       {
          type: 'Delete',
          buttonOption: {
-            cssClass: 'e-flat e-danger',
-            iconCss: 'e-icons e-delete',
+            cssClass: 'jf-action jf-action--danger',
+            iconCss: 'pi pi-trash',
             content: 'Delete'
          }
       }

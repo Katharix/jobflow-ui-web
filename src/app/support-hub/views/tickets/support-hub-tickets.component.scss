@@ -59,10 +59,10 @@ $radius: 14px;
   border-radius: 999px;
   white-space: nowrap;
 
-  &--urgent  { background: rgba(239, 68, 68, 0.12); color: #dc2626; }
-  &--high    { background: rgba(249, 115, 22, 0.14); color: #c2410c; }
+  &--urgent  { background: rgba(224, 54, 22, 0.12); color: #E03616; }
+  &--high    { background: rgba(255, 166, 48, 0.14); color: #FFA630; }
   &--normal  { background: rgba(63, 103, 218, 0.1);  color: #3F67DA; }
-  &--low     { background: rgba(16, 185, 129, 0.14); color: #059669; }
+  &--low     { background: rgba(45, 137, 139, 0.14); color: #2D898B; }
   &--resolved { background: rgba(188, 191, 204, 0.2); color: #6E7180; }
 }
 

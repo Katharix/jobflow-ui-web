@@ -5,19 +5,19 @@
 
   .form-label {
     font-weight: 650;
-    color: #1a4a71;
+    color: #40424D;
     margin-bottom: 0.38rem;
   }
 
   .form-control {
     border-radius: 0.72rem;
     min-height: 2.72rem;
-    border-color: #cadeef;
+    border-color: #D3D6E0;
   }
 
   .form-control:focus {
-    border-color: #1f83cf;
-    box-shadow: 0 0 0 0.2rem rgba(31, 131, 207, 0.16);
+    border-color: #3F67DA;
+    box-shadow: 0 0 0 0.2rem rgba(63, 103, 218, 0.16);
   }
 
   .invalid-feedback {

@@ -85,16 +85,24 @@
 </ng-template>
 
 <ng-template #actionsTemplate let-invoice>
-  <button
-    type="button"
-    class="btn btn-sm btn-link"
-    (click)="openInvoice(invoice)">
-    {{ 'admin.invoices.actions.view' | translate }}
-  </button>
+  <div class="d-flex gap-1 justify-content-end">
+    <button
+      type="button"
+      class="jf-action jf-action--secondary"
+      (click)="openEditInvoiceDrawer(invoice)">
+      Edit
+    </button>
+    <button
+      type="button"
+      class="jf-action jf-action--primary"
+      (click)="openInvoice(invoice)">
+      {{ 'admin.invoices.actions.view' | translate }}
+    </button>
+  </div>
 </ng-template>
 
 <app-jobflow-grid
-  [data]="filteredItems"
+  [data]="displayItems"
   [columns]="columns"
   [pageSettings]="pageSettings"
   [showSearchBar]="true"
@@ -309,3 +317,162 @@
 
           </div>
         </app-jobflow-drawer>
+
+<app-jobflow-drawer
+  [open]="isEditDrawerOpen"
+  [title]="'Edit Invoice'"
+  [width]="760"
+  (closed)="onEditDrawerClosed()"
+>
+  @if (editingInvoice) {
+  <div class="invoice-drawer">
+    <form [formGroup]="editInvoiceForm" (ngSubmit)="saveEditInvoice()" class="invoice-form">
+      <div class="invoice-form__intro">
+        <p class="invoice-drawer__eyebrow">Edit Invoice</p>
+        <h3>{{ editingInvoice.invoiceNumber }}</h3>
+        <p>{{ getClientName(editingInvoice) }}</p>
+      </div>
+
+      @if (editInvoiceError) {
+        <div class="alert alert-danger mb-4">
+          {{ editInvoiceError }}
+        </div>
+      }
+
+      <div class="row g-3 mb-4">
+        <div class="col-12 col-md-6">
+          <label class="invoice-form__label" for="editInvoiceDate">{{ 'admin.invoices.form.invoiceDate' | translate }} <span class="text-danger">*</span></label>
+          <input
+            id="editInvoiceDate"
+            type="date"
+            pInputText
+            formControlName="invoiceDate"
+            class="form-control"
+          />
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="invoice-form__label" for="editInvoiceDueDate">{{ 'admin.invoices.form.dueDate' | translate }} <span class="text-danger">*</span></label>
+          <input
+            id="editInvoiceDueDate"
+            type="date"
+            pInputText
+            formControlName="dueDate"
+            class="form-control"
+          />
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <span class="invoice-form__section-heading">{{ 'admin.invoices.form.lineItems' | translate }}</span>
+          <div class="d-flex align-items-center gap-2">
+            @if (hasPriceBookAccess) {
+              <p-autoComplete
+                [suggestions]="filteredPriceBookItems"
+                (completeMethod)="searchPriceBookItems($event)"
+                (onSelect)="onPriceBookItemSelected($event)"
+                field="name"
+                [placeholder]="'admin.invoices.form.searchPricebook' | translate"
+                [minLength]="1"
+                [forceSelection]="true"
+                [inputStyleClass]="'form-control form-control-sm'"
+                [styleClass]="'pricebook-autocomplete'"
+                size="small"
+              ></p-autoComplete>
+            }
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+              (click)="addEditInvoiceLine()"
+            >
+              <i class="pi pi-plus"></i>
+              {{ 'admin.invoices.form.addLine' | translate }}
+            </button>
+          </div>
+        </div>
+        <div class="invoice-form__line-header d-none d-md-grid">
+          <span>{{ 'admin.invoices.form.description' | translate }}</span>
+          <span>{{ 'admin.invoices.form.quantity' | translate }}</span>
+          <span>{{ 'admin.invoices.form.unitPrice' | translate }}</span>
+          <span class="text-end">{{ 'admin.invoices.form.total' | translate }}</span>
+          <span></span>
+        </div>
+        <div formArrayName="lineItems">
+          @for (line of editLineItems.controls; track line; let i = $index) {
+            <div
+              [formGroupName]="i"
+              class="invoice-form__line-row"
+            >
+              <div class="invoice-form__line-description">
+                <input
+                  pInputText
+                  formControlName="description"
+                  [placeholder]="'admin.invoices.form.descriptionPlaceholder' | translate"
+                  class="w-100"
+                />
+              </div>
+              <div>
+                <p-inputNumber
+                  formControlName="quantity"
+                  [min]="0.001"
+                  [minFractionDigits]="0"
+                  [maxFractionDigits]="3"
+                  inputStyleClass="w-100"
+                  styleClass="w-100"
+                ></p-inputNumber>
+              </div>
+              <div>
+                <p-inputNumber
+                  formControlName="unitPrice"
+                  mode="currency"
+                  currency="USD"
+                  locale="en-US"
+                  [min]="0"
+                  inputStyleClass="w-100"
+                  styleClass="w-100"
+                ></p-inputNumber>
+              </div>
+              <div class="invoice-form__line-total">
+                {{ formatMoney(editLineTotal(i)) }}
+              </div>
+              <div class="text-center">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-link text-danger p-0"
+                  (click)="removeEditInvoiceLine(i)"
+                  [disabled]="editLineItems.length === 1"
+                  [title]="'admin.invoices.form.removeLine' | translate"
+                >
+                  <i class="pi pi-trash"></i>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+        <div class="invoice-form__total-row">
+          <span class="text-muted">{{ 'admin.invoices.form.invoiceTotal' | translate }}</span>
+          <strong>{{ formatMoney(editInvoiceTotal) }}</strong>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 pt-2">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          (click)="onEditDrawerClosed()"
+          [disabled]="savingInvoice"
+        >
+          {{ 'admin.invoices.form.cancel' | translate }}
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="savingInvoice || editInvoiceForm.invalid"
+        >
+          {{ savingInvoice ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </form>
+  </div>
+  }
+</app-jobflow-drawer>

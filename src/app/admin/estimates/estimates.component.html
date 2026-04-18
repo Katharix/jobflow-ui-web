@@ -79,18 +79,18 @@
 
 <!-- Actions template -->
 <ng-template #actionsTemplate let-estimate>
-  <div class="estimate-actions">
-    <button type="button" class="btn btn-sm btn-link" (click)="openEdit(estimate)">
+  <div class="jf-grid-actions">
+    <button type="button" class="jf-action jf-action--primary" (click)="openEdit(estimate)">
       {{ 'admin.estimates.actions.edit' | translate }}
     </button>
     <button
       type="button"
-      class="btn btn-sm btn-link text-primary"
+      class="jf-action jf-action--secondary"
       (click)="openSend(estimate)"
       [disabled]="resolveStatus(estimate.status) === 3">
       {{ 'admin.estimates.actions.send' | translate }}
     </button>
-    <button type="button" class="btn btn-sm btn-link text-danger" (click)="deleteEstimate(estimate)">
+    <button type="button" class="jf-action jf-action--danger" (click)="deleteEstimate(estimate)">
       {{ 'admin.estimates.actions.delete' | translate }}
     </button>
   </div>

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseApiService } from '../../../services/shared/base-api.service';
-import { CreateInvoiceRequest, Invoice } from '../../../models/invoice';
+import { CreateInvoiceRequest, Invoice, UpdateInvoiceRequest } from '../../../models/invoice';
 import { Observable } from 'rxjs';
 import { CursorPagedResponse } from '../../../models/cursor-paged-response';
 
@@ -65,6 +65,10 @@ export class InvoiceService {
 
   upsertForOrganization(request: CreateInvoiceRequest): Observable<Invoice> {
     return this.api.post<Invoice>(`${this.invoiceUrl}organization`, request);
+  }
+
+  updateInvoice(id: string, request: UpdateInvoiceRequest): Observable<Invoice> {
+    return this.api.put<Invoice>(`${this.invoiceUrl}${id}`, request);
   }
 
   sendInvoice(invoiceId: string): Observable<void> {

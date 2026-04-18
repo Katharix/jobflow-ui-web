@@ -78,11 +78,11 @@
     </div>
   </div>
   <ng-template #actionsTemplate let-role>
-    <div class="roles-actions">
-      <button type="button" class="btn btn-sm btn-link" (click)="editRole(role)">Edit</button>
+    <div class="jf-grid-actions">
+      <button type="button" class="jf-action jf-action--primary" (click)="editRole(role)">Edit</button>
       <button
         type="button"
-        class="btn btn-sm btn-link text-danger"
+        class="jf-action jf-action--danger"
         (click)="deleteRole(role)"
         [disabled]="getUsageCount(role.id) > 0"
         [title]="getUsageCount(role.id) > 0 ? 'Reassign employees before deleting' : 'Delete role'">

@@ -90,7 +90,7 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
 
     const labels: Record<number, string> = {
       [InvoiceStatus.Draft]: 'Draft',
-      [InvoiceStatus.Sent]: 'Sent',
+      [InvoiceStatus.Sent]: 'Unpaid',
       [InvoiceStatus.Paid]: 'Paid',
       [InvoiceStatus.Overdue]: 'Overdue',
       [InvoiceStatus.Unpaid]: 'Unpaid',
@@ -118,7 +118,7 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
       case InvoiceStatus.Unpaid:
         return 'is-unpaid';
       case InvoiceStatus.Sent:
-        return 'is-sent';
+        return 'is-unpaid';
       default:
         return 'is-draft';
     }
@@ -155,6 +155,12 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
     this.isPaying = true;
     this.paymentError = null;
     this.showPaymentForm = false;
+
+    if (this.invoice.balanceDue > 999_999.99) {
+      this.paymentError = 'Payment amount must be no more than $999,999.99.';
+      this.isPaying = false;
+      return;
+    }
 
     const token = this.clientHubAuth.getToken();
     if (!token) {

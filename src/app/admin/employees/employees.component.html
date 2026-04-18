@@ -4,11 +4,11 @@
 ></app-page-header>
 
 <ng-template #actionsTemplate let-employee>
-  <div class="employees-actions">
-    <button type="button" class="btn btn-sm btn-link" (click)="onEditEmployee(employee)">
+  <div class="jf-grid-actions">
+    <button type="button" class="jf-action jf-action--primary" (click)="onEditEmployee(employee)">
       {{ 'admin.employees.actions.edit' | translate }}
     </button>
-    <button type="button" class="btn btn-sm btn-link text-danger" (click)="onDeleteEmployee(employee)">
+    <button type="button" class="jf-action jf-action--danger" (click)="onDeleteEmployee(employee)">
       {{ 'admin.employees.actions.delete' | translate }}
     </button>
   </div>

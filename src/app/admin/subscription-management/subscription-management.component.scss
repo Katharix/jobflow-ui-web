@@ -1,11 +1,11 @@
 .subscription-shell {
   --sub-blue: var(--bs-primary);
   --sub-blue-soft: rgba(var(--bs-primary-rgb), 0.1);
-  --sub-ink: #0f172a;
-  --sub-muted: #516079;
+  --sub-ink: #1E1E24;
+  --sub-muted: #6E7180;
   --sub-border: rgba(15, 23, 42, 0.12);
   --sub-active: var(--bs-primary);
-  --sub-inactive: #b45309;
+  --sub-inactive: #FFA630;
 
   display: flex;
   flex-direction: column;
@@ -87,8 +87,8 @@
 
 .status-chip--inactive {
   color: var(--sub-inactive);
-  background: rgba(180, 83, 9, 0.12);
-  border: 1px solid rgba(180, 83, 9, 0.34);
+  background: rgba(255, 166, 48, 0.12);
+  border: 1px solid rgba(255, 166, 48, 0.34);
 }
 
 .subscription-metrics {
@@ -238,9 +238,9 @@
 }
 
 .plan-pill--current {
-  color: #0f766e;
-  border-color: rgba(15, 118, 110, 0.35);
-  background: rgba(15, 118, 110, 0.12);
+  color: #2D898B;
+  border-color: rgba(45, 137, 139, 0.35);
+  background: rgba(45, 137, 139, 0.12);
 }
 
 .plan-price {
@@ -297,8 +297,8 @@
 }
 
 .summary-row--success {
-  border-color: rgba(22, 163, 74, 0.34);
-  background: rgba(22, 163, 74, 0.1);
+  border-color: rgba(45, 137, 139, 0.34);
+  background: rgba(45, 137, 139, 0.1);
 }
 
 .subscription-actions {

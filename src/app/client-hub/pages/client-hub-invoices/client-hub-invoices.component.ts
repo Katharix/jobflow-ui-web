@@ -36,7 +36,7 @@ export class ClientHubInvoicesComponent implements OnInit {
 
     const map: Record<number, string> = {
       [InvoiceStatus.Draft]: 'Draft',
-      [InvoiceStatus.Sent]: 'Sent',
+      [InvoiceStatus.Sent]: 'Unpaid',
       [InvoiceStatus.Paid]: 'Paid',
       [InvoiceStatus.Overdue]: 'Overdue',
       [InvoiceStatus.Unpaid]: 'Unpaid',
@@ -56,7 +56,7 @@ export class ClientHubInvoicesComponent implements OnInit {
       case InvoiceStatus.Unpaid:
         return 'is-unpaid';
       case InvoiceStatus.Sent:
-        return 'is-sent';
+        return 'is-unpaid';
       default:
         return 'is-draft';
     }

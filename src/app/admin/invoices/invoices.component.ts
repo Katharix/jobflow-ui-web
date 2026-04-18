@@ -1,10 +1,10 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {RouterModule} from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {CreateInvoiceLineItemRequest, CreateInvoiceRequest, Invoice, InvoiceStatus} from '../../models/invoice';
+import {CreateInvoiceLineItemRequest, CreateInvoiceRequest, Invoice, InvoiceStatus, UpdateInvoiceRequest} from '../../models/invoice';
 import {InvoiceService} from './services/invoice.service';
 import {PageHeaderComponent} from '../dashboard/page-header/page-header.component';
 import {JobflowGridColumn, JobflowGridComponent, JobflowGridPageSettings, JobflowGridSortChangeEvent} from '../../common/jobflow-grid/jobflow-grid.component';
@@ -62,6 +62,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
    private translate = inject(TranslateService);
    private priceBookService = inject(PriceBookItemService);
    private orgContext = inject(OrganizationContextService);
+   private cdr = inject(ChangeDetectorRef);
 
 
    @ViewChild('clientTemplate', {static: true})
@@ -75,6 +76,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
    columns: JobflowGridColumn[] = [];
    items: Invoice[] = [];
+   displayItems: Invoice[] = [];
    nextCursor: string | null = null;
    private cursorStack: string[] = [];
    listLoading = false;
@@ -118,6 +120,12 @@ export class InvoicesComponent implements OnInit, OnDestroy {
    creatingInvoice = false;
    invoiceForm!: FormGroup;
 
+   isEditDrawerOpen = false;
+   editingInvoice: Invoice | null = null;
+   editInvoiceError: string | null = null;
+   editInvoiceForm!: FormGroup;
+   savingInvoice = false;
+
    private prefillEstimates: Estimate[] = [];
    private isEstimatePrefillLoaded = false;
    private isLoadingEstimatePrefill = false;
@@ -127,6 +135,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
    hasPriceBookAccess = false;
 
    private statusLabelMap: Record<number, string> = { ...JobLifecycleStatusLabels };
+   private reverseLabelMap: Record<string, number> = {};
 
    private notifierHub: ReturnType<typeof useNotifierHub> | null = null;
    private readonly searchInput$ = new Subject<string>();
@@ -183,6 +192,8 @@ export class InvoicesComponent implements OnInit, OnDestroy {
             this.items = page.items ?? [];
             this.totalInvoiceCount = page.totalCount ?? null;
             this.nextCursor = page.nextCursor ?? null;
+            this.updateDisplayItems();
+            this.cdr.detectChanges();
          });
 
       this.notifierHub = useNotifierHub(this.auth, {
@@ -263,6 +274,12 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       }
 
       this.statusLabelMap = map;
+
+      const reverse: Record<string, number> = {};
+      for (const [enumVal, label] of Object.entries(map)) {
+         reverse[label.toLowerCase()] = Number(enumVal);
+      }
+      this.reverseLabelMap = reverse;
    }
 
    private buildDefaultWorkflowStatuses(): WorkflowStatusDto[] {
@@ -295,21 +312,26 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       }, 0);
    }
 
-   get filteredItems(): Invoice[] {
+
+
+   private updateDisplayItems(): void {
       if (this.selectedStatusFilter === 'all') {
-         return this.items;
+         this.displayItems = this.items;
+         return;
       }
 
       const target = this.statusFilters.find(filter => filter.key === this.selectedStatusFilter);
       if (!target?.status && target?.status !== 0) {
-         return this.items;
+         this.displayItems = this.items;
+         return;
       }
 
-      return this.items.filter(invoice => this.resolveStatus(invoice.status) === target.status);
+      this.displayItems = this.items.filter(invoice => this.resolveStatus(invoice.status) === target.status);
    }
 
    setStatusFilter(key: string): void {
       this.selectedStatusFilter = key;
+      this.updateDisplayItems();
       this.load();
    }
 
@@ -440,6 +462,8 @@ export class InvoicesComponent implements OnInit, OnDestroy {
          target.paidAt = payload.paidAt;
       }
 
+      this.updateDisplayItems();
+      this.cdr.detectChanges();
       this.loadSummary();
    }
 
@@ -585,6 +609,128 @@ export class InvoicesComponent implements OnInit, OnDestroy {
             this.toast.error(this.translate.instant('admin.invoices.toast.createFailed'));
             console.error(e);
          }
+      });
+   }
+
+   openEditInvoiceDrawer(invoice: Invoice): void {
+      this.editInvoiceError = null;
+      this.savingInvoice = false;
+
+      // Fetch full invoice with line items, then open drawer
+      this.invoiceService.getInvoice(invoice.id).subscribe({
+         next: (full) => {
+            this.editingInvoice = full;
+            this.buildEditInvoiceForm(full);
+            this.isEditDrawerOpen = true;
+            this.cdr.detectChanges();
+         },
+         error: () => {
+            this.editingInvoice = invoice;
+            this.buildEditInvoiceForm(invoice);
+            this.isEditDrawerOpen = true;
+            this.cdr.detectChanges();
+         }
+      });
+   }
+
+   onEditDrawerClosed(): void {
+      this.isEditDrawerOpen = false;
+      this.editingInvoice = null;
+      this.editInvoiceError = null;
+      this.savingInvoice = false;
+   }
+
+   get editLineItems(): FormArray {
+      return this.editInvoiceForm.get('lineItems') as FormArray;
+   }
+
+   get editInvoiceTotal(): number {
+      return this.editLineItems.controls.reduce((sum, ctrl) => {
+         const quantity = Number(ctrl.get('quantity')?.value ?? 0);
+         const unitPrice = Number(ctrl.get('unitPrice')?.value ?? 0);
+         return sum + quantity * unitPrice;
+      }, 0);
+   }
+
+   editLineTotal(index: number): number {
+      const line = this.editLineItems.at(index);
+      const quantity = Number(line.get('quantity')?.value ?? 0);
+      const unitPrice = Number(line.get('unitPrice')?.value ?? 0);
+      return quantity * unitPrice;
+   }
+
+   addEditInvoiceLine(): void {
+      this.editLineItems.push(this.newLineItemGroup());
+   }
+
+   removeEditInvoiceLine(index: number): void {
+      if (this.editLineItems.length > 1) {
+         this.editLineItems.removeAt(index);
+      }
+   }
+
+   saveEditInvoice(): void {
+      if (!this.editingInvoice || this.editInvoiceForm.invalid || this.savingInvoice) {
+         return;
+      }
+
+      this.savingInvoice = true;
+      this.editInvoiceError = null;
+
+      const value = this.editInvoiceForm.getRawValue() as {
+         invoiceDate: string | null;
+         dueDate: string | null;
+         lineItems: {
+            priceBookItemId: string | null;
+            description: string | null;
+            quantity: number | null;
+            unitPrice: number | null;
+         }[];
+      };
+
+      const lineItems: CreateInvoiceLineItemRequest[] = (value.lineItems ?? []).map(line => ({
+         priceBookItemId: line.priceBookItemId || undefined,
+         description: String(line.description ?? '').trim(),
+         quantity: Number(line.quantity ?? 0),
+         unitPrice: Number(line.unitPrice ?? 0)
+      }));
+
+      const payload: UpdateInvoiceRequest = {
+         invoiceDate: value.invoiceDate || undefined,
+         dueDate: value.dueDate || new Date().toISOString(),
+         lineItems
+      };
+
+      this.invoiceService.updateInvoice(this.editingInvoice.id, payload).subscribe({
+         next: () => {
+            this.savingInvoice = false;
+            this.toast.success(this.translate.instant('admin.invoices.toast.updated'));
+            this.load();
+            this.onEditDrawerClosed();
+         },
+         error: (e) => {
+            this.savingInvoice = false;
+            this.editInvoiceError = this.translate.instant('admin.invoices.errors.update');
+            this.toast.error(this.translate.instant('admin.invoices.toast.updateFailed'));
+            console.error(e);
+         }
+      });
+   }
+
+   private buildEditInvoiceForm(invoice: Invoice): void {
+      const lines = invoice.lineItems?.length
+         ? invoice.lineItems.map(li => this.newLineItemGroup({
+            priceBookItemId: li.priceBookItemId || undefined,
+            description: li.description,
+            quantity: li.quantity,
+            unitPrice: li.unitPrice
+         }))
+         : [this.newLineItemGroup()];
+
+      this.editInvoiceForm = this.fb.group({
+         invoiceDate: [this.toDateInputValue(new Date(invoice.invoiceDate)), Validators.required],
+         dueDate: [this.toDateInputValue(new Date(invoice.dueDate)), Validators.required],
+         lineItems: this.fb.array(lines)
       });
    }
 
@@ -776,6 +922,11 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       this.invoiceForm = this.fb.group({
          invoiceDate: [this.toDateInputValue(new Date()), Validators.required],
          dueDate: [this.toDateInputValue(this.addDays(new Date(), 14)), Validators.required],
+         lineItems: this.fb.array([this.newLineItemGroup()])
+      });
+      this.editInvoiceForm = this.fb.group({
+         invoiceDate: ['', Validators.required],
+         dueDate: ['', Validators.required],
          lineItems: this.fb.array([this.newLineItemGroup()])
       });
    }
@@ -1021,6 +1172,15 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
       if (typeof rawStatus === 'string') {
          const enumValue = JobLifecycleStatus[rawStatus as keyof typeof JobLifecycleStatus];
+         if (typeof enumValue === 'number' && this.statusLabelMap[enumValue]) {
+            return enumValue;
+         }
+
+         const byLabel = this.reverseLabelMap[rawStatus.toLowerCase()];
+         if (byLabel !== undefined) {
+            return byLabel as JobLifecycleStatus;
+         }
+
          if (typeof enumValue === 'number') {
             return enumValue;
          }
