@@ -227,7 +227,8 @@
             @for (status of statusOptions; track status.statusKey) {
               <button
                 class="jobflow-status-toggle__btn"
-                [class.is-active]="resolveLifecycleStatus(selectedJob) === status.value"
+                [class.is-active]="isStatusActive(status.statusKey, status.label)"
+                [attr.data-status]="status.statusKey.toLowerCase()"
                 (click)="updateJobStatus(status.value)"
                 [disabled]="updatingStatus"
               >{{ status.label }}</button>
@@ -307,24 +308,26 @@
     </ng-template>
 
     <ng-template #actionsTemplate let-data>
-      <div class="grid-actions">
+      <div class="jf-grid-actions">
         @if (isUnscheduled(data)) {
           <button
-            class="btn btn-sm btn-primary"
+            class="jf-action jf-action--filled"
             (click)="scheduleJob(data)">
             {{ 'admin.jobs.actions.schedule' | translate }}
           </button>
         }
 
         <button
-          class="btn btn-sm btn-link"
+          class="jf-action jf-action--primary"
           (click)="editJob(data)">
+          <lucide-icon name="pencil" [size]="14"></lucide-icon>
           {{ 'admin.jobs.actions.edit' | translate }}
         </button>
 
         <button
-          class="btn btn-sm btn-link text-danger"
+          class="jf-action jf-action--danger"
           (click)="deleteJob(data)">
+          <lucide-icon name="trash-2" [size]="14"></lucide-icon>
           {{ 'admin.jobs.actions.delete' | translate }}
         </button>
       </div>

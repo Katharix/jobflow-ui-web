@@ -69,3 +69,9 @@ export interface CreateInvoiceRequest {
    dueDate?: string;
    lineItems: CreateInvoiceLineItemRequest[];
 }
+
+export interface UpdateInvoiceRequest {
+   invoiceDate?: string;
+   dueDate: string;
+   lineItems: CreateInvoiceLineItemRequest[];
+}

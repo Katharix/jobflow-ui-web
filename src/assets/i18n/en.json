@@ -701,13 +701,16 @@
       "errors": {
         "load": "Failed to load invoices.",
         "loadJobs": "Unable to load jobs right now.",
-        "create": "Failed to create invoice. Please review details and try again."
+        "create": "Failed to create invoice. Please review details and try again.",
+        "update": "Failed to update invoice. Please review details and try again."
       },
       "toast": {
         "loadFailed": "Failed to load invoices",
         "loadJobsFailed": "Failed to load jobs for invoice selection",
         "created": "Invoice created successfully.",
-        "createFailed": "Failed to create invoice."
+        "createFailed": "Failed to create invoice.",
+        "updated": "Invoice updated successfully.",
+        "updateFailed": "Failed to update invoice."
       },
       "labels": {
         "unknownClient": "Unknown client",

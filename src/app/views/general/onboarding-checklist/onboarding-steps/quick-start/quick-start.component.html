@@ -1,13 +1,9 @@
 <app-page-header
   title="Quick-start setup"
-  subtitle="Pick an onboarding track and industry preset to load suggested services and workflow labels."
+  subtitle="Pick an onboarding track to set the order of your checklist. Optionally choose an industry preset to load suggested services and workflow labels."
 ></app-page-header>
 
 <section class="quick-start">
-  <div class="quick-start__notice">
-    Quick-start presets are available on the Go plan and above.
-  </div>
-
   @if (loading) {
     <p class="quick-start__state">Loading quick-start options...</p>
   }
@@ -43,8 +39,8 @@
     <section class="quick-start__section">
       <div class="quick-start__section-header">
         <div>
-          <h3>Select your industry preset</h3>
-          <p>We will add default services and suggested workflow labels based on your industry.</p>
+          <h3>Industry preset <span class="quick-start__optional">optional</span></h3>
+          <p>Load default services and workflow labels based on your industry. You can skip this or change it later.</p>
         </div>
       </div>
       <div class="quick-start__grid">

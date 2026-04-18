@@ -102,7 +102,8 @@ export class OnboardingChecklistComponent implements OnChanges {
       const title = (step.title ?? '').toLowerCase();
       const text = `${key} ${title}`;
 
-      if (text.includes('quick-start') || text.includes('onboarding path') || text.includes('industry')) return 'rocket';
+      if (text.includes('onboarding path') || text.includes('onboarding track')) return 'compass';
+      if (text.includes('quick-start') || text.includes('industry')) return 'rocket';
       if (text.includes('payment') || text.includes('stripe') || text.includes('square')) return 'credit-card';
       if (text.includes('branding') || text.includes('brand')) return 'palette';
       if (text.includes('company') || text.includes('organization')) return 'building';

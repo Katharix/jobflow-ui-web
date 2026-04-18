@@ -35,6 +35,7 @@ import { TranslateModule, TranslateService } from "@ngx-translate/core";
 import { BehaviorSubject, Subject, Subscription, catchError, debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
 import { Auth } from '@angular/fire/auth';
 import { useNotifierHub, NotifierHubHandle } from '../services/useNotifierHub';
+import { LucideAngularModule } from 'lucide-angular';
 
 
 @Component({
@@ -49,7 +50,8 @@ import { useNotifierHub, NotifierHubHandle } from '../services/useNotifierHub';
       JobflowDrawerComponent,
       CreateJobComponent,
       RouterLink,
-      TranslateModule
+      TranslateModule,
+      LucideAngularModule
    ],
    styleUrls: ['./job.component.scss'],
    templateUrl: './job.component.html'
@@ -119,6 +121,7 @@ export class JobComponent implements OnInit, OnDestroy {
    statusOptionsReady = false;
    private statusLabelMap: Record<number, string> = { ...JobLifecycleStatusLabels };
    private statusKeyMap: Record<number, string> = {};
+   private reverseLabelMap: Record<string, number> = {};
    private readonly searchInput$ = new Subject<string>();
    private readonly loadPage$ = new Subject<string | undefined>();
    private searchInputSub?: Subscription;
@@ -291,6 +294,13 @@ export class JobComponent implements OnInit, OnDestroy {
       this.statusLabelMap = nextLabelMap;
       this.statusKeyMap = nextKeyMap;
       this.statusOptionsReady = true;
+
+      const reverse: Record<string, number> = {};
+      for (const [enumVal, label] of Object.entries(nextLabelMap)) {
+         reverse[label.toLowerCase()] = Number(enumVal);
+      }
+      this.reverseLabelMap = reverse;
+
       this.recomputeDerivedState();
    }
 
@@ -662,25 +672,47 @@ export class JobComponent implements OnInit, OnDestroy {
    }
 
    resolveLifecycleStatus(job: Job | null | undefined): JobLifecycleStatus | null {
-      const rawStatus = job?.lifecycleStatus;
+      const rawStatus = job?.lifecycleStatus as unknown;
 
-      if (typeof rawStatus === 'number' && this.statusLabelMap[rawStatus as JobLifecycleStatus]) {
+      if (typeof rawStatus === 'number' && rawStatus in JobLifecycleStatus) {
          return rawStatus as JobLifecycleStatus;
       }
 
       if (typeof rawStatus === 'string') {
          const enumValue = JobLifecycleStatus[rawStatus as keyof typeof JobLifecycleStatus];
+         if (typeof enumValue === 'number' && this.statusLabelMap[enumValue]) {
+            return enumValue;
+         }
+
+         const byLabel = this.reverseLabelMap[rawStatus.toLowerCase()];
+         if (byLabel !== undefined) {
+            return byLabel as JobLifecycleStatus;
+         }
+
          if (typeof enumValue === 'number') {
             return enumValue;
          }
 
          const numericStatus = Number(rawStatus);
-         if (!Number.isNaN(numericStatus) && this.statusLabelMap[numericStatus as JobLifecycleStatus]) {
+         if (!Number.isNaN(numericStatus) && numericStatus in JobLifecycleStatus) {
             return numericStatus as JobLifecycleStatus;
          }
       }
 
       return null;
+   }
+
+   isStatusActive(statusKey: string, label: string): boolean {
+      if (!this.selectedJob) return false;
+      const raw = this.selectedJob.lifecycleStatus as unknown;
+      if (typeof raw === 'string') {
+         if (raw === statusKey) return true;
+         return raw.toLowerCase() === label.toLowerCase();
+      }
+      if (typeof raw === 'number') {
+         return JobLifecycleStatus[raw] === statusKey;
+      }
+      return false;
    }
 
    getStatusChipLabel(job: Job | null | undefined): string {

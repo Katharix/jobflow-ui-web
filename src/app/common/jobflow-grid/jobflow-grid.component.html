@@ -86,7 +86,6 @@
                     @for (command of col.commands; track command) {
                       <button
                         type="button"
-                        class="btn btn-sm"
                         [ngClass]="command.buttonOption?.cssClass"
                         (click)="onCommandItemClick(command.type, row)"
                         >

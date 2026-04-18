@@ -113,7 +113,7 @@
 
 .form-floating-line .form-control {
    border: none;
-   border-bottom: 1px solid #ccc;
+   border-bottom: 1px solid #BCBFCC;
    border-radius: 0;
    padding-left: 0;
    padding-right: 0;
@@ -122,14 +122,14 @@
 }
 
 .form-floating-line .form-control:focus {
-   border-bottom: 2px solid #007bff;
+   border-bottom: 2px solid #3F67DA;
    outline: none;
    background-color: transparent;
 }
 
 .form-floating-line .form-label {
    font-size: 0.85rem;
-   color: #6c757d;
+   color: #6E7180;
    margin-bottom: 0.25rem;
 }
 

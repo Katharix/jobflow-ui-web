@@ -41,7 +41,7 @@ export class OnboardingQuickStartComponent implements OnInit {
   }
 
   get canApply(): boolean {
-    return !!this.selectedTrackKey && !!this.selectedPresetKey && !this.applying;
+    return !!this.selectedTrackKey && !this.applying;
   }
 
   selectTrack(track: OnboardingQuickStartTrackDto): void {
@@ -49,7 +49,7 @@ export class OnboardingQuickStartComponent implements OnInit {
   }
 
   selectPreset(preset: OnboardingQuickStartPresetDto): void {
-    this.selectedPresetKey = preset.key;
+    this.selectedPresetKey = this.selectedPresetKey === preset.key ? '' : preset.key;
   }
 
   isTrackSelected(track: OnboardingQuickStartTrackDto): boolean {
@@ -62,7 +62,7 @@ export class OnboardingQuickStartComponent implements OnInit {
 
   applyQuickStart(): void {
     if (!this.canApply) {
-      this.error = 'Select a track and an industry preset to continue.';
+      this.error = 'Select an onboarding track to continue.';
       return;
     }
 
@@ -71,7 +71,7 @@ export class OnboardingQuickStartComponent implements OnInit {
 
     this.onboardingService.applyQuickStart({
       trackKey: this.selectedTrackKey,
-      presetKey: this.selectedPresetKey
+      presetKey: this.selectedPresetKey || null
     }).subscribe({
       next: (state) => {
         this.state = state;
@@ -95,7 +95,9 @@ export class OnboardingQuickStartComponent implements OnInit {
       next: (state) => {
         this.state = state;
         this.selectedTrackKey = state.selectedTrackKey ?? state.tracks?.[0]?.key ?? '';
-        this.selectedPresetKey = state.selectedPresetKey ?? '';
+        this.selectedPresetKey = state.selectedPresetKey
+          ?? state.recommendedPresetKey
+          ?? '';
         this.loading = false;
       },
       error: () => {

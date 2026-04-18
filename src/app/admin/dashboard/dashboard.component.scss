@@ -141,9 +141,9 @@
       transform: translateY(-1px);
    }
 
-   &--orange { border-top-color: #F0AD4E; }
-   &--red    { border-top-color: #ED474A; }
-   &--green  { border-top-color: #23CE6B; }
+   &--orange { border-top-color: #FFA630; }
+   &--red    { border-top-color: #E03616; }
+   &--green  { border-top-color: #2D898B; }
    &--blue   { border-top-color: #3F67DA; }
 }
 
@@ -204,8 +204,8 @@
 }
 
 .appointments-strip__stat--active .appointments-strip__value { color: #3F67DA; }
-.appointments-strip__stat--completed .appointments-strip__value { color: #23CE6B; }
-.appointments-strip__stat--overdue .appointments-strip__value { color: #ED474A; }
+.appointments-strip__stat--completed .appointments-strip__value { color: #2D898B; }
+.appointments-strip__stat--overdue .appointments-strip__value { color: #E03616; }
 
 // ── Business Performance ────────────────────────────────
 .performance-grid {
@@ -259,9 +259,9 @@
    }
 }
 
-.tone-success { color: #23CE6B !important; }
-.tone-warning { color: #F0AD4E !important; }
-.tone-danger  { color: #ED474A !important; }
+.tone-success { color: #2D898B !important; }
+.tone-warning { color: #FFA630 !important; }
+.tone-danger  { color: #E03616 !important; }
 
 // ── Client Activity ─────────────────────────────────────
 .dashboard-activity-list {
@@ -328,13 +328,13 @@
 }
 
 .dashboard-activity-badge.is-success {
-   color: #23CE6B;
-   background: rgba(35, 206, 107, 0.12);
+   color: #2D898B;
+   background: rgba(45, 137, 139, 0.12);
 }
 
 .dashboard-activity-badge.is-danger {
-   color: #ED474A;
-   background: rgba(237, 71, 74, 0.12);
+   color: #E03616;
+   background: rgba(224, 54, 22, 0.12);
 }
 
 .dashboard-activity-badge.is-primary {

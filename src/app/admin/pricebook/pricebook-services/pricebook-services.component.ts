@@ -48,16 +48,16 @@ export class PricebookServicesComponent implements OnInit, OnDestroy {
       {
          type: 'Edit',
          buttonOption: {
-            cssClass: 'e-flat e-primary',
-            iconCss: 'e-icons e-edit',
+            cssClass: 'jf-action jf-action--primary',
+            iconCss: 'pi pi-pencil',
             content: 'Edit'
          }
       },
       {
          type: 'Delete',
          buttonOption: {
-            cssClass: 'e-flat e-danger',
-            iconCss: 'e-icons e-delete',
+            cssClass: 'jf-action jf-action--danger',
+            iconCss: 'pi pi-trash',
             content: 'Delete'
          }
       }

@@ -124,6 +124,11 @@ export class InvoiceComponent implements OnInit {
    async payInvoice(): Promise<void> {
       if (!this.invoice?.id) return;
 
+      if (this.invoice.balanceDue > 999_999.99) {
+         this.error = 'Payment amount must be no more than $999,999.99.';
+         return;
+      }
+
       this.loading = true;
       this.error = null;
 

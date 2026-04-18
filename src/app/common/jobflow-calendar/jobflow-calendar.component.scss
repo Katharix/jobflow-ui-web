@@ -407,14 +407,14 @@
   gap: 0.18rem;
   min-height: 100%;
   padding: 0.5rem 0.6rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #D3D6E0;
   border-radius: 0.7rem;
   background: #ffffff;
-  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 8px 16px rgba(30, 30, 36, 0.06);
 }
 
 .jobflow-event-card__time {
-  color: #64748b;
+  color: #9DA2B3;
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -422,13 +422,13 @@
 }
 
 .jobflow-event-card__title {
-  color: #0f172a;
+  color: #1E1E24;
   font-size: 0.76rem;
   font-weight: 700;
 }
 
 .jobflow-event-card__meta {
-  color: #64748b;
+  color: #9DA2B3;
   font-size: 0.62rem;
   font-weight: 600;
 }
@@ -440,25 +440,25 @@
   border-radius: 999px;
   font-size: 0.6rem;
   font-weight: 700;
-  background: rgba(15, 23, 42, 0.08);
-  color: #0f172a;
+  background: rgba(30, 30, 36, 0.08);
+  color: #1E1E24;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .jobflow-event-card--exact {
-  border-color: #bfdbfe;
-  background: #eff6ff;
+  border-color: rgba(63, 103, 218, 0.3);
+  background: rgba(63, 103, 218, 0.06);
 }
 
 .jobflow-event-card--window {
-  border-color: #fde68a;
-  background: #fffbeb;
+  border-color: rgba(255, 166, 48, 0.35);
+  background: rgba(255, 166, 48, 0.06);
 }
 
 .jobflow-event-card--default {
-  border-color: #e5e7eb;
-  background: #f8fafc;
+  border-color: #D3D6E0;
+  background: #FAFBFF;
 }
 
 .jobflow-event-card.is-compact {
@@ -493,23 +493,23 @@
   border-radius: 0.5rem;
   font-size: 0.82rem;
   font-weight: 700;
-  color: #334155;
+  color: #40424D;
   transition: background-color 0.12s ease, color 0.12s ease;
 }
 
 .jobflow-scheduler .fc .fc-day-today .fc-daygrid-day-number {
-  background: #2563eb;
+  background: #3F67DA;
   color: #ffffff;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 2px 6px rgba(63, 103, 218, 0.3);
 }
 
 .jobflow-scheduler .fc .fc-timegrid-axis {
-  background: #f8fafc;
+  background: #FAFBFF;
 }
 
 .jobflow-scheduler .fc .fc-timegrid-divider,
 .jobflow-scheduler .fc .fc-cell-shaded {
-  background: #f8fafc;
+  background: #FAFBFF;
 }
 
 .jobflow-scheduler .fc .fc-button,

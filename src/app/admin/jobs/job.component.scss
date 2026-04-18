@@ -321,10 +321,10 @@
 
 .jobflow-preview {
    border-radius: 1.1rem;
-   border: 1px solid #e2e8f0;
+   border: 1px solid #D3D6E0;
    background: #ffffff;
    padding: 1.3rem;
-   box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+   box-shadow: 0 16px 30px rgba(30, 30, 36, 0.08);
 }
 
 .jobflow-preview__eyebrow {
@@ -332,7 +332,7 @@
    letter-spacing: 0.12em;
    font-size: 0.7rem;
    font-weight: 700;
-   color: var(--bs-primary);
+   color: #3F67DA;
 }
 
 .jobflow-preview__header h5 {
@@ -341,7 +341,7 @@
 }
 
 .jobflow-preview__header p {
-   color: #64748b;
+   color: #6E7180;
 }
 
 .jobflow-preview__body {
@@ -355,7 +355,7 @@
    justify-content: space-between;
    align-items: center;
    font-size: 0.85rem;
-   color: #475569;
+   color: #40424D;
 }
 
 .jobflow-status-toggle {
@@ -365,19 +365,62 @@
 }
 
 .jobflow-status-toggle__btn {
-   border: 1px solid #e2e8f0;
+   border: 1px solid #D3D6E0;
    border-radius: 999px;
    padding: 0.3rem 0.75rem;
    font-size: 0.72rem;
    font-weight: 700;
-   background: #f8fafc;
-   color: #475569;
+   background: #FAFBFF;
+   color: #6E7180;
+   cursor: pointer;
+   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+   &:hover:not(:disabled) {
+      border-color: #BCBFCC;
+      color: #40424D;
+   }
 }
 
 .jobflow-status-toggle__btn.is-active {
-   background: var(--bs-primary);
-   border-color: var(--bs-primary);
+   background: #3F67DA;
+   border-color: #3F67DA;
    color: #ffffff;
+
+   &[data-status="draft"] {
+      background: #6E7180;
+      border-color: #6E7180;
+   }
+
+   &[data-status="approved"] {
+      background: #3F67DA;
+      border-color: #3F67DA;
+   }
+
+   &[data-status="inprogress"] {
+      background: #FFA630;
+      border-color: #FFA630;
+      color: #40424D;
+   }
+
+   &[data-status="completed"] {
+      background: #2D898B;
+      border-color: #2D898B;
+   }
+
+   &[data-status="cancelled"] {
+      background: #9DA2B3;
+      border-color: #9DA2B3;
+   }
+
+   &[data-status="failed"] {
+      background: #E03616;
+      border-color: #E03616;
+   }
+
+   &[data-status="booked"] {
+      background: #8595D1;
+      border-color: #8595D1;
+   }
 }
 
 .jobflow-preview__assignees {
@@ -390,7 +433,7 @@
    font-size: 0.75rem;
    text-transform: uppercase;
    letter-spacing: 0.08em;
-   color: #64748b;
+   color: #6E7180;
 }
 
 .jobflow-assignee-list {
@@ -407,8 +450,8 @@
    gap: 0.4rem;
    padding: 0.35rem 0.5rem;
    border-radius: 0.6rem;
-   border: 1px solid #e2e8f0;
-   background: #f8fafc;
+   border: 1px solid #D3D6E0;
+   background: #FAFBFF;
    font-size: 0.8rem;
 }
 
@@ -417,13 +460,13 @@
    font-size: 0.75rem;
    text-transform: uppercase;
    letter-spacing: 0.08em;
-   color: #64748b;
+   color: #6E7180;
    margin-bottom: 0.4rem;
 }
 
 .jobflow-preview__notes p {
    margin-bottom: 0;
-   color: #0f172a;
+   color: #1E1E24;
 }
 
 .jobflow-preview__actions {
@@ -434,9 +477,9 @@
 .jobflow-table {
    background: #ffffff;
    border-radius: 1.1rem;
-   border: 1px solid #e2e8f0;
+   border: 1px solid #D3D6E0;
    padding: 1.25rem;
-   box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+   box-shadow: 0 16px 30px rgba(30, 30, 36, 0.08);
 }
 
 .jobflow-table__header {
@@ -444,7 +487,7 @@
 }
 
 .jobflow-table__header p {
-   color: #64748b;
+   color: #6E7180;
    margin-bottom: 0;
 }
 
@@ -455,12 +498,12 @@
 
    .job-title {
       font-weight: 600;
-      color: #111827;
+      color: #1E1E24;
    }
 
    .job-client {
       font-size: 0.85rem;
-      color: #6b7280;
+      color: #6E7180;
       margin-top: 2px;
    }
 }
@@ -476,41 +519,41 @@
 }
 
 .chip-draft {
-   background: #f3f4f6;
-   color: #6b7280;
+   background: rgba(110, 113, 128, 0.1);
+   color: #6E7180;
 }
 
 .chip-approved {
-   background: #eef2ff;
+   background: rgba(63, 103, 218, 0.1);
    color: #3F67DA;
 }
 
 .chip-inprogress {
-   background: #fff7ed;
-   color: #d97706;
+   background: rgba(255, 166, 48, 0.1);
+   color: #FFA630;
 }
 
 .chip-completed {
-   background: #ecfdf5;
-   color: #047857;
+   background: rgba(45, 137, 139, 0.1);
+   color: #2D898B;
 }
 
 .chip-cancelled {
-   background: #f3f4f6;
-   color: #6b7280;
+   background: rgba(157, 162, 179, 0.12);
+   color: #9DA2B3;
 }
 
 .chip-failed {
-   background: #fef2f2;
-   color: #dc2626;
+   background: rgba(224, 54, 22, 0.1);
+   color: #E03616;
 }
 
 .chip-booked {
-   background: #ede9fe;
-   color: #7c3aed;
+   background: rgba(133, 149, 209, 0.12);
+   color: #8595D1;
 }
 
 .chip-default {
-   background: #f3f4f6;
-   color: #9ca3af;
+   background: rgba(157, 162, 179, 0.1);
+   color: #9DA2B3;
 }

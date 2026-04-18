@@ -35,13 +35,16 @@ export interface OnboardingQuickStartStateDto {
   selectedTrackKey?: string | null;
   selectedPresetKey?: string | null;
   isPresetApplied: boolean;
+  recommendedPresetKey?: string | null;
+  currentPlan?: string | null;
+  requiredPlan: string;
   tracks: OnboardingQuickStartTrackDto[];
   presets: OnboardingQuickStartPresetDto[];
 }
 
 export interface OnboardingQuickStartApplyRequest {
   trackKey: string;
-  presetKey: string;
+  presetKey: string | null;
 }
 
 @Injectable({ providedIn: 'root' })

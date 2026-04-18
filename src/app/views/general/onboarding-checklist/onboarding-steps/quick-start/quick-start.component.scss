@@ -5,6 +5,16 @@
   padding: 0 0.5rem 1.5rem;
 }
 
+.quick-start__optional {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--bs-secondary-color);
+  vertical-align: middle;
+  margin-left: 0.35rem;
+}
+
 .quick-start__notice {
   border: 1px solid rgba(var(--bs-primary-rgb), 0.2);
   background: rgba(var(--bs-primary-rgb), 0.08);

@@ -16,12 +16,12 @@
     padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 0.5rem;
-    background-color: #0d6efd;
+    background-color: #3F67DA;
     color: #fff;
     font-weight: 600;
     cursor: pointer;
     &:hover {
-      background-color: #0b5ed7;
+      background-color: #3355b8;
     }
   }
 
@@ -30,6 +30,6 @@
   }
 
   .error-message {
-    color: #dc3545;
+    color: #E03616;
   }
 }
