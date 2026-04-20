@@ -143,6 +143,10 @@ export const routes: Routes = [
             canActivate: [subscriptionGuard],
             data: { minPlan: 'Max' },
             loadComponent: () => import('./admin/reporting/reporting.component').then(m => m.ReportingComponent)
+         },
+         {
+            path: 'support-chat',
+            loadComponent: () => import('./admin/support-chat/org-support-chat.component').then(m => m.OrgSupportChatComponent)
          }
       ]
    },
