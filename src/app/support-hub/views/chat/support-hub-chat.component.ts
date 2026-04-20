@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { SupportHubSignalRService, SupportChatMessageDto } from '../../services/support-hub-signalr.service';
 import { SupportHubChatApiService, SupportChatSendMessageRequest } from '../../services/support-hub-chat-api.service';
 import { SupportHubSoundService } from '../../services/support-hub-sound.service';
@@ -18,6 +20,7 @@ export class SupportHubChatComponent implements OnInit, OnDestroy {
   private signalR = inject(SupportHubSignalRService);
   private chatApi = inject(SupportHubChatApiService);
   private soundService = inject(SupportHubSoundService);
+  private destroy$ = new Subject<void>();
 
   sessionId = '';
   currentUserName = '';
@@ -41,16 +44,16 @@ export class SupportHubChatComponent implements OnInit, OnDestroy {
     await this.signalR.startConnection();
     await this.signalR.joinSession(this.sessionId);
 
-    this.signalR.messages$.subscribe(msg => {
-      this.messages.push(this.mapToViewMessage(msg));
+    this.signalR.messages$.pipe(takeUntil(this.destroy$)).subscribe(msg => {
+      this.messages = [...this.messages, this.mapToViewMessage(msg)];
       this.soundService.playNewMessageSound();
     });
 
-    this.signalR.userTyping$.subscribe(({ isTyping }) => {
+    this.signalR.userTyping$.pipe(takeUntil(this.destroy$)).subscribe(({ isTyping }) => {
       this.isTyping = isTyping;
     });
 
-    this.signalR.sessionClosed$.subscribe(() => {
+    this.signalR.sessionClosed$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.sessionEnded = true;
     });
   }
@@ -109,6 +112,8 @@ export class SupportHubChatComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
     this.signalR.leaveSession(this.sessionId);
   }
 }

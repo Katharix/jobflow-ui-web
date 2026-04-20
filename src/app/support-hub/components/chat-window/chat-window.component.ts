@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewChecked, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -21,7 +21,9 @@ export interface ChatMessage {
   templateUrl: './chat-window.component.html',
   styleUrl: './chat-window.component.scss',
 })
-export class ChatWindowComponent {
+export class ChatWindowComponent implements OnChanges, AfterViewChecked {
+  @ViewChild('messagesContainer') private messagesContainer!: ElementRef<HTMLElement>;
+
   @Input() messages: ChatMessage[] = [];
   @Input() isTyping = false;
   @Input() soundEnabled = true;
@@ -36,6 +38,27 @@ export class ChatWindowComponent {
 
   messageText = '';
   isDragOver = false;
+  private shouldScrollToBottom = false;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['messages']) {
+      this.shouldScrollToBottom = true;
+    }
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.shouldScrollToBottom) {
+      this.scrollToBottom();
+      this.shouldScrollToBottom = false;
+    }
+  }
+
+  private scrollToBottom(): void {
+    if (this.messagesContainer) {
+      const el = this.messagesContainer.nativeElement;
+      el.scrollTop = el.scrollHeight;
+    }
+  }
 
   onSend(): void {
     if (!this.messageText.trim() || this.sessionEnded) return;
