@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { SupportHubSignalRService } from '../../services/support-hub-signalr.service';
 
 @Component({
@@ -14,6 +16,7 @@ export class SupportHubQueueStatusComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private signalR = inject(SupportHubSignalRService);
+  private destroy$ = new Subject<void>();
 
   sessionId = '';
   queuePosition = 0;
@@ -31,7 +34,7 @@ export class SupportHubQueueStatusComponent implements OnInit, OnDestroy {
     await this.signalR.startConnection();
     await this.signalR.joinSession(this.sessionId);
 
-    this.signalR.agentJoined$.subscribe(({ agentName }) => {
+    this.signalR.agentJoined$.pipe(takeUntil(this.destroy$)).subscribe(({ agentName }) => {
       this.agentJoined = true;
       this.agentName = agentName;
       setTimeout(() => this.router.navigate(['/support-hub/chat', this.sessionId]), 2000);
@@ -39,6 +42,8 @@ export class SupportHubQueueStatusComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
     this.signalR.leaveSession(this.sessionId);
   }
 }

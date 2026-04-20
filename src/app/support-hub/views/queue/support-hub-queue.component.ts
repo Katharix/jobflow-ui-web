@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { SupportHubChatApiService } from '../../services/support-hub-chat-api.service';
 import { SupportHubSignalRService } from '../../services/support-hub-signalr.service';
 import { QueueCardComponent, QueueCustomer } from '../../components/queue-card/queue-card.component';
@@ -16,6 +18,7 @@ export class SupportHubQueueComponent implements OnInit, OnDestroy {
   private chatApi = inject(SupportHubChatApiService);
   private signalR = inject(SupportHubSignalRService);
   private router = inject(Router);
+  private destroy$ = new Subject<void>();
 
   isLoading = false;
   queuedCustomers: QueueCustomer[] = [];
@@ -29,7 +32,7 @@ export class SupportHubQueueComponent implements OnInit, OnDestroy {
   private async initSignalR(): Promise<void> {
     await this.signalR.startConnection();
     await this.signalR.joinRepGroup();
-    this.signalR.queueUpdated$.subscribe(() => this.loadQueue());
+    this.signalR.queueUpdated$.pipe(takeUntil(this.destroy$)).subscribe(() => this.loadQueue());
   }
 
   private loadQueue(): void {
@@ -65,6 +68,8 @@ export class SupportHubQueueComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
     this.signalR.disconnect();
   }
 }

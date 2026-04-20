@@ -49,6 +49,7 @@
     "@primeuix/themes": "^2.0.3",
     "@siemens/ngx-datatable": "^22.4.1",
     "@stripe/stripe-js": "^6.1.0",
+    "@tabler/icons-webfont": "^3.41.1",
     "animate.css": "^4.1.1",
     "bootstrap": "^5.3.7",
     "chart.js": "^4.5.1",

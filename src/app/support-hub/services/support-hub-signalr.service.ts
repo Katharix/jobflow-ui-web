@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, NgZone } from '@angular/core';
 import { Subject } from 'rxjs';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { environment } from '../../../environments/environment';
@@ -39,6 +39,7 @@ export interface SupportChatUserTypingEvent {
 export class SupportHubSignalRService {
   private connection: HubConnection | null = null;
   private auth = inject(Auth);
+  private zone = inject(NgZone);
 
   private messageSubject = new Subject<SupportChatMessageDto>();
   private queueUpdatedSubject = new Subject<void>();
@@ -69,23 +70,23 @@ export class SupportHubSignalRService {
       .build();
 
     this.connection.on('ReceiveMessage', (msg: SupportChatMessageDto) => {
-      this.messageSubject.next(msg);
+      this.zone.run(() => this.messageSubject.next(msg));
     });
 
     this.connection.on('QueueUpdated', () => {
-      this.queueUpdatedSubject.next();
+      this.zone.run(() => this.queueUpdatedSubject.next());
     });
 
     this.connection.on('AgentJoined', (payload: SupportChatAgentJoinedEvent) => {
-      this.agentJoinedSubject.next(payload);
+      this.zone.run(() => this.agentJoinedSubject.next(payload));
     });
 
     this.connection.on('SessionClosed', () => {
-      this.sessionClosedSubject.next();
+      this.zone.run(() => this.sessionClosedSubject.next());
     });
 
     this.connection.on('UserTyping', (payload: SupportChatUserTypingEvent) => {
-      this.userTypingSubject.next(payload);
+      this.zone.run(() => this.userTypingSubject.next(payload));
     });
 
     await this.connection.start();
