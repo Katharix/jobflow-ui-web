@@ -1,0 +1,24 @@
+<section class="org-support-chat">
+  <div class="org-support-chat__card">
+
+    @if (isLoading) {
+      <div class="org-support-chat__loading">
+        <div class="org-support-chat__spinner" role="status" aria-label="Connecting…"></div>
+        <h2 class="org-support-chat__title">Connecting to Support…</h2>
+        <p class="org-support-chat__subtitle">Please wait while we place you in the support queue.</p>
+      </div>
+    }
+
+    @if (!isLoading && error) {
+      <div class="org-support-chat__error">
+        <i class="ti ti-alert-circle org-support-chat__error-icon" aria-hidden="true"></i>
+        <h2 class="org-support-chat__title">Something went wrong</h2>
+        <p class="org-support-chat__subtitle">{{ error }}</p>
+        <button class="org-support-chat__retry-btn" type="button" (click)="startChat()">
+          Try Again
+        </button>
+      </div>
+    }
+
+  </div>
+</section>

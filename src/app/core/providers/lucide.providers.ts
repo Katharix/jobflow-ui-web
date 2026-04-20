@@ -40,7 +40,8 @@ import {
    Tag,
    UserPlus,
    Users,
-   Handshake
+   Handshake,
+   Headset
 } from 'lucide-angular';
 
 export const lucideProviders = importProvidersFrom(
@@ -82,6 +83,7 @@ export const lucideProviders = importProvidersFrom(
       Trash2,
       Users,
       Handshake,
+      Headset,
       CreditCard,
       Network,
       CircleArrowOutUpLeft,
