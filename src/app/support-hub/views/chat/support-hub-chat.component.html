@@ -1,0 +1,50 @@
+<div class="cust-chat">
+
+  <!-- Chat header -->
+  <header class="cust-chat__header">
+    <div class="cust-chat__header-agent">
+      <div class="cust-chat__agent-avatar" aria-hidden="true">
+        {{ agentName?.charAt(0) }}
+      </div>
+      <div class="cust-chat__agent-info">
+        <span class="cust-chat__agent-name">{{ agentName }}</span>
+        <span
+          class="cust-chat__agent-status"
+          [class.is-online]="agentOnline"
+          [attr.aria-label]="agentOnline ? 'Agent online' : 'Agent offline'"
+        >
+          <span class="cust-chat__status-dot" aria-hidden="true"></span>
+          {{ agentOnline ? 'Online' : 'Offline' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="cust-chat__header-actions">
+      <button
+        class="cust-chat__icon-btn"
+        (click)="onToggleSound()"
+        [attr.aria-pressed]="soundEnabled"
+        [attr.aria-label]="soundEnabled ? 'Mute message notifications' : 'Unmute message notifications'"
+        title="{{ soundEnabled ? 'Mute notifications' : 'Unmute notifications' }}"
+      >
+        <i [class]="soundEnabled ? 'ti ti-bell' : 'ti ti-bell-off'" aria-hidden="true"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Chat window -->
+  <div class="cust-chat__window">
+    <app-chat-window
+      [messages]="messages"
+      [isTyping]="isTyping"
+      [soundEnabled]="soundEnabled"
+      [canUpload]="true"
+      perspective="customer"
+      [sessionEnded]="sessionEnded"
+      (sendMessage)="onSendMessage($event)"
+      (fileSelected)="onFileSelected($event)"
+      (soundToggled)="onToggleSound()"
+    ></app-chat-window>
+  </div>
+
+</div>

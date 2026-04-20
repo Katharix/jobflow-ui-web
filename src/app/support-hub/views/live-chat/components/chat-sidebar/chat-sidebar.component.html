@@ -1,0 +1,60 @@
+<aside class="cs" aria-label="Customer information">
+
+  @if (isLoading || !customer) {
+    <!-- Skeleton state -->
+    <div class="cs__skeleton-wrap">
+      <div class="sh-skeleton cs-sk-avatar"></div>
+      <div class="sh-skeleton" style="width:55%;height:0.9rem;"></div>
+      <div class="sh-skeleton" style="width:70%;height:0.75rem;"></div>
+      <div class="cs-sk-rows">
+        @for (i of [1,2,3]; track i) {
+          <div class="cs-sk-row">
+            <div class="sh-skeleton" style="width:35%;height:0.65rem;"></div>
+            <div class="sh-skeleton" style="width:60%;height:0.8rem;margin-top:0.25rem;"></div>
+          </div>
+        }
+      </div>
+    </div>
+
+  } @else {
+    <!-- Customer card -->
+    <div class="cs__customer-card">
+      <div class="cs__avatar" aria-hidden="true">{{ customer.name?.charAt(0) }}</div>
+      <span class="cs__name">{{ customer.name }}</span>
+      <span class="cs__email">{{ customer.email }}</span>
+    </div>
+
+    <!-- Info -->
+    <div class="cs__info-rows">
+      <div class="cs__info-row">
+        <span class="cs__info-label">Organization</span>
+        <span class="cs__info-value">{{ customer.organizationName }}</span>
+      </div>
+      <div class="cs__info-row">
+        <span class="cs__info-label">Session started</span>
+        <span class="cs__info-value">{{ customer.sessionStartedAt }}</span>
+      </div>
+      <div class="cs__info-row">
+        <span class="cs__info-label">Session ID</span>
+        <span class="cs__info-value cs__info-value--mono">{{ customer.sessionId }}</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="cs__actions">
+      <a
+        class="cs__action"
+        [routerLink]="['/support-hub/tickets']"
+        [queryParams]="{ newFor: customer.organizationName }"
+      >
+        <i class="ti ti-ticket" aria-hidden="true"></i>
+        <span>Create ticket</span>
+      </a>
+      <a class="cs__action" [routerLink]="['/support-hub/people']">
+        <i class="ti ti-user-search" aria-hidden="true"></i>
+        <span>View profile</span>
+      </a>
+    </div>
+  }
+
+</aside>

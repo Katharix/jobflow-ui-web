@@ -1,0 +1,164 @@
+.sh-queue-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// ── Page header ───────────────────────────────────────
+
+.sh-queue-view__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sh-queue-view__title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+
+.sh-queue-view__sub {
+  font-size: 0.85rem;
+  color: var(--jf-muted);
+  margin: 0;
+}
+
+// ── Stats strip ───────────────────────────────────────
+
+.sh-queue-stats {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: #ffffff;
+  border: 1px solid rgba(188, 191, 204, 0.22);
+  border-radius: 14px;
+  padding: 0.75rem 1.25rem;
+}
+
+.sh-queue-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+
+  &--divider {
+    width: 1px;
+    height: 28px;
+    background: rgba(188, 191, 204, 0.35);
+    padding: 0;
+  }
+}
+
+.sh-queue-stat__val {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--jf-accent, #3F67DA);
+}
+
+.sh-queue-stat__lbl {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: var(--jf-muted);
+}
+
+// ── Queue list ────────────────────────────────────────
+
+.sh-queue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+// ── Empty state ───────────────────────────────────────
+
+.sh-queue-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 4rem 2rem;
+  text-align: center;
+  color: var(--jf-muted);
+
+  i {
+    font-size: 2.5rem;
+    color: var(--jf-accent, #3F67DA);
+    opacity: 0.4;
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #000000;
+    margin: 0;
+  }
+
+  p {
+    font-size: 0.875rem;
+    margin: 0;
+  }
+}
+
+// ── Skeleton ──────────────────────────────────────────
+
+.sh-queue-skel {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem 1.15rem;
+  background: #ffffff;
+  border: 1px solid rgba(188, 191, 204, 0.2);
+  border-radius: 14px;
+}
+
+.sh-queue-skel__avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sh-queue-skel__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.sh-queue-skel__btn {
+  width: 80px;
+  height: 36px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.sh-skeleton {
+  background: linear-gradient(90deg, #EDEFF7 25%, #f7f8fc 50%, #EDEFF7 75%);
+  background-size: 200% 100%;
+  border-radius: 8px;
+  animation: sh-shimmer 1.4s infinite;
+}
+
+@keyframes sh-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ── Responsive ────────────────────────────────────────
+
+@media (max-width: 576px) {
+  .sh-queue-view__head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sh-queue-stats {
+    justify-content: center;
+  }
+}

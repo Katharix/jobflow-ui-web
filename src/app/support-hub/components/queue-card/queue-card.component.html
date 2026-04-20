@@ -1,0 +1,49 @@
+<article
+  class="q-card"
+  [class.q-card--compact]="compact"
+  [attr.aria-label]="customer.name + ' — waiting ' + customer.waitMinutes + ' minutes'"
+>
+  <!-- Avatar -->
+  <div
+    class="q-card__avatar"
+    [style.background]="customer.avatarColor || 'var(--jf-accent, #3F67DA)'"
+    aria-hidden="true"
+  >
+    {{ customer.avatarInitials }}
+  </div>
+
+  <!-- Info -->
+  <div class="q-card__info">
+    <span class="q-card__name">{{ customer.name }}</span>
+    @if (!compact) {
+      <span class="q-card__org">{{ customer.organizationName }}</span>
+    }
+    <div class="q-card__badges">
+      @if (customer.position === 1) {
+        <span class="q-card__badge q-card__badge--next">Next up</span>
+      }
+      <span
+        class="q-card__badge q-card__badge--wait"
+        [class.q-card__badge--long]="customer.waitMinutes >= 10"
+        [attr.aria-label]="'Waiting ' + customer.waitMinutes + ' minutes'"
+      >
+        <i class="ti ti-clock" aria-hidden="true"></i>
+        {{ customer.waitMinutes }}m
+      </span>
+    </div>
+  </div>
+
+  <!-- Action -->
+  <button
+    class="q-card__pickup"
+    (click)="onPickUp()"
+    [attr.aria-label]="'Pick up ' + customer.name"
+  >
+    @if (compact) {
+      <i class="ti ti-phone-call" aria-hidden="true"></i>
+    } @else {
+      <i class="ti ti-phone-call" aria-hidden="true"></i>
+      <span>Pick Up</span>
+    }
+  </button>
+</article>

@@ -1,0 +1,41 @@
+<div class="ci-bar" [class.ci-bar--disabled]="disabled" role="region" aria-label="Message composer">
+  @if (canUpload) {
+    <label
+      class="ci-upload"
+      for="ci-file"
+      title="Attach file (images, PDF, doc · max 10MB)"
+      aria-label="Attach file"
+    >
+      <i class="ti ti-paperclip" aria-hidden="true"></i>
+      <input
+        type="file"
+        id="ci-file"
+        class="ci-file-hidden"
+        accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+        (change)="onFileChange($event)"
+        [disabled]="disabled"
+        aria-hidden="true"
+        tabindex="-1"
+      />
+    </label>
+  }
+
+  <textarea
+    class="ci-textarea"
+    placeholder="Type a message… (Enter to send)"
+    [(ngModel)]="messageText"
+    (keydown)="onKeydown($event)"
+    rows="1"
+    aria-label="Message"
+    [disabled]="disabled"
+  ></textarea>
+
+  <button
+    class="ci-send"
+    (click)="onSend()"
+    [disabled]="disabled || !messageText.trim()"
+    aria-label="Send message"
+  >
+    <i class="ti ti-send-2" aria-hidden="true"></i>
+  </button>
+</div>

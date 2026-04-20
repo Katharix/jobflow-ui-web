@@ -104,11 +104,59 @@
 
     </div>
 
+    <!-- ── Live Chat Queue Preview ───────────────────── -->
+    <section class="sh-panel sh-panel--queue">
+      <div class="sh-panel__head">
+        <h3>
+          <i class="ti ti-messages sh-panel__head-icon" aria-hidden="true"></i>
+          Live Chat Queue
+          @if (queuedSessions > 0) {
+            <span class="sh-badge sh-badge--blue sh-panel__head-badge" aria-label="{{ queuedSessions }} customers waiting">
+              {{ queuedSessions }}
+            </span>
+          }
+        </h3>
+        <a class="sh-link" routerLink="/support-hub/queue">View full queue</a>
+      </div>
+
+      @if (queuedSessions === 0) {
+        <div class="sh-queue-preview-empty">
+          <i class="ti ti-mood-happy" aria-hidden="true"></i>
+          <span>Queue is clear — no customers waiting right now.</span>
+        </div>
+      } @else {
+        <!-- [Engineer] Replace with @for over queuePreview (top 3 items) -->
+        <div class="sh-queue-preview-list" role="list" aria-label="Live queue preview">
+          <!-- Skeleton row (placeholder until Engineer wires real data) -->
+          <div class="sh-queue-preview-row" role="listitem">
+            <div class="sh-queue-preview-avatar" aria-hidden="true">JD</div>
+            <div class="sh-queue-preview-info">
+              <span class="sh-queue-preview-name">Customer Name</span>
+              <span class="sh-queue-preview-org">Organization</span>
+            </div>
+            <span class="sh-badge sh-badge--orange">~8m wait</span>
+            <a
+              class="sh-queue-preview-pickup"
+              routerLink="/support-hub/queue"
+              aria-label="Go to queue to pick up"
+            >
+              <i class="ti ti-phone-call" aria-hidden="true"></i>
+              Pick Up
+            </a>
+          </div>
+        </div>
+      }
+    </section>
+
     <!-- ── Quick Actions ──────────────────────────────── -->
     <div class="sh-actions">
       <a class="sh-action" routerLink="/support-hub/tickets">
         <i class="ti ti-ticket"></i>
         <span>Triage tickets</span>
+      </a>
+      <a class="sh-action" routerLink="/support-hub/queue">
+        <i class="ti ti-messages"></i>
+        <span>Live Chat Queue</span>
       </a>
       <a class="sh-action" routerLink="/support-hub/sessions">
         <i class="ti ti-headset"></i>

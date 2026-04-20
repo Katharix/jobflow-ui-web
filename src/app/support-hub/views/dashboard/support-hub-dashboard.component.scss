@@ -170,6 +170,110 @@
 
 // ── Quick Actions ───────────────────────────────────────
 
+// ── Live Queue Panel ────────────────────────────────
+
+.sh-panel--queue {
+  grid-column: 1 / -1; // Full width in sh-grid
+}
+
+.sh-panel__head-icon {
+  font-size: 1rem;
+  color: var(--jf-accent);
+  margin-right: 0.2rem;
+}
+
+.sh-panel__head-badge {
+  margin-left: 0.35rem;
+  font-size: 0.6rem;
+  padding: 0.25rem 0.55rem;
+}
+
+.sh-queue-preview-empty {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.25rem 0;
+  font-size: 0.85rem;
+  color: var(--jf-muted);
+
+  i { font-size: 1.1rem; color: var(--jf-accent); opacity: 0.45; }
+}
+
+.sh-queue-preview-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.sh-queue-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0;
+  border-top: 1px solid rgba(188, 191, 204, 0.1);
+
+  &:first-child { border-top: none; }
+}
+
+.sh-queue-preview-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--jf-accent);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.sh-queue-preview-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sh-queue-preview-name {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sh-queue-preview-org {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--jf-muted);
+}
+
+.sh-queue-preview-pickup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  height: 30px;
+  padding: 0 0.75rem;
+  border-radius: 8px;
+  background: var(--jf-accent);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.15s;
+  flex-shrink: 0;
+
+  i { font-size: 0.85rem; }
+
+  &:hover { background: #3459c9; }
+
+  &:focus-visible {
+    outline: 2px solid var(--jf-accent);
+    outline-offset: 2px;
+  }
+}
+
+// ── Quick Actions ────────────────────────────────────
+
 .sh-actions {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

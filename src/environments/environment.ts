@@ -2,6 +2,7 @@ export const environment = {
    production: false,
    apiUrl: 'https://localhost:44398/api',
    baseUrl: 'https://localhost:44398',
+   hubUrl: 'https://localhost:44398',
    firebase: {
       apiKey: 'AIzaSyCyQtD7ukgjwfONtjeemVtvFa2OKTtq1d4',
       authDomain: 'jobflow-ui-web-staging.firebaseapp.com',

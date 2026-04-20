@@ -2,6 +2,7 @@ export const environment = {
    production: true,
    apiUrl: 'https://api.gojobflow.com/api',
    baseUrl: 'https://api.gojobflow.com',
+   hubUrl: 'https://api.gojobflow.com',
    firebase: {
       apiKey: 'AIzaSyDr_AJGaGli7yC5Ex_RKW3HidgypZOr17U',
       authDomain: 'jobflow-ui-web.firebaseapp.com',
