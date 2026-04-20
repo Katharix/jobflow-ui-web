@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { environment } from '../../../environments/environment';
+import { Auth } from '@angular/fire/auth';
 
 // ---------------------------------------------------------------------------
 // DTOs (mirror of backend SupportChatDtos)
@@ -37,6 +38,7 @@ export interface SupportChatUserTypingEvent {
 @Injectable({ providedIn: 'root' })
 export class SupportHubSignalRService {
   private connection: HubConnection | null = null;
+  private auth = inject(Auth);
 
   private messageSubject = new Subject<SupportChatMessageDto>();
   private queueUpdatedSubject = new Subject<void>();
@@ -53,8 +55,15 @@ export class SupportHubSignalRService {
   async startConnection(): Promise<void> {
     if (this.connection) return;
 
+    const auth = this.auth;
     this.connection = new HubConnectionBuilder()
-      .withUrl(`${environment.hubUrl}/hubs/support-chat`)
+      .withUrl(`${environment.hubUrl}/hubs/support-chat`, {
+        accessTokenFactory: async () => {
+          const user = auth.currentUser;
+          if (!user) return '';
+          return user.getIdToken();
+        }
+      })
       .withAutomaticReconnect()
       .configureLogging(LogLevel.Warning)
       .build();
