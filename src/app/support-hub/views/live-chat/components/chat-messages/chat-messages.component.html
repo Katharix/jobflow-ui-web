@@ -1,0 +1,54 @@
+<!-- This component is used standalone when the full chat-window isn't needed.
+     For full chat functionality, prefer <app-chat-window>. -->
+
+@if (isLoading) {
+  <div class="cm-skeleton-list" aria-label="Loading messages" aria-busy="true">
+    @for (i of [1,2,3]; track i) {
+      <div class="cm-skel-row" [class.cm-skel-row--out]="i % 2 === 0">
+        @if (i % 2 !== 0) {
+          <div class="cm-skel-avatar sh-skeleton"></div>
+        }
+        <div class="cm-skel-bubble sh-skeleton" [style.width]="(40 + i * 8) + '%'"></div>
+      </div>
+    }
+  </div>
+} @else if (messages.length === 0) {
+  <div class="cm-empty">
+    <i class="ti ti-messages" aria-hidden="true"></i>
+    <p>No messages yet.</p>
+  </div>
+} @else {
+  <div class="cm-list" role="log" aria-label="Chat messages" aria-live="polite">
+    @for (msg of messages; track msg.id) {
+      <div
+        class="cm-msg"
+        [class.cm-msg--out]="msg.perspective === 'outbound'"
+        [class.cm-msg--in]="msg.perspective === 'inbound'"
+      >
+        @if (msg.perspective === 'inbound') {
+          <div class="cm-avatar" aria-hidden="true">{{ msg.senderName?.charAt(0) | uppercase }}</div>
+        }
+        <div class="cm-body">
+          @if (msg.perspective === 'inbound') {
+            <span class="cm-sender">{{ msg.senderName }}</span>
+          }
+          <div class="cm-bubble">
+            @if (msg.text) { <p>{{ msg.text }}</p> }
+          </div>
+          <span class="cm-time">{{ msg.sentAt }}</span>
+        </div>
+      </div>
+    }
+
+    @if (isTyping) {
+      <div class="cm-msg cm-msg--in" role="status" aria-label="Typing">
+        <div class="cm-avatar" aria-hidden="true">…</div>
+        <div class="cm-bubble cm-bubble--typing">
+          <span class="cm-dot"></span>
+          <span class="cm-dot"></span>
+          <span class="cm-dot"></span>
+        </div>
+      </div>
+    }
+  </div>
+}

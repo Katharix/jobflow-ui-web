@@ -1,0 +1,37 @@
+<div class="cq" role="region" aria-label="Customer queue">
+  <div class="cq__head">
+    <span class="cq__title">
+      <i class="ti ti-list-numbers" aria-hidden="true"></i>
+      Queue
+    </span>
+    @if (customers.length > 0) {
+      <span class="cq__count" aria-label="{{ customers.length }} waiting">{{ customers.length }}</span>
+    }
+  </div>
+
+  <div class="cq__list" role="list">
+    @if (isLoading) {
+      @for (i of [1,2]; track i) {
+        <div class="cq-skel">
+          <div class="cq-skel__avatar sh-skeleton"></div>
+          <div class="cq-skel__body">
+            <div class="sh-skeleton" style="width:60%;height:0.75rem;"></div>
+            <div class="sh-skeleton" style="width:40%;height:0.65rem;margin-top:0.3rem;"></div>
+          </div>
+        </div>
+      }
+    } @else if (customers.length === 0) {
+      <p class="cq__empty">Queue is clear.</p>
+    } @else {
+      @for (customer of customers; track customer.id) {
+        <div role="listitem">
+          <app-queue-card
+            [customer]="customer"
+            [compact]="true"
+            (pickUp)="pickUp.emit($event)"
+          ></app-queue-card>
+        </div>
+      }
+    }
+  </div>
+</div>

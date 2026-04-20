@@ -32,6 +32,7 @@ export class SupportHubLayoutComponent implements OnInit {
         { label: 'Dashboard', route: '/support-hub/dashboard', icon: 'ti ti-layout-dashboard' },
         { label: 'Tickets', route: '/support-hub/tickets', icon: 'ti ti-ticket' },
         { label: 'Sessions', route: '/support-hub/sessions', icon: 'ti ti-headset' },
+        { label: 'Live Chat Queue', route: '/support-hub/queue', icon: 'ti ti-messages' },
       ]
     },
     {

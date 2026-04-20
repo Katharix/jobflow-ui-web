@@ -1,0 +1,176 @@
+<div
+  class="chat-win"
+  [class.chat-win--rep]="perspective === 'rep'"
+  [class.chat-win--session-ended]="sessionEnded"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave()"
+  (drop)="onDrop($event)"
+  role="log"
+  aria-label="Chat messages"
+  aria-live="polite"
+>
+
+  <!-- Drag-and-drop overlay -->
+  @if (isDragOver && canUpload) {
+    <div class="chat-win__drop-overlay" aria-hidden="true">
+      <i class="ti ti-upload"></i>
+      <span>Drop files to attach</span>
+    </div>
+  }
+
+  <!-- Messages area -->
+  <div class="chat-win__messages" #messagesContainer>
+
+    @if (isLoading) {
+      <!-- Skeleton loaders -->
+      <div class="chat-win__skeleton-list" aria-label="Loading messages">
+        <div class="chat-win__skeleton-row chat-win__skeleton-row--inbound">
+          <div class="chat-win__sk-avatar sh-skeleton"></div>
+          <div class="chat-win__sk-bubble sh-skeleton" style="width: 52%"></div>
+        </div>
+        <div class="chat-win__skeleton-row chat-win__skeleton-row--outbound">
+          <div class="chat-win__sk-bubble sh-skeleton" style="width: 40%"></div>
+        </div>
+        <div class="chat-win__skeleton-row chat-win__skeleton-row--inbound">
+          <div class="chat-win__sk-avatar sh-skeleton"></div>
+          <div class="chat-win__sk-bubble sh-skeleton" style="width: 65%"></div>
+        </div>
+        <div class="chat-win__skeleton-row chat-win__skeleton-row--outbound">
+          <div class="chat-win__sk-bubble sh-skeleton" style="width: 30%"></div>
+        </div>
+      </div>
+
+    } @else if (messages.length === 0) {
+      <!-- Empty state -->
+      <div class="chat-win__empty">
+        <i class="ti ti-messages" aria-hidden="true"></i>
+        <p>No messages yet. Say hello!</p>
+      </div>
+
+    } @else {
+      <!-- Message bubbles -->
+      @for (msg of messages; track msg.id) {
+        <div
+          class="chat-win__msg"
+          [class.chat-win__msg--outbound]="msg.perspective === 'outbound'"
+          [class.chat-win__msg--inbound]="msg.perspective === 'inbound'"
+        >
+          @if (msg.perspective === 'inbound') {
+            <div class="chat-win__msg-avatar" aria-hidden="true">
+              {{ msg.senderName?.charAt(0) | uppercase }}
+            </div>
+          }
+
+          <div class="chat-win__msg-body">
+            @if (msg.perspective === 'inbound') {
+              <span class="chat-win__msg-sender">{{ msg.senderName }}</span>
+            }
+
+            <div class="chat-win__bubble">
+              @if (msg.text) {
+                <p class="chat-win__msg-text">{{ msg.text }}</p>
+              }
+
+              @if (msg.fileUrl) {
+                <div class="chat-win__attachment">
+                  @if (msg.uploading) {
+                    <div class="chat-win__upload-progress">
+                      <i class="ti ti-file" aria-hidden="true"></i>
+                      <div class="chat-win__upload-bar">
+                        <div class="chat-win__upload-bar-fill"></div>
+                      </div>
+                      <span>Uploading…</span>
+                    </div>
+                  } @else {
+                    <a
+                      [href]="msg.fileUrl"
+                      class="chat-win__file-link"
+                      target="_blank"
+                      rel="noopener"
+                      [attr.aria-label]="'Download ' + msg.fileName"
+                    >
+                      <i class="ti ti-file-download" aria-hidden="true"></i>
+                      <span class="chat-win__file-name">{{ msg.fileName }}</span>
+                      @if (msg.fileSize) {
+                        <span class="chat-win__file-size">{{ msg.fileSize | number }}KB</span>
+                      }
+                    </a>
+                  }
+                </div>
+              }
+            </div>
+
+            <span class="chat-win__msg-time">{{ msg.sentAt }}</span>
+          </div>
+        </div>
+      }
+
+      <!-- Typing indicator -->
+      @if (isTyping) {
+        <div class="chat-win__msg chat-win__msg--inbound" role="status" aria-label="Agent is typing">
+          <div class="chat-win__msg-avatar" aria-hidden="true">
+            <i class="ti ti-dots" style="font-size:0.75rem;"></i>
+          </div>
+          <div class="chat-win__bubble chat-win__bubble--typing">
+            <span class="chat-win__dot"></span>
+            <span class="chat-win__dot"></span>
+            <span class="chat-win__dot"></span>
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Session ended notice -->
+  @if (sessionEnded) {
+    <div class="chat-win__ended-banner" role="alert" aria-live="assertive">
+      <i class="ti ti-circle-check" aria-hidden="true"></i>
+      <span>This support session has ended. Thank you!</span>
+    </div>
+  }
+
+  <!-- Input bar -->
+  @if (!sessionEnded) {
+    <div class="chat-win__input-bar">
+      @if (canUpload) {
+        <label
+          class="chat-win__upload-btn"
+          for="chat-file-input"
+          title="Attach file (images, PDF, doc · max 10MB)"
+          aria-label="Attach file"
+        >
+          <i class="ti ti-paperclip" aria-hidden="true"></i>
+          <input
+            type="file"
+            id="chat-file-input"
+            class="chat-win__file-input"
+            accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+            (change)="onFileChange($event)"
+            aria-hidden="true"
+            tabindex="-1"
+          />
+        </label>
+      }
+
+      <textarea
+        class="chat-win__textarea"
+        placeholder="Type a message… (Enter to send, Shift+Enter for new line)"
+        [(ngModel)]="messageText"
+        (keydown)="onKeydown($event)"
+        rows="1"
+        aria-label="Message input"
+        [disabled]="sessionEnded"
+      ></textarea>
+
+      <button
+        class="chat-win__send-btn"
+        (click)="onSend()"
+        [disabled]="!messageText.trim()"
+        aria-label="Send message"
+      >
+        <i class="ti ti-send-2" aria-hidden="true"></i>
+      </button>
+    </div>
+  }
+
+</div>

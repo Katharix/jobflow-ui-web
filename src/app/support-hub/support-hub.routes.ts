@@ -10,12 +10,29 @@ import { SupportHubSettingsComponent } from './views/settings/support-hub-settin
 import { SupportHubBillingComponent } from './views/billing/support-hub-billing.component';
 import { SupportHubContentComponent } from './views/content/support-hub-content.component';
 import { SupportHubAuditLogsComponent } from './views/audit-logs/support-hub-audit-logs.component';
+import { SupportHubQueueComponent } from './views/queue/support-hub-queue.component';
+import { SupportHubLiveChatComponent } from './views/live-chat/support-hub-live-chat.component';
 
 export const SUPPORT_HUB_ROUTES: Routes = [
   {
     path: 'auth',
     loadChildren: () =>
       import('./auth/support-hub-auth.routes').then((m) => m.SUPPORT_HUB_AUTH_ROUTES),
+  },
+  {
+    path: 'customer-login',
+    loadComponent: () =>
+      import('./auth/customer-login/support-hub-customer-login.component').then(m => m.SupportHubCustomerLoginComponent),
+  },
+  {
+    path: 'queue-status/:sessionId',
+    loadComponent: () =>
+      import('./views/queue-status/support-hub-queue-status.component').then(m => m.SupportHubQueueStatusComponent),
+  },
+  {
+    path: 'chat/:sessionId',
+    loadComponent: () =>
+      import('./views/chat/support-hub-chat.component').then(m => m.SupportHubChatComponent),
   },
   {
     path: '',
@@ -33,6 +50,8 @@ export const SUPPORT_HUB_ROUTES: Routes = [
       { path: 'people', component: SupportHubPeopleComponent },
       { path: 'settings', component: SupportHubSettingsComponent },
       { path: 'audit-logs', component: SupportHubAuditLogsComponent },
+      { path: 'queue', component: SupportHubQueueComponent },
+      { path: 'live-chat/:sessionId', component: SupportHubLiveChatComponent },
     ],
   },
 ];

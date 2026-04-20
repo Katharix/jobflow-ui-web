@@ -1,0 +1,158 @@
+:host {
+  display: block;
+}
+
+// ── Card ──────────────────────────────────────────────
+
+.q-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: #ffffff;
+  border: 1px solid rgba(188, 191, 204, 0.22);
+  border-radius: 14px;
+  padding: 1rem 1.15rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    border-color: rgba(63, 103, 218, 0.25);
+    box-shadow: 0 4px 16px rgba(63, 103, 218, 0.07);
+  }
+
+  &--compact {
+    padding: 0.6rem 0.75rem;
+    border-radius: 10px;
+    gap: 0.6rem;
+  }
+}
+
+// ── Avatar ────────────────────────────────────────────
+
+.q-card__avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+
+  .q-card--compact & {
+    width: 32px;
+    height: 32px;
+    font-size: 0.65rem;
+  }
+}
+
+// ── Info ──────────────────────────────────────────────
+
+.q-card__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.q-card__name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #000000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .q-card--compact & {
+    font-size: 0.8rem;
+  }
+}
+
+.q-card__org {
+  font-size: 0.75rem;
+  color: var(--jf-muted, #6E7180);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.q-card__badges {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.2rem;
+}
+
+// ── Badges ────────────────────────────────────────────
+
+.q-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+
+  i { font-size: 0.7rem; }
+
+  &--wait {
+    background: rgba(255, 166, 48, 0.12);
+    color: #a06500;
+  }
+
+  &--wait.q-card__badge--long {
+    background: rgba(224, 54, 22, 0.1);
+    color: #b91c1c;
+  }
+
+  &--next {
+    background: rgba(45, 137, 139, 0.12);
+    color: #2D898B;
+  }
+}
+
+// ── Pick Up button ────────────────────────────────────
+
+.q-card__pickup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 36px;
+  padding: 0 1rem;
+  border: none;
+  border-radius: 10px;
+  background: var(--jf-accent, #3F67DA);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+
+  i { font-size: 0.95rem; }
+
+  &:hover {
+    background: #3459c9;
+    box-shadow: 0 4px 12px rgba(63, 103, 218, 0.3);
+  }
+
+  &:active { transform: scale(0.95); }
+
+  &:focus-visible {
+    outline: 2px solid var(--jf-accent, #3F67DA);
+    outline-offset: 2px;
+  }
+
+  .q-card--compact & {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 8px;
+    justify-content: center;
+  }
+}

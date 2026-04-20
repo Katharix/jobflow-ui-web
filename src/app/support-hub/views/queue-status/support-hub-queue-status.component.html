@@ -1,0 +1,96 @@
+<section class="qs-shell">
+  <div class="qs-shell__inner">
+
+    <!-- Brand -->
+    <div class="qs-brand">
+      <img src="/assets/public/images/Asset 1.png" alt="JobFlow" class="qs-brand__logo" />
+    </div>
+
+    @if (isLoading) {
+      <!-- Skeleton state -->
+      <div class="qs-card">
+        <div class="qs-skeleton qs-skeleton--circle"></div>
+        <div class="qs-skeleton qs-skeleton--bar" style="width: 55%; height: 1.75rem;"></div>
+        <div class="qs-skeleton qs-skeleton--bar" style="width: 75%; height: 1rem;"></div>
+        <div class="qs-skeleton qs-skeleton--bar" style="width: 40%; height: 0.875rem;"></div>
+      </div>
+
+    } @else if (agentJoined) {
+      <!-- Agent joined state -->
+      <div class="qs-card qs-card--joined" aria-live="assertive">
+        <div class="qs-joined-icon">
+          <i class="ti ti-check" aria-hidden="true"></i>
+        </div>
+        <h2 class="qs-joined__title">Agent Connected!</h2>
+        <p class="qs-joined__body">
+          <strong>{{ agentName }}</strong> is ready to help you.
+          Redirecting to chat…
+        </p>
+        <div class="qs-redirect-bar">
+          <div class="qs-redirect-bar__fill"></div>
+        </div>
+      </div>
+
+    } @else {
+      <!-- Waiting state -->
+      <div class="qs-card">
+        <!-- Position badge -->
+        <div class="qs-position" aria-label="Queue position {{ queuePosition }}">
+          <div class="qs-position__ring">
+            <span class="qs-position__number">{{ queuePosition }}</span>
+          </div>
+          <p class="qs-position__label">Your position in queue</p>
+        </div>
+
+        <!-- Wait estimate -->
+        <div class="qs-estimate">
+          <i class="ti ti-clock" aria-hidden="true"></i>
+          <div>
+            <span class="qs-estimate__value">~{{ estimatedMinutes }} min</span>
+            <span class="qs-estimate__label">estimated wait</span>
+          </div>
+        </div>
+
+        <!-- Progress steps -->
+        <div class="qs-steps" aria-label="What to expect">
+          <div class="qs-step qs-step--done">
+            <div class="qs-step__dot"><i class="ti ti-check" aria-hidden="true"></i></div>
+            <div class="qs-step__content">
+              <span class="qs-step__title">Identity validated</span>
+              <span class="qs-step__sub">Your details have been confirmed</span>
+            </div>
+          </div>
+          <div class="qs-step qs-step--active">
+            <div class="qs-step__dot">
+              <span class="qs-step__pulse" aria-hidden="true"></span>
+            </div>
+            <div class="qs-step__content">
+              <span class="qs-step__title">Waiting for an agent</span>
+              <span class="qs-step__sub">Our team is busy — you're {{ queuePosition === 1 ? 'next' : '#' + queuePosition }}</span>
+            </div>
+          </div>
+          <div class="qs-step">
+            <div class="qs-step__dot"><i class="ti ti-messages" aria-hidden="true"></i></div>
+            <div class="qs-step__content">
+              <span class="qs-step__title">Chat begins</span>
+              <span class="qs-step__sub">You'll be redirected automatically</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="qs-tip" aria-live="polite">
+          <i class="ti ti-info-circle" aria-hidden="true"></i>
+          Keep this tab open. You'll be notified as soon as an agent is available.
+        </p>
+      </div>
+
+      <!-- Queue context -->
+      <div class="qs-meta">
+        <span>{{ queuePosition - 1 > 0 ? (queuePosition - 1) + ' people ahead of you' : 'You\'re next!' }}</span>
+        <span class="qs-meta__dot" aria-hidden="true">·</span>
+        <span>Real-time updates</span>
+      </div>
+    }
+
+  </div>
+</section>
