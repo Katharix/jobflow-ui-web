@@ -15,12 +15,17 @@ Use when:
 
 ## Core lessons
 
-### Skip broad upfront Explore
-The Engineer does its own targeted reads efficiently. Only invoke `@Explore` for:
-- Post-implementation git status verification
-- Searches the Engineer cannot easily do inline (cross-repo, cross-workspace)
+### Use parallel targeted Explore calls
+When context gathering is needed, split into **2–3 parallel calls** by topic — never one large "get everything" call:
+- Call A: feature component files (HTML, SCSS, TS)
+- Call B: reference/comparison pages (e.g., billing page for style standards)
+- Call C: global styles / shared components (only if needed)
 
-**Avoid:** calling `@Explore` first "just to gather context" — it often returns large file-reference artifacts that can't be passed to other agents inline.
+Ask for **structured summaries with key code snippets**, not full raw file contents:
+- ✅ "Return the exact HTML markup for the page title, the CSS class name, and its font-size/font-weight rules"
+- ❌ "Return full file contents, no truncation" — causes response overflow → written to temp file → requires a second read call → that also overflows → cascading re-read chain costing 5+ minutes
+
+Only invoke `@Explore` for post-implementation verification (git status, residue scan) when the Engineer cannot do inline reads efficiently.
 
 ### Pre-load known context into prompts
 When a skill exists for a capability (e.g., `jobflow-ui-redesign`, `jobflow-git-workflow`), reference it in the agent prompt rather than re-explaining patterns. This saves tokens and avoids drift.
@@ -39,8 +44,12 @@ Every `@Engineer` prompt must end with:
 
 This prevents silent/truncated completions that force a follow-up `@Explore` call to verify what was done.
 
-### Model cost tier awareness
-When delegating to subagents, default to `Claude Sonnet 4.6 (copilot)` — attempting to use higher-tier models (e.g., Claude Opus 4.7) from a lower-tier parent will fail with a cost-tier error.
+### Model cost tier awareness — always specify explicitly
+**Always pass `model: Claude Sonnet 4.5 (copilot)` on every subagent invocation.** Never omit the model field.
+
+- Omitting the model allows subagents to default to a higher-tier model (e.g., Claude Opus 4.7), which fails with a cost-tier mismatch error — wasting a full agent call
+- Available safe models: `Claude Sonnet 4.5 (copilot)`, `Claude Sonnet 4.6 (copilot)`, `GPT-4o (copilot)`
+- Use `Claude Sonnet 4.5 (copilot)` as the default for all Engineer, Designer, Mobile, Planner, Closer, and Explore subagents
 
 ## Optimized flows
 

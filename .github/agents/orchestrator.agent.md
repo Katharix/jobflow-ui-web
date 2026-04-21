@@ -45,10 +45,14 @@ Create execution plan with agent assignments:
 Execute in proper order respecting dependencies:
 
 0. **@Explore** (ALWAYS first — before any other agent)
-   - Read all files relevant to the feature: existing models, services, components, routes, hubs, controllers
-   - Read environment files, DI registration, auth patterns
-   - Return a complete context report (full file contents or key patterns)
-   - **Pass this report as pre-loaded context in every subsequent agent prompt**
+   - Split into **2–3 parallel targeted calls** — never one large "get everything" call
+     - Call A: component files specific to the feature (HTML, SCSS, TS)
+     - Call B: reference/comparison files (e.g., billing page, dashboard)
+     - Call C: global styles / shared components (only if needed)
+   - Ask for **structured summaries with key code snippets** — not full raw file dumps
+     - Request: exact HTML markup for title areas, class names, key SCSS rules
+     - Avoid: "return full file contents, no truncation" — causes overflow → re-read chains
+   - **Pass the structured context report into every subsequent agent prompt**
    - This eliminates duplicate file reads across all downstream agents
 
 1. **@Planner** (always first for new work)
@@ -219,6 +223,13 @@ Ready for PR review.
 - **Read access** - Understand codebase context for routing
 - **Terminal access** - Check git status, branch state
 - **Autonomous** - Make delegation decisions without confirmation
+
+## Performance Rules
+
+- **Parallel Explore calls**: Split context gathering into 2–3 focused parallel calls by topic (feature files / reference files / global styles). Never batch everything into one call — large results overflow inline limits and require costly re-read chains.
+- **Structured summaries over raw dumps**: Explore prompts should request "key class names, exact markup for X, SCSS rule for Y" — not "full file contents". Structured output is 10x smaller and passes cleanly to downstream agents.
+- **Always specify model explicitly**: Pass `model: Claude Sonnet 4.5 (copilot)` on every subagent invocation. Omitting this risks a cost-tier mismatch error that wastes a full agent call.
+- **Enforce Engineer output contract**: Every Engineer prompt must end with: "Your final response MUST start with `## COMPLETED` and list every file path you modified."
 
 ## References
 
