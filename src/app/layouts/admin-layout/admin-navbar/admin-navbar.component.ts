@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import {NavigationEnd, Router, RouterLink, RouterModule} from '@angular/router';
 import {NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
 import {OrganizationContextService} from '../../../services/shared/organization-context.service';
@@ -7,6 +8,7 @@ import {OrganizationDto} from '../../../models/organization';
 import {NavItem} from '../../../models/nav-item';
 import {filter} from 'rxjs/operators';
 import {NavService} from "../services/nav.service";
+import {LucideAngularModule} from 'lucide-angular';
 
 
 @Component({
@@ -15,7 +17,8 @@ import {NavService} from "../services/nav.service";
    imports: [
     NgbDropdownModule,
     RouterLink,
-    RouterModule
+    RouterModule,
+    LucideAngularModule
 ],
    templateUrl: './admin-navbar.component.html',
    styleUrl: './admin-navbar.component.scss',
@@ -24,6 +27,7 @@ export class AdminNavbarComponent implements OnInit {
    private router = inject(Router);
    private orgContext = inject(OrganizationContextService);
    private navService = inject(NavService);
+   private document = inject(DOCUMENT);
 
    // currentTheme: string;
    navItems: NavItem[] = [];
@@ -54,6 +58,7 @@ export class AdminNavbarComponent implements OnInit {
             );
 
             this.navItems = this.navService.getNavItems(url);
+            this.document.body.classList.remove('sidebar-open');
          });
 
       this.orgContext.org$.subscribe(org => {
@@ -61,6 +66,10 @@ export class AdminNavbarComponent implements OnInit {
             this.org = org;
          }
       });
+   }
+
+   toggleSidebar(): void {
+      this.document.body.classList.toggle('sidebar-open');
    }
 
    showActiveTheme(theme: string) {
