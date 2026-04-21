@@ -50,8 +50,9 @@ export class SupportHubQueueStatusComponent implements OnInit, OnDestroy {
       this.signalR.agentJoined$.pipe(takeUntil(this.destroy$)).subscribe(({ agentName }) => {
         this.agentJoined = true;
         this.agentName = agentName;
-        const isAdminContext = this.router.url.startsWith('/admin');
-        const chatPath = isAdminContext
+        const storedSessionId = sessionStorage.getItem('support-hub-session-id');
+        const isOrgFlow = storedSessionId === this.sessionId;
+        const chatPath = isOrgFlow
           ? ['/admin/support-chat/chat', this.sessionId]
           : ['/support-hub/chat', this.sessionId];
         setTimeout(() => this.router.navigate(chatPath, { replaceUrl: true }), 2000);

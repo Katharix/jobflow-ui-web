@@ -46,4 +46,15 @@
       <span>Pick Up</span>
     }
   </button>
+
+  @if (showRemove) {
+    <button
+      class="q-card__remove"
+      (click)="onRemove()"
+      title="Remove from queue"
+      aria-label="Remove from queue"
+    >
+      <i class="ti ti-x" aria-hidden="true"></i>
+    </button>
+  }
 </article>

@@ -51,7 +51,9 @@
           <app-queue-card
             [customer]="customer"
             [compact]="false"
+            [showRemove]="true"
             (pickUp)="onPickUp($event)"
+            (remove)="onRemove($event)"
           ></app-queue-card>
         </div>
       }

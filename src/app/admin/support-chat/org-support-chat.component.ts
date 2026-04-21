@@ -40,7 +40,8 @@ export class OrgSupportChatComponent implements OnInit {
       },
       error: (err) => {
         this.isLoading = false;
-        this.error = err?.error?.detail ?? err?.error?.message ?? 'Failed to connect to support. Please try again.';
+        const queueFullMsg = err?.error?.error;
+        this.error = queueFullMsg ?? err?.error?.detail ?? err?.error?.message ?? 'Failed to connect to support. Please try again.';
       },
     });
   }

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -22,6 +22,7 @@ export class SupportHubLiveChatComponent implements OnInit, OnDestroy {
   private chatApi = inject(SupportHubChatApiService);
   private signalR = inject(SupportHubSignalRService);
   private soundService = inject(SupportHubSoundService);
+  private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   sessionId = '';
@@ -102,7 +103,10 @@ export class SupportHubLiveChatComponent implements OnInit, OnDestroy {
       this.isTyping = isTyping;
     });
 
-    this.signalR.queueUpdated$.pipe(takeUntil(this.destroy$)).subscribe(() => this.loadQueue());
+    this.signalR.queueUpdated$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.loadQueue();
+      this.cdr.detectChanges();
+    });
   }
 
   onSendMessage(content: string): void {
@@ -145,6 +149,10 @@ export class SupportHubLiveChatComponent implements OnInit, OnDestroy {
     this.chatApi.pickCustomer(customerId).subscribe(() => {
       this.router.navigate(['/support-hub/live-chat', customerId]);
     });
+  }
+
+  onRemoveFromQueue(customerId: string): void {
+    this.chatApi.removeFromQueue(customerId).subscribe(() => this.loadQueue());
   }
 
   onToggleSound(): void {

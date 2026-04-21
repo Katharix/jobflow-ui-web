@@ -70,17 +70,22 @@ Execute in proper order respecting dependencies:
    - Receives the Explore context report — does NOT re-explore
    - Implements API endpoints, Angular components, unit tests
    - Works in focused passes for large features (backend first, then frontend)
-   - Commits use `AB#<child-task-id>` for the repo being edited (UI uses UI child ID, API uses API child ID)
+   - Commits must follow the `jobflow-git-workflow` skill format exactly: `type(scope): [AB#<child-task-id>] short 5 word description` — AB# wrapped in `[]`, placed BEFORE the description, with a multi-line body
+   - Use the repo's own child Task ID (UI child ID in jobflow-ui-web, API child ID in JobFlow.API)
 
 4. **@Mobile** (if mobile parity needed)
    - Implement Flutter screens
    - Match web functionality
-   - Commits use `AB#<mobile-child-task-id>`
+   - Commits must follow the `jobflow-git-workflow` skill format: `type(scope): [AB#<mobile-child-task-id>] short 5 word description`
 
 5. **@CodeReview** (two-phase)
-   - **Phase 1 (autonomous)**: Review, fix issues, run build/lint/tests
+   - **Phase 1 (autonomous)**: Review, fix issues, then run its full validation workflow without skipping any step:
+     - Frontend: `ng.cmd build --configuration production` → `npm.cmd run lint` → tests
+     - Backend: `dotnet build` → `dotnet format --verify-no-changes` → tests
+   - Do NOT pass a subset of commands — let CodeReview execute all steps above in order
    - **Phase 2 (gated)**: Pause, show summary of all changes, ask user for commit approval
    - Only commits and pushes after explicit user confirmation
+   - After pushing, create a PR per repo following the PR Title and Body format in the `jobflow-git-workflow` skill
    - After push, capture commit SHAs per repo and pass them to @Closer
 
 6. **@Closer** (always last after pushes complete)
@@ -228,7 +233,7 @@ Ready for PR review.
 
 - **Parallel Explore calls**: Split context gathering into 2–3 focused parallel calls by topic (feature files / reference files / global styles). Never batch everything into one call — large results overflow inline limits and require costly re-read chains.
 - **Structured summaries over raw dumps**: Explore prompts should request "key class names, exact markup for X, SCSS rule for Y" — not "full file contents". Structured output is 10x smaller and passes cleanly to downstream agents.
-- **Always specify model explicitly**: Pass `model: Claude Sonnet 4.5 (copilot)` on every subagent invocation. Omitting this risks a cost-tier mismatch error that wastes a full agent call.
+- **Always specify model explicitly**: Pass `model: Claude Sonnet 4.6 (copilot)` on every subagent invocation. Omitting this risks a cost-tier mismatch error that wastes a full agent call.
 - **Enforce Engineer output contract**: Every Engineer prompt must end with: "Your final response MUST start with `## COMPLETED` and list every file path you modified."
 
 ## References

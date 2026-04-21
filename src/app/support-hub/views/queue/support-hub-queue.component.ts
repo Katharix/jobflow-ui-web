@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -18,6 +18,7 @@ export class SupportHubQueueComponent implements OnInit, OnDestroy {
   private chatApi = inject(SupportHubChatApiService);
   private signalR = inject(SupportHubSignalRService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   isLoading = false;
@@ -32,7 +33,10 @@ export class SupportHubQueueComponent implements OnInit, OnDestroy {
   private async initSignalR(): Promise<void> {
     await this.signalR.startConnection();
     await this.signalR.joinRepGroup();
-    this.signalR.queueUpdated$.pipe(takeUntil(this.destroy$)).subscribe(() => this.loadQueue());
+    this.signalR.queueUpdated$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.loadQueue();
+      this.cdr.detectChanges();
+    });
   }
 
   private loadQueue(): void {
@@ -61,6 +65,10 @@ export class SupportHubQueueComponent implements OnInit, OnDestroy {
     this.chatApi.pickCustomer(customerId).subscribe(() => {
       this.router.navigate(['/support-hub/live-chat', customerId]);
     });
+  }
+
+  onRemove(customerId: string): void {
+    this.chatApi.removeFromQueue(customerId).subscribe(() => this.loadQueue());
   }
 
   private getInitials(name: string): string {
