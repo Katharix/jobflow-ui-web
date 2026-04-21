@@ -1,6 +1,6 @@
 import { inject, Injectable, NgZone } from '@angular/core';
 import { Subject } from 'rxjs';
-import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from '@microsoft/signalr';
 import { environment } from '../../../environments/environment';
 import { Auth } from '@angular/fire/auth';
 
@@ -56,7 +56,7 @@ export class SupportHubSignalRService {
 
   async startConnection(): Promise<void> {
     if (this.connection) {
-      if (this.connection.state === 'Disconnected') {
+      if (this.connection.state === HubConnectionState.Disconnected) {
         await this.connection.start();
       }
       return;
@@ -130,6 +130,7 @@ export class SupportHubSignalRService {
   }
 
   async disconnect(): Promise<void> {
+    this._isRepMode = false;
     if (this.connection) {
       try { await this.connection.stop(); } catch { /* ignore */ }
       this.connection = null;
