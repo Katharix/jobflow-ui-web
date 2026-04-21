@@ -65,9 +65,7 @@ Always report back: **parent ID + child ID per repo + each branch name + upstrea
 git add -A
 
 # Commit using the repo's child Task ID with the AB# prefix
-git commit -m "feat(ui): AB#<ui-child-id> short message
-
-Optional longer body describing what changed and why."
+git commit -m "feat(ui): [AB#<ui-child-id>] short 5 word description"
 
 # Push to tracked upstream
 git push
@@ -76,25 +74,92 @@ git push
 ## Commit message format
 
 ```
-<type>(<scope>): AB#<child-task-id> <short summary>
-
-<optional body>
+type(scope): [AB#<child-task-id>] short 5 word description
 ```
 
-- `type`: `feat`, `fix`, `chore`, `refactor`, `docs`, `test`, `style`
-- `scope`: `ui`, `api`, `mobile`, or a specific feature (`dispatch`, `jobs`, etc.)
-- `child-task-id`: the child Task ID **for the repo being committed to**
+**Rules:**
+- `type` is always present: `feat`, `fix`, `refactor`, `chore`, `style`, `test`, etc.
+- `scope` is always present: `ui`, `api`, `mobile`, or a specific feature area
+- `AB#<id>` is always wrapped in square brackets `[]`
+- `AB#<id>` always comes BEFORE the description
+- Description is ~5 words, meaningful to the PR/change
+- No trailing punctuation, no ellipsis
+- Use the child Task ID **for the repo being committed to** — never the parent User Story ID
   - JobFlow-UI commits → UI child Task ID
   - JobFlow-API commits → API child Task ID
   - JobFlow-Mobile commits → Mobile child Task ID
-- The `AB#` prefix triggers Azure DevOps auto-linking between commit and work item
 
-### Example
+**Examples:**
 ```
-Parent User Story: #1200
-  ├── UI Task:     #1201 → commits in JobFlow-UI use     "AB#1201"
-  ├── API Task:    #1202 → commits in JobFlow-API use    "AB#1202"
-  └── Mobile Task: #1203 → commits in JobFlow-Mobile use "AB#1203"
+feat(ui): [AB#20] add mobile sidebar toggle button
+fix(ui): [AB#20] fix sidebar hover active colors
+feat(api): [AB#21] add employee CSV import endpoint
+refactor(ui): [AB#18] standardize page title components
+```
+
+### Commit body
+
+Every commit must include a multi-line body (passed as a second `-m` argument). The body explains the change in plain English and uses footnote-style references that map to specific files and line numbers.
+
+**Format:**
+```
+type(scope): [AB#<id>] short 5 word description
+
+<summary sentence of what changed and why>
+
+Changes:
+[1] Short description of change one
+[2] Short description of change two
+[3] Short description of change three
+
+References:
+[1] path/to/file.ts:42
+[2] path/to/other.scss:88
+[3] path/to/another.component.html:15
+```
+
+**Rules:**
+- The summary sentence comes first — one line, plain English, no bullet
+- `Changes:` lists what was done, numbered with `[n]`
+- `References:` maps each number to the exact file and line where that change lives
+- Line numbers should be accurate — point to the method, rule, or element changed
+- Every number in Changes must have a matching entry in References
+- Use relative paths from the repo root
+
+**Example:**
+```
+feat(ui): [AB#20] add mobile sidebar toggle button
+
+Added mobile hamburger toggle to admin navbar and fixed sidebar nav-link colors to read correctly on the primary-blue background.
+
+Changes:
+[1] Added hamburger button (d-lg-none) wired to toggleSidebar()
+[2] Injected DOCUMENT, added toggleSidebar() and auto-close on navigation
+[3] Fixed hover state — replaced $dark with $sidebar-nav-link-hover-color
+[4] Fixed sub-menu hover and active states to match top-level
+
+References:
+[1] src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.html:12
+[2] src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.ts:45
+[3] src/styles/admin/_sidebar.scss:88
+[4] src/styles/admin/_sidebar.scss:142
+```
+
+**Git command:**
+```powershell
+git commit -m "feat(ui): [AB#20] add mobile sidebar toggle button" -m "Added mobile hamburger toggle to admin navbar and fixed sidebar nav-link colors to read correctly on the primary-blue background.
+
+Changes:
+[1] Added hamburger button (d-lg-none) wired to toggleSidebar()
+[2] Injected DOCUMENT, added toggleSidebar() and auto-close on navigation
+[3] Fixed hover state — replaced \$dark with \$sidebar-nav-link-hover-color
+[4] Fixed sub-menu hover and active states to match top-level
+
+References:
+[1] src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.html:12
+[2] src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.ts:45
+[3] src/styles/admin/_sidebar.scss:88
+[4] src/styles/admin/_sidebar.scss:142"
 ```
 
 ## Rules

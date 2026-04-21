@@ -63,6 +63,15 @@
   background: var(--jf-bg);
   min-height: 100%;
   box-sizing: border-box;
+  padding: 1.25rem;
+
+  @media (min-width: 768px) {
+    padding: 1.5rem;
+  }
+
+  @media (min-width: 992px) {
+    padding: 2rem 2.5rem;
+  }
 }
 
 // ─── Page Header ─────────────────────────────────────────────────────────────

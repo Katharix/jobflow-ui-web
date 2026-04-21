@@ -13,7 +13,7 @@
 
 .jobs-filter-group {
    display: grid;
-   gap: 0.35rem;
+   gap: 0.5rem;
 }
 
 .jobs-filter-group__label {
@@ -65,7 +65,7 @@
    display: grid;
    grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr);
    gap: 1.5rem;
-   margin-bottom: 2rem;
+   margin-bottom: 1.5rem;
 
    @media (max-width: 1200px) {
       grid-template-columns: 1fr;
@@ -81,7 +81,7 @@
    background: var(--jf-surface);
    border: 1px solid var(--jf-border);
    border-radius: var(--jf-radius);
-   padding: 1.25rem;
+   padding: 1.5rem;
    box-shadow: var(--jf-shadow);
 }
 
