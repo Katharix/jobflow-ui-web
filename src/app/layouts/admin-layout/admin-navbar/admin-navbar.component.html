@@ -1,6 +1,12 @@
 @if (showNavbar) {
   <nav class="navbar bg-white shadow-sm px-3">
     <div class="navbar-content d-flex align-items-center justify-content-between w-100">
+      <!-- Mobile: Hamburger Toggle -->
+      <button class="btn btn-link p-1 d-lg-none hamburger-btn"
+        (click)="toggleSidebar()"
+        aria-label="Toggle sidebar">
+        <lucide-icon name="menu" [size]="22"></lucide-icon>
+      </button>
       <!-- Left: Logo + Nav Items -->
       <div class="d-flex align-items-center">
         <div class="logo-mini-wrapper me-4">

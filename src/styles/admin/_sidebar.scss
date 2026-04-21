@@ -165,15 +165,15 @@
 
             .link-title {
               margin-left: 1.85rem;
-              color: $dark;
+              color: $sidebar-nav-link-hover-color;
             }
 
             .link-arrow {
-              color: $dark;
+              color: $sidebar-nav-link-hover-color;
             }
 
             .link-icon {
-              color: $dark;
+              color: $sidebar-nav-link-hover-color;
               fill: rgba($sidebar-nav-link-hover-color, .1);
             }
           }
@@ -202,7 +202,7 @@
         &.mm-active>.nav-link,
         >.nav-link.mm-active {
           color: $white;
-          background-color: transparent;
+          background-color: rgba($white, 0.1);
           font-weight: 600;
 
           .link-arrow {
@@ -214,7 +214,7 @@
             content: '';
             width: 3px;
             height: 26px;
-            background: $sidebar-nav-link-active-color;
+            background: $secondary;
             position: absolute;
             left: -.85rem;
           }
@@ -231,16 +231,12 @@
 
         &.mm-active>.nav-link:hover {
           .link-icon {
-            color: $dark;
-            fill: rgba($white, 0.1);
+            color: $sidebar-nav-link-hover-color;
+            fill: rgba($sidebar-nav-link-hover-color, 0.1);
           }
 
-          // .link-title {
-          //   color: $white;
-          // }
-
           .link-arrow {
-            color: $dark;
+            color: $sidebar-nav-link-hover-color;
           }
         }
 
@@ -275,7 +271,7 @@
 
             &.mm-active {
               color: $white;
-              background-color: transparent;
+              background-color: rgba($white, 0.1);
               font-weight: 600;
 
               &::before {
@@ -289,13 +285,13 @@
             }
 
             &:hover {
-              color: $dark;
+              color: $sidebar-nav-link-hover-color;
               margin-left: 2px;
               background-color: rgba($white, .95);
 
               &::before {
-                border: 1px solid $white;
-                background: $white;
+                border: 1px solid $sidebar-nav-link-hover-color;
+                background: $sidebar-nav-link-hover-color;
               }
             }
 
