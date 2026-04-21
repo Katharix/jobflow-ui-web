@@ -1,31 +1,57 @@
 <div class="page-container">
-<div class="page-header">
-  <h1 class="page-title">{{ 'admin.billing.title' | translate }}</h1>
-  <p>{{ 'admin.billing.subtitle' | translate }}</p>
-</div>
 
-<section class="bp">
-  <!-- ── Summary strip ────────────────────────────────── -->
-  <div class="bp-summary">
-    <div class="bp-summary__card">
-      <span class="bp-summary__label">{{ 'admin.billing.summary.outstanding' | translate }}</span>
-      <strong class="bp-summary__value">{{ totalOutstanding | currency }}</strong>
+  <!-- ── Page Header ─────────────────────────────────────────────────── -->
+  <header class="page-header">
+    <div class="page-header__title-group">
+      <h1 class="page-header__title">{{ 'admin.billing.title' | translate }}</h1>
+      <p class="page-header__subtitle">{{ 'admin.billing.subtitle' | translate }}</p>
     </div>
-    <div class="bp-summary__card bp-summary__card--warn">
-      <span class="bp-summary__label">{{ 'admin.billing.summary.overdue' | translate }}</span>
-      <strong class="bp-summary__value">{{ totalOverdue }}</strong>
+  </header>
+
+  <!-- ── Summary Strip ──────────────────────────────────────────────────── -->
+  <div class="bp-summary-grid" aria-label="Billing summary">
+    <div class="kpi-tile">
+      <div class="kpi-tile__accent"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ totalOutstanding | currency }}</span>
+        <span class="kpi-tile__label">{{ 'admin.billing.summary.outstanding' | translate }}</span>
+      </div>
     </div>
-    <div class="bp-summary__card">
-      <span class="bp-summary__label">{{ 'admin.billing.summary.draft' | translate }}</span>
-      <strong class="bp-summary__value">{{ totalDrafts }}</strong>
+
+    <div class="kpi-tile">
+      <div class="kpi-tile__accent kpi-tile__accent--danger"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ totalOverdue }}</span>
+        <span class="kpi-tile__label">{{ 'admin.billing.summary.overdue' | translate }}</span>
+      </div>
     </div>
-    <div class="bp-summary__card">
-      <span class="bp-summary__label">{{ 'admin.billing.summary.sent' | translate }}</span>
-      <strong class="bp-summary__value">{{ totalSent }}</strong>
+
+    <div class="kpi-tile">
+      <div class="kpi-tile__accent kpi-tile__accent--neutral"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ totalDrafts }}</span>
+        <span class="kpi-tile__label">{{ 'admin.billing.summary.draft' | translate }}</span>
+      </div>
     </div>
-    <div class="bp-summary__card" [class.bp-summary__card--success]="hasPaymentProvider">
-      <span class="bp-summary__label">Payment provider</span>
-      <strong class="bp-summary__value">{{ activeProvider }}</strong>
+
+    <div class="kpi-tile">
+      <div class="kpi-tile__accent kpi-tile__accent--info"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ totalSent }}</span>
+        <span class="kpi-tile__label">{{ 'admin.billing.summary.sent' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="kpi-tile">
+      <div
+        class="kpi-tile__accent"
+        [class.kpi-tile__accent--success]="hasPaymentProvider"
+        [class.kpi-tile__accent--neutral]="!hasPaymentProvider"
+      ></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ activeProvider || 'None' }}</span>
+        <span class="kpi-tile__label">Payment Provider</span>
+      </div>
     </div>
   </div>
 
@@ -39,61 +65,89 @@
     </p-tablist>
 
     <p-tabpanels>
-      <!-- ═══ Overview ════════════════════════════════ -->
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           Overview Tab
+      ════════════════════════════════════════════════════════════════ -->
       <p-tabpanel value="overview">
-        <div class="bp-overview">
-          <!-- Left: quick stats -->
-          <div class="bp-overview__main">
-            <div class="bp-panel">
-              <div class="bp-panel__header">
-                <h3>Financial snapshot</h3>
+        <div class="bp-overview-layout">
+
+          <!-- Main column -->
+          <div class="bp-overview-layout__main">
+
+            <!-- Financial KPI row -->
+            <div class="bp-kpi-row">
+              <div class="kpi-tile">
+                <div class="kpi-tile__accent"></div>
+                <div class="kpi-tile__body">
+                  <span class="kpi-tile__value">{{ (financialSummary?.grossCollected ?? 0) / 100 | currency }}</span>
+                  <span class="kpi-tile__label">Gross Collected</span>
+                </div>
               </div>
-              <div class="bp-kpi-grid">
-                <div class="bp-kpi">
-                  <span class="bp-kpi__label">Gross collected</span>
-                  <strong class="bp-kpi__value">{{ (financialSummary?.grossCollected ?? 0) / 100 | currency }}</strong>
+
+              <div class="kpi-tile">
+                <div class="kpi-tile__accent kpi-tile__accent--danger"></div>
+                <div class="kpi-tile__body">
+                  <span class="kpi-tile__value">{{ (financialSummary?.refunded ?? 0) / 100 | currency }}</span>
+                  <span class="kpi-tile__label">Refunded</span>
                 </div>
-                <div class="bp-kpi">
-                  <span class="bp-kpi__label">Refunded</span>
-                  <strong class="bp-kpi__value">{{ (financialSummary?.refunded ?? 0) / 100 | currency }}</strong>
+              </div>
+
+              <div class="kpi-tile">
+                <div class="kpi-tile__accent kpi-tile__accent--success"></div>
+                <div class="kpi-tile__body">
+                  <span class="kpi-tile__value">{{ (financialSummary?.netCollected ?? 0) / 100 | currency }}</span>
+                  <span class="kpi-tile__label">Net Collected</span>
                 </div>
-                <div class="bp-kpi">
-                  <span class="bp-kpi__label">Net collected</span>
-                  <strong class="bp-kpi__value">{{ (financialSummary?.netCollected ?? 0) / 100 | currency }}</strong>
-                </div>
-                <div class="bp-kpi">
-                  <span class="bp-kpi__label">Invoices</span>
-                  <strong class="bp-kpi__value">{{ financialSummary?.invoiceCount ?? 0 }}</strong>
+              </div>
+
+              <div class="kpi-tile">
+                <div class="kpi-tile__accent kpi-tile__accent--info"></div>
+                <div class="kpi-tile__body">
+                  <span class="kpi-tile__value">{{ financialSummary?.invoiceCount ?? 0 }}</span>
+                  <span class="kpi-tile__label">Total Invoices</span>
                 </div>
               </div>
             </div>
 
+            <!-- Overdue invoices -->
             @if (!loading && overdueInvoices.length > 0) {
-              <div class="bp-panel bp-panel--warn">
-                <div class="bp-panel__header">
-                  <h3>Overdue invoices</h3>
-                  <span class="bp-badge bp-badge--danger">{{ overdueInvoices.length }}</span>
+              <div class="content-card bp-flush-card">
+                <div class="content-card__header">
+                  <div>
+                    <h3 class="content-card__title">Overdue Invoices</h3>
+                    <p class="content-card__subtitle">Requires immediate attention</p>
+                  </div>
+                  <div class="content-card__actions">
+                    <span class="status-chip status-chip--danger">{{ overdueInvoices.length }}</span>
+                  </div>
                 </div>
                 <div class="table-responsive">
-                  <table class="bp-table">
+                  <table class="table table-hover bp-table">
                     <thead>
                       <tr>
-                        <th>Invoice</th>
-                        <th>Client</th>
-                        <th>Due</th>
-                        <th class="text-end">Balance</th>
+                        <th>Customer</th>
+                        <th class="text-end">Amount</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
                         <th class="text-end">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       @for (invoice of overdueInvoices | slice:0:5; track invoice.id) {
                         <tr>
-                          <td>{{ invoice.invoiceNumber }}</td>
                           <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
-                          <td>{{ invoice.dueDate | date:'mediumDate' }}</td>
                           <td class="text-end">{{ invoice.balanceDue | currency }}</td>
+                          <td>{{ invoice.dueDate | date:'mediumDate' }}</td>
+                          <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
                           <td class="text-end">
-                            <button class="btn btn-sm btn-outline-primary" (click)="sendReminder(invoice)">Send reminder</button>
+                            <button
+                              class="btn btn-sm btn-outline-primary"
+                              (click)="sendReminder(invoice)"
+                              [attr.aria-label]="'Send reminder to ' + invoice.organizationClient.firstName"
+                            >
+                              {{ 'admin.billing.actions.sendReminder' | translate }}
+                            </button>
                           </td>
                         </tr>
                       }
@@ -104,48 +158,56 @@
             }
           </div>
 
-          <!-- Right: payment options sidebar (Jobber-inspired) -->
-          <aside class="bp-overview__sidebar">
-            <div class="bp-panel">
-              <div class="bp-panel__header">
-                <h3>Payment options</h3>
+          <!-- Sidebar -->
+          <aside class="bp-overview-layout__sidebar" aria-label="Payment options">
+            <div class="content-card">
+              <div class="content-card__header">
+                <div>
+                  <h3 class="content-card__title">Payment Options</h3>
+                  <p class="content-card__subtitle">Your active payment configuration</p>
+                </div>
               </div>
-              <div class="bp-options">
-                @if (hasPaymentProvider) {
-                  <div class="bp-options__row">
-                    <span class="bp-options__label">Provider</span>
-                    <strong>{{ activeProvider }}</strong>
+
+              @if (hasPaymentProvider) {
+                <div class="bp-options-list">
+                  <div class="bp-options-list__row">
+                    <span class="bp-options-list__label">Provider</span>
+                    <span class="status-chip status-chip--success">{{ activeProvider }}</span>
                   </div>
-                  <div class="bp-options__row">
-                    <span class="bp-options__label">Debit / Credit cards</span>
-                    <span>Visa, Mastercard, Amex</span>
+                  <div class="bp-options-list__row">
+                    <span class="bp-options-list__label">Accepted Cards</span>
+                    <span class="bp-options-list__value">Visa, Mastercard, Amex</span>
                   </div>
-                  <div class="bp-options__divider"></div>
-                  <h4 class="bp-options__heading">Features included</h4>
-                  <ul class="bp-options__features">
+                </div>
+                <div class="bp-options-features">
+                  <p class="bp-options-features__label">Features included</p>
+                  <ul class="bp-options-features__list">
                     <li>Client Hub payments</li>
                     <li>Real-time payment status</li>
                     <li>Partial payments</li>
                     <li>Refund management</li>
                     <li>Webhook event tracking</li>
                   </ul>
-                } @else {
-                  <div class="bp-options__empty">
-                    <p>Connect a payment provider to start accepting payments.</p>
-                    <a class="btn btn-primary btn-sm" routerLink="/admin/connectedpayment">Connect now</a>
-                  </div>
-                }
+                </div>
+              } @else {
+                <div class="bp-options-empty">
+                  <p>Connect a payment provider to start accepting payments.</p>
+                  <a class="btn btn-primary btn-sm" routerLink="/admin/connectedpayment">Connect now</a>
+                </div>
+              }
+
+              <div class="bp-options-actions">
+                <a class="btn btn-outline-primary btn-sm w-100" routerLink="/admin/connectedpayment">Manage Connection</a>
+                <a class="btn btn-outline-secondary btn-sm w-100" routerLink="/admin/invoices">All Invoices</a>
               </div>
-            </div>
-            <div class="bp-panel__actions">
-              <a class="btn btn-outline-primary btn-sm w-100" routerLink="/admin/connectedpayment">Manage connection</a>
-              <a class="btn btn-outline-secondary btn-sm w-100" routerLink="/admin/invoices">All invoices</a>
             </div>
           </aside>
         </div>
       </p-tabpanel>
 
-      <!-- ═══ Invoices ════════════════════════════════ -->
+      <!-- ═══════════════════════════════════════════════════════════════
+           Invoices Tab
+      ════════════════════════════════════════════════════════════════ -->
       <p-tabpanel value="invoices">
         @if (loading) {
           <p class="bp-state">{{ 'admin.billing.state.loading' | translate }}</p>
@@ -155,17 +217,22 @@
         }
 
         @if (!loading && !error) {
-          <!-- Draft -->
-          <div class="bp-panel">
-            <div class="bp-panel__header">
-              <h3>{{ 'admin.billing.sections.draft.title' | translate }}</h3>
-              <span class="bp-badge">{{ totalDrafts }}</span>
+
+          <!-- Draft invoices -->
+          <div class="content-card bp-flush-card">
+            <div class="content-card__header">
+              <div>
+                <h3 class="content-card__title">{{ 'admin.billing.sections.draft.title' | translate }}</h3>
+              </div>
+              <div class="content-card__actions">
+                <span class="status-chip status-chip--neutral">{{ totalDrafts }}</span>
+              </div>
             </div>
             @if (draftInvoices.length === 0) {
-              <div class="bp-empty">{{ 'admin.billing.empty.draft' | translate }}</div>
+              <div class="bp-empty-state">{{ 'admin.billing.empty.draft' | translate }}</div>
             } @else {
               <div class="table-responsive">
-                <table class="bp-table">
+                <table class="table table-hover bp-table">
                   <thead>
                     <tr>
                       <th>{{ 'admin.billing.table.invoice' | translate }}</th>
@@ -198,17 +265,21 @@
             }
           </div>
 
-          <!-- Sent -->
-          <div class="bp-panel">
-            <div class="bp-panel__header">
-              <h3>{{ 'admin.billing.sections.sent.title' | translate }}</h3>
-              <span class="bp-badge">{{ totalSent }}</span>
+          <!-- Sent invoices -->
+          <div class="content-card bp-flush-card">
+            <div class="content-card__header">
+              <div>
+                <h3 class="content-card__title">{{ 'admin.billing.sections.sent.title' | translate }}</h3>
+              </div>
+              <div class="content-card__actions">
+                <span class="status-chip status-chip--info">{{ totalSent }}</span>
+              </div>
             </div>
             @if (sentInvoices.length === 0) {
-              <div class="bp-empty">{{ 'admin.billing.empty.sent' | translate }}</div>
+              <div class="bp-empty-state">{{ 'admin.billing.empty.sent' | translate }}</div>
             } @else {
               <div class="table-responsive">
-                <table class="bp-table">
+                <table class="table table-hover bp-table">
                   <thead>
                     <tr>
                       <th>{{ 'admin.billing.table.invoice' | translate }}</th>
@@ -241,17 +312,21 @@
             }
           </div>
 
-          <!-- Overdue -->
-          <div class="bp-panel">
-            <div class="bp-panel__header">
-              <h3>{{ 'admin.billing.sections.overdue.title' | translate }}</h3>
-              <span class="bp-badge bp-badge--danger">{{ totalOverdue }}</span>
+          <!-- Overdue invoices -->
+          <div class="content-card bp-flush-card">
+            <div class="content-card__header">
+              <div>
+                <h3 class="content-card__title">{{ 'admin.billing.sections.overdue.title' | translate }}</h3>
+              </div>
+              <div class="content-card__actions">
+                <span class="status-chip status-chip--danger">{{ totalOverdue }}</span>
+              </div>
             </div>
             @if (overdueInvoices.length === 0) {
-              <div class="bp-empty">{{ 'admin.billing.empty.overdue' | translate }}</div>
+              <div class="bp-empty-state">{{ 'admin.billing.empty.overdue' | translate }}</div>
             } @else {
               <div class="table-responsive">
-                <table class="bp-table">
+                <table class="table table-hover bp-table">
                   <thead>
                     <tr>
                       <th>{{ 'admin.billing.table.invoice' | translate }}</th>
@@ -284,15 +359,20 @@
             }
           </div>
 
-          <!-- Paid / Refunded -->
+          <!-- Paid / Refunded invoices -->
           @if (paidInvoices.length > 0) {
-            <div class="bp-panel">
-              <div class="bp-panel__header">
-                <h3>{{ 'admin.billing.sections.paid.title' | translate }}</h3>
-                <span class="bp-badge bp-badge--success">{{ paidInvoices.length }}</span>
+            <div class="content-card bp-flush-card">
+              <div class="content-card__header">
+                <div>
+                  <h3 class="content-card__title">{{ 'admin.billing.sections.paid.title' | translate }}</h3>
+                  <p class="content-card__subtitle">Issue refunds for eligible paid invoices</p>
+                </div>
+                <div class="content-card__actions">
+                  <span class="status-chip status-chip--success">{{ paidInvoices.length }}</span>
+                </div>
               </div>
               <div class="table-responsive">
-                <table class="bp-table">
+                <table class="table table-hover bp-table">
                   <thead>
                     <tr>
                       <th>{{ 'admin.billing.table.invoice' | translate }}</th>
@@ -311,7 +391,7 @@
                         <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
                         <td>{{ invoice.invoiceDate | date:'mediumDate' }}</td>
                         <td class="text-end">{{ invoice.totalAmount | currency }}</td>
-                        <td class="text-end" style="min-width: 180px;">
+                        <td class="text-end bp-refund-amount-cell">
                           <input
                             type="number"
                             class="form-control form-control-sm"
@@ -319,6 +399,7 @@
                             min="0.01"
                             step="0.01"
                             [(ngModel)]="invoiceRefundAmounts[invoice.id]"
+                            [attr.aria-label]="'Refund amount for invoice ' + invoice.invoiceNumber"
                           />
                         </td>
                         <td><span [class]="getStatusClass(invoice.status)">{{ getStatusLabel(invoice.status) }}</span></td>
@@ -326,10 +407,10 @@
                           <div class="d-flex justify-content-end gap-2">
                             <input
                               type="text"
-                              class="form-control form-control-sm"
-                              style="max-width: 220px;"
+                              class="form-control form-control-sm bp-refund-reason-input"
                               [placeholder]="'admin.billing.refund.reasonPlaceholder' | translate"
                               [(ngModel)]="invoiceRefundReasons[invoice.id]"
+                              [attr.aria-label]="'Refund reason for invoice ' + invoice.invoiceNumber"
                             />
                             <button class="btn btn-sm btn-outline-secondary" (click)="openInvoice(invoice)">{{ 'admin.billing.actions.view' | translate }}</button>
                             <button
@@ -348,30 +429,44 @@
               </div>
             </div>
           }
+
         }
       </p-tabpanel>
 
-      <!-- ═══ Activity ════════════════════════════════ -->
+      <!-- ═══════════════════════════════════════════════════════════════
+           Activity Tab
+      ════════════════════════════════════════════════════════════════ -->
       <p-tabpanel value="activity">
+
         <!-- Payment History -->
-        <div class="bp-panel">
-          <div class="bp-panel__header">
+        <div class="content-card bp-flush-card">
+          <div class="content-card__header">
             <div>
-              <h3>Recent payment activity</h3>
-              <p>Latest successful, failed, refund, and subscription events.</p>
+              <h3 class="content-card__title">Recent Payment Activity</h3>
+              <p class="content-card__subtitle">Latest successful, failed, refund, and subscription events</p>
             </div>
-            <div class="bp-pager">
-              <button class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBackHistory || historyLoading" (click)="onPrevHistoryPage()">Previous</button>
-              <button class="btn btn-sm btn-outline-primary" [disabled]="!historyNextCursor || historyLoading" (click)="onNextHistoryPage()">Next</button>
+            <div class="content-card__actions">
+              <button
+                class="btn btn-sm btn-outline-secondary"
+                [disabled]="!canGoBackHistory || historyLoading"
+                (click)="onPrevHistoryPage()"
+                aria-label="Previous page"
+              >Previous</button>
+              <button
+                class="btn btn-sm btn-outline-primary"
+                [disabled]="!historyNextCursor || historyLoading"
+                (click)="onNextHistoryPage()"
+                aria-label="Next page"
+              >Next</button>
             </div>
           </div>
           @if (historyLoading) {
-            <div class="bp-empty">Loading payment activity...</div>
+            <div class="bp-empty-state">Loading payment activity…</div>
           } @else if (history.length === 0) {
-            <div class="bp-empty">No payment activity available yet.</div>
+            <div class="bp-empty-state">No payment activity available yet.</div>
           } @else {
             <div class="table-responsive">
-              <table class="bp-table">
+              <table class="table table-hover bp-table">
                 <thead>
                   <tr>
                     <th>When</th>
@@ -387,7 +482,7 @@
                       <td>{{ event.paidAt | date:'medium' }}</td>
                       <td>{{ event.eventType }}</td>
                       <td>{{ event.status }}</td>
-                      <td>{{ event.stripePaymentIntentId || '-' }}</td>
+                      <td class="bp-mono">{{ event.stripePaymentIntentId || '—' }}</td>
                       <td class="text-end">{{ toDollarFromMinor(event.amountPaid) | currency:event.currency }}</td>
                     </tr>
                   }
@@ -398,24 +493,34 @@
         </div>
 
         <!-- Disputes -->
-        <div class="bp-panel">
-          <div class="bp-panel__header">
+        <div class="content-card bp-flush-card">
+          <div class="content-card__header">
             <div>
-              <h3>Disputes</h3>
-              <p>Chargebacks and dispute lifecycle events from your payment providers.</p>
+              <h3 class="content-card__title">Disputes</h3>
+              <p class="content-card__subtitle">Chargebacks and dispute lifecycle events from your payment providers</p>
             </div>
-            <div class="bp-pager">
-              <button class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBackDisputes || disputesLoading" (click)="onPrevDisputesPage()">Previous</button>
-              <button class="btn btn-sm btn-outline-primary" [disabled]="!disputeNextCursor || disputesLoading" (click)="onNextDisputesPage()">Next</button>
+            <div class="content-card__actions">
+              <button
+                class="btn btn-sm btn-outline-secondary"
+                [disabled]="!canGoBackDisputes || disputesLoading"
+                (click)="onPrevDisputesPage()"
+                aria-label="Previous disputes page"
+              >Previous</button>
+              <button
+                class="btn btn-sm btn-outline-primary"
+                [disabled]="!disputeNextCursor || disputesLoading"
+                (click)="onNextDisputesPage()"
+                aria-label="Next disputes page"
+              >Next</button>
             </div>
           </div>
           @if (disputesLoading) {
-            <div class="bp-empty">Loading disputes...</div>
+            <div class="bp-empty-state">Loading disputes…</div>
           } @else if (disputes.length === 0) {
-            <div class="bp-empty">No disputes found.</div>
+            <div class="bp-empty-state">No disputes found.</div>
           } @else {
             <div class="table-responsive">
-              <table class="bp-table">
+              <table class="table table-hover bp-table">
                 <thead>
                   <tr>
                     <th>When</th>
@@ -431,7 +536,7 @@
                       <td>{{ dispute.paidAt | date:'medium' }}</td>
                       <td>{{ dispute.eventType }}</td>
                       <td>{{ dispute.status }}</td>
-                      <td>{{ dispute.customerId || '-' }}</td>
+                      <td>{{ dispute.customerId || '—' }}</td>
                       <td class="text-end">{{ toDollarFromMinor(dispute.amountPaid) | currency:dispute.currency }}</td>
                     </tr>
                   }
@@ -440,67 +545,104 @@
             </div>
           }
         </div>
+
       </p-tabpanel>
 
-      <!-- ═══ Payment Setup ═══════════════════════════ -->
+      <!-- ═══════════════════════════════════════════════════════════════
+           Payment Setup Tab
+      ════════════════════════════════════════════════════════════════ -->
       <p-tabpanel value="setup">
-        <div class="bp-setup">
-          <div class="bp-panel">
-            <div class="bp-panel__header">
-              <h3>Connected payment accounts</h3>
+
+        <p class="bp-setup-intro">
+          Connect Stripe or Square to accept client payments through invoices and the Client Hub.
+        </p>
+
+        <div class="bp-providers">
+
+          <!-- Stripe -->
+          <div class="content-card bp-provider-card" [class.bp-provider-card--active]="isStripeConnected">
+            <div class="bp-provider-card__header">
+              <strong class="bp-provider-card__name">Stripe</strong>
+              @if (isStripeConnected) {
+                <span class="status-chip status-chip--success">Connected</span>
+              } @else {
+                <span class="status-chip status-chip--neutral">Not Connected</span>
+              }
             </div>
-            <p class="bp-setup__desc">
-              Connect Stripe or Square to accept client payments through invoices and the Client Hub.
+            <p class="bp-provider-card__desc">
+              Credit cards, ACH bank transfers, Apple Pay, Google Pay. Full webhook event tracking.
             </p>
-
-            <div class="bp-provider-grid">
-              <!-- Stripe -->
-              <div class="bp-provider" [class.bp-provider--active]="isStripeConnected">
-                <div class="bp-provider__header">
-                  <strong>Stripe</strong>
-                  @if (isStripeConnected) {
-                    <span class="bp-badge bp-badge--success">Connected</span>
-                  }
-                </div>
-                <p>Credit cards, ACH bank transfers, Apple Pay, Google Pay. Full webhook event tracking.</p>
-                <a class="btn btn-sm" [class.btn-outline-secondary]="isStripeConnected" [class.btn-primary]="!isStripeConnected" routerLink="/admin/connectedpayment">
-                  {{ isStripeConnected ? 'Manage Stripe' : 'Connect Stripe' }}
-                </a>
-              </div>
-
-              <!-- Square -->
-              <div class="bp-provider" [class.bp-provider--active]="isSquareConnected">
-                <div class="bp-provider__header">
-                  <strong>Square</strong>
-                  @if (isSquareConnected) {
-                    <span class="bp-badge bp-badge--success">Connected</span>
-                  }
-                </div>
-                <p>Card payments, Square POS integration, and in-person Tap to Pay.</p>
-                <a class="btn btn-sm" [class.btn-outline-secondary]="isSquareConnected" [class.btn-primary]="!isSquareConnected" routerLink="/admin/connectedpayment">
-                  {{ isSquareConnected ? 'Manage Square' : 'Connect Square' }}
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Features included -->
-          <div class="bp-panel">
-            <div class="bp-panel__header">
-              <h3>Features included</h3>
-            </div>
-            <ul class="bp-feature-list">
-              <li>Client Hub (online payment portal)</li>
-              <li>Real-time payment status updates</li>
-              <li>Partial payments</li>
-              <li>Refund management</li>
-              <li>Webhook event tracking</li>
-              <li>Multiple provider support (Stripe + Square)</li>
+            <ul class="bp-provider-card__features">
+              <li>Card &amp; ACH payments</li>
+              <li>Apple Pay / Google Pay</li>
+              <li>Real-time webhook events</li>
+              <li>Dispute management</li>
             </ul>
+            <a
+              class="btn btn-sm mt-auto"
+              [class.btn-outline-secondary]="isStripeConnected"
+              [class.btn-primary]="!isStripeConnected"
+              routerLink="/admin/connectedpayment"
+              [attr.aria-label]="isStripeConnected ? 'Manage Stripe connection' : 'Connect Stripe'"
+            >
+              {{ isStripeConnected ? 'Manage Stripe' : 'Connect Stripe' }}
+            </a>
           </div>
+
+          <!-- Square -->
+          <div class="content-card bp-provider-card" [class.bp-provider-card--active]="isSquareConnected">
+            <div class="bp-provider-card__header">
+              <strong class="bp-provider-card__name">Square</strong>
+              @if (isSquareConnected) {
+                <span class="status-chip status-chip--success">Connected</span>
+              } @else {
+                <span class="status-chip status-chip--neutral">Not Connected</span>
+              }
+            </div>
+            <p class="bp-provider-card__desc">
+              Card payments, Square POS integration, and in-person Tap to Pay.
+            </p>
+            <ul class="bp-provider-card__features">
+              <li>Card payments</li>
+              <li>Square POS integration</li>
+              <li>In-person Tap to Pay</li>
+              <li>Offline transaction support</li>
+            </ul>
+            <a
+              class="btn btn-sm mt-auto"
+              [class.btn-outline-secondary]="isSquareConnected"
+              [class.btn-primary]="!isSquareConnected"
+              routerLink="/admin/connectedpayment"
+              [attr.aria-label]="isSquareConnected ? 'Manage Square connection' : 'Connect Square'"
+            >
+              {{ isSquareConnected ? 'Manage Square' : 'Connect Square' }}
+            </a>
+          </div>
+
         </div>
+
+        <!-- Platform features -->
+        <div class="content-card">
+          <div class="content-card__header">
+            <div>
+              <h3 class="content-card__title">Features Included</h3>
+              <p class="content-card__subtitle">Available with any connected payment provider</p>
+            </div>
+          </div>
+          <ul class="bp-feature-list">
+            <li>Client Hub (online payment portal)</li>
+            <li>Real-time payment status updates</li>
+            <li>Partial payments</li>
+            <li>Refund management</li>
+            <li>Webhook event tracking</li>
+            <li>Multiple provider support (Stripe + Square)</li>
+          </ul>
+        </div>
+
       </p-tabpanel>
+
     </p-tabpanels>
   </p-tabs>
-</section>
+
 </div>
+
