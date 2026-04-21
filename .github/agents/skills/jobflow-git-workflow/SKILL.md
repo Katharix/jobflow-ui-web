@@ -97,8 +97,47 @@ Parent User Story: #1200
   └── Mobile Task: #1203 → commits in JobFlow-Mobile use "AB#1203"
 ```
 
+## Pull Request Creation (required after every push)
+
+After pushing, always create a PR using `gh pr create`. Never skip this step.
+
+### PR Title Format
+`<type>(<scope>): <Short human-readable summary> [AB#<child-task-id>]`
+- Keep title under 60 characters (excluding the AB# tag)
+- Use sentence-style description — NOT a repeat of the commit message
+- Examples:
+  - `feat(ui): Live Support admin layout & role gate [AB#24]`
+  - `fix(api): Correct invoice total rounding error [AB#31]`
+
+### PR Body Template
+```
+## Summary
+One or two sentences describing what this PR does and why.
+
+## Changes
+Bullet list of the key changes made, grouped by area (e.g., ### API, ### UI, ### Mobile).
+
+## Work Item
+Closes AB#<child-task-id> — child of User Story #<parent-id>
+```
+
+### Command
+```
+gh pr create \
+  --base main \
+  --head <branch-name> \
+  --title "<title>" \
+  --body "<body>"
+```
+
+### Rules
+- Never leave a pushed branch without a PR
+- PR title must NOT be a copy of the commit message — write a clean human-readable title
+- Always include the Work Item section with AB# reference
+
 ## Rules
 
 - Never `git push --force` without explicit user approval
 - Never bypass hooks (`--no-verify`)
 - Never commit without running build first
+- Always create a PR after pushing — use the PR Title Format and Body Template above
