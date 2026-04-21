@@ -109,7 +109,7 @@ After pushing, always create a PR using `gh pr create`. Never skip this step.
   - `feat(ui): Live Support admin layout & role gate [AB#24]`
   - `fix(api): Correct invoice total rounding error [AB#31]`
 
-### PR Body Template
+### PR Body (required)
 ```
 ## Summary
 One or two sentences describing what this PR does and why.
@@ -134,6 +134,7 @@ gh pr create \
 - Never leave a pushed branch without a PR
 - PR title must NOT be a copy of the commit message — write a clean human-readable title
 - Always include the Work Item section with AB# reference
+- PR body is required — always populate all three sections (Summary, Changes, Work Item). Never leave the body empty or use a placeholder.
 
 ## Rules
 
