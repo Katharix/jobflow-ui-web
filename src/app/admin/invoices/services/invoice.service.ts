@@ -34,7 +34,9 @@ export class InvoiceService {
   private readonly invoiceUrl = 'invoice/';
 
   getByOrganization(options?: { context?: import('@angular/common/http').HttpContext }): Observable<Invoice[]> {
-    return this.api.get<Invoice[]>(`${this.invoiceUrl}organization`, undefined, options?.context);
+    return options?.context
+      ? this.api.get<Invoice[]>(`${this.invoiceUrl}organization`, undefined, options.context)
+      : this.api.get<Invoice[]>(`${this.invoiceUrl}organization`);
   }
 
   getByOrganizationPaged(options?: InvoicePagedQueryOptions): Observable<CursorPagedResponse<Invoice>> {
