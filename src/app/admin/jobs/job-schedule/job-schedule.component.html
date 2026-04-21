@@ -1,59 +1,101 @@
-<app-page-header
-  [title]="'Schedule'"
-  [subtitle]="isJobScoped ? ('Schedule and manage assignments for ' + jobTitle) : 'Plan, schedule, and manage your work'"
-></app-page-header>
-
-<section class="schedule-shell mt-3">
-  <aside class="suggestions-card">
-    <div class="suggestions-card__head">
-      <h3>Suggested jobs</h3>
-      <p>Jobs with no assignments yet.</p>
+<div class="page-container">
+  <header class="page-header">
+    <div class="page-header__title-group">
+      <h1 class="page-header__title">Schedule</h1>
+      <p class="page-header__subtitle">{{ isJobScoped ? ('Schedule and manage assignments for ' + jobTitle) : 'Plan, schedule, and manage your work' }}</p>
     </div>
+  </header>
 
-    @if (loadingUnassignedJobs) {
-      <p class="suggestions-card__state">Loading jobs...</p>
-    }
-
-    <p class="suggestions-card__state" [class.d-none]="loadingUnassignedJobs || unassignedJobs.length > 0">Everything is already assigned for now.</p>
-
-    <ul #suggestedJobsList class="suggestions-list" [class.d-none]="loadingUnassignedJobs || unassignedJobs.length === 0">
-      @for (job of unassignedJobs; track job.id) {
-        <li>
-          <button
-            type="button"
-            class="suggestions-list__item"
-            [class.suggestions-list__item--active]="job.id === currentJobId"
-            [attr.data-job-id]="job.id"
-            [attr.data-title]="job.title"
-            (click)="selectSuggestedJob(job)"
-          >
-            <strong>{{ job.title }}</strong>
-            <span>
-              {{ job.organizationClient.firstName }} {{ job.organizationClient.lastName }}
-            </span>
-          </button>
-        </li>
-      }
-    </ul>
-  </aside>
-
-  <div class="calendar-panel">
-    <app-jobflow-calendar
-      [(selectedDate)]="selectedDate"
-      [calendarView]="calendarView"
-      [views]="['Day', 'Week', 'Month']"
-      [eventSettings]="calendarEvents"
-      [allowExternalDrop]="true"
-      (selectedDateChange)="onCalendarDateChange($event)"
-      (calendarViewChange)="onCalendarViewChange($event)"
-      (eventCreate)="onCalendarEventCreate($event)"
-      (eventChange)="onCalendarEventUpdate($event)"
-      (externalEventCreate)="onExternalEventCreate($event)"
-      (dateClick)="onDateCellClick($event)"
-    >
-    </app-jobflow-calendar>
+  <!-- KPI Metrics -->
+  <div class="kpi-grid kpi-grid--3" role="list" aria-label="Schedule metrics">
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--warning"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ unassignedJobs.length }}</span>
+        <span class="kpi-tile__label">Unscheduled Jobs</span>
+        <span class="kpi-tile__note">Drag onto calendar to assign</span>
+      </div>
+    </div>
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--success"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ calendarEvents.dataSource.length }}</span>
+        <span class="kpi-tile__label">Scheduled Assignments</span>
+        <span class="kpi-tile__note">Visible in current view</span>
+      </div>
+    </div>
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--info"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ calendarView }}</span>
+        <span class="kpi-tile__label">Current View</span>
+        <span class="kpi-tile__note">Day · Week · Month</span>
+      </div>
+    </div>
   </div>
-</section>
+
+  <!-- CTA Card -->
+  <div class="cta-card">
+    <div>
+      <p class="cta-card__eyebrow">Schedule workspace</p>
+      <h3 class="cta-card__title">Drag, drop, and assign with confidence.</h3>
+      <p class="cta-card__body">Click any date to create an assignment. Drag unscheduled jobs from the sidebar directly onto the calendar.</p>
+    </div>
+  </div>
+
+  <div class="schedule-shell">
+    <aside class="content-card schedule-suggestions">
+      <div class="content-card__header">
+        <div>
+          <h3 class="content-card__title">Suggested jobs</h3>
+          <p class="content-card__subtitle">Jobs with no assignments yet.</p>
+        </div>
+      </div>
+
+      @if (loadingUnassignedJobs) {
+        <p class="suggestions-state">Loading jobs...</p>
+      }
+
+      <p class="suggestions-state" [class.d-none]="loadingUnassignedJobs || unassignedJobs.length > 0">Everything is already assigned for now.</p>
+
+      <ul #suggestedJobsList class="suggestions-list" [class.d-none]="loadingUnassignedJobs || unassignedJobs.length === 0">
+        @for (job of unassignedJobs; track job.id) {
+          <li>
+            <button
+              type="button"
+              class="suggestions-list__item"
+              [class.suggestions-list__item--active]="job.id === currentJobId"
+              [attr.data-job-id]="job.id"
+              [attr.data-title]="job.title"
+              (click)="selectSuggestedJob(job)"
+            >
+              <strong>{{ job.title }}</strong>
+              <span>
+                {{ job.organizationClient.firstName }} {{ job.organizationClient.lastName }}
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+    </aside>
+
+    <div class="content-card schedule-calendar">
+      <app-jobflow-calendar
+        [(selectedDate)]="selectedDate"
+        [calendarView]="calendarView"
+        [views]="['Day', 'Week', 'Month']"
+        [eventSettings]="calendarEvents"
+        [allowExternalDrop]="true"
+        (selectedDateChange)="onCalendarDateChange($event)"
+        (calendarViewChange)="onCalendarViewChange($event)"
+        (eventCreate)="onCalendarEventCreate($event)"
+        (eventChange)="onCalendarEventUpdate($event)"
+        (externalEventCreate)="onExternalEventCreate($event)"
+        (dateClick)="onDateCellClick($event)"
+      >
+      </app-jobflow-calendar>
+    </div>
+  </div>
 
 <!-- Date Context Menu -->
 @if (contextMenu.visible) {
@@ -81,10 +123,13 @@
 }
 
 @if (!isJobScoped) {
-  <div class="schedule-hint">
-    Pick a suggested job to open its scheduling drawer.
+  <div class="schedule-tip">
+    <lucide-icon name="info" size="16"></lucide-icon>
+    <span>Pick a suggested job from the sidebar to open its scheduling drawer.</span>
   </div>
 }
+
+</div>
 
 <app-jobflow-drawer
   [open]="showAssignmentModal"

@@ -5,7 +5,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { ToastService } from '../../../common/toast/toast.service';
 import { OrganizationContextService } from '../../../services/shared/organization-context.service';
-import { PageHeaderComponent } from '../../dashboard/page-header/page-header.component';
 import { JobflowDrawerComponent } from '../../../common/jobflow-drawer/jobflow-drawer.component';
 import { JobTemplateService } from '../services/job-template.service';
 import { JobTemplate, JobTemplateItem } from '../models/job-template';
@@ -17,7 +16,7 @@ import { Subscription } from 'rxjs';
    standalone: true,
    templateUrl: './job-templates.component.html',
    styleUrls: ['./job-templates.component.scss'],
-   imports: [ReactiveFormsModule, FormsModule, InputTextModule, SelectModule, PageHeaderComponent, JobflowDrawerComponent]
+   imports: [ReactiveFormsModule, FormsModule, InputTextModule, SelectModule, JobflowDrawerComponent]
 })
 export class JobTemplatesComponent implements OnInit, OnDestroy {
    private templateService = inject(JobTemplateService);

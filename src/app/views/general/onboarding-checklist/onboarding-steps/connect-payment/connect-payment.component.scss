@@ -1,159 +1,67 @@
-.connected-payment {
-	padding: 2.5rem 0 3.5rem;
-	background: radial-gradient(circle at top left, #EDEFF7 0%, #FAFBFF 45%, #ffffff 100%);
-
-	.page-hero {
-		display: grid;
-		grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
-		gap: 2rem;
-		align-items: stretch;
-		margin-bottom: 2rem;
-
-		.eyebrow {
-			text-transform: uppercase;
-			letter-spacing: 0.12em;
-			font-size: 0.7rem;
-			color: #6E7180;
-			font-weight: 700;
-			margin-bottom: 0.4rem;
-		}
-
-		h1 {
-			font-size: 2rem;
-			font-weight: 700;
-			color: #1E1E24;
-			margin-bottom: 0.6rem;
-		}
-
-		.lead {
-			color: #6E7180;
-			font-size: 1rem;
-			margin-bottom: 0;
-		}
-
-		.hero-card {
-			border-radius: 16px;
-			background: #1E1E24;
-			color: #FAFBFF;
-			padding: 1.5rem;
-			box-shadow: 0 20px 40px rgba(30, 30, 36, 0.2);
-
-			h3 {
-				font-size: 1.05rem;
-				margin-bottom: 0.75rem;
-			}
-
-			ul {
-				margin: 0;
-				padding-left: 1.2rem;
-
-				li {
-					margin-bottom: 0.4rem;
-					color: #D3D6E0;
-				}
-			}
-		}
-	}
-
-	.status-banner {
-		margin-bottom: 1.5rem;
-
-		.alert {
-			border-radius: 12px;
-			padding: 0.75rem 1rem;
-			margin-bottom: 0;
-		}
-	}
-
-	.provider-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-		gap: 1.5rem;
-	}
-
-	.provider-card {
-		background: #ffffff;
-		border-radius: 16px;
-		padding: 1.5rem;
-		border: 1px solid #D3D6E0;
-		box-shadow: 0 18px 32px rgba(30, 30, 36, 0.08);
-		display: flex;
-		flex-direction: column;
-		gap: 1.25rem;
-	}
-
-	.provider-card--selected {
-		border-color: #3f67da;
-		box-shadow: 0 20px 40px rgba(63, 103, 218, 0.16);
-	}
-
-	.provider-brand {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 1rem;
-	}
-
-	.provider-logo {
-		max-height: 42px;
-		max-width: 160px;
-		object-fit: contain;
-	}
-
-	.provider-tags {
-		display: inline-flex;
-		gap: 0.4rem;
-		flex-wrap: wrap;
-		justify-content: flex-end;
-	}
-
-	.provider-tag {
-		background: rgba(45, 137, 139, 0.12);
-		color: #2D898B;
-		border-radius: 999px;
-		padding: 0.25rem 0.7rem;
-		font-size: 0.7rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-	}
-
-	.provider-tag--active {
-		background: rgba(63, 103, 218, 0.12);
-		color: #3f67da;
-	}
-
-	.provider-copy {
-		h2 {
-			font-size: 1.25rem;
-			margin-bottom: 0.5rem;
-			color: #1E1E24;
-		}
-
-		.provider-description {
-			color: #6E7180;
-			white-space: pre-line;
-			margin-bottom: 0;
-		}
-	}
-
-	.provider-actions {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.small-text {
-		color: #6E7180;
-		font-size: 0.85rem;
-		margin: 0;
-	}
+.provider-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
-@media (max-width: 960px) {
-	.connected-payment {
-		.page-hero {
-			grid-template-columns: 1fr;
-		}
-	}
+.provider-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &--selected {
+    border-color: var(--jf-primary);
+    box-shadow: 0 0 0 2px rgba(63, 103, 218, 0.16);
+  }
+}
+
+.provider-brand {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.provider-logo {
+  max-height: 42px;
+  max-width: 160px;
+  object-fit: contain;
+}
+
+.provider-tags {
+  display: inline-flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.provider-copy {
+  flex: 1;
+}
+
+.provider-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  color: var(--jf-text);
+}
+
+.provider-description {
+  color: var(--jf-text-muted);
+  white-space: pre-line;
+  margin-bottom: 0;
+  font-size: 0.875rem;
+}
+
+.provider-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.provider-hint {
+  color: var(--jf-text-muted);
+  font-size: 0.85rem;
+  margin: 0;
 }

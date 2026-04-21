@@ -1,8 +1,12 @@
 <div class="page-container">
-  <div class="page-header">
-    <h1 class="page-title">{{ 'company.title' | translate }}</h1>
-    <p>{{ 'company.subtitle' | translate }}</p>
+
+<!-- ── Page Header ─────────────────────────────────────────────────────── -->
+<header class="page-header">
+  <div class="page-header__title-group">
+    <h1 class="page-header__title">{{ 'company.title' | translate }}</h1>
+    <p class="page-header__subtitle">{{ 'company.subtitle' | translate }}</p>
   </div>
+</header>
 
   @if (isLoading) {
     <div class="content-card text-center py-4">
@@ -11,14 +15,18 @@
     </div>
   } @else {
     @if (error) {
-      <div class="alert alert-danger">{{ error }}</div>
+      <div class="page-alert page-alert--danger">{{ error }}</div>
     }
 
     <form #companyForm="ngForm" (ngSubmit)="save(companyForm)" novalidate>
       <!-- Business Details -->
       <div class="content-card">
-        <span class="section-label">{{ 'company.sectionBusiness' | translate }}</span>
-        <p class="text-muted mb-3">{{ 'company.sectionBusinessDesc' | translate }}</p>
+        <div class="content-card__header">
+          <div>
+            <h3 class="content-card__title">{{ 'company.sectionBusiness' | translate }}</h3>
+            <p class="content-card__subtitle">{{ 'company.sectionBusinessDesc' | translate }}</p>
+          </div>
+        </div>
         <div class="row g-3">
             <div class="col-md-7">
               <label class="form-label" for="organizationName">{{ 'company.organizationName' | translate }}</label>
@@ -59,8 +67,12 @@
 
       <!-- Primary Contact -->
       <div class="content-card">
-        <span class="section-label">{{ 'company.sectionContact' | translate }}</span>
-        <p class="text-muted mb-3">{{ 'company.sectionContactDesc' | translate }}</p>
+        <div class="content-card__header">
+          <div>
+            <h3 class="content-card__title">{{ 'company.sectionContact' | translate }}</h3>
+            <p class="content-card__subtitle">{{ 'company.sectionContactDesc' | translate }}</p>
+          </div>
+        </div>
         <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label" for="contactFirstName">{{ 'company.contactFirstName' | translate }}</label>
@@ -110,8 +122,12 @@
 
       <!-- Business Address -->
       <div class="content-card">
-        <span class="section-label">{{ 'company.sectionAddress' | translate }}</span>
-        <p class="text-muted mb-3">{{ 'company.sectionAddressDesc' | translate }}</p>
+        <div class="content-card__header">
+          <div>
+            <h3 class="content-card__title">{{ 'company.sectionAddress' | translate }}</h3>
+            <p class="content-card__subtitle">{{ 'company.sectionAddressDesc' | translate }}</p>
+          </div>
+        </div>
         <div class="row g-3">
             <div class="col-12">
               <label class="form-label" for="address1">{{ 'company.address1' | translate }}</label>

@@ -1,88 +1,91 @@
-<section class="connected-payment">
-  <div class="container">
-    <header class="page-hero">
-      <div>
-        <p class="eyebrow">Connected Payments</p>
-        <h1>Choose how clients pay you</h1>
-        <p class="lead">
-          Connect Stripe or Square to accept client payments in invoices and the Client Hub.
-          You can change your provider anytime.
-        </p>
-      </div>
-      <div class="hero-card">
-        <h3>What this unlocks</h3>
-        <ul>
-          <li>Pay invoices directly in the Client Hub</li>
-          <li>Real-time payment status updates</li>
-          <li>Secure processing with provider webhooks</li>
-        </ul>
-      </div>
-    </header>
+<div class="page-container">
 
-    @if (callbackStatus) {
-      <div class="status-banner">
-        <div
-          class="alert"
-        [ngClass]="{
-          'alert-info': callbackStatus === 'processing',
-          'alert-success': callbackStatus === 'success',
-          'alert-danger': callbackStatus === 'error'
-        }"
-          role="alert"
-          >
-          @if (callbackProvider) {
-            <strong>{{ callbackProvider }}:</strong>
+<!-- ── Page Header ─────────────────────────────────────────────────────── -->
+<header class="page-header">
+  <div class="page-header__title-group">
+    <h1 class="page-header__title">Connected Payments</h1>
+    <p class="page-header__subtitle">Connect Stripe or Square to accept client payments in invoices and the Client Hub.</p>
+  </div>
+</header>
+
+<!-- ── CTA Card ─────────────────────────────────────────────────────────── -->
+<div class="cta-card">
+  <div>
+    <p class="cta-card__eyebrow">Connected Payments</p>
+    <h3 class="cta-card__title">Choose how clients pay you</h3>
+    <p class="cta-card__body">Connect Stripe or Square to accept client payments in invoices and the Client Hub. You can change your provider anytime.</p>
+  </div>
+  <div class="cta-card__actions">
+    <ul style="margin:0; padding-left:1.2rem; color:var(--jf-text-muted); font-size:0.875rem;">
+      <li>Pay invoices directly in the Client Hub</li>
+      <li>Real-time payment status updates</li>
+      <li>Secure processing with provider webhooks</li>
+    </ul>
+  </div>
+</div>
+
+@if (callbackStatus) {
+  <div
+    class="page-alert"
+    [ngClass]="{
+      'page-alert--info': callbackStatus === 'processing' || callbackStatus === 'success',
+      'page-alert--danger': callbackStatus === 'error'
+    }"
+    role="alert"
+  >
+    @if (callbackProvider) {
+      <strong>{{ callbackProvider }}:</strong>
+    }
+    {{ callbackMessage }}
+  </div>
+}
+
+<!-- ── Provider Cards ────────────────────────────────────────────────────── -->
+<div class="provider-grid">
+  @for (provider of paymentProviders; track provider) {
+    <div class="content-card provider-card" [class.provider-card--selected]="isProviderSelected(provider.provider)">
+      <div class="provider-brand">
+        <img
+          [src]="provider.logoPath"
+          [alt]="provider.altLogoText"
+          class="provider-logo"
+        />
+        <div class="provider-tags">
+          @if (provider.provider === 'Stripe') {
+            <span class="status-chip status-chip--primary">Recommended</span>
           }
-          {{ callbackMessage }}
+          @if (isProviderSelected(provider.provider)) {
+            <span class="status-chip status-chip--success">Selected</span>
+          }
         </div>
       </div>
-    }
-
-    <div class="provider-grid">
-      @for (provider of paymentProviders; track provider) {
-        <div class="provider-card" [class.provider-card--selected]="isProviderSelected(provider.provider)">
-          <div class="provider-brand">
-            <img
-              [src]="provider.logoPath"
-              [alt]="provider.altLogoText"
-              class="provider-logo"
-              />
-              <div class="provider-tags">
-                @if (provider.provider === 'Stripe') {
-                  <span class="provider-tag">Recommended</span>
-                }
-                @if (isProviderSelected(provider.provider)) {
-                  <span class="provider-tag provider-tag--active">Selected</span>
-                }
-              </div>
-            </div>
-            <div class="provider-copy">
-              <h2>{{ provider.provider }}</h2>
-              <p class="provider-description">{{ provider.description }}</p>
-            </div>
-            <div class="provider-actions">
-              <button
-                class="btn btn-primary"
-                (click)="createConnectedAccount(provider.provider)"
-                [disabled]="isProviderSelected(provider.provider)"
-              >
-                {{ isProviderSelected(provider.provider) ? 'Connected via ' + provider.provider : 'Connect ' + provider.provider }}
-              </button>
-              @if (provider.provider === 'Square' && isProviderSelected('Square')) {
-                <button
-                  class="btn btn-outline-danger"
-                  (click)="disconnectSquare()"
-                  [disabled]="isDisconnectingSquare"
-                >
-                  {{ isDisconnectingSquare ? 'Disconnecting...' : 'Disconnect Square' }}
-                </button>
-              }
-              <p class="small-text">
-                {{ isProviderSelected(provider.provider) ? 'This provider is active for your account.' : 'You will be redirected to authorize and return here.' }}
-              </p>
-            </div>
-          </div>
+      <div class="provider-copy">
+        <h2 class="provider-name">{{ provider.provider }}</h2>
+        <p class="provider-description">{{ provider.description }}</p>
+      </div>
+      <div class="provider-actions">
+        <button
+          class="btn btn-primary"
+          (click)="createConnectedAccount(provider.provider)"
+          [disabled]="isProviderSelected(provider.provider)"
+        >
+          {{ isProviderSelected(provider.provider) ? 'Connected via ' + provider.provider : 'Connect ' + provider.provider }}
+        </button>
+        @if (provider.provider === 'Square' && isProviderSelected('Square')) {
+          <button
+            class="btn btn-outline-danger"
+            (click)="disconnectSquare()"
+            [disabled]="isDisconnectingSquare"
+          >
+            {{ isDisconnectingSquare ? 'Disconnecting...' : 'Disconnect Square' }}
+          </button>
         }
+        <p class="provider-hint">
+          {{ isProviderSelected(provider.provider) ? 'This provider is active for your account.' : 'You will be redirected to authorize and return here.' }}
+        </p>
       </div>
     </div>
-  </section>
+  }
+</div>
+
+</div>

@@ -2,7 +2,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { PageHeaderComponent } from '../../dashboard/page-header/page-header.component';
 import { JobflowCalendarComponent } from '../../../common/jobflow-calendar/jobflow-calendar.component';
 import { CalendarEvent } from '../../../common/jobflow-calendar/models/calendar-event';
 import { CalendarDateClickInfo } from '../../../common/jobflow-calendar/jobflow-calendar.component';
@@ -25,7 +24,7 @@ import { Job, JobLifecycleStatus } from '../models/job';
 @Component({
   selector: 'app-job-schedule',
   standalone: true,
-  imports: [CommonModule, PageHeaderComponent, JobflowCalendarComponent, JobAssignmentFormComponent, JobflowDrawerComponent, LucideAngularModule],
+  imports: [CommonModule, JobflowCalendarComponent, JobAssignmentFormComponent, JobflowDrawerComponent, LucideAngularModule],
   templateUrl: './job-schedule.component.html',
   styleUrls: ['./job-schedule.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,136 +1,66 @@
-﻿.jobflow-hero {
-   display: grid;
-   grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, .8fr);
-   gap: 1.5rem;
-   padding: 1.5rem;
-   border-radius: 1.25rem;
-   border: 1px solid #e2e8f0;
-   background:
-      radial-gradient(circle at 0 0, rgba(63, 103, 218, 0.18), transparent 40%),
-      radial-gradient(circle at 80% 0, rgba(49, 91, 216, 0.16), transparent 45%),
-      #f8fafc;
-   margin-bottom: 1.8rem;
-   font-family: "Sora", "DM Sans", "Segoe UI", sans-serif;
-
-   @media (max-width: 992px) {
-      grid-template-columns: 1fr;
-   }
+﻿// ─── Filters ─────────────────────────────────────────────────────────────────
+.jobs-filter-card {
+   margin-bottom: 1.5rem;
 }
 
-.jobflow-filters {
+.jobs-filters {
    display: grid;
-   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
    gap: 1rem;
    align-items: end;
-   margin-bottom: 1.8rem;
+   margin-bottom: 1rem;
 }
 
-.jobflow-filters__group {
+.jobs-filter-group {
    display: grid;
    gap: 0.35rem;
 }
 
-.jobflow-filters__group label {
+.jobs-filter-group__label {
    font-size: 0.75rem;
    font-weight: 700;
    letter-spacing: 0.08em;
    text-transform: uppercase;
-   color: #64748b;
-.list-pagination-controls {
-   display: flex;
-   justify-content: flex-end;
-   gap: 0.5rem;
-   margin-bottom: 0.75rem;
-}
+   color: var(--jf-text-section);
 }
 
-.jobflow-filters__clear {
+.jobs-filters__clear {
    justify-self: flex-start;
    padding-left: 0;
    font-weight: 600;
-   color: var(--bs-primary);
+   color: var(--jf-primary);
 }
 
-.jobflow-hero__intro h2 {
-   font-size: 1.6rem;
-   margin-bottom: 0.35rem;
-   color: #0f172a;
-}
-
-.jobflow-hero__intro p {
-   color: #475569;
-   margin-bottom: 0;
-}
-
-.jobflow-hero__eyebrow {
-   text-transform: uppercase;
-   letter-spacing: 0.18em;
-   font-size: 0.7rem;
-   font-weight: 700;
-   color: var(--bs-primary);
-}
-
-.jobflow-hero__metrics {
-   display: grid;
-   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-   gap: 0.9rem;
-}
-
-.jobflow-metric {
-   padding: 0.9rem 1rem;
-   border-radius: 0.9rem;
-   background: #ffffff;
-   border: 1px solid #e2e8f0;
-   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
-}
-
-.jobflow-metric__label {
-   font-size: 0.7rem;
-   text-transform: uppercase;
-   letter-spacing: 0.08em;
-   color: #64748b;
-}
-
-.jobflow-metric__value {
-   display: block;
-   font-size: 1.4rem;
-   font-weight: 700;
-   color: #0f172a;
-}
-
-.jobflow-cta {
-   border: 1px solid var(--bs-border-color);
-   border-radius: 1rem;
-   padding: 1.05rem 1.1rem;
-   background: var(--bs-body-bg);
-   display: grid;
-   gap: .85rem;
-   align-content: space-between;
-   box-shadow: 0 0 0 1px rgba(var(--bs-info-rgb), .06);
+// ─── Inline Card Header ───────────────────────────────────────────────────────
+.inline-card-header {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   margin-bottom: 1.5rem;
+   padding-bottom: 1rem;
+   border-bottom: 1px solid var(--jf-border);
 
    h3 {
-      margin: 0;
-      font-size: 1.05rem;
+      font-size: 1.125rem;
       font-weight: 700;
-      color: var(--bs-heading-color);
+      color: var(--jf-text);
+      margin: 0;
    }
 
-   p {
-      margin: .35rem 0 0;
-      color: var(--bs-secondary-color);
-      font-size: .88rem;
+   .close-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--jf-text-muted);
+      font-size: 1.5rem;
+      line-height: 1;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      &:hover { background: var(--jf-border); color: var(--jf-text); }
    }
 }
 
-.jobflow-cta__eyebrow {
-   margin: 0;
-   font-size: .7rem;
-   text-transform: uppercase;
-   letter-spacing: .08em;
-   font-weight: 700;
-   color: var(--bs-info);
-}
-
+// ─── Lanes Layout ─────────────────────────────────────────────────────────────
 .jobflow-lanes {
    display: grid;
    grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr);
@@ -148,11 +78,11 @@
 }
 
 .jobflow-lane {
-   background: #ffffff;
-   border: 1px solid #e2e8f0;
-   border-radius: 1.1rem;
+   background: var(--jf-surface);
+   border: 1px solid var(--jf-border);
+   border-radius: var(--jf-radius);
    padding: 1.25rem;
-   box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
+   box-shadow: var(--jf-shadow);
 }
 
 .jobflow-lane__header {
@@ -169,16 +99,16 @@
 
 .jobflow-lane__header p {
    margin-bottom: 0;
-   color: #64748b;
+   color: var(--jf-text-muted);
 }
 
 .jobflow-lane__count {
    font-size: 0.75rem;
    font-weight: 700;
-   color: #0f172a;
+   color: var(--jf-text);
    padding: 0.3rem 0.7rem;
    border-radius: 999px;
-   background: #e2e8f0;
+   background: var(--jf-border);
 }
 
 .jobflow-lane__body {
@@ -192,23 +122,23 @@
    align-items: center;
    gap: 1rem;
    padding: 0.9rem 1rem;
-   border-radius: 0.9rem;
-   border: 1px solid #e2e8f0;
-   background: #f8fafc;
+   border-radius: var(--jf-radius-sm);
+   border: 1px solid var(--jf-border);
+   background: var(--jf-bg);
    cursor: pointer;
    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .jobflow-card:hover {
    transform: translateY(-1px);
-   border-color: #94a3b8;
+   border-color: var(--jf-border);
    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
 }
 
 .jobflow-card.is-active {
-   border-color: var(--bs-primary);
+   border-color: var(--jf-primary);
    box-shadow: 0 16px 32px rgba(63, 103, 218, 0.2);
-   background: rgba(63, 103, 218, 0.08);
+   background: var(--jf-primary-soft);
 }
 
 .jobflow-card h6 {
@@ -219,7 +149,7 @@
 .jobflow-card p {
    margin-bottom: 0;
    font-size: 0.85rem;
-   color: #64748b;
+   color: var(--jf-text-muted);
 }
 
 .jobflow-timeline {
@@ -253,14 +183,14 @@
    width: 0.55rem;
    height: 0.55rem;
    border-radius: 999px;
-   background: var(--bs-primary);
+   background: var(--jf-primary);
    box-shadow: 0 0 0 4px rgba(63, 103, 218, 0.18);
 }
 
 .jobflow-timeline__dot span {
    font-size: 0.65rem;
    font-weight: 600;
-   color: #0f172a;
+   color: var(--jf-text);
 }
 
 .jobflow-card__meta {
@@ -279,8 +209,8 @@
    width: 1.65rem;
    height: 1.65rem;
    border-radius: 999px;
-   background: var(--bs-primary);
-   color: #ffffff;
+   background: var(--jf-primary);
+   color: var(--jf-text-on-accent);
    font-size: 0.7rem;
    font-weight: 700;
    display: inline-flex;
@@ -290,8 +220,8 @@
 }
 
 .jobflow-assignee-dot--more {
-   background: #ffffff;
-   color: var(--bs-primary);
+   background: var(--jf-surface);
+   color: var(--jf-primary);
    border: 1px solid rgba(63, 103, 218, 0.4);
    box-shadow: none;
 }
@@ -299,7 +229,7 @@
 .jobflow-card__time {
    font-size: 0.75rem;
    font-weight: 600;
-   color: #0f172a;
+   color: var(--jf-text);
 }
 
 .jobflow-card--scheduled {
@@ -308,11 +238,11 @@
 
 .jobflow-empty {
    padding: 1.2rem;
-   border-radius: 0.9rem;
-   border: 1px dashed #cbd5f5;
-   background: #f8fafc;
+   border-radius: var(--jf-radius-sm);
+   border: 1px dashed var(--jf-border);
+   background: var(--jf-bg);
    text-align: center;
-   color: #64748b;
+   color: var(--jf-text-muted);
 }
 
 .jobflow-empty span {
@@ -320,11 +250,11 @@
 }
 
 .jobflow-preview {
-   border-radius: 1.1rem;
-   border: 1px solid #D3D6E0;
-   background: #ffffff;
+   border-radius: var(--jf-radius);
+   border: 1px solid var(--jf-border);
+   background: var(--jf-surface);
    padding: 1.3rem;
-   box-shadow: 0 16px 30px rgba(30, 30, 36, 0.08);
+   box-shadow: var(--jf-shadow);
 }
 
 .jobflow-preview__eyebrow {
@@ -332,7 +262,7 @@
    letter-spacing: 0.12em;
    font-size: 0.7rem;
    font-weight: 700;
-   color: #3F67DA;
+   color: var(--jf-primary);
 }
 
 .jobflow-preview__header h5 {
@@ -341,7 +271,7 @@
 }
 
 .jobflow-preview__header p {
-   color: #6E7180;
+   color: var(--jf-text-muted);
 }
 
 .jobflow-preview__body {
@@ -355,7 +285,7 @@
    justify-content: space-between;
    align-items: center;
    font-size: 0.85rem;
-   color: #40424D;
+   color: var(--jf-text);
 }
 
 .jobflow-status-toggle {
@@ -365,61 +295,61 @@
 }
 
 .jobflow-status-toggle__btn {
-   border: 1px solid #D3D6E0;
+   border: 1px solid var(--jf-border);
    border-radius: 999px;
    padding: 0.3rem 0.75rem;
    font-size: 0.72rem;
    font-weight: 700;
-   background: #FAFBFF;
-   color: #6E7180;
+   background: var(--jf-bg);
+   color: var(--jf-text-muted);
    cursor: pointer;
    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 
    &:hover:not(:disabled) {
-      border-color: #BCBFCC;
-      color: #40424D;
+      border-color: var(--jf-border);
+      color: var(--jf-text);
    }
 }
 
 .jobflow-status-toggle__btn.is-active {
-   background: #3F67DA;
-   border-color: #3F67DA;
-   color: #ffffff;
+   background: var(--jf-primary);
+   border-color: var(--jf-primary);
+   color: var(--jf-text-on-accent);
 
    &[data-status="draft"] {
-      background: #6E7180;
-      border-color: #6E7180;
+      background: var(--jf-text-muted);
+      border-color: var(--jf-text-muted);
    }
 
    &[data-status="approved"] {
-      background: #3F67DA;
-      border-color: #3F67DA;
+      background: var(--jf-primary);
+      border-color: var(--jf-primary);
    }
 
    &[data-status="inprogress"] {
-      background: #FFA630;
-      border-color: #FFA630;
-      color: #40424D;
+      background: var(--jf-warning);
+      border-color: var(--jf-warning);
+      color: var(--jf-text);
    }
 
    &[data-status="completed"] {
-      background: #2D898B;
-      border-color: #2D898B;
+      background: var(--jf-success);
+      border-color: var(--jf-success);
    }
 
    &[data-status="cancelled"] {
-      background: #9DA2B3;
-      border-color: #9DA2B3;
+      background: var(--jf-text-section);
+      border-color: var(--jf-text-section);
    }
 
    &[data-status="failed"] {
-      background: #E03616;
-      border-color: #E03616;
+      background: var(--jf-danger);
+      border-color: var(--jf-danger);
    }
 
    &[data-status="booked"] {
-      background: #8595D1;
-      border-color: #8595D1;
+      background: var(--jf-info);
+      border-color: var(--jf-info);
    }
 }
 
@@ -433,7 +363,7 @@
    font-size: 0.75rem;
    text-transform: uppercase;
    letter-spacing: 0.08em;
-   color: #6E7180;
+   color: var(--jf-text-muted);
 }
 
 .jobflow-assignee-list {
@@ -449,9 +379,9 @@
    align-items: center;
    gap: 0.4rem;
    padding: 0.35rem 0.5rem;
-   border-radius: 0.6rem;
-   border: 1px solid #D3D6E0;
-   background: #FAFBFF;
+   border-radius: var(--jf-radius-sm);
+   border: 1px solid var(--jf-border);
+   background: var(--jf-bg);
    font-size: 0.8rem;
 }
 
@@ -460,13 +390,13 @@
    font-size: 0.75rem;
    text-transform: uppercase;
    letter-spacing: 0.08em;
-   color: #6E7180;
+   color: var(--jf-text-muted);
    margin-bottom: 0.4rem;
 }
 
 .jobflow-preview__notes p {
    margin-bottom: 0;
-   color: #1E1E24;
+   color: var(--jf-text);
 }
 
 .jobflow-preview__actions {
@@ -475,20 +405,7 @@
 }
 
 .jobflow-table {
-   background: #ffffff;
-   border-radius: 1.1rem;
-   border: 1px solid #D3D6E0;
-   padding: 1.25rem;
-   box-shadow: 0 16px 30px rgba(30, 30, 36, 0.08);
-}
-
-.jobflow-table__header {
-   margin-bottom: 1rem;
-}
-
-.jobflow-table__header p {
-   color: #6E7180;
-   margin-bottom: 0;
+   margin-bottom: 1.5rem;
 }
 
 .job-cell {
@@ -498,12 +415,12 @@
 
    .job-title {
       font-weight: 600;
-      color: #1E1E24;
+      color: var(--jf-text);
    }
 
    .job-client {
       font-size: 0.85rem;
-      color: #6E7180;
+      color: var(--jf-text-muted);
       margin-top: 2px;
    }
 }
@@ -520,40 +437,40 @@
 
 .chip-draft {
    background: rgba(110, 113, 128, 0.1);
-   color: #6E7180;
+   color: var(--jf-text-muted);
 }
 
 .chip-approved {
-   background: rgba(63, 103, 218, 0.1);
-   color: #3F67DA;
+   background: var(--jf-primary-soft);
+   color: var(--jf-primary);
 }
 
 .chip-inprogress {
    background: rgba(255, 166, 48, 0.1);
-   color: #FFA630;
+   color: var(--jf-warning);
 }
 
 .chip-completed {
    background: rgba(45, 137, 139, 0.1);
-   color: #2D898B;
+   color: var(--jf-success);
 }
 
 .chip-cancelled {
    background: rgba(157, 162, 179, 0.12);
-   color: #9DA2B3;
+   color: var(--jf-text-section);
 }
 
 .chip-failed {
-   background: rgba(224, 54, 22, 0.1);
-   color: #E03616;
+   background: var(--jf-danger-soft);
+   color: var(--jf-danger);
 }
 
 .chip-booked {
    background: rgba(133, 149, 209, 0.12);
-   color: #8595D1;
+   color: var(--jf-info);
 }
 
 .chip-default {
    background: rgba(157, 162, 179, 0.1);
-   color: #9DA2B3;
+   color: var(--jf-text-section);
 }
