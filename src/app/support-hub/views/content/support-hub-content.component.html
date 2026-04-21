@@ -1,231 +1,245 @@
-<app-page-header
-  title="Help Content"
-  subtitle="Manage help articles and changelog for customer organizations"
-></app-page-header>
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-header__title-group">
+      <h1 class="page-header__title">Help Content</h1>
+      <p class="page-header__subtitle">Manage help articles and changelog for customer organizations</p>
+    </div>
+    <div class="page-header__actions">
+      @if (activeTab === '0') {
+        <button pButton label="New Article" icon="ti ti-plus" (click)="openCreateArticle()" aria-label="New Article"></button>
+      }
+      @if (activeTab === '1') {
+        <button pButton label="New Entry" icon="ti ti-plus" (click)="openCreateChangelog()" aria-label="New Entry"></button>
+      }
+    </div>
+  </div>
 
-<section class="sh-content">
-  <p-tabs [(value)]="activeTab">
-    <p-tablist>
-      <p-tab value="0">Articles ({{ articles.length }})</p-tab>
-      <p-tab value="1">Changelog ({{ changelog.length }})</p-tab>
-    </p-tablist>
+  <div class="sh-content-tabs">
+    <p-tabs [(value)]="activeTab">
+      <p-tablist>
+        <p-tab value="0">Articles ({{ articles.length }})</p-tab>
+        <p-tab value="1">Changelog ({{ changelog.length }})</p-tab>
+      </p-tablist>
 
-    <p-tabpanels>
-      <!-- ── Articles Tab ──────────────────────────────── -->
-      <p-tabpanel value="0">
-        @if (articleSuccess) {
-          <p-message severity="success" [text]="articleSuccess" class="mb-3 d-block"></p-message>
-        }
-        @if (articleError) {
-          <p-message severity="error" [text]="articleError" class="mb-3 d-block"></p-message>
-        }
+      <p-tabpanels>
+        <!-- ── Articles Tab ──────────────────────────────── -->
+        <p-tabpanel value="0">
+          @if (articleSuccess) {
+            <p-message severity="success" [text]="articleSuccess" class="mb-3 d-block"></p-message>
+          }
+          @if (articleError) {
+            <p-message severity="error" [text]="articleError" class="mb-3 d-block"></p-message>
+          }
 
-        <div class="sh-toolbar">
-          <button pButton label="New Article" icon="ti ti-plus" (click)="openCreateArticle()" aria-label="New Article"></button>
-        </div>
+          <div class="content-card content-card--no-pad">
+            <!-- Article Editor -->
+            @if (showArticleEditor) {
+              <div class="sh-content-editor">
+                <h6 class="support-mb-2">{{ articleEditorMode === 'create' ? 'New Article' : 'Edit Article' }}</h6>
 
-        <!-- Article Editor -->
-        @if (showArticleEditor) {
-          <div class="sh-editor">
-            <h6 class="support-mb-2">{{ articleEditorMode === 'create' ? 'New Article' : 'Edit Article' }}</h6>
-
-            <div class="sh-editor__grid">
-              <div class="field">
-                <label class="form-label fw-semibold" for="articleTitle">Title</label>
-                <input id="articleTitle" pInputText class="w-100" [(ngModel)]="currentArticleForm.title" placeholder="Article title" />
-              </div>
-
-              <div class="field">
-                <label class="form-label fw-semibold" for="articleSummary">Summary</label>
-                <input id="articleSummary" pInputText class="w-100" [(ngModel)]="currentArticleForm.summary" placeholder="Brief summary" />
-              </div>
-
-              <div class="field">
-                <label class="form-label fw-semibold" for="articleType">Type</label>
-                <p-select
-                  id="articleType"
-                  [options]="typeOptions"
-                  [(ngModel)]="currentArticleForm.articleType"
-                  optionLabel="label"
-                  optionValue="value"
-                  class="w-100"
-                ></p-select>
-              </div>
-
-              <div class="field">
-                <label class="form-label fw-semibold" for="articleCategory">Category</label>
-                <p-select
-                  id="articleCategory"
-                  [options]="categoryOptions"
-                  [(ngModel)]="currentArticleForm.category"
-                  optionLabel="label"
-                  optionValue="value"
-                  class="w-100"
-                ></p-select>
-              </div>
-
-              <div class="field">
-                <label class="form-label fw-semibold" for="articleTags">Tags</label>
-                <input id="articleTags" pInputText class="w-100" [(ngModel)]="currentArticleForm.tags" placeholder="Comma-separated tags" />
-              </div>
-
-              <div class="field">
-                <label class="form-label fw-semibold" for="articleSort">Sort Order</label>
-                <p-inputnumber id="articleSort" [(ngModel)]="currentArticleForm.sortOrder" [showButtons]="true" class="w-100"></p-inputnumber>
-              </div>
-            </div>
-
-            <div class="field" style="margin-top: 0.75rem">
-              <label class="form-label fw-semibold" for="articleContent">Content</label>
-              <textarea id="articleContent" pTextarea class="w-100" rows="6" [(ngModel)]="currentArticleForm.content" placeholder="Article content (supports markdown)"></textarea>
-            </div>
-
-            <div class="sh-editor__checks">
-              <p-checkbox [(ngModel)]="currentArticleForm.isFeatured" [binary]="true" label="Featured"></p-checkbox>
-              <p-checkbox [(ngModel)]="currentArticleForm.isPublished" [binary]="true" label="Published"></p-checkbox>
-            </div>
-
-            <div class="sh-editor__actions">
-              <button pButton label="Cancel" severity="secondary" [outlined]="true" (click)="cancelArticleEditor()" aria-label="Cancel"></button>
-              <button pButton [label]="articleEditorMode === 'create' ? 'Create' : 'Save'" (click)="saveArticle()" aria-label="Save article"></button>
-            </div>
-          </div>
-        }
-
-        <!-- Articles List -->
-        @if (articlesLoading) {
-          <p class="support-muted">Loading articles...</p>
-        } @else if (articles.length === 0) {
-          <div class="sh-empty">
-            <p>No help articles yet. Create your first article above.</p>
-          </div>
-        } @else {
-          <div class="sh-items">
-            @for (article of articles; track article.id) {
-              <div class="sh-item">
-                <div class="sh-item__info">
-                  <div class="sh-item__title">
-                    {{ article.title }}
-                    @if (!article.isPublished) {
-                      <span class="sh-badge-draft">Draft</span>
-                    }
-                    @if (article.isFeatured) {
-                      <span class="sh-badge-featured">Featured</span>
-                    }
+                <div class="sh-editor__grid">
+                  <div class="field">
+                    <label class="form-label fw-semibold" for="articleTitle">Title</label>
+                    <input id="articleTitle" pInputText class="w-100" [(ngModel)]="currentArticleForm.title" placeholder="Article title" />
                   </div>
-                  <div class="sh-item__meta">
-                    <p-tag [value]="getCategoryLabel(article.category)" severity="secondary" [rounded]="true"></p-tag>
-                    <p-tag [value]="article.articleType" [severity]="getArticleTypeSeverity(article.articleType)" [rounded]="true"></p-tag>
-                    @if (article.summary) {
-                      <span>{{ article.summary }}</span>
-                    }
+
+                  <div class="field">
+                    <label class="form-label fw-semibold" for="articleSummary">Summary</label>
+                    <input id="articleSummary" pInputText class="w-100" [(ngModel)]="currentArticleForm.summary" placeholder="Brief summary" />
+                  </div>
+
+                  <div class="field">
+                    <label class="form-label fw-semibold" for="articleType">Type</label>
+                    <p-select
+                      id="articleType"
+                      [options]="typeOptions"
+                      [(ngModel)]="currentArticleForm.articleType"
+                      optionLabel="label"
+                      optionValue="value"
+                      class="w-100"
+                    ></p-select>
+                  </div>
+
+                  <div class="field">
+                    <label class="form-label fw-semibold" for="articleCategory">Category</label>
+                    <p-select
+                      id="articleCategory"
+                      [options]="categoryOptions"
+                      [(ngModel)]="currentArticleForm.category"
+                      optionLabel="label"
+                      optionValue="value"
+                      class="w-100"
+                    ></p-select>
+                  </div>
+
+                  <div class="field">
+                    <label class="form-label fw-semibold" for="articleTags">Tags</label>
+                    <input id="articleTags" pInputText class="w-100" [(ngModel)]="currentArticleForm.tags" placeholder="Comma-separated tags" />
+                  </div>
+
+                  <div class="field">
+                    <label class="form-label fw-semibold" for="articleSort">Sort Order</label>
+                    <p-inputnumber id="articleSort" [(ngModel)]="currentArticleForm.sortOrder" [showButtons]="true" class="w-100"></p-inputnumber>
                   </div>
                 </div>
-                <div class="sh-item__actions">
-                  <button pButton icon="ti ti-pencil" severity="secondary" [outlined]="true" [rounded]="true" (click)="openEditArticle(article)" aria-label="Edit article"></button>
-                  <button pButton icon="ti ti-trash" severity="danger" [outlined]="true" [rounded]="true" (click)="deleteArticle(article)" aria-label="Delete article"></button>
+
+                <div class="field" style="margin-top: 0.75rem">
+                  <label class="form-label fw-semibold" for="articleContent">Content</label>
+                  <textarea id="articleContent" pTextarea class="w-100" rows="6" [(ngModel)]="currentArticleForm.content" placeholder="Article content (supports markdown)"></textarea>
+                </div>
+
+                <div class="sh-editor__checks">
+                  <p-checkbox [(ngModel)]="currentArticleForm.isFeatured" [binary]="true" label="Featured"></p-checkbox>
+                  <p-checkbox [(ngModel)]="currentArticleForm.isPublished" [binary]="true" label="Published"></p-checkbox>
+                </div>
+
+                <div class="sh-editor__actions">
+                  <button pButton label="Cancel" severity="secondary" [outlined]="true" (click)="cancelArticleEditor()" aria-label="Cancel"></button>
+                  <button pButton [label]="articleEditorMode === 'create' ? 'Create' : 'Save'" (click)="saveArticle()" aria-label="Save article"></button>
                 </div>
               </div>
             }
-          </div>
-        }
-      </p-tabpanel>
 
-      <!-- ── Changelog Tab ─────────────────────────────── -->
-      <p-tabpanel value="1">
-        @if (changelogSuccess) {
-          <p-message severity="success" [text]="changelogSuccess" class="mb-3 d-block"></p-message>
-        }
-        @if (changelogError) {
-          <p-message severity="error" [text]="changelogError" class="mb-3 d-block"></p-message>
-        }
-
-        <div class="sh-toolbar">
-          <button pButton label="New Entry" icon="ti ti-plus" (click)="openCreateChangelog()" aria-label="New Entry"></button>
-        </div>
-
-        <!-- Changelog Editor -->
-        @if (showChangelogEditor) {
-          <div class="sh-editor">
-            <h6 class="support-mb-2">{{ changelogEditorMode === 'create' ? 'New Changelog Entry' : 'Edit Entry' }}</h6>
-
-            <div class="sh-editor__grid">
-              <div class="field">
-                <label class="form-label fw-semibold" for="clTitle">Title</label>
-                <input id="clTitle" pInputText class="w-100" [(ngModel)]="currentChangelogForm.title" placeholder="What changed?" />
+            <!-- Articles List -->
+            @if (articlesLoading) {
+              <p class="support-muted p-3">Loading articles...</p>
+            } @else if (articles.length === 0) {
+              <div class="empty-state">
+                <h4>No content yet</h4>
+                <p>Create your first article to build your knowledge base.</p>
               </div>
-
-              <div class="field">
-                <label class="form-label fw-semibold" for="clVersion">Version</label>
-                <input id="clVersion" pInputText class="w-100" [(ngModel)]="currentChangelogForm.version" placeholder="e.g. 2.4.0" />
-              </div>
-
-              <div class="field">
-                <label class="form-label fw-semibold" for="clCategory">Category</label>
-                <p-select
-                  id="clCategory"
-                  [options]="changelogCategoryOptions"
-                  [(ngModel)]="currentChangelogForm.category"
-                  optionLabel="label"
-                  optionValue="value"
-                  class="w-100"
-                ></p-select>
-              </div>
-            </div>
-
-            <div class="field" style="margin-top: 0.75rem">
-              <label class="form-label fw-semibold" for="clDescription">Description</label>
-              <textarea id="clDescription" pTextarea class="w-100" rows="4" [(ngModel)]="currentChangelogForm.description" placeholder="Describe the change"></textarea>
-            </div>
-
-            <div class="sh-editor__checks">
-              <p-checkbox [(ngModel)]="currentChangelogForm.isPublished" [binary]="true" label="Published"></p-checkbox>
-            </div>
-
-            <div class="sh-editor__actions">
-              <button pButton label="Cancel" severity="secondary" [outlined]="true" (click)="cancelChangelogEditor()" aria-label="Cancel"></button>
-              <button pButton [label]="changelogEditorMode === 'create' ? 'Create' : 'Save'" (click)="saveChangelog()" aria-label="Save changelog entry"></button>
-            </div>
-          </div>
-        }
-
-        <!-- Changelog List -->
-        @if (changelogLoading) {
-          <p class="support-muted">Loading changelog...</p>
-        } @else if (changelog.length === 0) {
-          <div class="sh-empty">
-            <p>No changelog entries yet. Add the first one above.</p>
-          </div>
-        } @else {
-          <div class="sh-items">
-            @for (entry of changelog; track entry.id) {
-              <div class="sh-item">
-                <div class="sh-item__info">
-                  <div class="sh-item__title">
-                    {{ entry.title }}
-                    @if (entry.version) {
-                      <span class="sh-badge-version">v{{ entry.version }}</span>
-                    }
-                    @if (!entry.isPublished) {
-                      <span class="sh-badge-draft">Draft</span>
-                    }
+            } @else {
+              <div class="sh-items">
+                @for (article of articles; track article.id) {
+                  <div class="sh-item">
+                    <div class="sh-item__info">
+                      <div class="sh-content-article-title">
+                        {{ article.title }}
+                        @if (!article.isPublished) {
+                          <span class="status-chip status-chip--neutral">Draft</span>
+                        } @else {
+                          <span class="status-chip status-chip--success">Published</span>
+                        }
+                        @if (article.isFeatured) {
+                          <span class="status-chip status-chip--info">Featured</span>
+                        }
+                      </div>
+                      <div class="sh-content-meta">
+                        <p-tag [value]="getCategoryLabel(article.category)" severity="secondary" [rounded]="true"></p-tag>
+                        <p-tag [value]="article.articleType" [severity]="getArticleTypeSeverity(article.articleType)" [rounded]="true"></p-tag>
+                        @if (article.summary) {
+                          <span>{{ article.summary }}</span>
+                        }
+                      </div>
+                    </div>
+                    <div class="sh-item__actions">
+                      <button pButton icon="ti ti-pencil" severity="secondary" [outlined]="true" [rounded]="true" (click)="openEditArticle(article)" aria-label="Edit article"></button>
+                      <button pButton icon="ti ti-trash" severity="danger" [outlined]="true" [rounded]="true" (click)="deleteArticle(article)" aria-label="Delete article"></button>
+                    </div>
                   </div>
-                  <div class="sh-item__meta">
-                    <p-tag [value]="entry.category" [severity]="getChangelogSeverity(entry.category)" [rounded]="true"></p-tag>
-                    @if (entry.description) {
-                      <span>{{ entry.description }}</span>
-                    }
-                  </div>
-                </div>
-                <div class="sh-item__actions">
-                  <button pButton icon="ti ti-pencil" severity="secondary" [outlined]="true" [rounded]="true" (click)="openEditChangelog(entry)" aria-label="Edit changelog entry"></button>
-                  <button pButton icon="ti ti-trash" severity="danger" [outlined]="true" [rounded]="true" (click)="deleteChangelog(entry)" aria-label="Delete changelog entry"></button>
-                </div>
+                }
               </div>
             }
           </div>
-        }
-      </p-tabpanel>
-    </p-tabpanels>
-  </p-tabs>
-</section>
+        </p-tabpanel>
+
+        <!-- ── Changelog Tab ─────────────────────────────── -->
+        <p-tabpanel value="1">
+          @if (changelogSuccess) {
+            <p-message severity="success" [text]="changelogSuccess" class="mb-3 d-block"></p-message>
+          }
+          @if (changelogError) {
+            <p-message severity="error" [text]="changelogError" class="mb-3 d-block"></p-message>
+          }
+
+          <div class="content-card content-card--no-pad">
+            <!-- Changelog Editor -->
+            @if (showChangelogEditor) {
+              <div class="sh-content-editor">
+                <h6 class="support-mb-2">{{ changelogEditorMode === 'create' ? 'New Changelog Entry' : 'Edit Entry' }}</h6>
+
+                <div class="sh-editor__grid">
+                  <div class="field">
+                    <label class="form-label fw-semibold" for="clTitle">Title</label>
+                    <input id="clTitle" pInputText class="w-100" [(ngModel)]="currentChangelogForm.title" placeholder="What changed?" />
+                  </div>
+
+                  <div class="field">
+                    <label class="form-label fw-semibold" for="clVersion">Version</label>
+                    <input id="clVersion" pInputText class="w-100" [(ngModel)]="currentChangelogForm.version" placeholder="e.g. 2.4.0" />
+                  </div>
+
+                  <div class="field">
+                    <label class="form-label fw-semibold" for="clCategory">Category</label>
+                    <p-select
+                      id="clCategory"
+                      [options]="changelogCategoryOptions"
+                      [(ngModel)]="currentChangelogForm.category"
+                      optionLabel="label"
+                      optionValue="value"
+                      class="w-100"
+                    ></p-select>
+                  </div>
+                </div>
+
+                <div class="field" style="margin-top: 0.75rem">
+                  <label class="form-label fw-semibold" for="clDescription">Description</label>
+                  <textarea id="clDescription" pTextarea class="w-100" rows="4" [(ngModel)]="currentChangelogForm.description" placeholder="Describe the change"></textarea>
+                </div>
+
+                <div class="sh-editor__checks">
+                  <p-checkbox [(ngModel)]="currentChangelogForm.isPublished" [binary]="true" label="Published"></p-checkbox>
+                </div>
+
+                <div class="sh-editor__actions">
+                  <button pButton label="Cancel" severity="secondary" [outlined]="true" (click)="cancelChangelogEditor()" aria-label="Cancel"></button>
+                  <button pButton [label]="changelogEditorMode === 'create' ? 'Create' : 'Save'" (click)="saveChangelog()" aria-label="Save changelog entry"></button>
+                </div>
+              </div>
+            }
+
+            <!-- Changelog List -->
+            @if (changelogLoading) {
+              <p class="support-muted p-3">Loading changelog...</p>
+            } @else if (changelog.length === 0) {
+              <div class="empty-state">
+                <h4>No changelog entries yet</h4>
+                <p>Add the first one above.</p>
+              </div>
+            } @else {
+              <div class="sh-items">
+                @for (entry of changelog; track entry.id) {
+                  <div class="sh-item">
+                    <div class="sh-item__info">
+                      <div class="sh-content-article-title">
+                        {{ entry.title }}
+                        @if (entry.version) {
+                          <span class="status-chip">v{{ entry.version }}</span>
+                        }
+                        @if (!entry.isPublished) {
+                          <span class="status-chip status-chip--neutral">Draft</span>
+                        } @else {
+                          <span class="status-chip status-chip--success">Published</span>
+                        }
+                      </div>
+                      <div class="sh-content-meta">
+                        <p-tag [value]="entry.category" [severity]="getChangelogSeverity(entry.category)" [rounded]="true"></p-tag>
+                        @if (entry.description) {
+                          <span>{{ entry.description }}</span>
+                        }
+                      </div>
+                    </div>
+                    <div class="sh-item__actions">
+                      <button pButton icon="ti ti-pencil" severity="secondary" [outlined]="true" [rounded]="true" (click)="openEditChangelog(entry)" aria-label="Edit changelog entry"></button>
+                      <button pButton icon="ti ti-trash" severity="danger" [outlined]="true" [rounded]="true" (click)="deleteChangelog(entry)" aria-label="Delete changelog entry"></button>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+</div>

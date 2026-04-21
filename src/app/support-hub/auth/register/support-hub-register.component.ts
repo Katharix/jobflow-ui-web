@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
@@ -24,11 +24,13 @@ import { MessageModule } from 'primeng/message';
   ],
   templateUrl: './support-hub-register.component.html',
   styleUrl: './support-hub-register.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportHubRegisterComponent {
   private auth = inject(Auth);
   private router = inject(Router);
   private supportHubAuth = inject(SupportHubAuthService);
+  private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('form') form?: NgForm;
 
@@ -75,6 +77,7 @@ export class SupportHubRegisterComponent {
     } catch (err: unknown) {
       this.error = this.mapFirebaseAuthError(err);
       this.isSubmitting = false;
+      this.cdr.markForCheck();
     }
   }
 

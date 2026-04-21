@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '@angular/fire/auth';
 import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
@@ -33,9 +33,11 @@ const DEFAULT_PREFS: SupportHubPreferences = {
   imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonModule, ToggleSwitchModule, SelectModule],
   templateUrl: './support-hub-settings.component.html',
   styleUrl: './support-hub-settings.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportHubSettingsComponent implements OnInit {
   private auth = inject(Auth);
+  private cdr = inject(ChangeDetectorRef);
 
   userDisplayName = '';
   userEmail = '';
@@ -69,6 +71,7 @@ export class SupportHubSettingsComponent implements OnInit {
 
       user.getIdTokenResult().then(token => {
         this.userRole = (token.claims['role'] as string) ?? 'Unknown';
+        this.cdr.markForCheck();
       });
     }
 
@@ -78,7 +81,10 @@ export class SupportHubSettingsComponent implements OnInit {
   savePrefs(): void {
     localStorage.setItem(PREFS_KEY, JSON.stringify(this.prefs));
     this.saved = true;
-    setTimeout(() => (this.saved = false), 2500);
+    setTimeout(() => {
+      this.saved = false;
+      this.cdr.markForCheck();
+    }, 2500);
   }
 
   resetPrefs(): void {

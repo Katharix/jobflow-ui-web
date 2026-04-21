@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -14,12 +14,14 @@ import { ChatWindowComponent, ChatMessage } from '../../components/chat-window/c
   imports: [CommonModule, ChatWindowComponent],
   templateUrl: './support-hub-chat.component.html',
   styleUrl: './support-hub-chat.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportHubChatComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private signalR = inject(SupportHubSignalRService);
   private chatApi = inject(SupportHubChatApiService);
   private soundService = inject(SupportHubSoundService);
+  private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   sessionId = '';
@@ -51,25 +53,30 @@ export class SupportHubChatComponent implements OnInit, OnDestroy {
       this.signalR.messages$.pipe(takeUntil(this.destroy$)).subscribe(msg => {
         this.messages = [...this.messages, this.mapToViewMessage(msg)];
         this.soundService.playNewMessageSound();
+        this.cdr.markForCheck();
       });
 
       this.signalR.userTyping$.pipe(takeUntil(this.destroy$)).subscribe(({ isTyping }) => {
         this.isTyping = isTyping;
+        this.cdr.markForCheck();
       });
 
       this.signalR.sessionClosed$.pipe(takeUntil(this.destroy$)).subscribe(() => {
         this.sessionEnded = true;
+        this.cdr.markForCheck();
       });
     } catch (err) {
       console.error('SignalR connection failed:', err);
     } finally {
       this.isConnecting = false;
+      this.cdr.markForCheck();
     }
   }
 
   private loadMessages(): void {
     this.chatApi.getMessages(this.sessionId).subscribe(msgs => {
       this.messages = msgs.map(m => this.mapToViewMessage(m));
+      this.cdr.markForCheck();
     });
   }
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SupportHubDataService } from '../../services/support-hub-data.service';
 import { SupportHubTicket } from '../../models/support-hub-ticket';
@@ -16,6 +16,7 @@ import { forkJoin, of, catchError } from 'rxjs';
   imports: [CommonModule, RouterLink],
   templateUrl: './support-hub-dashboard.component.html',
   styleUrl: './support-hub-dashboard.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportHubDashboardComponent implements OnInit {
   private dataService = inject(SupportHubDataService);

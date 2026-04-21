@@ -2,118 +2,29 @@
   display: grid;
   place-items: center;
   min-height: 300px;
-  color: var(--jf-muted);
+  color: var(--jf-text-muted);
 }
 
-.sh-dash {
+.sh-dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.sh-dash-main { }
+
+.sh-dash-side {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
-// ── Metrics ─────────────────────────────────────────────
-
-.sh-metrics {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 0.75rem;
+.sh-dash-panel {
+  background: var(--jf-surface);
+  border-radius: var(--jf-radius);
+  box-shadow: var(--jf-shadow);
 }
-
-.sh-metric {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  background: #ffffff;
-  border: 1px solid rgba(188, 191, 204, 0.2);
-  border-radius: 14px;
-  padding: 1.1rem 1.25rem;
-}
-
-.sh-metric__icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  font-size: 1.15rem;
-  flex-shrink: 0;
-
-  &--tickets { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
-  &--sessions { background: rgba(16, 185, 129, 0.12); color: #059669; }
-  &--orgs { background: rgba(63, 103, 218, 0.1); color: #3F67DA; }
-  &--content { background: rgba(168, 85, 247, 0.1); color: #7c3aed; }
-}
-
-.sh-metric__value {
-  display: block;
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.sh-metric__label {
-  display: block;
-  font-size: 0.75rem;
-  color: var(--jf-muted);
-  margin-top: 0.15rem;
-}
-
-.sh-metric__extra {
-  margin-left: auto;
-}
-
-// ── Grid ────────────────────────────────────────────────
-
-.sh-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-}
-
-@media (max-width: 900px) {
-  .sh-grid { grid-template-columns: 1fr; }
-}
-
-// ── Panel ───────────────────────────────────────────────
-
-.sh-panel {
-  background: #ffffff;
-  border: 1px solid rgba(188, 191, 204, 0.2);
-  border-radius: 14px;
-  padding: 1.25rem;
-}
-
-.sh-panel__head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-
-  h3 {
-    font-size: 0.95rem;
-    font-weight: 700;
-    margin: 0;
-  }
-}
-
-.sh-link {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--jf-accent);
-  text-decoration: none;
-
-  &:hover { text-decoration: underline; }
-}
-
-.sh-empty {
-  text-align: center;
-  color: var(--jf-muted);
-  padding: 2rem 0;
-  font-size: 0.85rem;
-  margin: 0;
-}
-
-// ── Table ───────────────────────────────────────────────
 
 .sh-table {
   display: flex;
@@ -125,7 +36,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.65rem 0;
-  border-top: 1px solid rgba(188, 191, 204, 0.1);
+  border-top: 1px solid var(--jf-border);
 
   &:first-child { border-top: none; }
 }
@@ -142,62 +53,66 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--jf-text);
 }
 
 .sh-table__sub {
   display: block;
   font-size: 0.7rem;
-  color: var(--jf-muted);
+  color: var(--jf-text-muted);
 }
 
-// ── Badges ──────────────────────────────────────────────
-
-.sh-badge {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.3rem 0.6rem;
-  border-radius: 999px;
-  white-space: nowrap;
-
-  &--red { background: rgba(239, 68, 68, 0.12); color: #dc2626; }
-  &--orange { background: rgba(249, 115, 22, 0.14); color: #c2410c; }
-  &--blue { background: rgba(63, 103, 218, 0.1); color: #3F67DA; }
-  &--green { background: rgba(16, 185, 129, 0.14); color: #059669; }
-  &--gray { background: rgba(188, 191, 204, 0.2); color: #6E7180; }
+.sh-queue-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-// ── Quick Actions ───────────────────────────────────────
-
-// ── Live Queue Panel ────────────────────────────────
-
-.sh-panel--queue {
-  grid-column: 1 / -1; // Full width in sh-grid
-}
-
-.sh-panel__head-icon {
-  font-size: 1rem;
-  color: var(--jf-accent);
-  margin-right: 0.2rem;
-}
-
-.sh-panel__head-badge {
-  margin-left: 0.35rem;
-  font-size: 0.6rem;
-  padding: 0.25rem 0.55rem;
-}
-
-.sh-queue-preview-empty {
+.sh-queue-preview-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1.25rem 0;
-  font-size: 0.85rem;
-  color: var(--jf-muted);
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--jf-border);
 
-  i { font-size: 1.1rem; color: var(--jf-accent); opacity: 0.45; }
+  &:first-child { border-top: none; }
 }
+
+.sh-queue-preview-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--jf-primary-soft);
+  color: var(--jf-primary);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.sh-queue-preview-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.sh-queue-preview-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--jf-text);
+}
+
+.sh-queue-preview-org {
+  font-size: 0.7rem;
+  color: var(--jf-text-muted);
+}
+
+@media (max-width: 1024px) {
+  .sh-dash-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 .sh-queue-preview-list {
   display: flex;

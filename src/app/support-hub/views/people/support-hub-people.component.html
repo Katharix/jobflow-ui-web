@@ -1,28 +1,33 @@
-<app-page-header title="People" subtitle="Manage support hub staff and invitations."></app-page-header>
-
-<section class="sh-people">
-  <!-- Tabs -->
-  <div class="sh-tabs">
-    <button class="sh-tab" [class.sh-tab--active]="activeTab === 'staff'" (click)="activeTab = 'staff'">
-      Staff <span class="sh-tab__count">{{ staff.length }}</span>
-    </button>
-    <button class="sh-tab" [class.sh-tab--active]="activeTab === 'invites'" (click)="activeTab = 'invites'">
-      Invites <span class="sh-tab__count">{{ invites.length }}</span>
-    </button>
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-header__title-group">
+      <h1 class="page-header__title">People</h1>
+      <p class="page-header__subtitle">Contacts & team members</p>
+    </div>
   </div>
 
-  <!-- Staff Tab -->
-  @if (activeTab === 'staff') {
-    <div class="sh-card">
+  <div class="sh-people-tabs">
+    <div class="sh-tabs">
+      <button class="sh-tab" [class.sh-tab--active]="activeTab === 'staff'" (click)="activeTab = 'staff'">
+        Staff <span class="sh-tab__count">{{ staff.length }}</span>
+      </button>
+      <button class="sh-tab" [class.sh-tab--active]="activeTab === 'invites'" (click)="activeTab = 'invites'">
+        Invites <span class="sh-tab__count">{{ invites.length }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="content-card content-card--no-pad">
+    @if (activeTab === 'staff') {
       @if (loadingStaff) {
-        <div class="sh-empty"><i class="ti ti-loader-2 sh-spinner"></i> Loading staff…</div>
+        <div class="empty-state"><i class="ti ti-loader-2 sh-spinner"></i> Loading staff…</div>
       } @else if (!staff.length) {
-        <div class="sh-empty">
-          <i class="ti ti-users-group"></i>
-          <p>No staff members yet. Send an invite to get started.</p>
+        <div class="empty-state">
+          <h4>No contacts found</h4>
+          <p>Add contacts or adjust your search.</p>
         </div>
       } @else {
-        <table class="sh-table">
+        <table class="sh-data-table">
           <thead>
             <tr>
               <th>Name</th>
@@ -36,17 +41,17 @@
             @for (member of staff; track member.id) {
               <tr [class.sh-row--inactive]="!member.isActive">
                 <td>
-                  <div class="sh-user">
+                  <div class="sh-user" style="display: flex; align-items: center; gap: 0.75rem;">
                     <span class="sh-avatar">{{ initials(member) }}</span>
-                    <span>{{ displayName(member) }}</span>
+                    <span class="sh-person-name">{{ displayName(member) }}</span>
                   </div>
                 </td>
-                <td class="sh-cell--muted">{{ member.email || '—' }}</td>
+                <td class="sh-person-email">{{ member.email || '—' }}</td>
                 <td>
-                  <p-tag [value]="roleLabel(member.role)" [severity]="roleSeverity(member.role)"></p-tag>
+                  <span class="status-chip" [ngClass]="roleSeverityStyles(member.role)">{{ roleLabel(member.role) }}</span>
                 </td>
                 <td class="sh-cell--muted">{{ member.createdAt | date:'mediumDate' }}</td>
-                <td class="sh-cell--actions">
+                <td class="sh-cell--actions" style="text-align: right;">
                   @if (member.isActive) {
                     <button class="sh-icon-btn" title="Change role" (click)="openRoleDialog(member)">
                       <i class="ti ti-switch-horizontal"></i>
@@ -63,38 +68,37 @@
           </tbody>
         </table>
       }
-    </div>
-  }
+    }
 
-  <!-- Invites Tab -->
-  @if (activeTab === 'invites') {
-    <div class="sh-card">
-      <div class="sh-invite-bar">
-        <p-select
-          [options]="roleOptions"
-          [(ngModel)]="newInviteRole"
-          optionLabel="label"
-          optionValue="value"
-          styleClass="sh-invite-bar__select"
-        ></p-select>
-        <p-button
-          label="Create invite"
-          icon="ti ti-send"
-          [outlined]="true"
-          [loading]="creatingInvite"
-          (onClick)="createInvite()"
-        ></p-button>
+    @if (activeTab === 'invites') {
+      <div class="filter-bar" style="padding: 1.25rem; border-bottom: 1px solid var(--jf-border);">
+        <div class="filter-bar__group sh-invite-bar">
+          <p-select
+            [options]="roleOptions"
+            [(ngModel)]="newInviteRole"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="sh-invite-bar__select"
+          ></p-select>
+          <p-button
+            label="Create invite"
+            icon="ti ti-send"
+            [outlined]="true"
+            [loading]="creatingInvite"
+            (onClick)="createInvite()"
+          ></p-button>
+        </div>
       </div>
 
       @if (loadingInvites) {
-        <div class="sh-empty"><i class="ti ti-loader-2 sh-spinner"></i> Loading invites…</div>
+        <div class="empty-state"><i class="ti ti-loader-2 sh-spinner"></i> Loading invites…</div>
       } @else if (!invites.length) {
-        <div class="sh-empty">
-          <i class="ti ti-mail"></i>
-          <p>No active invites. Create one above to invite a team member.</p>
+        <div class="empty-state">
+          <h4>No contacts found</h4>
+          <p>Add contacts or adjust your search.</p>
         </div>
       } @else {
-        <table class="sh-table">
+        <table class="sh-data-table">
           <thead>
             <tr>
               <th>Invite Code</th>
@@ -108,7 +112,7 @@
               <tr>
                 <td><code class="sh-code">{{ invite.code }}</code></td>
                 <td>
-                  <p-tag [value]="roleLabel(invite.role)" [severity]="roleSeverity(invite.role)"></p-tag>
+                  <span class="status-chip" [ngClass]="roleSeverityStyles(invite.role)">{{ roleLabel(invite.role) }}</span>
                 </td>
                 <td class="sh-cell--muted">{{ invite.createdAt | date:'mediumDate' }}</td>
                 <td>
@@ -119,9 +123,9 @@
           </tbody>
         </table>
       }
-    </div>
-  }
-</section>
+    }
+  </div>
+</div>
 
 <!-- Role Change Dialog -->
 <p-dialog

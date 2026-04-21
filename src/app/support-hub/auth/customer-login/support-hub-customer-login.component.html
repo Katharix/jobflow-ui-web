@@ -1,120 +1,91 @@
-<section class="cust-auth-shell">
-  <div class="cust-auth-shell__inner">
+<div class="cl-shell">
+  <div class="cl-card">
+    <img src="/assets/public/images/Asset 1.png" class="cl-logo" alt="JobFlow">
+    <h1 class="cl-title">Get Support</h1>
+    <p class="cl-subtitle">Our team is ready to help you</p>
 
-    <!-- Brand -->
-    <div class="cust-auth-brand">
-      <img src="/assets/public/images/Asset 1.png" alt="JobFlow" class="cust-auth-brand__logo" />
-    </div>
+    <form #form="ngForm" (ngSubmit)="onJoinQueue($event)" novalidate>
+      @if (error) {
+        <div class="cl-alert cl-alert--danger">{{ error }}</div>
+      }
 
-    <!-- Card -->
-    <div class="cust-auth-card">
-      <div class="cust-auth-card__icon">
-        <i class="ti ti-headset"></i>
-      </div>
-      <h1 class="cust-auth-card__title">Get Support</h1>
-      <p class="cust-auth-card__subtitle">
-        Enter your details below to join the support queue. An agent will be with you shortly.
-      </p>
-
-      <form #form="ngForm" (ngSubmit)="onJoinQueue($event)" novalidate class="cust-auth-form">
-
-        @if (error) {
-          <div class="cust-auth-alert" role="alert" aria-live="assertive">
-            <i class="ti ti-alert-circle"></i>
-            <span>{{ error }}</span>
+      <div class="cl-field">
+        <label class="cl-label" for="cust-name">Your Name</label>
+        <input
+          type="text"
+          id="cust-name"
+          name="name"
+          class="cl-input"
+          placeholder="e.g. Alex Johnson"
+          [(ngModel)]="name"
+          required
+          minlength="2"
+          maxlength="80"
+          #nameModel="ngModel"
+          [class.ng-invalid]="nameModel.invalid && (nameModel.touched || submitted)"
+          [class.ng-touched]="nameModel.touched || submitted"
+          autocomplete="name"
+        />
+        @if (nameModel.invalid && (nameModel.touched || submitted)) {
+          <div class="support-error support-mt-1">
+            <div>Please enter your name (at least 2 characters).</div>
           </div>
         }
+      </div>
 
-        <!-- Name -->
-        <div class="cust-auth-field">
-          <label class="cust-auth-field__label" for="cust-name">Your name</label>
-          <input
-            type="text"
-            id="cust-name"
-            name="name"
-            class="cust-auth-field__input"
-            placeholder="e.g. Alex Johnson"
-            [(ngModel)]="name"
-            required
-            minlength="2"
-            maxlength="80"
-            #nameModel="ngModel"
-            [class.is-invalid]="nameModel.invalid && (nameModel.touched || submitted)"
-            autocomplete="name"
-          />
-          @if (nameModel.invalid && (nameModel.touched || submitted)) {
-            <p class="cust-auth-field__error">Please enter your name (at least 2 characters).</p>
-          }
-        </div>
+      <div class="cl-field">
+        <label class="cl-label" for="cust-email">Work email</label>
+        <input
+          type="email"
+          id="cust-email"
+          name="email"
+          class="cl-input"
+          placeholder="you@company.com"
+          [(ngModel)]="email"
+          required
+          email
+          #emailModel="ngModel"
+          [class.ng-invalid]="emailModel.invalid && (emailModel.touched || submitted)"
+          [class.ng-touched]="emailModel.touched || submitted"
+          autocomplete="email"
+        />
+        @if (emailModel.invalid && (emailModel.touched || submitted)) {
+          <div class="support-error support-mt-1">
+            <div>A valid email address is required.</div>
+          </div>
+        }
+      </div>
 
-        <!-- Email -->
-        <div class="cust-auth-field">
-          <label class="cust-auth-field__label" for="cust-email">Work email</label>
-          <input
-            type="email"
-            id="cust-email"
-            name="email"
-            class="cust-auth-field__input"
-            placeholder="you@company.com"
-            [(ngModel)]="email"
-            required
-            email
-            #emailModel="ngModel"
-            [class.is-invalid]="emailModel.invalid && (emailModel.touched || submitted)"
-            autocomplete="email"
-          />
-          @if (emailModel.invalid && (emailModel.touched || submitted)) {
-            <p class="cust-auth-field__error">A valid email address is required.</p>
-          }
-        </div>
+      <div class="cl-field cl-field--optional">
+        <label class="cl-label" for="cust-code">Access Code</label>
+        <input
+          type="text"
+          id="cust-code"
+          name="accessCode"
+          class="cl-input"
+          placeholder="e.g. SUPP-1234"
+          [(ngModel)]="accessCode"
+          autocomplete="off"
+        />
+      </div>
 
-        <!-- Access code (optional) -->
-        <div class="cust-auth-field">
-          <label class="cust-auth-field__label" for="cust-code">
-            Access code
-            <span class="cust-auth-field__label-hint">(optional — if provided in your invite)</span>
-          </label>
-          <input
-            type="text"
-            id="cust-code"
-            name="accessCode"
-            class="cust-auth-field__input"
-            placeholder="e.g. SUPP-1234"
-            [(ngModel)]="accessCode"
-            autocomplete="off"
-          />
-        </div>
+      <button
+        type="submit"
+        class="cl-btn w-full"
+        [disabled]="isLoading"
+        aria-label="Join support queue"
+      >
+        @if (isLoading) {
+          <span>Joining queue…</span>
+        } @else {
+          <span>Join Support Queue</span>
+        }
+      </button>
 
-        <button
-          type="submit"
-          class="cust-auth-btn"
-          [class.is-loading]="isLoading"
-          [disabled]="isLoading"
-          aria-label="Join support queue"
-        >
-          @if (isLoading) {
-            <span class="cust-auth-btn__spinner" aria-hidden="true"></span>
-            <span>Joining queue…</span>
-          } @else {
-            <i class="ti ti-messages" aria-hidden="true"></i>
-            <span>Join Support Queue</span>
-          }
-        </button>
-      </form>
-
-      <p class="cust-auth-footer">
-        By joining the queue, you agree to our
-        <a href="/privacy" target="_blank" rel="noopener">privacy policy</a>.
-        We only use your details to connect you with a support agent.
-      </p>
-    </div>
-
-    <!-- Trust signals -->
-    <div class="cust-auth-trust">
-      <span><i class="ti ti-lock" aria-hidden="true"></i> Secure connection</span>
-      <span><i class="ti ti-shield-check" aria-hidden="true"></i> Data encrypted</span>
-      <span><i class="ti ti-clock" aria-hidden="true"></i> Usually &lt; 10 min wait</span>
-    </div>
-
+      <div class="cl-footer">
+        <span>🔒 Secure & Encrypted</span>
+        <span>⏱ Typically replies in under 5 min</span>
+      </div>
+    </form>
   </div>
-</section>
+</div>

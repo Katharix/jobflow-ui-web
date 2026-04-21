@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { QueueCustomer } from '../../../../components/queue-card/queue-card.component';
 import { QueueCardComponent } from '../../../../components/queue-card/queue-card.component';
@@ -9,6 +9,7 @@ import { QueueCardComponent } from '../../../../components/queue-card/queue-card
   imports: [CommonModule, QueueCardComponent],
   templateUrl: './chat-queue.component.html',
   styleUrl: './chat-queue.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChatQueueComponent {
   @Input() customers: QueueCustomer[] = [];

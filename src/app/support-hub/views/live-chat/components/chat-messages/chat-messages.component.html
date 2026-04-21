@@ -1,52 +1,39 @@
 <!-- This component is used standalone when the full chat-window isn't needed.
      For full chat functionality, prefer <app-chat-window>. -->
-
 @if (isLoading) {
-  <div class="cm-skeleton-list" aria-label="Loading messages" aria-busy="true">
+  <div class="cw-messages" aria-label="Loading messages" aria-busy="true">
     @for (i of [1,2,3]; track i) {
-      <div class="cm-skel-row" [class.cm-skel-row--out]="i % 2 === 0">
-        @if (i % 2 !== 0) {
-          <div class="cm-skel-avatar sh-skeleton"></div>
-        }
-        <div class="cm-skel-bubble sh-skeleton" [style.width]="(40 + i * 8) + '%'"></div>
+      <div class="cw-msg" [class.cw-msg--outgoing]="i % 2 === 0" [class.cw-msg--incoming]="i % 2 !== 0">
+        <div class="cw-bubble sh-skeleton" [style.height.px]="38" [style.width]="(40 + i * 8) + '%'"></div>
       </div>
     }
   </div>
 } @else if (messages.length === 0) {
-  <div class="cm-empty">
-    <i class="ti ti-messages" aria-hidden="true"></i>
-    <p>No messages yet.</p>
+  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem 1rem; color: var(--jf-text-muted); text-align: center;">
+    <i class="ti ti-messages" aria-hidden="true" style="font-size: 1.75rem; opacity: 0.3;"></i>
+    <p style="margin: 0; font-size: 0.85rem; margin-top: 0.5rem;">No messages yet.</p>
   </div>
 } @else {
-  <div class="cm-list" role="log" aria-label="Chat messages" aria-live="polite">
+  <div class="cw-messages" role="log" aria-label="Chat messages" aria-live="polite">
     @for (msg of messages; track msg.id) {
-      <div
-        class="cm-msg"
-        [class.cm-msg--out]="msg.perspective === 'outbound'"
-        [class.cm-msg--in]="msg.perspective === 'inbound'"
-      >
-        @if (msg.perspective === 'inbound') {
-          <div class="cm-avatar" aria-hidden="true">{{ msg.senderName?.charAt(0) | uppercase }}</div>
-        }
-        <div class="cm-body">
-          @if (msg.perspective === 'inbound') {
-            <span class="cm-sender">{{ msg.senderName }}</span>
-          }
-          <div class="cm-bubble">
-            @if (msg.text) { <p>{{ msg.text }}</p> }
-          </div>
-          <span class="cm-time">{{ msg.sentAt }}</span>
+      <div class="cw-msg"
+        [class.cw-msg--outgoing]="msg.perspective === 'outbound'"
+        [class.cw-msg--incoming]="msg.perspective === 'inbound'">
+        <div class="cw-bubble">
+          @if (msg.text) { <p style="margin: 0;">{{ msg.text }}</p> }
         </div>
+        <div class="cw-timestamp">{{ msg.sentAt }}</div>
       </div>
     }
 
     @if (isTyping) {
-      <div class="cm-msg cm-msg--in" role="status" aria-label="Typing">
-        <div class="cm-avatar" aria-hidden="true">…</div>
-        <div class="cm-bubble cm-bubble--typing">
-          <span class="cm-dot"></span>
-          <span class="cm-dot"></span>
-          <span class="cm-dot"></span>
+      <div class="cw-msg cw-msg--incoming" role="status" aria-label="Typing">
+        <div class="cw-bubble">
+          <span style="display: flex; align-items: center; gap: 4px;">
+            <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--jf-text-muted);"></span>
+            <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--jf-text-muted);"></span>
+            <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--jf-text-muted);"></span>
+          </span>
         </div>
       </div>
     }

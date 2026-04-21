@@ -3,67 +3,63 @@
     <p>Loading dashboard...</p>
   </div>
 } @else {
-  <div class="sh-dash">
-    <!-- ── Metrics Row ────────────────────────────────── -->
-    <div class="sh-metrics">
-      <div class="sh-metric">
-        <div class="sh-metric__icon sh-metric__icon--tickets">
-          <i class="ti ti-ticket"></i>
-        </div>
-        <div>
-          <span class="sh-metric__value">{{ openTickets }}</span>
-          <span class="sh-metric__label">Open tickets</span>
-        </div>
-        @if (urgentTickets > 0) {
-          <span class="sh-badge sh-badge--red sh-metric__extra">{{ urgentTickets }} urgent</span>
-        }
+  <div class="page-container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-header__title-group">
+        <h1 class="page-header__title">Dashboard</h1>
+        <p class="page-header__subtitle">Support Hub overview</p>
       </div>
-
-      <div class="sh-metric">
-        <div class="sh-metric__icon sh-metric__icon--sessions">
-          <i class="ti ti-headset"></i>
-        </div>
-        <div>
-          <span class="sh-metric__value">{{ liveSessions }}</span>
-          <span class="sh-metric__label">Live sessions</span>
-        </div>
-        @if (queuedSessions > 0) {
-          <span class="sh-badge sh-badge--blue sh-metric__extra">{{ queuedSessions }} queued</span>
-        }
+      <div class="page-header__actions">
+        <!-- Kept quick actions here as buttons for preservation -->
+        <a class="filter-chip filter-chip--active" routerLink="/support-hub/tickets">Triage tickets</a>
+        <a class="filter-chip filter-chip--active" routerLink="/support-hub/sessions">Start session</a>
       </div>
+    </div>
 
-      <div class="sh-metric">
-        <div class="sh-metric__icon sh-metric__icon--orgs">
-          <i class="ti ti-building-community"></i>
-        </div>
-        <div>
-          <span class="sh-metric__value">{{ organizations.length }}</span>
-          <span class="sh-metric__label">Organizations</span>
+    <!-- KPI Row -->
+    <div class="kpi-grid kpi-grid--4">
+      <div class="kpi-tile kpi-tile__accent--danger">
+        <div class="kpi-tile__body">
+          <span class="kpi-tile__value">{{ openTickets }}</span>
+          <span class="kpi-tile__label">Open Tickets</span>
+          @if (urgentTickets > 0) {
+            <span class="kpi-tile__note">{{ urgentTickets }} urgent</span>
+          }
         </div>
       </div>
-
-      <div class="sh-metric">
-        <div class="sh-metric__icon sh-metric__icon--content">
-          <i class="ti ti-book"></i>
+      <div class="kpi-tile kpi-tile__accent--warning">
+        <div class="kpi-tile__body">
+          <span class="kpi-tile__value">{{ queuedSessions }}</span>
+          <span class="kpi-tile__label">Queue Now</span>
         </div>
-        <div>
-          <span class="sh-metric__value">{{ publishedArticles }}</span>
-          <span class="sh-metric__label">Published articles</span>
+      </div>
+      <div class="kpi-tile kpi-tile__accent--info">
+        <div class="kpi-tile__body">
+          <span class="kpi-tile__value">{{ liveSessions }}</span>
+          <span class="kpi-tile__label">Active Sessions</span>
+        </div>
+      </div>
+      <div class="kpi-tile kpi-tile__accent--success">
+        <div class="kpi-tile__body">
+          <span class="kpi-tile__value">{{ publishedArticles }}</span>
+          <span class="kpi-tile__label">Published Articles</span>
         </div>
       </div>
     </div>
 
-    <!-- ── Content Grid ───────────────────────────────── -->
-    <div class="sh-grid">
-
-      <!-- Recent Tickets -->
-      <section class="sh-panel">
-        <div class="sh-panel__head">
-          <h3>Recent Tickets</h3>
-          <a class="sh-link" routerLink="/support-hub/tickets">View all</a>
+    <!-- Main Grid -->
+    <div class="sh-dash-grid">
+      <!-- Main panel: recent tickets table -->
+      <div class="content-card sh-dash-main">
+        <div class="content-card__header">
+          <h2 class="content-card__title">Recent Tickets</h2>
         </div>
         @if (recentTickets.length === 0) {
-          <p class="sh-empty">No tickets yet.</p>
+          <div class="empty-state">
+            <h4>No tickets yet</h4>
+            <p>Recent tickets will appear here.</p>
+          </div>
         } @else {
           <div class="sh-table">
             @for (ticket of recentTickets; track ticket.id) {
@@ -72,104 +68,68 @@
                   <span class="sh-table__title">{{ ticket.title }}</span>
                   <span class="sh-table__sub">{{ ticket.organizationName }}</span>
                 </div>
-                <span [ngClass]="getStatusClass(ticket.status)">{{ ticket.status }}</span>
+                <!-- Status chip -->
+                <span class="status-chip" [ngClass]="getStatusClass(ticket.status)">{{ ticket.status }}</span>
               </div>
             }
           </div>
         }
-      </section>
-
-      <!-- Active Sessions -->
-      <section class="sh-panel">
-        <div class="sh-panel__head">
-          <h3>Active Sessions</h3>
-          <a class="sh-link" routerLink="/support-hub/sessions">View all</a>
-        </div>
-        @if (activeSessions.length === 0) {
-          <p class="sh-empty">No active sessions.</p>
-        } @else {
-          <div class="sh-table">
-            @for (session of activeSessions; track session.id) {
-              <div class="sh-table__row">
-                <div class="sh-table__cell sh-table__cell--grow">
-                  <span class="sh-table__title">{{ session.organizationName }}</span>
-                  <span class="sh-table__sub">{{ session.agentName }}</span>
-                </div>
-                <span [ngClass]="getStatusClass(session.status)">{{ session.status }}</span>
-              </div>
-            }
-          </div>
-        }
-      </section>
-
-    </div>
-
-    <!-- ── Live Chat Queue Preview ───────────────────── -->
-    <section class="sh-panel sh-panel--queue">
-      <div class="sh-panel__head">
-        <h3>
-          <i class="ti ti-messages sh-panel__head-icon" aria-hidden="true"></i>
-          Live Chat Queue
-          @if (queuedSessions > 0) {
-            <span class="sh-badge sh-badge--blue sh-panel__head-badge" aria-label="{{ queuedSessions }} customers waiting">
-              {{ queuedSessions }}
-            </span>
-          }
-        </h3>
-        <a class="sh-link" routerLink="/support-hub/queue">View full queue</a>
       </div>
 
-      @if (queuedSessions === 0) {
-        <div class="sh-queue-preview-empty">
-          <i class="ti ti-mood-happy" aria-hidden="true"></i>
-          <span>Queue is clear — no customers waiting right now.</span>
-        </div>
-      } @else {
-        <!-- [Engineer] Replace with @for over queuePreview (top 3 items) -->
-        <div class="sh-queue-preview-list" role="list" aria-label="Live queue preview">
-          <!-- Skeleton row (placeholder until Engineer wires real data) -->
-          <div class="sh-queue-preview-row" role="listitem">
-            <div class="sh-queue-preview-avatar" aria-hidden="true">JD</div>
-            <div class="sh-queue-preview-info">
-              <span class="sh-queue-preview-name">Customer Name</span>
-              <span class="sh-queue-preview-org">Organization</span>
-            </div>
-            <span class="sh-badge sh-badge--orange">~8m wait</span>
-            <a
-              class="sh-queue-preview-pickup"
-              routerLink="/support-hub/queue"
-              aria-label="Go to queue to pick up"
-            >
-              <i class="ti ti-phone-call" aria-hidden="true"></i>
-              Pick Up
-            </a>
+      <!-- Side panel: quick stats -->
+      <div class="sh-dash-side">
+        <!-- Live Queue Panel -->
+        <div class="content-card sh-dash-panel">
+          <div class="content-card__header">
+            <h2 class="content-card__title">Live Chat Queue</h2>
           </div>
-        </div>
-      }
-    </section>
 
-    <!-- ── Quick Actions ──────────────────────────────── -->
-    <div class="sh-actions">
-      <a class="sh-action" routerLink="/support-hub/tickets">
-        <i class="ti ti-ticket"></i>
-        <span>Triage tickets</span>
-      </a>
-      <a class="sh-action" routerLink="/support-hub/queue">
-        <i class="ti ti-messages"></i>
-        <span>Live Chat Queue</span>
-      </a>
-      <a class="sh-action" routerLink="/support-hub/sessions">
-        <i class="ti ti-headset"></i>
-        <span>Start session</span>
-      </a>
-      <a class="sh-action" routerLink="/support-hub/organizations">
-        <i class="ti ti-building-community"></i>
-        <span>Browse orgs</span>
-      </a>
-      <a class="sh-action" routerLink="/support-hub/content">
-        <i class="ti ti-book"></i>
-        <span>Manage content</span>
-      </a>
+          @if (queuedSessions === 0) {
+            <div class="empty-state">
+              <h4>Queue is clear</h4>
+              <p>No customers waiting right now.</p>
+            </div>
+          } @else {
+            <div class="sh-queue-preview-list" role="list" aria-label="Live queue preview">
+              <div class="sh-queue-preview-row" role="listitem">
+                <div class="sh-queue-preview-avatar" aria-hidden="true">JD</div>
+                <div class="sh-queue-preview-info">
+                  <span class="sh-queue-preview-name">Customer Name</span>
+                  <span class="sh-queue-preview-org">Organization</span>
+                </div>
+                <span class="status-chip status-chip--warning">~8m wait</span>
+                <a class="filter-chip" routerLink="/support-hub/queue" aria-label="Go to queue to pick up">
+                  Pick Up
+                </a>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Active Sessions Layer -->
+        <div class="content-card sh-dash-panel">
+          <div class="content-card__header">
+            <h2 class="content-card__title">Active Sessions</h2>
+          </div>
+          @if (activeSessions.length === 0) {
+            <div class="empty-state">
+              <h4>No active sessions</h4>
+            </div>
+          } @else {
+            <div class="sh-table">
+              @for (session of activeSessions; track session.id) {
+                <div class="sh-table__row">
+                  <div class="sh-table__cell sh-table__cell--grow">
+                    <span class="sh-table__title">{{ session.organizationName }}</span>
+                    <span class="sh-table__sub">{{ session.agentName }}</span>
+                  </div>
+                  <span class="status-chip" [ngClass]="getStatusClass(session.status)">{{ session.status }}</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
     </div>
   </div>
 }

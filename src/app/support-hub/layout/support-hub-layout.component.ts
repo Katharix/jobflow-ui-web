@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Auth, signOut } from '@angular/fire/auth';
 
@@ -20,10 +20,12 @@ interface NavGroup {
   imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
   templateUrl: './support-hub-layout.component.html',
   styleUrl: './support-hub-layout.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportHubLayoutComponent implements OnInit {
   private auth = inject(Auth);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   readonly navGroups: NavGroup[] = [
     {
@@ -84,6 +86,7 @@ export class SupportHubLayoutComponent implements OnInit {
     await navigator.clipboard.writeText(token);
     this.tokenCopiedMessage = 'Token copied to clipboard';
     this.clearToast();
+    this.cdr.markForCheck();
   }
 
   async logout(): Promise<void> {

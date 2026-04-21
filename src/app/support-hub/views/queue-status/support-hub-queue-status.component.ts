@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -12,12 +12,14 @@ import { SupportHubChatApiService } from '../../services/support-hub-chat-api.se
   imports: [CommonModule],
   templateUrl: './support-hub-queue-status.component.html',
   styleUrl: './support-hub-queue-status.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportHubQueueStatusComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private signalR = inject(SupportHubSignalRService);
   private chatApi = inject(SupportHubChatApiService);
+  private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   sessionId = '';
@@ -38,6 +40,7 @@ export class SupportHubQueueStatusComponent implements OnInit, OnDestroy {
     this.chatApi.getSession(this.sessionId).subscribe(session => {
       this.queuePosition = session.queuePosition;
       this.estimatedMinutes = Math.ceil(session.estimatedWaitSeconds / 60);
+      this.cdr.markForCheck();
     });
   }
 
@@ -50,6 +53,7 @@ export class SupportHubQueueStatusComponent implements OnInit, OnDestroy {
       this.signalR.agentJoined$.pipe(takeUntil(this.destroy$)).subscribe(({ agentName }) => {
         this.agentJoined = true;
         this.agentName = agentName;
+        this.cdr.markForCheck();
         const storedSessionId = sessionStorage.getItem('support-hub-session-id');
         const isOrgFlow = storedSessionId === this.sessionId;
         const chatPath = isOrgFlow
@@ -65,6 +69,7 @@ export class SupportHubQueueStatusComponent implements OnInit, OnDestroy {
       console.error('SignalR connection failed:', err);
     } finally {
       this.isConnecting = false;
+      this.cdr.markForCheck();
     }
   }
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { OrganizationService } from '../../../services/shared/organization.service';
@@ -16,6 +16,7 @@ import {
   imports: [CommonModule, FormsModule, PageHeaderComponent],
   templateUrl: './support-hub-billing.component.html',
   styleUrl: './support-hub-billing.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportHubBillingComponent implements OnInit {
   private readonly eventPageSize = 25;

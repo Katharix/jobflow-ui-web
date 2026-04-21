@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { OrganizationService } from '../../../services/shared/organization.service';
 import { OrganizationDto } from '../../../models/organization';
@@ -16,6 +16,7 @@ import { MessageModule } from 'primeng/message';
   imports: [CommonModule, PageHeaderComponent, JobflowGridComponent, MessageModule],
   templateUrl: './support-hub-organizations.component.html',
   styleUrl: './support-hub-organizations.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportHubOrganizationsComponent implements OnInit {
   private organizationService = inject(OrganizationService);
