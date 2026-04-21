@@ -147,6 +147,18 @@ export const routes: Routes = [
          {
             path: 'support-chat',
             loadComponent: () => import('./admin/support-chat/org-support-chat.component').then(m => m.OrgSupportChatComponent)
+         },
+         {
+            path: 'support-chat/queue-status/:sessionId',
+            loadComponent: () =>
+               import('./support-hub/views/queue-status/support-hub-queue-status.component')
+                  .then(m => m.SupportHubQueueStatusComponent)
+         },
+         {
+            path: 'support-chat/chat/:sessionId',
+            loadComponent: () =>
+               import('./support-hub/views/chat/support-hub-chat.component')
+                  .then(m => m.SupportHubChatComponent)
          }
       ]
    },

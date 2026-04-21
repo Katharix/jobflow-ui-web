@@ -31,6 +31,8 @@ export class SupportHubChatComponent implements OnInit, OnDestroy {
   messages: ChatMessage[] = [];
   messageText = '';
 
+  isConnecting = false;
+
   get soundEnabled(): boolean { return this.soundService.isSoundEnabled(); }
 
   ngOnInit(): void {
@@ -41,21 +43,28 @@ export class SupportHubChatComponent implements OnInit, OnDestroy {
   }
 
   private async initSignalR(): Promise<void> {
-    await this.signalR.startConnection();
-    await this.signalR.joinSession(this.sessionId);
+    this.isConnecting = true;
+    try {
+      await this.signalR.startConnection();
+      await this.signalR.joinSession(this.sessionId);
 
-    this.signalR.messages$.pipe(takeUntil(this.destroy$)).subscribe(msg => {
-      this.messages = [...this.messages, this.mapToViewMessage(msg)];
-      this.soundService.playNewMessageSound();
-    });
+      this.signalR.messages$.pipe(takeUntil(this.destroy$)).subscribe(msg => {
+        this.messages = [...this.messages, this.mapToViewMessage(msg)];
+        this.soundService.playNewMessageSound();
+      });
 
-    this.signalR.userTyping$.pipe(takeUntil(this.destroy$)).subscribe(({ isTyping }) => {
-      this.isTyping = isTyping;
-    });
+      this.signalR.userTyping$.pipe(takeUntil(this.destroy$)).subscribe(({ isTyping }) => {
+        this.isTyping = isTyping;
+      });
 
-    this.signalR.sessionClosed$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.sessionEnded = true;
-    });
+      this.signalR.sessionClosed$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+        this.sessionEnded = true;
+      });
+    } catch (err) {
+      console.error('SignalR connection failed:', err);
+    } finally {
+      this.isConnecting = false;
+    }
   }
 
   private loadMessages(): void {

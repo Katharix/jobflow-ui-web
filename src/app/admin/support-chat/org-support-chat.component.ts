@@ -36,7 +36,7 @@ export class OrgSupportChatComponent implements OnInit {
         this.isLoading = false;
         sessionStorage.setItem('support-hub-customer-name', customerName || 'You');
         sessionStorage.setItem('support-hub-session-id', res.sessionId);
-        this.router.navigate(['/support-hub/queue-status', res.sessionId]);
+        this.router.navigate(['/admin/support-chat/queue-status', res.sessionId]);
       },
       error: (err) => {
         this.isLoading = false;

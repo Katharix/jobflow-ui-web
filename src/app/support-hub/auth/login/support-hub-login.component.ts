@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewChild, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
+import { Auth, signInWithEmailAndPassword, signOut } from '@angular/fire/auth';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
@@ -59,7 +59,22 @@ export class SupportHubLoginComponent {
     this.isSubmitting = true;
 
     try {
-      await signInWithEmailAndPassword(this.auth, this.email.trim(), this.password.trim());
+      const userCredential = await signInWithEmailAndPassword(this.auth, this.email.trim(), this.password.trim());
+      try {
+        const tokenResult = await userCredential.user.getIdTokenResult(true);
+        const role = tokenResult.claims['role'] as string;
+        if (role !== 'KatharixAdmin' && role !== 'KatharixEmployee') {
+          await signOut(this.auth);
+          this.error = 'Access denied. Only Katharix staff can access the Support Hub.';
+          this.isSubmitting = false;
+          return;
+        }
+      } catch (roleErr: unknown) {
+        await signOut(this.auth);
+        this.error = 'Unable to verify your access. Please try again.';
+        this.isSubmitting = false;
+        return;
+      }
       await this.router.navigate(['/support-hub/dashboard']);
     } catch (err: unknown) {
       this.error = this.mapFirebaseAuthError(err);
