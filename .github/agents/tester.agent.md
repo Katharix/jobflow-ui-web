@@ -20,7 +20,7 @@ dotnet test ../JobFlow.Tests --logger "console;verbosity=detailed"
 
 # Frontend
 cd jobflow-ui-web
-npm.cmd run test -- --watch=false --browsers=ChromeHeadless --code-coverage
+ng test --watch=false --browsers=ChromeHeadlessNoSandbox
 ```
 
 Report pass/fail counts and any failing tests with their error messages.

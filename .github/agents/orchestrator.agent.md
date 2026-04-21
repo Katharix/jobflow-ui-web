@@ -233,7 +233,6 @@ Ready for PR review.
 
 - **Parallel Explore calls**: Split context gathering into 2–3 focused parallel calls by topic (feature files / reference files / global styles). Never batch everything into one call — large results overflow inline limits and require costly re-read chains.
 - **Structured summaries over raw dumps**: Explore prompts should request "key class names, exact markup for X, SCSS rule for Y" — not "full file contents". Structured output is 10x smaller and passes cleanly to downstream agents.
-- **Always specify model explicitly**: Pass `model: Claude Sonnet 4.6 (copilot)` on every subagent invocation. Omitting this risks a cost-tier mismatch error that wastes a full agent call.
 - **Enforce Engineer output contract**: Every Engineer prompt must end with: "Your final response MUST start with `## COMPLETED` and list every file path you modified."
 
 ## References

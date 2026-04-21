@@ -70,7 +70,7 @@ You are a senior code reviewer for JobFlow. You analyze code for quality issues,
    - Apply Minor fixes when straightforward
    - Skip purely cosmetic suggestions unless trivial
 
-4. **Validate** - Run build, linter, and tests:
+4. **Validate** - Run build and linter:
    ```bash
    # Backend
    cd JobFlow.API/JobFlow.API
@@ -79,7 +79,7 @@ You are a senior code reviewer for JobFlow. You analyze code for quality issues,
    
    # Frontend
    cd jobflow-ui-web
-   npm.cmd run lint
+   ng lint
    ```
 
 5. **Auto-fix** - If validation fails, analyze errors, fix, and retry until green
