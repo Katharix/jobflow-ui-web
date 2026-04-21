@@ -1,132 +1,135 @@
-<div class="profile-page">
-  <div class="profile-page__header">
-    <h1 class="profile-page__title">{{ 'profile.title' | translate }}</h1>
-    <p class="profile-page__subtitle">{{ 'profile.subtitle' | translate }}</p>
-  </div>
+<div class="page-container profile-view">
+
+  <header class="page-header">
+    <div class="page-header__title-group">
+      <h1 class="page-header__title">{{ 'profile.title' | translate }}</h1>
+      <p class="page-header__subtitle">{{ 'profile.subtitle' | translate }}</p>
+    </div>
+  </header>
 
   @if (isLoading) {
-    <div class="profile-page__loading">
+    <div class="profile-view__loading">
       <div class="spinner-border text-primary" role="status"></div>
       <p>{{ 'profile.loading' | translate }}</p>
     </div>
   } @else {
     @if (error) {
-      <div class="alert alert-danger">{{ error }}</div>
+      <div class="page-alert page-alert--danger">{{ error }}</div>
     }
 
     <form #profileForm="ngForm" (ngSubmit)="save(profileForm)" novalidate>
       <!-- Personal Information -->
-      <section class="profile-section">
-        <div class="profile-section__heading">
-          <h2 class="profile-section__title">{{ 'profile.sectionPersonal' | translate }}</h2>
-          <p class="profile-section__desc">{{ 'profile.sectionPersonalDesc' | translate }}</p>
-        </div>
-        <div class="profile-section__body">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label" for="firstName">{{ 'profile.firstName' | translate }}</label>
-              <input
-                id="firstName"
-                name="firstName"
-                type="text"
-                class="form-control"
-                [placeholder]="'profile.firstNamePlaceholder' | translate"
-                required
-                [(ngModel)]="model.firstName"
-                #firstNameModel="ngModel" />
-              @if (firstNameModel.invalid && (firstNameModel.touched || profileForm.submitted)) {
-                <div class="invalid-feedback d-block">{{ 'profile.firstNameError' | translate }}</div>
-              }
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="lastName">{{ 'profile.lastName' | translate }}</label>
-              <input
-                id="lastName"
-                name="lastName"
-                type="text"
-                class="form-control"
-                [placeholder]="'profile.lastNamePlaceholder' | translate"
-                required
-                [(ngModel)]="model.lastName"
-                #lastNameModel="ngModel" />
-              @if (lastNameModel.invalid && (lastNameModel.touched || profileForm.submitted)) {
-                <div class="invalid-feedback d-block">{{ 'profile.lastNameError' | translate }}</div>
-              }
-            </div>
+      <div class="content-card">
+        <div class="content-card__header">
+          <div>
+            <h3 class="content-card__title">{{ 'profile.sectionPersonal' | translate }}</h3>
+            <p class="content-card__subtitle">{{ 'profile.sectionPersonalDesc' | translate }}</p>
           </div>
         </div>
-      </section>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="firstName">{{ 'profile.firstName' | translate }}</label>
+            <input
+              id="firstName"
+              name="firstName"
+              type="text"
+              class="form-control"
+              [placeholder]="'profile.firstNamePlaceholder' | translate"
+              required
+              [(ngModel)]="model.firstName"
+              #firstNameModel="ngModel" />
+            @if (firstNameModel.invalid && (firstNameModel.touched || profileForm.submitted)) {
+              <div class="invalid-feedback d-block">{{ 'profile.firstNameError' | translate }}</div>
+            }
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label" for="lastName">{{ 'profile.lastName' | translate }}</label>
+            <input
+              id="lastName"
+              name="lastName"
+              type="text"
+              class="form-control"
+              [placeholder]="'profile.lastNamePlaceholder' | translate"
+              required
+              [(ngModel)]="model.lastName"
+              #lastNameModel="ngModel" />
+            @if (lastNameModel.invalid && (lastNameModel.touched || profileForm.submitted)) {
+              <div class="invalid-feedback d-block">{{ 'profile.lastNameError' | translate }}</div>
+            }
+          </div>
+        </div>
+      </div>
 
       <!-- Contact Information -->
-      <section class="profile-section">
-        <div class="profile-section__heading">
-          <h2 class="profile-section__title">{{ 'profile.sectionContact' | translate }}</h2>
-          <p class="profile-section__desc">{{ 'profile.sectionContactDesc' | translate }}</p>
-        </div>
-        <div class="profile-section__body">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label" for="email">{{ 'profile.email' | translate }}</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                class="form-control"
-                placeholder="you@example.com"
-                required
-                [(ngModel)]="model.email"
-                #emailModel="ngModel" />
-              @if (emailModel.invalid && (emailModel.touched || profileForm.submitted)) {
-                <div class="invalid-feedback d-block">{{ 'profile.emailError' | translate }}</div>
-              }
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="phoneNumber">{{ 'profile.phone' | translate }}</label>
-              <input
-                id="phoneNumber"
-                name="phoneNumber"
-                type="tel"
-                class="form-control"
-                placeholder="(555) 123-4567"
-                [(ngModel)]="model.phoneNumber" />
-            </div>
+      <div class="content-card">
+        <div class="content-card__header">
+          <div>
+            <h3 class="content-card__title">{{ 'profile.sectionContact' | translate }}</h3>
+            <p class="content-card__subtitle">{{ 'profile.sectionContactDesc' | translate }}</p>
           </div>
         </div>
-      </section>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="email">{{ 'profile.email' | translate }}</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              class="form-control"
+              placeholder="you@example.com"
+              required
+              [(ngModel)]="model.email"
+              #emailModel="ngModel" />
+            @if (emailModel.invalid && (emailModel.touched || profileForm.submitted)) {
+              <div class="invalid-feedback d-block">{{ 'profile.emailError' | translate }}</div>
+            }
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label" for="phoneNumber">{{ 'profile.phone' | translate }}</label>
+            <input
+              id="phoneNumber"
+              name="phoneNumber"
+              type="tel"
+              class="form-control"
+              placeholder="(555) 123-4567"
+              [(ngModel)]="model.phoneNumber" />
+          </div>
+        </div>
+      </div>
 
       <!-- Preferences -->
-      <section class="profile-section">
-        <div class="profile-section__heading">
-          <h2 class="profile-section__title">{{ 'profile.sectionPreferences' | translate }}</h2>
-          <p class="profile-section__desc">{{ 'profile.sectionPreferencesDesc' | translate }}</p>
-        </div>
-        <div class="profile-section__body">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label" for="preferredLanguage">{{ 'profile.language' | translate }}</label>
-              <select
-                id="preferredLanguage"
-                name="preferredLanguage"
-                class="form-select"
-                required
-                [(ngModel)]="model.preferredLanguage"
-                #languageModel="ngModel">
-                @for (option of languageOptions; track option.value) {
-                  <option [value]="option.value">{{ option.labelKey | translate }}</option>
-                }
-              </select>
-              @if (languageModel.invalid && (languageModel.touched || profileForm.submitted)) {
-                <div class="invalid-feedback d-block">{{ 'profile.languageError' | translate }}</div>
-              }
-            </div>
+      <div class="content-card">
+        <div class="content-card__header">
+          <div>
+            <h3 class="content-card__title">{{ 'profile.sectionPreferences' | translate }}</h3>
+            <p class="content-card__subtitle">{{ 'profile.sectionPreferencesDesc' | translate }}</p>
           </div>
         </div>
-      </section>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="preferredLanguage">{{ 'profile.language' | translate }}</label>
+            <select
+              id="preferredLanguage"
+              name="preferredLanguage"
+              class="form-select"
+              required
+              [(ngModel)]="model.preferredLanguage"
+              #languageModel="ngModel">
+              @for (option of languageOptions; track option.value) {
+                <option [value]="option.value">{{ option.labelKey | translate }}</option>
+              }
+            </select>
+            @if (languageModel.invalid && (languageModel.touched || profileForm.submitted)) {
+              <div class="invalid-feedback d-block">{{ 'profile.languageError' | translate }}</div>
+            }
+          </div>
+        </div>
+      </div>
 
       <!-- Save -->
-      <div class="profile-page__footer">
+      <div class="d-flex justify-content-end pt-2">
         <button class="btn btn-primary" type="submit" [disabled]="isSaving">
           @if (isSaving) {
             <span class="spinner-border spinner-border-sm me-1" role="status"></span>

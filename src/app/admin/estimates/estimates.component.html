@@ -12,63 +12,82 @@
 </header>
 
 @if (error) {
-  <div class="alert alert-danger mb-3">{{ error }}</div>
+  <div class="page-alert page-alert--danger">{{ error }}</div>
 }
 
-<section class="estimates-overview">
-  <div class="estimates-overview__metrics">
-    <article class="estimates-card">
-      <p class="estimates-card__label">{{ 'admin.estimates.metrics.total' | translate }}</p>
-      <h3>{{ summary.total }}</h3>
-      <p class="estimates-card__note">{{ 'admin.estimates.metrics.totalNote' | translate }}</p>
-    </article>
-    <article class="estimates-card">
-      <p class="estimates-card__label">{{ 'admin.estimates.metrics.draft' | translate }}</p>
-      <h3>{{ summary.draft }}</h3>
-      <p class="estimates-card__note">{{ 'admin.estimates.metrics.draftNote' | translate }}</p>
-    </article>
-    <article class="estimates-card">
-      <p class="estimates-card__label">{{ 'admin.estimates.metrics.sent' | translate }}</p>
-      <h3>{{ summary.sent }}</h3>
-      <p class="estimates-card__note">{{ 'admin.estimates.metrics.sentNote' | translate }}</p>
-    </article>
-    <article class="estimates-card">
-      <p class="estimates-card__label">{{ 'admin.estimates.metrics.accepted' | translate }}</p>
-      <h3>{{ summary.accepted }}</h3>
-      <p class="estimates-card__note">{{ 'admin.estimates.metrics.acceptedNote' | translate }}</p>
-    </article>
-    <article class="estimates-card estimates-card--accent">
-      <p class="estimates-card__label">{{ 'admin.estimates.metrics.totalValue' | translate }}</p>
-      <h3>{{ formatCurrency(summary.totalValue) }}</h3>
-      <p class="estimates-card__note">{{ 'admin.estimates.metrics.totalValueNote' | translate }}</p>
-    </article>
-  </div>
-  <div class="estimates-cta">
-    <div>
-      <p class="estimates-cta__eyebrow">{{ 'admin.estimates.cta.eyebrow' | translate }}</p>
-      <h3>{{ 'admin.estimates.cta.title' | translate }}</h3>
-      <p>{{ 'admin.estimates.cta.subtitle' | translate }}</p>
+<!-- KPI Metrics -->
+<div class="kpi-grid kpi-grid--5" role="list" aria-label="Estimate metrics">
+  <div class="kpi-tile" role="listitem">
+    <div class="kpi-tile__accent"></div>
+    <div class="kpi-tile__body">
+      <span class="kpi-tile__value">{{ summary.total }}</span>
+      <span class="kpi-tile__label">{{ 'admin.estimates.metrics.total' | translate }}</span>
+      <span class="kpi-tile__note">{{ 'admin.estimates.metrics.totalNote' | translate }}</span>
     </div>
+  </div>
+  <div class="kpi-tile" role="listitem">
+    <div class="kpi-tile__accent kpi-tile__accent--neutral"></div>
+    <div class="kpi-tile__body">
+      <span class="kpi-tile__value">{{ summary.draft }}</span>
+      <span class="kpi-tile__label">{{ 'admin.estimates.metrics.draft' | translate }}</span>
+      <span class="kpi-tile__note">{{ 'admin.estimates.metrics.draftNote' | translate }}</span>
+    </div>
+  </div>
+  <div class="kpi-tile" role="listitem">
+    <div class="kpi-tile__accent kpi-tile__accent--info"></div>
+    <div class="kpi-tile__body">
+      <span class="kpi-tile__value">{{ summary.sent }}</span>
+      <span class="kpi-tile__label">{{ 'admin.estimates.metrics.sent' | translate }}</span>
+      <span class="kpi-tile__note">{{ 'admin.estimates.metrics.sentNote' | translate }}</span>
+    </div>
+  </div>
+  <div class="kpi-tile" role="listitem">
+    <div class="kpi-tile__accent kpi-tile__accent--success"></div>
+    <div class="kpi-tile__body">
+      <span class="kpi-tile__value">{{ summary.accepted }}</span>
+      <span class="kpi-tile__label">{{ 'admin.estimates.metrics.accepted' | translate }}</span>
+      <span class="kpi-tile__note">{{ 'admin.estimates.metrics.acceptedNote' | translate }}</span>
+    </div>
+  </div>
+  <div class="kpi-tile" role="listitem">
+    <div class="kpi-tile__accent kpi-tile__accent--warning"></div>
+    <div class="kpi-tile__body">
+      <span class="kpi-tile__value">{{ formatCurrency(summary.totalValue) }}</span>
+      <span class="kpi-tile__label">{{ 'admin.estimates.metrics.totalValue' | translate }}</span>
+      <span class="kpi-tile__note">{{ 'admin.estimates.metrics.totalValueNote' | translate }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- CTA Card -->
+<div class="cta-card">
+  <div>
+    <p class="cta-card__eyebrow">{{ 'admin.estimates.cta.eyebrow' | translate }}</p>
+    <h3 class="cta-card__title">{{ 'admin.estimates.cta.title' | translate }}</h3>
+    <p class="cta-card__body">{{ 'admin.estimates.cta.subtitle' | translate }}</p>
+  </div>
+  <div class="cta-card__actions">
     <button type="button" class="btn btn-primary" (click)="openNew()">
       {{ 'admin.estimates.cta.button' | translate }}
     </button>
   </div>
-</section>
+</div>
 
-<section class="estimates-filters" aria-label="Estimate filters">
-  <div class="estimates-filters__group">
+<!-- Filter Bar -->
+<div class="filter-bar" aria-label="Estimate filters">
+  <div class="filter-bar__group">
     @for (filter of statusFilters; track filter.key) {
       <button
         type="button"
-        class="estimates-filter"
-        [class.estimates-filter--active]="selectedStatusFilter === filter.key"
+        class="filter-chip"
+        [class.filter-chip--active]="selectedStatusFilter === filter.key"
         (click)="setStatusFilter(filter.key)">
         {{ filter.label }}
-        <span class="estimates-filter__count">{{ getFilterCount(filter.key) }}</span>
+        <span class="filter-chip__count">{{ getFilterCount(filter.key) }}</span>
       </button>
     }
   </div>
-</section>
+</div>
 
 <!-- Client cell template -->
 <ng-template #clientTemplate let-estimate>
@@ -105,12 +124,14 @@
 </ng-template>
 
 <!-- Grid -->
-<app-jobflow-grid
-  [data]="filteredItems"
-  [columns]="columns"
-  [pageSettings]="pageSettings"
-  [showSearchBar]="true">
-</app-jobflow-grid>
+<div class="content-card content-card--no-pad">
+  <app-jobflow-grid
+    [data]="filteredItems"
+    [columns]="columns"
+    [pageSettings]="pageSettings"
+    [showSearchBar]="true">
+  </app-jobflow-grid>
+</div>
 
 <!-- Create / Edit Panel -->
 @if (isFormDrawerOpen) {
@@ -135,7 +156,7 @@
       <button class="close-btn" (click)="isSendDrawerOpen = false">×</button>
     </div>
     @if (sendError) {
-      <div class="alert alert-danger mb-3">{{ sendError }}</div>
+      <div class="page-alert page-alert--danger">{{ sendError }}</div>
     }
     <div class="mb-3">
       <label class="form-label fw-semibold" for="estimateSendEmail">

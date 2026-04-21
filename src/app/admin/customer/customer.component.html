@@ -1,101 +1,111 @@
 <div class="page-container">
-<div class="page-header">
-  <h1 class="page-title">Clients</h1>
-  <p>Keep client data tidy and ready for every workflow.</p>
-</div>
-@if (error) {
-  <div class="alert alert-danger mb-3">
-    {{ error }}
+
+<!-- ── Page Header ─────────────────────────────────────────────────────── -->
+<header class="page-header">
+  <div class="page-header__title-group">
+    <h1 class="page-header__title">Clients</h1>
+    <p class="page-header__subtitle">Keep client data tidy and ready for every workflow.</p>
   </div>
+</header>
+
+@if (error) {
+  <div class="page-alert page-alert--danger">{{ error }}</div>
 }
 
 @if (metrics$ | async; as metricsVm) {
-  <section class="clientflow-hero">
-    <div class="clientflow-hero__intro">
-      <span class="clientflow-hero__eyebrow">Client workspace</span>
-      <h2>Clarity for every relationship.</h2>
-      <p>Capture contact details once and keep every follow-up smooth.</p>
-    </div>
-    <div class="clientflow-hero__metrics">
-      <div class="clientflow-metric">
-        <span class="clientflow-metric__label">Total clients</span>
-        <span class="clientflow-metric__value">{{ metricsVm.totalClients }}</span>
-      </div>
-      <div class="clientflow-metric">
-        <span class="clientflow-metric__label">With email</span>
-        <span class="clientflow-metric__value">{{ metricsVm.clientsWithEmail }}</span>
-      </div>
-      <div class="clientflow-metric">
-        <span class="clientflow-metric__label">With phone</span>
-        <span class="clientflow-metric__value">{{ metricsVm.clientsWithPhone }}</span>
-      </div>
-      <div class="clientflow-metric">
-        <span class="clientflow-metric__label">Missing email</span>
-        <span class="clientflow-metric__value">{{ metricsVm.clientsMissingEmail }}</span>
-      </div>
-    </div>
-    <div class="clientflow-cta">
-      <div>
-        <p class="clientflow-cta__eyebrow">Quick action</p>
-        <h3>Add or import clients</h3>
-        <p>Create a client manually or import from a CSV file.</p>
-      </div>
-      <div class="clientflow-cta__actions">
-        <button type="button" class="btn btn-primary" (click)="openAddClient()">
-          Add Client
-        </button>
-        <button type="button" class="btn btn-outline-primary" (click)="openBulkAddModal()">
-          Bulk Add
-        </button>
-        <button type="button" class="btn btn-outline-primary" (click)="openImportModal()">
-          Import Data
-        </button>
-      </div>
-    </div>
-  </section>
 
-  <section class="clientflow-shell">
-    <div class="clientflow-shell__header">
-      <div>
-        <h6 class="mb-1">Client directory</h6>
-        <p class="text-muted mb-0">Search, edit, and email Client Hub access directly from this list.</p>
-      </div>
-      <div class="clientflow-shell__actions">
-        <button
-          type="button"
-          class="btn btn-sm"
-          [ngClass]="showMissingEmailOnly ? 'btn-dark' : 'btn-outline-secondary'"
-          (click)="toggleMissingEmailFilter()"
-          >
-          Missing email ({{ metricsVm.clientsMissingEmail }})
-        </button>
-        <span class="badge bg-light text-dark">Email Client Hub Link in actions menu</span>
+  <!-- ── KPI Metrics ───────────────────────────────────────────────────── -->
+  <div class="kpi-grid kpi-grid--4" role="list" aria-label="Client metrics">
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ metricsVm.totalClients }}</span>
+        <span class="kpi-tile__label">Total clients</span>
+        <span class="kpi-tile__note">All active records</span>
       </div>
     </div>
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--success"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ metricsVm.clientsWithEmail }}</span>
+        <span class="kpi-tile__label">With email</span>
+        <span class="kpi-tile__note">Can receive Client Hub</span>
+      </div>
+    </div>
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--info"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ metricsVm.clientsWithPhone }}</span>
+        <span class="kpi-tile__label">With phone</span>
+        <span class="kpi-tile__note">Can receive SMS updates</span>
+      </div>
+    </div>
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--warning"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ metricsVm.clientsMissingEmail }}</span>
+        <span class="kpi-tile__label">Missing email</span>
+        <span class="kpi-tile__note">Action recommended</span>
+      </div>
+    </div>
+  </div>
 
-    <div class="clientflow-grid">
-      <ng-template #clientNameTemplate let-client>
-        <div class="client-cell">
-          <div class="client-title">{{ client.firstName }} {{ client.lastName }}</div>
-          <div class="client-meta">{{ client.emailAddress || 'Email missing' }}</div>
+  <!-- ── CTA Card ─────────────────────────────────────────────────────── -->
+  <div class="cta-card">
+    <div>
+      <p class="cta-card__eyebrow">Quick action</p>
+      <h3 class="cta-card__title">Add or import clients</h3>
+      <p class="cta-card__body">Create a client manually or import from a CSV file.</p>
+    </div>
+    <div class="cta-card__actions">
+      <button type="button" class="btn btn-primary" (click)="openAddClient()">Add Client</button>
+      <button type="button" class="btn btn-outline-primary" (click)="openBulkAddModal()">Bulk Add</button>
+      <button type="button" class="btn btn-outline-primary" (click)="openImportModal()">Import Data</button>
+    </div>
+  </div>
+
+  <!-- ── Client Directory ──────────────────────────────────────────────── -->
+  <div class="content-card content-card--no-pad">
+    <div class="content-card__header" style="padding: 1.25rem 1.5rem 0;">
+      <div>
+        <h3 class="content-card__title">Client directory</h3>
+        <p class="content-card__subtitle">Search, edit, and email Client Hub access directly from this list.</p>
+      </div>
+      <div class="content-card__actions">
+        <div class="filter-bar" style="margin-bottom:0;">
+          <button
+            type="button"
+            class="filter-chip"
+            [class.filter-chip--active]="showMissingEmailOnly"
+            (click)="toggleMissingEmailFilter()"
+          >Missing email ({{ metricsVm.clientsMissingEmail }})</button>
         </div>
-      </ng-template>
-
-      <app-jobflow-grid
-        [data]="filteredItems"
-        [columns]="columns"
-        [pageSettings]="pageSettings"
-        [showSearchBar]="true"
-        [serverSide]="true"
-        [totalRecords]="totalClientCount"
-        [loading]="clientsLoading"
-        (commandClick)="onCommandClick($event)"
-        (searchChange)="onGridSearchChange($event)"
-        (sortChange)="onGridSortChange($event)"
-        (pageChange)="onPageChange($event)"
-      ></app-jobflow-grid>
+        <span class="status-chip status-chip--primary">Email Client Hub Link in actions menu</span>
+      </div>
     </div>
-  </section>
+
+    <ng-template #clientNameTemplate let-client>
+      <div class="client-cell">
+        <div class="client-title">{{ client.firstName }} {{ client.lastName }}</div>
+        <div class="client-meta">{{ client.emailAddress || 'Email missing' }}</div>
+      </div>
+    </ng-template>
+
+    <app-jobflow-grid
+      [data]="filteredItems"
+      [columns]="columns"
+      [pageSettings]="pageSettings"
+      [showSearchBar]="true"
+      [serverSide]="true"
+      [totalRecords]="totalClientCount"
+      [loading]="clientsLoading"
+      (commandClick)="onCommandClick($event)"
+      (searchChange)="onGridSearchChange($event)"
+      (sortChange)="onGridSortChange($event)"
+      (pageChange)="onPageChange($event)"
+    ></app-jobflow-grid>
+  </div>
+
 }
 
 @if (isDrawerOpen) {
@@ -160,7 +170,7 @@
         </div>
 
         @if (importError) {
-          <div class="alert alert-danger mt-3 mb-0">{{ importError }}</div>
+          <div class="page-alert page-alert--danger mt-3 mb-0">{{ importError }}</div>
         }
 
         @if (importPreview) {
@@ -264,7 +274,7 @@
         <p class="text-muted mb-3">Add multiple clients at once. First name is required for each row.</p>
 
         @if (bulkError) {
-          <div class="alert alert-danger mb-3">{{ bulkError }}</div>
+          <div class="page-alert page-alert--danger mb-3">{{ bulkError }}</div>
         }
 
         <div class="table-responsive">

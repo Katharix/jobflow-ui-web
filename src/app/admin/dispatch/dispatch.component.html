@@ -1,195 +1,189 @@
 <div class="page-container">
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">Dispatch</h1>
-      <p>Live command center for scheduling, crew assignment, and real-time status</p>
+  <header class="page-header">
+    <div class="page-header__title-group">
+      <h1 class="page-header__title">Dispatch</h1>
+      <p class="page-header__subtitle">Live command center for scheduling, crew assignment, and real-time status</p>
     </div>
-    <div class="page-actions">
-      <a class="btn btn-primary" routerLink="/admin/jobs">Create Dispatch Ticket</a>
+    <div class="page-header__actions">
       <a class="btn btn-outline-primary" routerLink="/admin/jobs">Open Jobs Board</a>
+      <a class="btn btn-primary" routerLink="/admin/jobs">Create Dispatch Ticket</a>
     </div>
-  </div>
+  </header>
 
-<section class="dispatch-layout">
-  <div class="card dispatch-hero mb-3">
-    <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div>
-        <p class="dispatch-hero__eyebrow mb-1">Today · {{ todaysDateLabel }}</p>
-        <h5 class="mb-1">Keep crews moving. Surface blockers early.</h5>
-        <p class="text-muted mb-0">Drag, drop, and dispatch without leaving the board.</p>
+  <!-- KPI Metrics -->
+  <div class="kpi-grid kpi-grid--4" role="list" aria-label="Dispatch metrics">
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ openTickets }}</span>
+        <span class="kpi-tile__label">Open Tickets</span>
+        <span class="kpi-tile__note">Awaiting dispatch</span>
       </div>
-
+    </div>
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--success"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ crewsOut }}</span>
+        <span class="kpi-tile__label">Crews Out</span>
+        <span class="kpi-tile__note">Currently active</span>
+      </div>
+    </div>
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--danger"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ atRiskJobs }}</span>
+        <span class="kpi-tile__label">At Risk Jobs</span>
+        <span class="kpi-tile__note">Need attention</span>
+      </div>
+    </div>
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--info"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ completedToday }}</span>
+        <span class="kpi-tile__label">Completed Today</span>
+        <span class="kpi-tile__note">{{ todaysDateLabel }}</span>
+      </div>
     </div>
   </div>
 
-  <div class="row g-3 mb-3">
-    <div class="col-6 col-lg-3">
-      <article class="card h-100 stat-card">
-        <div class="card-body">
-          <p>Open Tickets</p>
-          <h4>{{ openTickets }}</h4>
-        </div>
-      </article>
-    </div>
-    <div class="col-6 col-lg-3">
-      <article class="card h-100 stat-card">
-        <div class="card-body">
-          <p>Crews Out</p>
-          <h4>{{ crewsOut }}</h4>
-        </div>
-      </article>
-    </div>
-    <div class="col-6 col-lg-3">
-      <article class="card h-100 stat-card">
-        <div class="card-body">
-          <p>At Risk Jobs</p>
-          <h4>{{ atRiskJobs }}</h4>
-        </div>
-      </article>
-    </div>
-    <div class="col-6 col-lg-3">
-      <article class="card h-100 stat-card">
-        <div class="card-body">
-          <p>Completed Today</p>
-          <h4>{{ completedToday }}</h4>
-        </div>
-      </article>
+  <!-- Hero Banner -->
+  <div class="cta-card">
+    <div>
+      <p class="cta-card__eyebrow">Today · {{ todaysDateLabel }}</p>
+      <h3 class="cta-card__title">Keep crews moving. Surface blockers early.</h3>
+      <p class="cta-card__body">Drag, drop, and dispatch without leaving the board.</p>
     </div>
   </div>
 
   <div class="dispatch-grid">
     <div class="dispatch-main">
-      <div class="card dispatch-board mb-3">
-        <div class="card-body">
-          <div class="dispatch-board__header">
-            <div>
-              <h6 class="mb-1">Central Dispatch Board</h6>
-              <p class="text-muted small mb-0">Click a slot to schedule. Click a job to update status.</p>
-              <div class="text-muted small">Drag cards into open time slots to schedule fast.</div>
-            </div>
-            <div class="dispatch-board__filters">
-              <select class="form-select form-select-sm" [(ngModel)]="selectedStatus" (change)="onStatusFilterChange(selectedStatus)">
-                <option value="">All statuses</option>
-                <option value="Scheduled">Scheduled</option>
-                <option value="InProgress">In Progress</option>
-                <option value="Completed">Completed</option>
-                <option value="Canceled">Cancelled</option>
-                <option value="Skipped">Skipped</option>
-              </select>
-              <div class="text-muted small mt-1">Filter the board without hiding unscheduled work.</div>
-            </div>
-          </div>
 
-          <app-jobflow-calendar
-            [(selectedDate)]="selectedDate"
-            [calendarView]="calendarView"
-            [views]="['Day', 'Week', 'Month']"
-            [eventSettings]="calendarEvents"
-            [filters]="employeeFilters"
-            [selectedFilter]="selectedEmployeeId"
-            [allowExternalDrop]="true"
-            (selectedDateChange)="onCalendarDateChange($event)"
-            (calendarViewChange)="onCalendarViewChange($event)"
-            (selectedFilterChange)="onEmployeeFilterChange($event)"
-            (eventCreate)="onCalendarEventCreate($event)"
-            (eventChange)="onCalendarEventUpdate($event)"
-            (eventSelect)="onCalendarEventSelect($event)"
-            (externalEventCreate)="onExternalEventCreate($event)"
-            (dateClick)="onDateCellClick($event)"
-            >
-          </app-jobflow-calendar>
+      <!-- Dispatch Board -->
+      <div class="content-card">
+        <div class="content-card__header">
+          <div>
+            <h3 class="content-card__title">Central Dispatch Board</h3>
+            <p class="content-card__subtitle">Click a slot to schedule. Click a job to update status.</p>
+          </div>
+          <div class="dispatch-board__filters content-card__actions">
+            <select class="form-select form-select-sm" [(ngModel)]="selectedStatus" (change)="onStatusFilterChange(selectedStatus)">
+              <option value="">All statuses</option>
+              <option value="Scheduled">Scheduled</option>
+              <option value="InProgress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="Canceled">Cancelled</option>
+              <option value="Skipped">Skipped</option>
+            </select>
+          </div>
         </div>
+
+        <app-jobflow-calendar
+          [(selectedDate)]="selectedDate"
+          [calendarView]="calendarView"
+          [views]="['Day', 'Week', 'Month']"
+          [eventSettings]="calendarEvents"
+          [filters]="employeeFilters"
+          [selectedFilter]="selectedEmployeeId"
+          [allowExternalDrop]="true"
+          (selectedDateChange)="onCalendarDateChange($event)"
+          (calendarViewChange)="onCalendarViewChange($event)"
+          (selectedFilterChange)="onEmployeeFilterChange($event)"
+          (eventCreate)="onCalendarEventCreate($event)"
+          (eventChange)="onCalendarEventUpdate($event)"
+          (eventSelect)="onCalendarEventSelect($event)"
+          (externalEventCreate)="onExternalEventCreate($event)"
+          (dateClick)="onDateCellClick($event)"
+        >
+        </app-jobflow-calendar>
       </div>
 
-      <div class="card dispatch-queue">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-            <div>
-              <h6 class="mb-1">Unscheduled Queue</h6>
-              <p class="text-muted small mb-0">Drag a job onto the calendar to assign a time.</p>
-              <div class="text-muted small">Keep this list short to reduce same-day surprises.</div>
-            </div>
-            <span class="dispatch-queue__count">{{ unscheduledJobs.length }} waiting</span>
+      <!-- Unscheduled Queue -->
+      <div class="content-card">
+        <div class="content-card__header">
+          <div>
+            <h3 class="content-card__title">Unscheduled Queue</h3>
+            <p class="content-card__subtitle">Drag a job onto the calendar to assign a time.</p>
           </div>
+          <span class="dispatch-queue__count">{{ unscheduledJobs.length }} waiting</span>
+        </div>
 
-          <div #unscheduledList class="dispatch-queue__list" [class.d-none]="unscheduledJobs.length === 0">
-            @for (job of unscheduledJobs; track job.jobId) {
-              <article
-                class="dispatch-queue__item"
-                [attr.data-job-id]="job.jobId"
-                [attr.data-title]="job.jobTitle ?? 'Assignment'"
-                >
-                <div>
-                  <p class="dispatch-queue__title mb-1">{{ job.jobTitle || 'Untitled job' }}</p>
-                  <p class="dispatch-queue__subtitle mb-0">{{ job.clientName || 'Client TBD' }}</p>
-                </div>
-                <button class="btn btn-sm btn-outline-primary" type="button" (click)="scheduleUnscheduled(job)">Schedule</button>
-              </article>
-            }
-          </div>
-          <div class="dispatch-empty" [class.d-none]="unscheduledJobs.length > 0">
-            <p class="mb-1">No unscheduled jobs right now.</p>
-            <span class="text-muted small">New jobs will appear here automatically.</span>
-          </div>
-
+        <div #unscheduledList class="dispatch-queue__list" [class.d-none]="unscheduledJobs.length === 0">
+          @for (job of unscheduledJobs; track job.jobId) {
+            <article
+              class="dispatch-queue__item"
+              [attr.data-job-id]="job.jobId"
+              [attr.data-title]="job.jobTitle ?? 'Assignment'"
+            >
+              <div>
+                <p class="dispatch-queue__title mb-1">{{ job.jobTitle || 'Untitled job' }}</p>
+                <p class="dispatch-queue__subtitle mb-0">{{ job.clientName || 'Client TBD' }}</p>
+              </div>
+              <button class="btn btn-sm btn-outline-primary" type="button" (click)="scheduleUnscheduled(job)">Schedule</button>
+            </article>
+          }
+        </div>
+        <div class="dispatch-empty" [class.d-none]="unscheduledJobs.length > 0">
+          <p class="mb-1">No unscheduled jobs right now.</p>
+          <span>New jobs will appear here automatically.</span>
         </div>
       </div>
     </div>
 
     <div class="dispatch-side">
-      <div class="card mb-3">
-        <div class="card-body">
+
+      <!-- Daily Overview -->
+      <div class="content-card">
+        <div class="content-card__header">
           <div>
-            <h6 class="mb-1">Daily Dispatch Overview</h6>
-            <p class="text-muted small mb-0">Who is assigned, with gaps and overlaps.</p>
+            <h3 class="content-card__title">Daily Dispatch Overview</h3>
+            <p class="content-card__subtitle">Who is assigned, with gaps and overlaps.</p>
           </div>
-
-          <div class="dispatch-overview" [class.d-none]="overviewRows.length === 0">
-            @for (row of overviewRows; track $index) {
-              <div class="dispatch-overview__row">
-                <div>
-                  <p class="dispatch-overview__name mb-1">{{ row.employeeName }}</p>
-                  @if (row.conflicts) {
-                    <span class="dispatch-overview__meta">{{ row.conflicts }} conflict{{ row.conflicts === 1 ? '' : 's' }}</span>
-                  }
-                </div>
-                <div class="dispatch-overview__chips">
-                  @for (item of row.assignments; track item.id) {
-                    <span class="dispatch-chip">
-                      {{ item.jobTitle || 'Assignment' }}
-                    </span>
-                  }
-                </div>
-              </div>
-            }
-          </div>
-          <p class="text-muted small mb-0" [class.d-none]="overviewRows.length > 0">No assignments scheduled for this day yet.</p>
-
         </div>
+
+        <div class="dispatch-overview" [class.d-none]="overviewRows.length === 0">
+          @for (row of overviewRows; track $index) {
+            <div class="dispatch-overview__row">
+              <div>
+                <p class="dispatch-overview__name mb-1">{{ row.employeeName }}</p>
+                @if (row.conflicts) {
+                  <span class="dispatch-overview__meta">{{ row.conflicts }} conflict{{ row.conflicts === 1 ? '' : 's' }}</span>
+                }
+              </div>
+              <div class="dispatch-overview__chips">
+                @for (item of row.assignments; track item.id) {
+                  <span class="dispatch-chip">
+                    {{ item.jobTitle || 'Assignment' }}
+                  </span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+        <p class="dispatch-empty-text" [class.d-none]="overviewRows.length > 0">No assignments scheduled for this day yet.</p>
       </div>
 
-      <div class="card">
-        <div class="card-body d-grid gap-3">
+      <!-- Next Best Actions -->
+      <div class="content-card">
+        <div class="content-card__header">
           <div>
-            <h6 class="mb-1">Next Best Actions</h6>
-            <p class="text-muted small mb-0">Simple, high-value prompts for dispatch leads.</p>
+            <h3 class="content-card__title">Next Best Actions</h3>
+            <p class="content-card__subtitle">Simple, high-value prompts for dispatch leads.</p>
           </div>
+        </div>
 
-          <ul class="dispatch-actions mb-0">
-            @for (action of nextActions; track action) {
-              <li>{{ action }}</li>
-            }
-          </ul>
+        <ul class="dispatch-actions">
+          @for (action of nextActions; track action) {
+            <li>{{ action }}</li>
+          }
+        </ul>
 
-          <div class="d-grid gap-2 pt-2">
-            <a class="btn btn-outline-primary" routerLink="/admin/messaging">Message Crews</a>
-            <a class="btn btn-outline-primary" routerLink="/admin/jobs">Open Jobs Board</a>
-          </div>
+        <div class="dispatch-link-grid">
+          <a class="btn btn-outline-primary" routerLink="/admin/messaging">Message Crews</a>
+          <a class="btn btn-outline-primary" routerLink="/admin/jobs">Open Jobs Board</a>
         </div>
       </div>
     </div>
   </div>
-</section>
 
 <!-- Date Context Menu -->
 @if (contextMenu.visible) {

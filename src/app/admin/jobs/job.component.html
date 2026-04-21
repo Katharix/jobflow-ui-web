@@ -1,115 +1,123 @@
 <div class="page-container">
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">{{ 'admin.jobs.title' | translate }}</h1>
-      <p>{{ 'admin.jobs.subtitle' | translate }}</p>
+  <header class="page-header">
+    <div class="page-header__title-group">
+      <h1 class="page-header__title">{{ 'admin.jobs.title' | translate }}</h1>
+      <p class="page-header__subtitle">{{ 'admin.jobs.subtitle' | translate }}</p>
     </div>
-    <div class="page-actions">
+    <div class="page-header__actions">
       <button type="button" class="btn btn-primary" (click)="openAddJob()">
         {{ 'admin.jobs.cta.button' | translate }}
       </button>
     </div>
-  </div>
+  </header>
 
 @if (error) {
-  <div class="alert alert-danger mb-3">
+  <div class="page-alert page-alert--danger">
     {{ error }}
   </div>
 }
 
 @if (isDrawerOpen) {
   <div class="content-card">
-    <div class="drawer-content__intro">
-      <p class="drawer-content__eyebrow">{{ editingJob ? 'Update job' : 'New job' }}</p>
-      <h3 class="drawer-content__heading">{{ 'admin.jobs.drawer.addTitle' | translate }}</h3>
+    <div class="inline-card-header">
+      <h3>{{ editingJob ? ('admin.jobs.drawer.updateTitle' | translate) : ('admin.jobs.drawer.addTitle' | translate) }}</h3>
+      <button class="close-btn" (click)="onCreateCancelled()">×</button>
     </div>
     <app-job-create [job]="editingJob" (saved)="onCreateSaved()" (cancelled)="onCreateCancelled()"/>
   </div>
 }
 
-<section class="jobflow-hero">
-  <div class="jobflow-hero__intro">
-    <span class="jobflow-hero__eyebrow">{{ 'admin.jobs.hero.eyebrow' | translate }}</span>
-    <p>{{ 'admin.jobs.hero.subtitle' | translate }}</p>
-  </div>
-  <div class="jobflow-hero__metrics">
-    <div class="jobflow-metric">
-      <span class="jobflow-metric__label">{{ 'admin.jobs.metrics.total' | translate }}</span>
-      <span class="jobflow-metric__value">{{ totalJobs$ | async }}</span>
-    </div>
-    <div class="jobflow-metric">
-      <span class="jobflow-metric__label">{{ 'admin.jobs.metrics.unscheduled' | translate }}</span>
-      <span class="jobflow-metric__value">{{ unscheduledJobs.length }}</span>
-    </div>
-    <div class="jobflow-metric">
-      <span class="jobflow-metric__label">{{ 'admin.jobs.metrics.inProgress' | translate }}</span>
-      <span class="jobflow-metric__value">{{ inProgressCount }}</span>
-    </div>
-    <div class="jobflow-metric">
-      <span class="jobflow-metric__label">{{ 'admin.jobs.metrics.completed' | translate }}</span>
-      <span class="jobflow-metric__value">{{ completedCount }}</span>
+<!-- KPI Metrics -->
+<div class="kpi-grid kpi-grid--4" role="list" aria-label="Job metrics">
+  <div class="kpi-tile" role="listitem">
+    <div class="kpi-tile__accent"></div>
+    <div class="kpi-tile__body">
+      <span class="kpi-tile__value">{{ totalJobs$ | async }}</span>
+      <span class="kpi-tile__label">{{ 'admin.jobs.metrics.total' | translate }}</span>
+      <span class="kpi-tile__note">{{ 'admin.jobs.hero.eyebrow' | translate }}</span>
     </div>
   </div>
-  <div class="jobflow-cta">
-    <div>
-      <p class="jobflow-cta__eyebrow">{{ 'admin.jobs.cta.eyebrow' | translate }}</p>
-      <h3>{{ 'admin.jobs.cta.title' | translate }}</h3>
-      <p>{{ 'admin.jobs.cta.subtitle' | translate }}</p>
+  <div class="kpi-tile" role="listitem">
+    <div class="kpi-tile__accent kpi-tile__accent--warning"></div>
+    <div class="kpi-tile__body">
+      <span class="kpi-tile__value">{{ unscheduledJobs.length }}</span>
+      <span class="kpi-tile__label">{{ 'admin.jobs.metrics.unscheduled' | translate }}</span>
+      <span class="kpi-tile__note">Need scheduling</span>
     </div>
+  </div>
+  <div class="kpi-tile" role="listitem">
+    <div class="kpi-tile__accent kpi-tile__accent--info"></div>
+    <div class="kpi-tile__body">
+      <span class="kpi-tile__value">{{ inProgressCount }}</span>
+      <span class="kpi-tile__label">{{ 'admin.jobs.metrics.inProgress' | translate }}</span>
+      <span class="kpi-tile__note">Active right now</span>
+    </div>
+  </div>
+  <div class="kpi-tile" role="listitem">
+    <div class="kpi-tile__accent kpi-tile__accent--success"></div>
+    <div class="kpi-tile__body">
+      <span class="kpi-tile__value">{{ completedCount }}</span>
+      <span class="kpi-tile__label">{{ 'admin.jobs.metrics.completed' | translate }}</span>
+      <span class="kpi-tile__note">Finished jobs</span>
+    </div>
+  </div>
+</div>
+
+<!-- CTA Card -->
+<div class="cta-card">
+  <div>
+    <p class="cta-card__eyebrow">{{ 'admin.jobs.cta.eyebrow' | translate }}</p>
+    <h3 class="cta-card__title">{{ 'admin.jobs.cta.title' | translate }}</h3>
+    <p class="cta-card__body">{{ 'admin.jobs.cta.subtitle' | translate }}</p>
+  </div>
+  <div class="cta-card__actions">
     <button type="button" class="btn btn-primary" (click)="openAddJob()">
       {{ 'admin.jobs.cta.button' | translate }}
     </button>
   </div>
-</section>
+</div>
 
-<section class="jobflow-filters">
-  <div class="jobflow-filters__group">
-    <label for="jobFilterStatus">{{ 'admin.jobs.filters.status' | translate }}</label>
-    <select id="jobFilterStatus" class="form-select" [(ngModel)]="selectedStatusFilter" (change)="onFiltersChanged()">
-      <option value="">{{ 'admin.jobs.filters.allStatuses' | translate }}</option>
-      @if (statusOptionsReady) {
-        @for (status of statusOptions; track status.statusKey) {
-          <option [value]="status.statusKey">
-            {{ status.label }}
-          </option>
+<!-- Filters -->
+<div class="content-card jobs-filter-card">
+  <div class="jobs-filters">
+    <div class="jobs-filter-group">
+      <label class="jobs-filter-group__label" for="jobFilterStatus">{{ 'admin.jobs.filters.status' | translate }}</label>
+      <select id="jobFilterStatus" class="form-select form-select-sm" [(ngModel)]="selectedStatusFilter" (change)="onFiltersChanged()">
+        <option value="">{{ 'admin.jobs.filters.allStatuses' | translate }}</option>
+        @if (statusOptionsReady) {
+          @for (status of statusOptions; track status.statusKey) {
+            <option [value]="status.statusKey">{{ status.label }}</option>
+          }
         }
-      }
-    </select>
-    <small class="text-muted">{{ 'admin.jobs.filters.statusHint' | translate }}</small>
+      </select>
+    </div>
+    <div class="jobs-filter-group">
+      <label class="jobs-filter-group__label" for="jobFilterClient">{{ 'admin.jobs.filters.client' | translate }}</label>
+      <select id="jobFilterClient" class="form-select form-select-sm" [(ngModel)]="selectedClientFilter" (change)="onFiltersChanged()">
+        <option value="">{{ 'admin.jobs.filters.allClients' | translate }}</option>
+        @for (client of clientOptions; track client.value) {
+          <option [value]="client.value">{{ client.label }}</option>
+        }
+      </select>
+    </div>
+    <div class="jobs-filter-group">
+      <label class="jobs-filter-group__label" for="jobFilterAssignee">{{ 'admin.jobs.filters.assignee' | translate }}</label>
+      <select id="jobFilterAssignee" class="form-select form-select-sm" [(ngModel)]="selectedAssigneeFilter" (change)="onFiltersChanged()">
+        <option value="">{{ 'admin.jobs.filters.allAssignees' | translate }}</option>
+        @for (assignee of assigneeOptions; track assignee.value) {
+          <option [value]="assignee.value">{{ assignee.label }}</option>
+        }
+      </select>
+    </div>
+    <button class="btn btn-link btn-sm jobs-filters__clear" type="button" (click)="clearFilters()">
+      {{ 'admin.jobs.filters.clear' | translate }}
+    </button>
   </div>
-  <div class="jobflow-filters__group">
-    <label for="jobFilterClient">{{ 'admin.jobs.filters.client' | translate }}</label>
-    <select id="jobFilterClient" class="form-select" [(ngModel)]="selectedClientFilter" (change)="onFiltersChanged()">
-      <option value="">{{ 'admin.jobs.filters.allClients' | translate }}</option>
-      @for (client of clientOptions; track client.value) {
-        <option [value]="client.value">
-          {{ client.label }}
-        </option>
-      }
-    </select>
-    <small class="text-muted">{{ 'admin.jobs.filters.clientHint' | translate }}</small>
+  <div class="page-pagination">
+    <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBack || jobsLoading" (click)="onPrevPage()">Previous</button>
+    <button type="button" class="btn btn-sm btn-outline-primary" [disabled]="!nextCursor || jobsLoading" (click)="onNextPage()">Next</button>
   </div>
-  <div class="jobflow-filters__group">
-    <label for="jobFilterAssignee">{{ 'admin.jobs.filters.assignee' | translate }}</label>
-    <select id="jobFilterAssignee" class="form-select" [(ngModel)]="selectedAssigneeFilter" (change)="onFiltersChanged()">
-      <option value="">{{ 'admin.jobs.filters.allAssignees' | translate }}</option>
-      @for (assignee of assigneeOptions; track assignee.value) {
-        <option [value]="assignee.value">
-          {{ assignee.label }}
-        </option>
-      }
-    </select>
-    <small class="text-muted">{{ 'admin.jobs.filters.assigneeHint' | translate }}</small>
-  </div>
-  <button class="btn btn-link jobflow-filters__clear" type="button" (click)="clearFilters()">
-    {{ 'admin.jobs.filters.clear' | translate }}
-  </button>
-</section>
-
-<section class="list-pagination-controls">
-  <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBack || jobsLoading" (click)="onPrevPage()">Previous</button>
-  <button type="button" class="btn btn-sm btn-outline-primary" [disabled]="!nextCursor || jobsLoading" (click)="onNextPage()">Next</button>
-</section>
+</div>
 
 <section class="jobflow-lanes">
   <div class="jobflow-lanes__main">
@@ -301,10 +309,12 @@
     </aside>
   </section>
 
-  <section class="jobflow-table">
-    <div class="jobflow-table__header">
-      <h5>{{ 'admin.jobs.table.title' | translate }}</h5>
-      <p>{{ 'admin.jobs.table.subtitle' | translate }}</p>
+  <section class="jobflow-table content-card">
+    <div class="content-card__header">
+      <div>
+        <h3 class="content-card__title">{{ 'admin.jobs.table.title' | translate }}</h3>
+        <p class="content-card__subtitle">{{ 'admin.jobs.table.subtitle' | translate }}</p>
+      </div>
     </div>
 
     <ng-template #jobTitleTemplate let-job>
