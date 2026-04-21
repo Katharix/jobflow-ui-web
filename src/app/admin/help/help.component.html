@@ -13,16 +13,22 @@
           Browse feature guides, search FAQs, or reach out to our support team.
         </p>
       </div>
-      <div class="search-bar">
-        <input
-          id="helpSearch"
-          pInputText
-          class="w-100"
-          placeholder="Search guides and FAQs..."
-          [(ngModel)]="searchTerm"
-        />
+      <div class="search-bar-wrapper">
+        <div class="search-bar">
+          <i class="ti ti-search search-icon"></i>
+          <input
+            id="helpSearch"
+            pInputText
+            class="search-input"
+            placeholder="Search guides and FAQs..."
+            [(ngModel)]="searchTerm"
+          />
+          @if (searchTerm.trim()) {
+            <button pButton type="button" icon="ti ti-x" severity="secondary" [text]="true" (click)="clearSearch()" aria-label="Clear search"></button>
+          }
+        </div>
         @if (searchTerm.trim()) {
-          <button pButton type="button" icon="ti ti-x" severity="secondary" [text]="true" (click)="clearSearch()" aria-label="Clear search"></button>
+          <span class="search-results-badge">{{ totalResults }} result{{ totalResults === 1 ? '' : 's' }}</span>
         }
       </div>
     </div>
@@ -33,13 +39,6 @@
   } @else if (error) {
     <p-message severity="error" [text]="error"></p-message>
   } @else {
-    <!-- Search results indicator -->
-    @if (searchTerm.trim()) {
-      <div class="search-results-bar">
-        <span class="text-muted">{{ totalResults }} result{{ totalResults === 1 ? '' : 's' }} for "{{ searchTerm.trim() }}"</span>
-      </div>
-    }
-
     <p-tabs [(value)]="activeTab">
       <p-tablist>
         <p-tab value="0">
