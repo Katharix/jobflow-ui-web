@@ -1,37 +1,33 @@
-<div class="cq" role="region" aria-label="Customer queue">
-  <div class="cq__head">
-    <span class="cq__title">
-      <i class="ti ti-list-numbers" aria-hidden="true"></i>
-      Queue
-    </span>
-    @if (customers.length > 0) {
-      <span class="cq__count" aria-label="{{ customers.length }} waiting">{{ customers.length }}</span>
-    }
-  </div>
-
-  <div class="cq__list" role="list">
-    @if (isLoading) {
-      @for (i of [1,2]; track i) {
-        <div class="cq-skel">
-          <div class="cq-skel__avatar sh-skeleton"></div>
-          <div class="cq-skel__body">
-            <div class="sh-skeleton" style="width:60%;height:0.75rem;"></div>
-            <div class="sh-skeleton" style="width:40%;height:0.65rem;margin-top:0.3rem;"></div>
-          </div>
+<div class="cq-shell" role="region" aria-label="Customer queue">
+  @if (isLoading) {
+    @for (i of [1,2]; track i) {
+      <div class="cq-item">
+        <div class="cq-avatar sh-skeleton" style="background: transparent;"></div>
+        <div class="cq-info">
+          <div class="sh-skeleton" style="width: 60%; height: 0.75rem;"></div>
+          <div class="sh-skeleton" style="width: 40%; height: 0.65rem; margin-top: 0.3rem;"></div>
         </div>
-      }
-    } @else if (customers.length === 0) {
-      <p class="cq__empty">Queue is clear.</p>
-    } @else {
-      @for (customer of customers; track customer.id) {
-        <div role="listitem">
-          <app-queue-card
-            [customer]="customer"
-            [compact]="true"
-            (pickUp)="pickUp.emit($event)"
-          ></app-queue-card>
-        </div>
-      }
+      </div>
     }
-  </div>
+  } @else if (customers.length === 0) {
+    <p style="text-align: center; padding: 1.25rem; color: var(--jf-text-muted); font-size: 0.875rem;">Queue is clear.</p>
+  } @else {
+    @for (customer of customers; track customer.id) {
+      <div
+        class="cq-item"
+        role="listitem"
+        tabindex="0"
+        (click)="pickUp.emit(customer)"
+        (keydown.enter)="pickUp.emit(customer)"
+        (keydown.space)="pickUp.emit(customer); $event.preventDefault()"
+      >
+        <div class="cq-avatar">{{ customer.avatarInitials || customer.name.charAt(0) }}</div>
+        <div class="cq-info">
+          <span class="cq-name">{{ customer.name }}</span>
+          <span class="cq-channel">{{ customer.organizationName || 'Visitor' }}</span>
+        </div>
+        <div class="cq-wait">{{ customer.waitMinutes }}m</div>
+      </div>
+    }
+  }
 </div>

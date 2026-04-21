@@ -1,76 +1,12 @@
-$border: 1px solid rgba(188, 191, 204, 0.2);
-$radius: 14px;
-
-.sh-sessions {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.sh-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  background: #ffffff;
-  border: $border;
-  border-radius: $radius;
-  padding: 1.15rem 1.25rem;
-}
-
-.sh-composer {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-  background: #ffffff;
-  border: $border;
-  border-radius: $radius;
-  padding: 1.15rem 1.25rem;
-  align-items: end;
-}
-
-.sh-org-select,
-.sh-agent-select {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0.6rem;
-  align-items: center;
-}
-
-.sh-data {
-  background: #ffffff;
-  border: $border;
-  border-radius: $radius;
-  padding: 1.15rem;
-}
+.sh-session-customer { font-weight: 600; color: var(--jf-text); }
+.sh-session-agent { font-size: 0.8125rem; color: var(--jf-text-muted); }
+.sh-session-duration { font-size: 0.8125rem; font-weight: 500; color: var(--jf-text); }
 
 .sh-grid-actions {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   justify-content: flex-end;
-}
-
-.sh-empty {
-  display: grid;
-  place-items: center;
-  min-height: 220px;
-  color: var(--jf-muted);
-}
-
-.status-chip {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.3rem 0.6rem;
-  border-radius: 999px;
-  white-space: nowrap;
-
-  &--live     { background: rgba(16, 185, 129, 0.14); color: #059669; }
-  &--queued   { background: rgba(63, 103, 218, 0.1);  color: #3F67DA; }
-  &--followup { background: rgba(249, 115, 22, 0.14); color: #c2410c; }
-  &--ended    { background: rgba(188, 191, 204, 0.2); color: #6E7180; }
 }
 
 .sh-modal {
@@ -98,7 +34,6 @@ $radius: 14px;
   width: min(520px, 90vw);
   display: grid;
   gap: 1rem;
-  box-shadow: 0 24px 50px rgba(30, 30, 36, 0.2);
 }
 
 .sh-modal__header {
@@ -108,21 +43,24 @@ $radius: 14px;
 }
 
 .sh-modal__list {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  max-height: 280px;
-  overflow: auto;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .sh-modal__item {
-  border: $border;
-  border-radius: 10px;
-  padding: 0.7rem 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--jf-border);
+  border-radius: var(--jf-radius-sm);
+  background: transparent;
   text-align: left;
-  background: #FAFBFF;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.2s;
 
-  &:hover { background: #D3D6E0; }
+  &:hover {
+    background: var(--jf-primary-soft);
+  }
 }
 

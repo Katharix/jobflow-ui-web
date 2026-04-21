@@ -1,71 +1,64 @@
-<app-page-header
-  [title]="'support.sessions.header.title' | translate"
-  [subtitle]="'support.sessions.header.subtitle' | translate"
-></app-page-header>
-
-<section class="sh-sessions">
-  <div class="sh-toolbar">
-    <div>
-      <h5 class="support-mb-1">{{ 'support.sessions.queueTitle' | translate }}</h5>
-      <p class="support-muted">{{ 'support.sessions.queueSubtitle' | translate }}</p>
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-header__title-group">
+      <h1 class="page-header__title">Sessions</h1>
+      <p class="page-header__subtitle">Chat session history</p>
     </div>
-    <button
-      pButton
-      type="button"
-      class="p-button-primary"
-      (click)="createSession()"
-    >{{ 'support.sessions.startSession' | translate }}</button>
+    <div class="page-header__actions">
+      <button
+        pButton
+        type="button"
+        class="p-button-primary"
+        (click)="createSession()"
+      >{{ 'support.sessions.startSession' | translate }}</button>
+    </div>
   </div>
 
-  <div class="sh-composer">
-    <div>
-      <label class="form-label" for="support-session-org">{{ 'support.common.organization' | translate }}</label>
-      <div class="sh-org-select">
+  <div class="filter-bar">
+    <div class="filter-bar__group sh-composer">
+      <div>
+        <div class="sh-org-select" style="display: flex; gap: 0.5rem;">
+          <p-select
+            [options]="organizationOptions"
+            optionLabel="label"
+            optionValue="value"
+            inputId="support-session-org"
+            [(ngModel)]="selectedOrganizationId"
+            [placeholder]="'support.common.selectOrganization' | translate"
+          ></p-select>
+          <button
+            pButton
+            type="button"
+            class="p-button-outlined p-button-secondary"
+            (click)="openOrgModal()"
+          >{{ 'support.common.find' | translate }}</button>
+        </div>
+      </div>
+      <div>
+        <div class="sh-agent-select" style="display: flex; gap: 0.5rem;">
+          <input
+            pInputText
+            id="support-session-agent"
+            [(ngModel)]="newAgentName"
+            [placeholder]="'support.sessions.agentPlaceholder' | translate"
+          />
+          <button
+            pButton
+            type="button"
+            class="p-button-outlined p-button-secondary"
+            (click)="assignToMe()"
+          >{{ 'support.sessions.assignMe' | translate }}</button>
+        </div>
+      </div>
+      <div>
         <p-select
-          [options]="organizationOptions"
+          [options]="statusOptions"
           optionLabel="label"
           optionValue="value"
-          inputId="support-session-org"
-          [(ngModel)]="selectedOrganizationId"
-          [placeholder]="'support.common.selectOrganization' | translate"
-          styleClass="support-w-100"
+          inputId="support-session-status"
+          [(ngModel)]="newStatus"
         ></p-select>
-        <button
-          pButton
-          type="button"
-          class="p-button-outlined p-button-secondary"
-          (click)="openOrgModal()"
-        >{{ 'support.common.find' | translate }}</button>
       </div>
-    </div>
-    <div>
-      <label class="form-label" for="support-session-agent">{{ 'support.sessions.agentLabel' | translate }}</label>
-      <div class="sh-agent-select">
-        <input
-          pInputText
-          id="support-session-agent"
-          class="support-w-100"
-          [(ngModel)]="newAgentName"
-          [placeholder]="'support.sessions.agentPlaceholder' | translate"
-        />
-        <button
-          pButton
-          type="button"
-          class="p-button-outlined p-button-secondary"
-          (click)="assignToMe()"
-        >{{ 'support.sessions.assignMe' | translate }}</button>
-      </div>
-    </div>
-    <div>
-      <label class="form-label" for="support-session-status">{{ 'support.sessions.statusLabel' | translate }}</label>
-      <p-select
-        [options]="statusOptions"
-        optionLabel="label"
-        optionValue="value"
-        inputId="support-session-status"
-        [(ngModel)]="newStatus"
-        styleClass="support-w-100"
-      ></p-select>
     </div>
   </div>
 
@@ -74,7 +67,7 @@
   }
 
   <ng-template #statusTemplate let-session>
-    <span [ngClass]="getSessionStatusClass(session.status)">
+    <span class="status-chip" [ngClass]="getSessionStatusClass(session.status)">
       {{ formatSessionStatus(session.status) }}
     </span>
   </ng-template>
@@ -97,29 +90,36 @@
     </div>
   </ng-template>
 
-  <div class="sh-data">
+  <div class="content-card content-card--no-pad">
     @if (isLoading) {
-      <div class="sh-empty">
+      <div class="empty-state">
         <p>{{ 'support.sessions.loading' | translate }}</p>
       </div>
     } @else if (error) {
-      <div class="sh-empty">
+      <div class="empty-state">
         <p-message severity="error" [text]="error"></p-message>
       </div>
     } @else {
-      <app-jobflow-grid
-        [data]="sessions"
-        [columns]="columns"
-        [allowPaging]="true"
-        [allowSorting]="true"
-        [allowFiltering]="false"
-        [showSearchBar]="true"
-        [pageSettings]="pageSettings"
-        [height]="520"
-      ></app-jobflow-grid>
+      @if (sessions.length === 0) {
+        <div class="empty-state">
+          <h4>No sessions found</h4>
+          <p>Sessions will appear here once customers join the queue.</p>
+        </div>
+      } @else {
+        <app-jobflow-grid
+          [data]="sessions"
+          [columns]="columns"
+          [allowPaging]="true"
+          [allowSorting]="true"
+          [allowFiltering]="false"
+          [showSearchBar]="true"
+          [pageSettings]="pageSettings"
+          [height]="520"
+        ></app-jobflow-grid>
+      }
     }
   </div>
-</section>
+</div>
 
 @if (isOrgModalOpen) {
   <div class="sh-modal">

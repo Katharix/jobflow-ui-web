@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewChecked, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewChecked, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -20,6 +20,7 @@ export interface ChatMessage {
   imports: [CommonModule, FormsModule],
   templateUrl: './chat-window.component.html',
   styleUrl: './chat-window.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChatWindowComponent implements OnChanges, AfterViewChecked {
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef<HTMLElement>;

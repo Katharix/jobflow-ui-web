@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Auth, signInWithEmailAndPassword, signOut } from '@angular/fire/auth';
@@ -24,11 +24,13 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   ],
   templateUrl: './support-hub-login.component.html',
   styleUrl: './support-hub-login.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportHubLoginComponent {
   private auth = inject(Auth);
   private router = inject(Router);
   private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('form') form?: NgForm;
 
@@ -67,18 +69,21 @@ export class SupportHubLoginComponent {
           await signOut(this.auth);
           this.error = 'Access denied. Only Katharix staff can access the Support Hub.';
           this.isSubmitting = false;
+          this.cdr.markForCheck();
           return;
         }
       } catch {
         await signOut(this.auth);
         this.error = 'Unable to verify your access. Please try again.';
         this.isSubmitting = false;
+        this.cdr.markForCheck();
         return;
       }
       await this.router.navigate(['/support-hub/dashboard']);
     } catch (err: unknown) {
       this.error = this.mapFirebaseAuthError(err);
       this.isSubmitting = false;
+      this.cdr.markForCheck();
     }
   }
 

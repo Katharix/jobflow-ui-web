@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -15,6 +15,7 @@ import { QueueCardComponent, QueueCustomer } from '../../components/queue-card/q
   imports: [CommonModule, RouterLink, ChatWindowComponent, QueueCardComponent],
   templateUrl: './support-hub-live-chat.component.html',
   styleUrl: './support-hub-live-chat.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportHubLiveChatComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
@@ -61,6 +62,7 @@ export class SupportHubLiveChatComponent implements OnInit, OnDestroy {
           sessionId: session.id,
           sessionStartedAt: session.startedAt ?? session.createdAt
         };
+        this.cdr.markForCheck();
       }
     });
   }
@@ -68,6 +70,7 @@ export class SupportHubLiveChatComponent implements OnInit, OnDestroy {
   private loadMessages(): void {
     this.chatApi.getMessages(this.sessionId).subscribe(msgs => {
       this.messages = msgs.map(m => this.mapToViewMessage(m));
+      this.cdr.markForCheck();
     });
   }
 
@@ -85,6 +88,7 @@ export class SupportHubLiveChatComponent implements OnInit, OnDestroy {
             avatarInitials: item.customerName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
             avatarColor: undefined
           }));
+        this.cdr.markForCheck();
       }
     });
   }
@@ -97,10 +101,12 @@ export class SupportHubLiveChatComponent implements OnInit, OnDestroy {
     this.signalR.messages$.pipe(takeUntil(this.destroy$)).subscribe(msg => {
       this.messages = [...this.messages, this.mapToViewMessage(msg)];
       this.soundService.playNewMessageSound();
+      this.cdr.markForCheck();
     });
 
     this.signalR.userTyping$.pipe(takeUntil(this.destroy$)).subscribe(({ isTyping }) => {
       this.isTyping = isTyping;
+      this.cdr.markForCheck();
     });
 
     this.signalR.queueUpdated$.pipe(takeUntil(this.destroy$)).subscribe(() => {

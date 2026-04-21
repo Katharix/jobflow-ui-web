@@ -1,147 +1,63 @@
-@use "admin/admin-styles";
+.sh-audit-list { padding: 0.5rem 0; }
+.sh-audit-entry {
+  display: flex; align-items: flex-start; gap: 0.875rem;
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid var(--jf-border);
+  &:last-child { border-bottom: none; }
+  &:hover { background: rgba(63,103,218,0.02); }
+}
+.sh-audit-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--jf-primary-soft); color: var(--jf-primary); display: flex; align-items: center; justify-content: center; font-size: 0.875rem; flex-shrink: 0; margin-top: 2px; }
+.sh-audit-body { flex: 1; }
+.sh-audit-action { font-size: 0.875rem; color: var(--jf-text); font-weight: 500; }
+.sh-audit-user { font-size: 0.8125rem; color: var(--jf-text-muted); }
+.sh-audit-time { font-size: 0.75rem; color: var(--jf-text-section); margin-top: 0.125rem; }
 
-$border: 1px solid rgba(188, 191, 204, 0.2);
-$radius: 14px;
+.sh-audit__row--fail {
+  border-left: 3px solid var(--jf-danger);
+}
 
-.sh-audit {
+.sh-audit__details {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  font-size: 0.78rem;
+  color: #6e7180;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 240px;
+  overflow-y: auto;
+  font-family: 'Courier New', monospace;
+}
+
+.sh-audit__empty {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 3rem 1rem;
+  color: #9da2b3;
 
-  &__filters {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
+  i {
+    font-size: 2rem;
   }
+}
 
-  &__select {
-    min-width: 170px;
-  }
+.sh-audit__more {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 0;
+}
 
-  &__table-wrap {
-    background: #fff;
-    border: $border;
-    border-radius: $radius;
-    overflow-x: auto;
-  }
+.sh-audit__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  color: #9da2b3;
+}
 
-  &__table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.82rem;
-
-    th,
-    td {
-      padding: 0.6rem 0.75rem;
-      text-align: left;
-      border-bottom: $border;
-      white-space: nowrap;
-    }
-
-    th {
-      background: #fafbff;
-      color: #6e7180;
-      font-weight: 600;
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-
-    tbody tr:hover {
-      background: rgba(63, 103, 218, 0.03);
-    }
-  }
-
-  &__row--fail {
-    background: rgba(220, 53, 69, 0.04);
-  }
-
-  &__cell--time {
-    color: #9da2b3;
-    font-variant-numeric: tabular-nums;
-  }
-
-  &__cell--path {
-    max-width: 280px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  &__cell--user {
-    color: #9da2b3;
-    font-family: monospace;
-    font-size: 0.78rem;
-  }
-
-  &__cell--ip {
-    color: #9da2b3;
-    font-family: monospace;
-    font-size: 0.78rem;
-  }
-
-  &__expand {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #6e7180;
-    padding: 0.2rem 0.4rem;
-    border-radius: 6px;
-
-    &:hover {
-      background: rgba(63, 103, 218, 0.08);
-      color: #3f67da;
-    }
-  }
-
-  &__details-row td {
-    padding: 0;
-    background: #fafbff;
-  }
-
-  &__details {
-    margin: 0;
-    padding: 0.75rem 1rem;
-    font-size: 0.78rem;
-    color: #6e7180;
-    white-space: pre-wrap;
-    word-break: break-all;
-    max-height: 240px;
-    overflow-y: auto;
-    font-family: 'Courier New', monospace;
-  }
-
-  &__empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 3rem 1rem;
-    color: #9da2b3;
-
-    i {
-      font-size: 2rem;
-    }
-  }
-
-  &__more {
-    display: flex;
-    justify-content: center;
-    padding: 0.5rem 0;
-  }
-
-  &__loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 2rem;
-    color: #9da2b3;
-  }
-
-  &__spinner {
-    animation: sh-spin 1s linear infinite;
-  }
+.sh-audit__spinner {
+  animation: sh-spin 1s linear infinite;
 }
 
 .sh-method {

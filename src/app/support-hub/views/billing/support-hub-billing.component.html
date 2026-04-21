@@ -1,68 +1,87 @@
-<app-page-header
-  title="Billing Ops"
-  subtitle="Support-side billing visibility for subscriptions, payments, and disputes."
-></app-page-header>
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-header__title-group">
+      <h1 class="page-header__title">Billing</h1>
+      <p class="page-header__subtitle">Subscription & payment history</p>
+    </div>
+  </div>
 
-<section class="sh-billing">
-  <div class="sh-toolbar">
-    <label for="orgSelect">Organization</label>
-    <select
-      id="orgSelect"
-      [(ngModel)]="selectedOrganizationId"
-      (change)="loadOrganizationBilling()"
-    >
-      @for (org of organizations; track org.id) {
-        <option [value]="org.id">{{ org.organizationName || 'Unknown org' }}</option>
-      }
-    </select>
+  <div class="filter-bar">
+    <div class="filter-bar__group" style="align-items: center; gap: 1rem;">
+      <label for="orgSelect" style="font-size: 0.875rem; font-weight: 600;">Organization</label>
+      <select
+        id="orgSelect"
+        [(ngModel)]="selectedOrganizationId"
+        (change)="loadOrganizationBilling()"
+        style="padding: 0.5rem; border-radius: var(--jf-radius-sm); border: 1px solid var(--jf-border); min-width: 200px; font-family: inherit;"
+      >
+        @for (org of organizations; track org.id) {
+          <option [value]="org.id">{{ org.organizationName || 'Unknown org' }}</option>
+        }
+      </select>
+    </div>
   </div>
 
   @if (loading) {
-    <div class="sh-card">Loading billing data...</div>
+    <div class="content-card">Loading billing data...</div>
   }
 
   @if (!loading && financialSummary) {
-    <div class="sh-summary">
-      <div class="sh-card">
-        <span>Plan</span>
-        <strong>{{ financialSummary.subscriptionPlan || 'Unknown' }}</strong>
+    <!-- Plan Summary Card -->
+    <div class="content-card sh-billing-plan">
+      <div class="sh-billing-plan__header">
+        <div>
+          <div class="sh-billing-plan__name">{{ financialSummary.subscriptionPlan || 'Unknown' }}</div>
+          <div class="sh-billing-plan__renewal">Status: {{ financialSummary.subscriptionStatus || 'Unknown' }}</div>
+        </div>
+        <span class="status-chip status-chip--success">Active</span>
       </div>
-      <div class="sh-card">
-        <span>Status</span>
-        <strong>{{ financialSummary.subscriptionStatus || 'Unknown' }}</strong>
+    </div>
+
+    <!-- Usage KPIs -->
+    <div class="kpi-grid kpi-grid--3">
+      <div class="kpi-tile">
+        <div class="kpi-tile__body">
+          <div class="kpi-tile__label">Net collected</div>
+          <div class="kpi-tile__value">{{ financialSummary.netCollected | currency }}</div>
+        </div>
       </div>
-      <div class="sh-card">
-        <span>Net collected</span>
-        <strong>{{ financialSummary.netCollected | currency }}</strong>
+      <div class="kpi-tile">
+        <div class="kpi-tile__body">
+          <div class="kpi-tile__label">Outstanding</div>
+          <div class="kpi-tile__value">{{ financialSummary.outstanding | currency }}</div>
+        </div>
       </div>
-      <div class="sh-card">
-        <span>Outstanding</span>
-        <strong>{{ financialSummary.outstanding | currency }}</strong>
-      </div>
-      <div class="sh-card">
-        <span>Disputes</span>
-        <strong>{{ financialSummary.disputeCount }}</strong>
+      <div class="kpi-tile">
+        <div class="kpi-tile__body">
+          <div class="kpi-tile__label">Disputes</div>
+          <div class="kpi-tile__value">{{ financialSummary.disputeCount }}</div>
+        </div>
       </div>
     </div>
   }
 
-  <div class="sh-grid">
-    <section class="sh-panel">
-      <div class="sh-panel__head">
-        <h5>Recent Payment Events</h5>
+  <div class="sh-billing-tables-grid">
+    <div class="content-card content-card--no-pad sh-billing-table-card">
+      <div class="content-card__header" style="display:flex; justify-content: space-between; align-items: center;">
+        <h2 class="content-card__title">Recent Payment Events</h2>
         <div class="sh-page-controls">
           <button [disabled]="!canGoBackPayments || paymentsLoading" (click)="onPrevPaymentsPage()">Previous</button>
           <button [disabled]="!paymentNextCursor || paymentsLoading" (click)="onNextPaymentsPage()">Next</button>
         </div>
       </div>
+      
       @if (paymentsLoading) {
-        <p class="sh-empty">Loading payment events...</p>
+        <div class="empty-state">Loading payment events...</div>
       }
       @if (!paymentsLoading && !payments.length) {
-        <p class="sh-empty">No payment events.</p>
+        <div class="empty-state">
+          <h4>No payment events</h4>
+          <p>Your billing history will appear here.</p>
+        </div>
       }
       @if (!paymentsLoading && payments.length) {
-        <table class="sh-table">
+        <table class="sh-invoice-table">
           <thead>
             <tr>
               <th>When</th>
@@ -77,30 +96,34 @@
                 <td>{{ item.paidAt | date: 'short' }}</td>
                 <td>{{ item.eventType }}</td>
                 <td>{{ item.status }}</td>
-                <td class="text-end">{{ amountDollars(item.amountPaid) | currency:item.currency }}</td>
+                <td class="text-end sh-invoice-amount">{{ amountDollars(item.amountPaid) | currency:item.currency }}</td>
               </tr>
             }
           </tbody>
         </table>
       }
-    </section>
+    </div>
 
-    <section class="sh-panel">
-      <div class="sh-panel__head">
-        <h5>Disputes</h5>
+    <div class="content-card content-card--no-pad sh-billing-table-card">
+      <div class="content-card__header" style="display:flex; justify-content: space-between; align-items: center;">
+        <h2 class="content-card__title">Disputes</h2>
         <div class="sh-page-controls">
           <button [disabled]="!canGoBackDisputes || disputesLoading" (click)="onPrevDisputesPage()">Previous</button>
           <button [disabled]="!disputeNextCursor || disputesLoading" (click)="onNextDisputesPage()">Next</button>
         </div>
       </div>
+      
       @if (disputesLoading) {
-        <p class="sh-empty">Loading disputes...</p>
+        <div class="empty-state">Loading disputes...</div>
       }
       @if (!disputesLoading && !disputes.length) {
-        <p class="sh-empty">No dispute events.</p>
+        <div class="empty-state">
+          <h4>No disputes</h4>
+          <p>No dispute events have been recorded.</p>
+        </div>
       }
       @if (!disputesLoading && disputes.length) {
-        <table class="sh-table">
+        <table class="sh-invoice-table">
           <thead>
             <tr>
               <th>When</th>
@@ -115,12 +138,12 @@
                 <td>{{ item.paidAt | date: 'short' }}</td>
                 <td>{{ item.eventType }}</td>
                 <td>{{ item.status }}</td>
-                <td class="text-end">{{ amountDollars(item.amountPaid) | currency:item.currency }}</td>
+                <td class="text-end sh-invoice-amount">{{ amountDollars(item.amountPaid) | currency:item.currency }}</td>
               </tr>
             }
           </tbody>
         </table>
       }
-    </section>
+    </div>
   </div>
-</section>
+</div>

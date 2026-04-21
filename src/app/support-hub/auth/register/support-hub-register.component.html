@@ -1,23 +1,27 @@
-<div class="support-auth__header">
-  <h2>Create your Support Hub account</h2>
-  <p class="support-muted">Create your Support Hub credentials to get started.</p>
+<div class="sh-login-header">
+  <h2 class="sh-login-title">Create your account</h2>
+  <p class="sh-login-subtitle">Join the Support Hub team</p>
 </div>
 
 <form #form="ngForm" (ngSubmit)="register()" novalidate>
   @if (submitted && form.invalid) {
-    <p-message severity="error" text="Please fix the highlighted fields and try again."></p-message>
+    <div class="sh-login-alert sh-login-alert--danger">
+      <p-message severity="error" text="Please fix the highlighted fields and try again."></p-message>
+    </div>
   }
 
   @if (error) {
-    <p-message severity="error" [text]="error"></p-message>
+    <div class="sh-login-alert sh-login-alert--danger">
+      <p-message severity="error" [text]="error"></p-message>
+    </div>
   }
 
-  <div class="support-auth__field">
-    <label class="form-label" for="username">Username</label>
+  <div class="sh-login-field">
+    <label class="sh-login-label" for="username">Username</label>
     <input
       pInputText
       type="text"
-      class="support-w-100"
+      class="sh-login-input w-full"
       id="username"
       name="username"
       placeholder="katharix.support"
@@ -33,12 +37,12 @@
     }
   </div>
 
-  <div class="support-auth__field">
-    <label class="form-label" for="email">Work email</label>
+  <div class="sh-login-field">
+    <label class="sh-login-label" for="email">Work email</label>
     <input
       pInputText
       type="email"
-      class="support-w-100"
+      class="sh-login-input w-full"
       id="email"
       name="email"
       placeholder="you@katharix.com"
@@ -60,8 +64,8 @@
     }
   </div>
 
-  <div class="support-auth__field">
-    <label class="form-label" for="password">Password</label>
+  <div class="sh-login-field">
+    <label class="sh-login-label" for="password">Password</label>
     <p-password
       id="password"
       name="password"
@@ -71,8 +75,8 @@
       [minlength]="8"
       [toggleMask]="true"
       [feedback]="false"
-      styleClass="support-w-100"
-      inputStyleClass="support-w-100"
+      styleClass="w-full"
+      inputStyleClass="sh-login-input w-full"
       #passwordModel="ngModel"
       [ngClass]="{ 'p-invalid': passwordModel.invalid && (passwordModel.touched || submitted) }"
     ></p-password>
@@ -88,8 +92,8 @@
     }
   </div>
 
-  <div class="support-auth__field">
-    <label class="form-label" for="confirmPassword">Confirm password</label>
+  <div class="sh-login-field">
+    <label class="sh-login-label" for="confirmPassword">Confirm password</label>
     <p-password
       id="confirmPassword"
       name="confirmPassword"
@@ -98,8 +102,8 @@
       required
       [toggleMask]="true"
       [feedback]="false"
-      styleClass="support-w-100"
-      inputStyleClass="support-w-100"
+      styleClass="w-full"
+      inputStyleClass="sh-login-input w-full"
       #confirmPasswordModel="ngModel"
       [ngClass]="{ 'p-invalid': confirmPasswordModel.invalid && (confirmPasswordModel.touched || submitted) }"
     ></p-password>
@@ -115,15 +119,16 @@
     }
   </div>
 
-  <div class="support-auth__actions">
-    <button pButton type="button" class="support-auth__submit" [disabled]="isSubmitting" (click)="register()">
-      @if (!isSubmitting) {
-        <span>Create Support Hub account</span>
-      }
-      @if (isSubmitting) {
-        <span>Creating account...</span>
-      }
-    </button>
-    <a routerLink="/support-hub/auth/login">Already have access? Sign in</a>
+  <button pButton type="button" class="btn w-full sh-login-btn" [disabled]="isSubmitting" (click)="register()">
+    @if (!isSubmitting) {
+      <span>Create Support Hub account</span>
+    }
+    @if (isSubmitting) {
+      <span>Creating account...</span>
+    }
+  </button>
+  
+  <div class="sh-login-footer">
+    Already have access? <a routerLink="/support-hub/auth/login">Sign in</a>
   </div>
 </form>

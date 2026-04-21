@@ -1,5 +1,4 @@
-<div
-  class="chat-win"
+<div class="cw-shell"
   [class.chat-win--rep]="perspective === 'rep'"
   [class.chat-win--session-ended]="sessionEnded"
   (dragover)="onDragOver($event)"
@@ -9,168 +8,97 @@
   aria-label="Chat messages"
   aria-live="polite"
 >
-
-  <!-- Drag-and-drop overlay -->
   @if (isDragOver && canUpload) {
-    <div class="chat-win__drop-overlay" aria-hidden="true">
-      <i class="ti ti-upload"></i>
-      <span>Drop files to attach</span>
+    <!-- Drag-and-drop overlay -->
+    <div class="chat-win__drop-overlay" aria-hidden="true" style="position: absolute; inset: 0; background: rgba(63, 103, 218, 0.07); border: 2px dashed var(--jf-primary); border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6rem; z-index: 10; pointer-events: none;">
+      <i class="ti ti-upload" style="font-size: 2rem; color: var(--jf-primary);"></i>
+      <span style="font-size: 0.9rem; font-weight: 700; color: var(--jf-primary);">Drop files to attach</span>
     </div>
   }
 
-  <!-- Messages area -->
-  <div class="chat-win__messages" #messagesContainer>
-
+  <div class="cw-messages" #messagesContainer>
     @if (isLoading) {
       <!-- Skeleton loaders -->
-      <div class="chat-win__skeleton-list" aria-label="Loading messages">
-        <div class="chat-win__skeleton-row chat-win__skeleton-row--inbound">
-          <div class="chat-win__sk-avatar sh-skeleton"></div>
-          <div class="chat-win__sk-bubble sh-skeleton" style="width: 52%"></div>
-        </div>
-        <div class="chat-win__skeleton-row chat-win__skeleton-row--outbound">
-          <div class="chat-win__sk-bubble sh-skeleton" style="width: 40%"></div>
-        </div>
-        <div class="chat-win__skeleton-row chat-win__skeleton-row--inbound">
-          <div class="chat-win__sk-avatar sh-skeleton"></div>
-          <div class="chat-win__sk-bubble sh-skeleton" style="width: 65%"></div>
-        </div>
-        <div class="chat-win__skeleton-row chat-win__skeleton-row--outbound">
-          <div class="chat-win__sk-bubble sh-skeleton" style="width: 30%"></div>
-        </div>
+      <div aria-label="Loading messages" style="display: flex; flex-direction: column; gap: 0.85rem;">
+        <div class="cw-msg cw-msg--incoming"><div class="cw-bubble sh-skeleton" style="width: 52%; height: 38px;"></div></div>
+        <div class="cw-msg cw-msg--outgoing"><div class="cw-bubble sh-skeleton" style="width: 40%; height: 38px;"></div></div>
+        <div class="cw-msg cw-msg--incoming"><div class="cw-bubble sh-skeleton" style="width: 65%; height: 38px;"></div></div>
+        <div class="cw-msg cw-msg--outgoing"><div class="cw-bubble sh-skeleton" style="width: 30%; height: 38px;"></div></div>
       </div>
-
     } @else if (messages.length === 0) {
       <!-- Empty state -->
-      <div class="chat-win__empty">
-        <i class="ti ti-messages" aria-hidden="true"></i>
-        <p>No messages yet. Say hello!</p>
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; gap: 0.5rem; color: var(--jf-text-muted); padding: 2rem;">
+        <i class="ti ti-messages" style="font-size: 2rem; opacity: 0.4;" aria-hidden="true"></i>
+        <p style="margin: 0; font-size: 0.875rem;">No messages yet. Say hello!</p>
       </div>
-
     } @else {
-      <!-- Message bubbles -->
       @for (msg of messages; track msg.id) {
-        <div
-          class="chat-win__msg"
-          [class.chat-win__msg--outbound]="msg.perspective === 'outbound'"
-          [class.chat-win__msg--inbound]="msg.perspective === 'inbound'"
-        >
-          @if (msg.perspective === 'inbound') {
-            <div class="chat-win__msg-avatar" aria-hidden="true">
-              {{ msg.senderName.charAt(0) | uppercase }}
-            </div>
-          }
-
-          <div class="chat-win__msg-body">
-            @if (msg.perspective === 'inbound') {
-              <span class="chat-win__msg-sender">{{ msg.senderName }}</span>
+        <div class="cw-msg"
+             [class.cw-msg--outgoing]="msg.perspective === 'outbound'"
+             [class.cw-msg--incoming]="msg.perspective === 'inbound'">
+          <div class="cw-bubble">
+            @if (msg.text) {
+              <p style="margin: 0; font-size: 0.875rem;">{{ msg.text }}</p>
             }
-
-            <div class="chat-win__bubble">
-              @if (msg.text) {
-                <p class="chat-win__msg-text">{{ msg.text }}</p>
-              }
-
-              @if (msg.fileUrl) {
-                <div class="chat-win__attachment">
-                  @if (msg.uploading) {
-                    <div class="chat-win__upload-progress">
-                      <i class="ti ti-file" aria-hidden="true"></i>
-                      <div class="chat-win__upload-bar">
-                        <div class="chat-win__upload-bar-fill"></div>
-                      </div>
-                      <span>Uploading…</span>
-                    </div>
-                  } @else {
-                    <a
-                      [href]="msg.fileUrl"
-                      class="chat-win__file-link"
-                      target="_blank"
-                      rel="noopener"
-                      [attr.aria-label]="'Download ' + msg.fileName"
-                    >
-                      <i class="ti ti-file-download" aria-hidden="true"></i>
-                      <span class="chat-win__file-name">{{ msg.fileName }}</span>
-                      @if (msg.fileSize) {
-                        <span class="chat-win__file-size">{{ msg.fileSize | number }}KB</span>
-                      }
-                    </a>
-                  }
-                </div>
-              }
-            </div>
-
-            <span class="chat-win__msg-time">{{ msg.sentAt }}</span>
+            @if (msg.fileUrl) {
+              <div style="margin-top: 0.3rem;">
+                @if (msg.uploading) {
+                  <div style="font-size: 0.8rem; font-weight: 600;">
+                    <i class="ti ti-file" aria-hidden="true"></i>
+                    <span>Uploading…</span>
+                  </div>
+                } @else {
+                  <a [href]="msg.fileUrl" target="_blank" rel="noopener" [attr.aria-label]="'Download ' + msg.fileName" style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.8rem; font-weight: 600; text-decoration: none; color: inherit;">
+                    <i class="ti ti-file-download" aria-hidden="true"></i>
+                    <span style="max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ msg.fileName }}</span>
+                    @if (msg.fileSize) {
+                      <span style="opacity: 0.65; font-size: 0.7rem;">{{ msg.fileSize | number }}KB</span>
+                    }
+                  </a>
+                }
+              </div>
+            }
           </div>
+          <div class="cw-timestamp">{{ msg.sentAt }}</div>
         </div>
       }
 
-      <!-- Typing indicator -->
       @if (isTyping) {
-        <div class="chat-win__msg chat-win__msg--inbound" role="status" aria-label="Agent is typing">
-          <div class="chat-win__msg-avatar" aria-hidden="true">
-            <i class="ti ti-dots" style="font-size:0.75rem;"></i>
-          </div>
-          <div class="chat-win__bubble chat-win__bubble--typing">
-            <span class="chat-win__dot"></span>
-            <span class="chat-win__dot"></span>
-            <span class="chat-win__dot"></span>
+        <!-- Typing indicator -->
+        <div class="cw-msg cw-msg--incoming" role="status" aria-label="Agent is typing">
+          <div class="cw-bubble">
+            <span style="display: flex; align-items: center; gap: 4px;">
+              <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--jf-text-muted);"></span>
+              <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--jf-text-muted);"></span>
+              <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--jf-text-muted);"></span>
+            </span>
           </div>
         </div>
       }
     }
   </div>
 
-  <!-- Session ended notice -->
   @if (sessionEnded) {
-    <div class="chat-win__ended-banner" role="alert" aria-live="assertive">
+    <div role="alert" aria-live="assertive" style="padding: 0.875rem; background: var(--jf-surface); color: var(--jf-success); text-align: center; border-top: 1px solid var(--jf-border); font-size: 0.875rem;">
       <i class="ti ti-circle-check" aria-hidden="true"></i>
       <span>This support session has ended. Thank you!</span>
     </div>
   }
 
-  <!-- Input bar -->
   @if (!sessionEnded) {
-    <div class="chat-win__input-bar">
+    <div class="cw-input-bar">
       @if (canUpload) {
-        <label
-          class="chat-win__upload-btn"
-          for="chat-file-input"
-          title="Attach file (images, PDF, doc · max 10MB)"
-          aria-label="Attach file"
-        >
-          <i class="ti ti-paperclip" aria-hidden="true"></i>
-          <input
-            type="file"
-            id="chat-file-input"
-            class="chat-win__file-input"
-            accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
-            (change)="onFileChange($event)"
-            aria-hidden="true"
-            tabindex="-1"
-          />
+        <label for="chat-file-input" title="Attach file (images, PDF, doc · max 10MB)" aria-label="Attach file" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; color: var(--jf-text-muted);">
+          <i class="ti ti-paperclip" style="font-size: 1.25rem;" aria-hidden="true"></i>
+          <input type="file" id="chat-file-input" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" (change)="onFileChange($event)" aria-hidden="true" tabindex="-1" style="display: none;" />
         </label>
       }
 
-      <textarea
-        class="chat-win__textarea"
-        placeholder="Type a message… (Enter to send, Shift+Enter for new line)"
-        [(ngModel)]="messageText"
-        (keydown)="onKeydown($event)"
-        rows="1"
-        aria-label="Message input"
-        [disabled]="sessionEnded"
-      ></textarea>
+      <textarea class="cw-textarea" placeholder="Type a message… (Enter to send, Shift+Enter for new line)" [(ngModel)]="messageText" (keydown)="onKeydown($event)" rows="1" aria-label="Message input" [disabled]="sessionEnded"></textarea>
 
-      <button
-        class="chat-win__send-btn"
-        (click)="onSend()"
-        [disabled]="!messageText.trim()"
-        aria-label="Send message"
-      >
-        <i class="ti ti-send-2" aria-hidden="true"></i>
+      <button class="cw-send-btn" (click)="onSend()" [disabled]="!messageText?.trim()" aria-label="Send message">
+        <i class="ti ti-send" aria-hidden="true"></i>
       </button>
     </div>
   }
-
 </div>

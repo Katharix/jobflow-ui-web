@@ -1,21 +1,18 @@
-<div class="support-hub" [class.support-hub--collapsed]="sidebarCollapsed">
-  <aside class="support-hub__sidebar">
-    <div class="support-hub__brand">
+<div class="sh-layout" [class.sh-layout--collapsed]="sidebarCollapsed">
+  <aside class="sh-layout__sidebar">
+    <div class="sh-layout__brand">
       <img src="/assets/public/images/Asset 1.png" alt="JobFlow" />
-      <div class="support-hub__brand-text">
-        <span class="support-hub__brand-title">Support Hub</span>
-        <span class="support-hub__brand-subtitle">Katharix</span>
-      </div>
+      <div class="sh-layout__brand-label">Support Hub</div>
     </div>
 
-    <nav class="support-hub__nav">
+    <nav class="sh-layout__nav">
       @for (group of navGroups; track group.heading) {
-        <span class="support-hub__nav-heading">{{ group.heading }}</span>
+        <div class="sh-nav-section">{{ group.heading }}</div>
         @for (item of group.items; track item.route) {
           <a
-            class="support-hub__nav-link"
+            class="sh-nav-item"
             [routerLink]="item.route"
-            routerLinkActive="is-active"
+            routerLinkActive="active"
           >
             <i [class]="item.icon"></i>
             <span>{{ item.label }}</span>
@@ -24,36 +21,32 @@
       }
     </nav>
 
-    <div class="support-hub__sidebar-footer">
-      <div class="support-hub__user">
-        <div class="support-hub__avatar">{{ userInitials }}</div>
-        <div class="support-hub__user-info">
-          <span class="support-hub__user-name" (dblclick)="copyToken()">{{ userDisplayName }}</span>
-          <span class="support-hub__user-email">{{ userEmail }}</span>
-        </div>
+    <div class="sh-layout__user">
+      <div class="sh-user-avatar">{{ userInitials }}</div>
+      <div class="sh-user-info">
+        <div class="sh-user-name" (dblclick)="copyToken()">{{ userDisplayName }}</div>
+        <div class="sh-user-role">{{ userEmail }}</div>
+        @if (tokenCopiedMessage) {
+          <div style="font-size: 0.6875rem; color: #86efac; margin-top: 0.25rem;">{{ tokenCopiedMessage }}</div>
+        }
       </div>
-      @if (tokenCopiedMessage) {
-        <div class="support-hub__token-toast">{{ tokenCopiedMessage }}</div>
-      }
-      <button class="support-hub__logout" (click)="logout()">
+      <button class="sh-logout-btn" (click)="logout()">
         <i class="ti ti-logout"></i>
-        <span>Sign out</span>
       </button>
     </div>
   </aside>
 
-  <div class="support-hub__main">
-    <header class="support-hub__topbar">
-      <button class="support-hub__toggle" (click)="toggleSidebar()" aria-label="Toggle sidebar">
-        <i class="ti ti-menu-2"></i>
-      </button>
-      <div class="support-hub__topbar-right">
-        <span class="support-hub__env-badge">Internal</span>
-      </div>
-    </header>
-
-    <div class="support-hub__content">
-      <router-outlet></router-outlet>
+  <header class="sh-layout__topbar">
+    <button class="sh-layout__toggle" (click)="toggleSidebar()" aria-label="Toggle sidebar">
+      <i class="ti ti-menu-2"></i>
+    </button>
+    <div class="sh-layout__topbar-title">Support Hub</div>
+    <div class="sh-layout__topbar-actions">
+      <span style="font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; padding: 0.3rem 0.7rem; border-radius: 999px; background: var(--jf-primary-soft); color: var(--jf-primary);">Internal</span>
     </div>
-  </div>
+  </header>
+
+  <main class="sh-layout__content">
+    <router-outlet></router-outlet>
+  </main>
 </div>

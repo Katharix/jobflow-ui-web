@@ -1,68 +1,63 @@
-$border: 1px solid rgba(188, 191, 204, 0.2);
-$radius: 14px;
-
-.sh-tickets {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.sh-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  background: #ffffff;
-  border: $border;
-  border-radius: $radius;
-  padding: 1.15rem 1.25rem;
-}
-
 .sh-composer {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-  background: #ffffff;
-  border: $border;
-  border-radius: $radius;
-  padding: 1.15rem 1.25rem;
-  align-items: end;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .sh-org-select {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0.6rem;
+  display: flex;
   align-items: center;
+  gap: 0.5rem;
 }
 
-.sh-data {
-  background: #ffffff;
-  border: $border;
-  border-radius: $radius;
-  padding: 1.15rem;
+.sh-tickets-table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  th {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--jf-text-section);
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--jf-border);
+    text-align: left;
+  }
+  
+  td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--jf-border);
+    color: var(--jf-text);
+    font-size: 0.875rem;
+    vertical-align: middle;
+  }
+  
+  tr:last-child td {
+    border-bottom: none;
+  }
+  
+  tr:hover td {
+    background: var(--jf-primary-soft);
+  }
 }
 
-.sh-empty {
-  display: grid;
-  place-items: center;
-  min-height: 220px;
-  color: var(--jf-muted);
+.sh-ticket-subject {
+  font-weight: 600;
+  color: var(--jf-text);
+}
+
+.sh-ticket-meta {
+  font-size: 0.8125rem;
+  color: var(--jf-text-muted);
 }
 
 .status-chip {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.3rem 0.6rem;
-  border-radius: 999px;
-  white-space: nowrap;
-
-  &--urgent  { background: rgba(224, 54, 22, 0.12); color: #E03616; }
-  &--high    { background: rgba(255, 166, 48, 0.14); color: #FFA630; }
-  &--normal  { background: rgba(63, 103, 218, 0.1);  color: #3F67DA; }
-  &--low     { background: rgba(45, 137, 139, 0.14); color: #2D898B; }
+  &--urgent { background: var(--jf-danger-soft); color: var(--jf-danger); }
+  &--high   { background: var(--jf-warning-soft); color: var(--jf-warning); }
+  &--normal { background: var(--jf-primary-soft);  color: var(--jf-primary); }
+  &--low    { background: var(--jf-success-soft); color: var(--jf-success); }
   &--resolved { background: rgba(188, 191, 204, 0.2); color: #6E7180; }
 }
 
@@ -85,13 +80,13 @@ $radius: 14px;
 
 .sh-modal__panel {
   position: relative;
-  background: #ffffff;
-  border-radius: 18px;
+  background: var(--jf-surface);
+  border-radius: var(--jf-radius);
   padding: 1.5rem;
   width: min(520px, 90vw);
   display: grid;
   gap: 1rem;
-  box-shadow: 0 24px 50px rgba(30, 30, 36, 0.2);
+  box-shadow: var(--jf-shadow-hover);
 }
 
 .sh-modal__header {
@@ -108,13 +103,13 @@ $radius: 14px;
 }
 
 .sh-modal__item {
-  border: $border;
-  border-radius: 10px;
+  border: 1px solid var(--jf-border);
+  border-radius: var(--jf-radius-sm);
   padding: 0.7rem 1rem;
   text-align: left;
-  background: #FAFBFF;
+  background: var(--jf-bg);
   cursor: pointer;
   transition: background 0.15s;
 
-  &:hover { background: #D3D6E0; }
+  &:hover { background: var(--jf-border); }
 }

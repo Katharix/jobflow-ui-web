@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { HelpContentService } from '../../../services/shared/help-content.service';
@@ -45,7 +45,8 @@ type EditorMode = 'create' | 'edit';
     InputNumberModule
   ],
   templateUrl: './support-hub-content.component.html',
-  styleUrl: './support-hub-content.component.scss'
+  styleUrl: './support-hub-content.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportHubContentComponent implements OnInit {
   private helpService = inject(HelpContentService);

@@ -1,108 +1,40 @@
-@use "admin/admin-styles";
+.sh-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--jf-primary-soft); color: var(--jf-primary); font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sh-person-name { font-weight: 600; color: var(--jf-text); }
+.sh-person-email { font-size: 0.8125rem; color: var(--jf-text-muted); }
+.sh-people-tabs { margin-bottom: 1.25rem; }
 
-$border: 1px solid rgba(188, 191, 204, 0.2);
-$radius: 14px;
+table.sh-data-table { width: 100%; border-collapse: collapse; th { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--jf-text-section); padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--jf-border); text-align: left; } td { padding: 0.875rem 1.25rem; border-bottom: 1px solid var(--jf-border); vertical-align: middle; font-size: 0.875rem; } tr:last-child td { border-bottom: none; } tr:hover td { background: rgba(63,103,218,0.02); } }
 
-.sh-people {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-// Tabs
 .sh-tabs {
   display: flex;
-  gap: 0.25rem;
-  border-bottom: $border;
-  padding-bottom: 0;
+  gap: 1rem;
+  border-bottom: 1px solid var(--jf-border);
 }
-
 .sh-tab {
   background: none;
   border: none;
-  padding: 0.6rem 1rem;
-  font-size: 0.82rem;
+  padding: 0.75rem 0;
+  font-size: 0.875rem;
   font-weight: 600;
-  color: #9da2b3;
+  color: var(--jf-text-muted);
   cursor: pointer;
   border-bottom: 2px solid transparent;
-  transition: color 0.15s, border-color 0.15s;
-
-  &:hover {
-    color: #6e7180;
-  }
-
-  &--active {
-    color: #3f67da;
-    border-bottom-color: #3f67da;
-  }
-
-  &__count {
-    font-weight: 400;
-    opacity: 0.7;
-    margin-left: 0.3rem;
-  }
+  margin-bottom: -1px;
+}
+.sh-tab--active {
+  color: var(--jf-primary);
+  border-bottom-color: var(--jf-primary);
 }
 
-// Card
-.sh-card {
-  background: #fff;
-  border: $border;
-  border-radius: $radius;
-  overflow: hidden;
-}
-
-// Table
-.sh-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.82rem;
-
-  th,
-  td {
-    padding: 0.65rem 0.9rem;
-    text-align: left;
-    border-bottom: $border;
-    white-space: nowrap;
-  }
-
-  th {
-    background: #fafbff;
-    color: #6e7180;
-    font-weight: 600;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
-
-  tbody tr:hover {
-    background: rgba(63, 103, 218, 0.03);
-  }
-}
-
-.sh-row--inactive {
-  opacity: 0.5;
-}
-
-// User cell
-.sh-user {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.sh-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+.sh-tab__count {
   background: rgba(63, 103, 218, 0.1);
   color: #3f67da;
   font-size: 0.72rem;
   font-weight: 700;
   flex-shrink: 0;
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+  margin-left: 0.35rem;
 }
 
 .sh-cell--muted {
@@ -145,7 +77,7 @@ $radius: 14px;
   align-items: center;
   gap: 0.75rem;
   padding: 0.9rem;
-  border-bottom: $border;
+  border-bottom: 1px solid var(--jf-border);
 
   &__select {
     min-width: 150px;

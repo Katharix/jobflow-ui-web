@@ -1,121 +1,49 @@
-.sh-queue-view {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-// ── Page header ───────────────────────────────────────
-
-.sh-queue-view__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.sh-queue-view__title {
-  font-size: 1.35rem;
-  font-weight: 700;
-  margin: 0 0 0.25rem;
-}
-
-.sh-queue-view__sub {
-  font-size: 0.85rem;
-  color: var(--jf-muted);
-  margin: 0;
-}
-
-// ── Stats strip ───────────────────────────────────────
-
-.sh-queue-stats {
-  display: flex;
+.sh-queue-live-badge {
+  display: inline-flex;
   align-items: center;
-  gap: 1.25rem;
-  background: #ffffff;
-  border: 1px solid rgba(188, 191, 204, 0.22);
-  border-radius: 14px;
-  padding: 0.75rem 1.25rem;
-}
-
-.sh-queue-stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.1rem;
-
-  &--divider {
-    width: 1px;
-    height: 28px;
-    background: rgba(188, 191, 204, 0.35);
-    padding: 0;
-  }
-}
-
-.sh-queue-stat__val {
-  font-size: 1.4rem;
+  gap: 0.375rem;
+  background: var(--jf-success-soft);
+  color: var(--jf-success);
+  border: 1px solid rgba(45, 137, 139, 0.2);
+  border-radius: 20px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  line-height: 1;
-  color: var(--jf-accent, #3F67DA);
 }
 
-.sh-queue-stat__lbl {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 600;
-  color: var(--jf-muted);
+.sh-queue-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--jf-success);
+  animation: sh-pulse 1.5s ease-in-out infinite;
 }
 
-// ── Queue list ────────────────────────────────────────
+@keyframes sh-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.sh-queue-list-card .content-card__header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--jf-border);
+}
 
 .sh-queue-list {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+  padding: 1.25rem;
 }
-
-// ── Empty state ───────────────────────────────────────
-
-.sh-queue-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 4rem 2rem;
-  text-align: center;
-  color: var(--jf-muted);
-
-  i {
-    font-size: 2.5rem;
-    color: var(--jf-accent, #3F67DA);
-    opacity: 0.4;
-  }
-
-  h3 {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #000000;
-    margin: 0;
-  }
-
-  p {
-    font-size: 0.875rem;
-    margin: 0;
-  }
-}
-
-// ── Skeleton ──────────────────────────────────────────
 
 .sh-queue-skel {
   display: flex;
   align-items: center;
   gap: 0.85rem;
   padding: 1rem 1.15rem;
-  background: #ffffff;
-  border: 1px solid rgba(188, 191, 204, 0.2);
-  border-radius: 14px;
+  background: var(--jf-surface);
+  border: 1px solid var(--jf-border);
+  border-radius: var(--jf-radius-sm);
 }
 
 .sh-queue-skel__avatar {
@@ -150,15 +78,3 @@
   100% { background-position: -200% 0; }
 }
 
-// ── Responsive ────────────────────────────────────────
-
-@media (max-width: 576px) {
-  .sh-queue-view__head {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .sh-queue-stats {
-    justify-content: center;
-  }
-}

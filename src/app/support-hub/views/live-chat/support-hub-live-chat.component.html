@@ -1,27 +1,27 @@
-<div class="lc" [class.lc--queue-hidden]="!queuePanelOpen" [class.lc--sidebar-hidden]="!sidebarOpen">
+<div class="lc-shell" [class.lc--queue-hidden]="!queuePanelOpen" [class.lc--sidebar-hidden]="!sidebarOpen">
 
   <!-- Left: Queue panel -->
-  <aside class="lc__queue-panel" [class.is-hidden]="!queuePanelOpen">
-    <div class="lc__panel-head">
-      <span class="lc__panel-title">
-        <i class="ti ti-list-numbers" aria-hidden="true"></i>
-        Queue
-        @if (queuedCustomers.length > 0) {
-          <span class="lc__queue-badge" aria-label="{{ queuedCustomers.length }} waiting">
-            {{ queuedCustomers.length }}
-          </span>
-        }
+  <aside class="lc-queue-panel" [class.is-hidden]="!queuePanelOpen">
+    <div class="lc-queue-panel__head">
+      <span class="lc-queue-panel__title">
+        <i class="ti ti-list-numbers" aria-hidden="true"></i> Queue
       </span>
+      @if (queuedCustomers.length > 0) {
+        <span class="lc-badge" aria-label="{{ queuedCustomers.length }} waiting">
+          {{ queuedCustomers.length }}
+        </span>
+      }
       <button
         class="lc__panel-toggle"
         (click)="onToggleQueuePanel()"
         aria-label="Collapse queue panel"
+        style="margin-left: auto; border:none; background:transparent; cursor:pointer;"
       >
         <i class="ti ti-layout-sidebar-left-collapse" aria-hidden="true"></i>
       </button>
     </div>
 
-    <div class="lc__queue-list" role="list" aria-label="Waiting customers">
+    <div class="lc__queue-list" role="list" aria-label="Waiting customers" style="flex:1; overflow-y:auto; padding: 1rem;">
       @if (queuedCustomers.length === 0) {
         <p class="lc__panel-empty">No other customers waiting.</p>
       } @else {
@@ -46,36 +46,38 @@
       class="lc__queue-reveal"
       (click)="onToggleQueuePanel()"
       aria-label="Open queue panel"
+      style="position:absolute; left:0; z-index:10;"
     >
       <i class="ti ti-list-numbers" aria-hidden="true"></i>
       @if (queuedCustomers.length > 0) {
-        <span class="lc__queue-badge lc__queue-badge--sm">{{ queuedCustomers.length }}</span>
+        <span class="lc-badge">{{ queuedCustomers.length }}</span>
       }
     </button>
   }
 
   <!-- Center: Chat -->
-  <main class="lc__chat">
+  <main class="lc-chat">
 
     <!-- Chat header -->
-    <header class="lc__chat-header">
-      <div class="lc__chat-header-left">
-        <div class="lc__chat-avatar" aria-hidden="true">
-          {{ customerName.charAt(0) }}
-        </div>
-        <div class="lc__chat-meta">
-          <span class="lc__chat-customer-name">{{ customerName }}</span>
-          <span class="lc__chat-customer-org">{{ customerOrg }}</span>
+    <div class="lc-chat__header">
+      <div class="lc__chat-avatar" aria-hidden="true" style="width:32px; height:32px; border-radius:50%; background:var(--jf-primary); color:#fff; display:flex; align-items:center; justify-content:center;">
+        {{ customerName.charAt(0) }}
+      </div>
+      <div style="display:flex; flex-direction:column;">
+        <span class="lc-customer-name">{{ customerName }}</span>
+        <div style="display:flex; align-items:center; gap:0.5rem; font-size:12px; color:var(--jf-text-muted);">
+           <span class="lc-status-dot"></span> Online
         </div>
       </div>
 
-      <div class="lc__chat-header-actions">
+      <div class="lc__chat-header-actions" style="margin-left:auto; display:flex; gap:0.5rem;">
         <button
           class="lc__icon-btn"
           (click)="onToggleSound()"
           [attr.aria-pressed]="soundEnabled"
           [attr.aria-label]="soundEnabled ? 'Mute notifications' : 'Unmute notifications'"
           title="{{ soundEnabled ? 'Mute notifications' : 'Unmute notifications' }}"
+          style="border:none; background:transparent; cursor:pointer;"
         >
           <i [class]="soundEnabled ? 'ti ti-bell' : 'ti ti-bell-off'" aria-hidden="true"></i>
         </button>
@@ -85,6 +87,7 @@
           (click)="onToggleSidebar()"
           [attr.aria-label]="sidebarOpen ? 'Hide customer info' : 'Show customer info'"
           title="Toggle customer info"
+          style="border:none; background:transparent; cursor:pointer;"
         >
           <i class="ti ti-layout-sidebar-right" aria-hidden="true"></i>
         </button>
@@ -94,14 +97,15 @@
           (click)="onEndSession()"
           aria-label="End session"
           title="End this session"
+          style="border:none; background:transparent; cursor:pointer; color:var(--jf-danger);"
         >
           <i class="ti ti-phone-off" aria-hidden="true"></i>
         </button>
       </div>
-    </header>
+    </div>
 
     <!-- Chat window -->
-    <div class="lc__chat-window">
+    <div class="lc-chat__body">
       <app-chat-window
         [messages]="messages"
         [isTyping]="isTyping"
@@ -116,9 +120,9 @@
   </main>
 
   <!-- Right: Customer info sidebar -->
-  <aside class="lc__sidebar" [class.is-hidden]="!sidebarOpen" aria-label="Customer information">
-    <div class="lc__panel-head">
-      <span class="lc__panel-title">
+  <aside class="lc-sidebar" [class.is-hidden]="!sidebarOpen">
+    <div class="lc-queue-panel__head" style="min-height: 56px; border-bottom: 1px solid var(--jf-border); padding: 1rem 1.25rem; display: flex; align-items: center;">
+      <span class="lc-queue-panel__title" style="font-size: 0.875rem; font-weight: 700; color: var(--jf-text);">
         <i class="ti ti-user" aria-hidden="true"></i>
         Customer
       </span>
@@ -126,53 +130,58 @@
         class="lc__panel-toggle"
         (click)="onToggleSidebar()"
         aria-label="Collapse sidebar"
+        style="margin-left: auto; border:none; background:transparent; cursor:pointer;"
       >
         <i class="ti ti-layout-sidebar-right-collapse" aria-hidden="true"></i>
       </button>
     </div>
 
-    <!-- Customer card -->
-    <div class="lc__customer-card">
-      <div class="lc__cust-avatar" aria-hidden="true">{{ customerName.charAt(0) }}</div>
-      <span class="lc__cust-name">{{ customerName }}</span>
-      <span class="lc__cust-email">{{ customerEmail }}</span>
-    </div>
+    <div style="padding: 1.5rem; display:flex; flex-direction:column; gap:1rem;">
+      <!-- Customer card -->
+      <div class="lc__customer-card" style="text-align:center;">
+        <div class="lc__cust-avatar" aria-hidden="true" style="width:64px; height:64px; border-radius:50%; background:var(--jf-primary-soft); color:var(--jf-primary); display:flex; align-items:center; justify-content:center; margin: 0 auto 1rem; font-size:1.5rem; font-weight:bold;">{{ customerName.charAt(0) }}</div>
+        <div class="lc-customer-name">{{ customerName }}</div>
+        <div style="color:var(--jf-text-muted); font-size:14px;">{{ customerEmail }}</div>
+      </div>
 
-    <!-- Info rows -->
-    <div class="lc__info-rows">
-      <div class="lc__info-row">
-        <span class="lc__info-label">Organization</span>
-        <span class="lc__info-value">{{ customerOrg }}</span>
+      <!-- Info rows -->
+      <div class="lc__info-rows" style="display:flex; flex-direction:column; gap:0.5rem; margin-top:1rem; border-top:1px solid var(--jf-border); padding-top:1rem;">
+        <div class="lc__info-row" style="display:flex; justify-content:space-between; font-size:14px;">
+          <span style="color:var(--jf-text-section);">Organization</span>
+          <span style="color:var(--jf-text); font-weight:500;">{{ customerOrg }}</span>
+        </div>
+        <div class="lc__info-row" style="display:flex; justify-content:space-between; font-size:14px;">
+          <span style="color:var(--jf-text-section);">Session started</span>
+          <span style="color:var(--jf-text); font-weight:500;">{{ sessionStartedAt }}</span>
+        </div>
+        <div class="lc__info-row" style="display:flex; flex-direction:column; font-size:14px; gap:0.25rem;">
+          <span style="color:var(--jf-text-section);">Session ID</span>
+          <span style="color:var(--jf-text); font-family:monospace; background:var(--jf-bg); padding:0.25rem; border-radius:4px; font-size:12px;">{{ sessionId }}</span>
+        </div>
       </div>
-      <div class="lc__info-row">
-        <span class="lc__info-label">Session started</span>
-        <span class="lc__info-value">{{ sessionStartedAt }}</span>
-      </div>
-      <div class="lc__info-row">
-        <span class="lc__info-label">Session ID</span>
-        <span class="lc__info-value lc__info-value--mono">{{ sessionId }}</span>
-      </div>
-    </div>
 
-    <!-- Quick actions -->
-    <div class="lc__sidebar-actions">
-      <a
-        class="lc__sidebar-action"
-        [routerLink]="['/support-hub/tickets']"
-        [queryParams]="{ newFor: customerOrg }"
-        title="Create ticket for this customer"
-      >
-        <i class="ti ti-ticket" aria-hidden="true"></i>
-        <span>Create ticket</span>
-      </a>
-      <a
-        class="lc__sidebar-action"
-        [routerLink]="['/support-hub/people']"
-        title="View customer in People"
-      >
-        <i class="ti ti-user-search" aria-hidden="true"></i>
-        <span>View profile</span>
-      </a>
+      <!-- Quick actions -->
+      <div class="lc__sidebar-actions" style="display:flex; flex-direction:column; gap:0.5rem; margin-top:1rem;">
+        <a
+          class="lc__sidebar-action"
+          [routerLink]="['/support-hub/tickets']"
+          [queryParams]="{ newFor: customerOrg }"
+          title="Create ticket for this customer"
+          style="display:flex; align-items:center; gap:0.5rem; padding:0.75rem; background:var(--jf-bg); border-radius:var(--jf-radius-sm); text-decoration:none; color:var(--jf-text); font-size:14px;"
+        >
+          <i class="ti ti-ticket" aria-hidden="true" style="color:var(--jf-primary);"></i>
+          <span>Create ticket</span>
+        </a>
+        <a
+          class="lc__sidebar-action"
+          [routerLink]="['/support-hub/people']"
+          title="View customer in People"
+          style="display:flex; align-items:center; gap:0.5rem; padding:0.75rem; background:var(--jf-bg); border-radius:var(--jf-radius-sm); text-decoration:none; color:var(--jf-text); font-size:14px;"
+        >
+          <i class="ti ti-user-search" aria-hidden="true" style="color:var(--jf-primary);"></i>
+          <span>View profile</span>
+        </a>
+      </div>
     </div>
   </aside>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -13,6 +13,7 @@ import { QueueCardComponent, QueueCustomer } from '../../components/queue-card/q
   imports: [CommonModule, QueueCardComponent],
   templateUrl: './support-hub-queue.component.html',
   styleUrl: './support-hub-queue.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportHubQueueComponent implements OnInit, OnDestroy {
   private chatApi = inject(SupportHubChatApiService);
@@ -56,6 +57,7 @@ export class SupportHubQueueComponent implements OnInit, OnDestroy {
           ? Math.round(this.queuedCustomers.reduce((sum, c) => sum + c.waitMinutes, 0) / this.queuedCustomers.length)
           : 0;
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
       error: () => { this.isLoading = false; }
     });

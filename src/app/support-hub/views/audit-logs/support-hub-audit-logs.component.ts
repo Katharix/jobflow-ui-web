@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { ButtonModule } from 'primeng/button';
@@ -13,9 +13,11 @@ import { SupportHubAuditLog } from '../../models/support-hub-audit-log';
   imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonModule, SelectModule],
   templateUrl: './support-hub-audit-logs.component.html',
   styleUrl: './support-hub-audit-logs.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportHubAuditLogsComponent implements OnInit {
   private dataService = inject(SupportHubDataService);
+  private cdr = inject(ChangeDetectorRef);
 
   logs: SupportHubAuditLog[] = [];
   loading = false;
@@ -54,9 +56,11 @@ export class SupportHubAuditLogsComponent implements OnInit {
         this.logs = append ? [...this.logs, ...res.items] : res.items;
         this.nextCursor = res.nextCursor ?? null;
         this.loading = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.loading = false;
+        this.cdr.markForCheck();
       },
     });
   }

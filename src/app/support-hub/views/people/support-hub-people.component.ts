@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { SupportHubInviteService } from '../../services/support-hub-invite.service';
@@ -25,10 +25,12 @@ import { DialogModule } from 'primeng/dialog';
   ],
   templateUrl: './support-hub-people.component.html',
   styleUrl: './support-hub-people.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportHubPeopleComponent implements OnInit {
   private invitesService = inject(SupportHubInviteService);
   private dataService = inject(SupportHubDataService);
+  private cdr = inject(ChangeDetectorRef);
 
   // Staff
   staff: SupportHubStaffMember[] = [];
@@ -66,10 +68,12 @@ export class SupportHubPeopleComponent implements OnInit {
       next: (staff) => {
         this.staff = staff;
         this.loadingStaff = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.staff = [];
         this.loadingStaff = false;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -80,10 +84,12 @@ export class SupportHubPeopleComponent implements OnInit {
       next: (invites) => {
         this.invites = invites.filter(i => !i.redeemedAt);
         this.loadingInvites = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.invites = [];
         this.loadingInvites = false;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -95,9 +101,11 @@ export class SupportHubPeopleComponent implements OnInit {
       next: () => {
         this.loadInvites();
         this.creatingInvite = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.creatingInvite = false;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -116,9 +124,11 @@ export class SupportHubPeopleComponent implements OnInit {
         this.showRoleDialog = false;
         this.savingRole = false;
         this.loadStaff();
+        this.cdr.markForCheck();
       },
       error: () => {
         this.savingRole = false;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -141,6 +151,10 @@ export class SupportHubPeopleComponent implements OnInit {
 
   roleSeverity(role: string): 'info' | 'success' {
     return role === 'KatharixAdmin' ? 'info' : 'success';
+  }
+
+  roleSeverityStyles(role: string): string {
+    return role === 'KatharixAdmin' ? 'status-chip--info' : 'status-chip--success';
   }
 
   expiresIn(expiresAt: string): string {

@@ -1,10 +1,12 @@
 <div class="ti-wrap" role="status" [attr.aria-label]="senderName + ' is typing'">
   <div class="ti-bubble">
-    <span class="ti-dot"></span>
-    <span class="ti-dot"></span>
-    <span class="ti-dot"></span>
+    <span class="ti-dot ti-dot--1"></span>
+    <span class="ti-dot ti-dot--2"></span>
+    <span class="ti-dot ti-dot--3"></span>
   </div>
   @if (senderName) {
     <span class="ti-label" aria-hidden="true">{{ senderName }} is typing…</span>
+  } @else {
+    <span class="ti-label" aria-hidden="true">typing...</span>
   }
 </div>

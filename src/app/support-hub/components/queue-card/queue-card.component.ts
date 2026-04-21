@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface QueueCustomer {
@@ -17,6 +17,7 @@ export interface QueueCustomer {
   imports: [CommonModule],
   templateUrl: './queue-card.component.html',
   styleUrl: './queue-card.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QueueCardComponent {
   @Input() customer!: QueueCustomer;

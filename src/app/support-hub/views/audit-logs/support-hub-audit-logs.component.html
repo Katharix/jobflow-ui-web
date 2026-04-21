@@ -1,98 +1,81 @@
-<app-page-header title="Audit Logs" subtitle="System activity log viewer"></app-page-header>
-
-<div class="sh-audit">
-  <!-- Filters -->
-  <div class="sh-audit__filters">
-    <p-select
-      [options]="categoryOptions"
-      [(ngModel)]="categoryFilter"
-      optionLabel="label"
-      optionValue="value"
-      placeholder="Category"
-      styleClass="sh-audit__select"
-    ></p-select>
-
-    <p-select
-      [options]="successOptions"
-      [(ngModel)]="successFilter"
-      optionLabel="label"
-      optionValue="value"
-      placeholder="Result"
-      styleClass="sh-audit__select"
-    ></p-select>
-
-    <p-button label="Apply" icon="ti ti-filter" [outlined]="true" (onClick)="applyFilters()"></p-button>
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-header__title-group">
+      <h1 class="page-header__title">Audit Logs</h1>
+      <p class="page-header__subtitle">Activity trail across your organization</p>
+    </div>
   </div>
 
-  <!-- Table -->
-  <div class="sh-audit__table-wrap">
-    <table class="sh-audit__table">
-      <thead>
-        <tr>
-          <th>Timestamp</th>
-          <th>Category</th>
-          <th>Action</th>
-          <th>Method</th>
-          <th>Path</th>
-          <th>Status</th>
-          <th>User</th>
-          <th>IP</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (log of logs; track log.id) {
-          <tr [class.sh-audit__row--fail]="!log.success">
-            <td class="sh-audit__cell--time">{{ log.createdAt | date:'short' }}</td>
-            <td>{{ log.category }}</td>
-            <td>{{ log.action }}</td>
-            <td>
-              <span class="sh-method" [ngClass]="methodClass(log.method)">{{ log.method }}</span>
-            </td>
-            <td class="sh-audit__cell--path">{{ log.path }}</td>
-            <td>
-              <span class="sh-status" [ngClass]="statusClass(log.statusCode)">{{ log.statusCode }}</span>
-            </td>
-            <td class="sh-audit__cell--user">{{ log.userId ? (log.userId | slice:0:12) + '…' : '—' }}</td>
-            <td class="sh-audit__cell--ip">{{ log.ipAddress || '—' }}</td>
-            <td>
-              @if (log.detailsJson) {
-                <button class="sh-audit__expand" (click)="toggleDetails(log.id)">
-                  <i class="ti" [ngClass]="expandedId === log.id ? 'ti-chevron-up' : 'ti-chevron-down'"></i>
-                </button>
-              }
-            </td>
-          </tr>
-          @if (expandedId === log.id && log.detailsJson) {
-            <tr class="sh-audit__details-row">
-              <td colspan="9">
-                <pre class="sh-audit__details">{{ log.detailsJson }}</pre>
-              </td>
-            </tr>
-          }
-        }
-      </tbody>
-    </table>
+  <div class="filter-bar">
+    <div class="filter-bar__group sh-audit__filters">
+      <p-select
+        [options]="categoryOptions"
+        [(ngModel)]="categoryFilter"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Category"
+        styleClass="sh-audit__select"
+      ></p-select>
+
+      <p-select
+        [options]="successOptions"
+        [(ngModel)]="successFilter"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Result"
+        styleClass="sh-audit__select"
+      ></p-select>
+
+      <p-button label="Apply" icon="ti ti-filter" [outlined]="true" (onClick)="applyFilters()"></p-button>
+    </div>
+  </div>
+
+  <div class="content-card content-card--no-pad">
+    <div class="sh-audit-list">
+      @for (log of logs; track log.id) {
+        <div class="sh-audit-entry" [class.sh-audit__row--fail]="!log.success">
+          <div class="sh-audit-icon">
+            <i class="ti ti-file-text"></i>
+          </div>
+          <div class="sh-audit-body">
+            <div class="sh-audit-action">{{ log.action }}</div>
+            <div class="sh-audit-user">
+              User: {{ log.userId ? log.userId : 'System' }} • IP: {{ log.ipAddress || '—' }}
+            </div>
+            <div class="sh-audit-time">{{ log.createdAt | date:'short' }} • {{ log.category }} • {{ log.method }} {{ log.path }} ({{ log.statusCode }})</div>
+            
+            @if (log.detailsJson) {
+              <button class="sh-audit__expand" (click)="toggleDetails(log.id)" style="margin-top: 0.5rem; background: none; border: none; font-size: 0.75rem; color: var(--jf-primary); cursor: pointer; padding: 0;">
+                {{ expandedId === log.id ? 'Hide Details' : 'View Details' }}
+              </button>
+            }
+            @if (expandedId === log.id && log.detailsJson) {
+              <pre class="sh-audit__details" style="margin-top: 0.5rem; padding: 0.75rem; background: var(--jf-bg); border-radius: var(--jf-radius-sm); font-size: 0.75rem; overflow-x: auto;">{{ log.detailsJson }}</pre>
+            }
+          </div>
+        </div>
+      }
+    </div>
 
     @if (!loading && logs.length === 0) {
-      <div class="sh-audit__empty">
-        <i class="ti ti-file-text"></i>
-        <p>No audit logs found</p>
+      <div class="empty-state">
+        <h4>No activity found</h4>
+        <p>Try adjusting your filters.</p>
+      </div>
+    }
+
+    <!-- Load more -->
+    @if (nextCursor) {
+      <div class="sh-audit__more" style="padding: 1rem; text-align: center; border-top: 1px solid var(--jf-border);">
+        <p-button label="Load more" icon="ti ti-arrow-down" [outlined]="true" [loading]="loading" (onClick)="loadMore()"></p-button>
+      </div>
+    }
+
+    @if (loading && logs.length === 0) {
+      <div class="sh-audit__loading" style="padding: 2rem; text-align: center; color: var(--jf-text-muted);">
+        <i class="ti ti-loader-2 sh-audit__spinner" style="animation: spin 1s linear infinite;"></i>
+        Loading…
       </div>
     }
   </div>
-
-  <!-- Load more -->
-  @if (nextCursor) {
-    <div class="sh-audit__more">
-      <p-button label="Load more" icon="ti ti-arrow-down" [outlined]="true" [loading]="loading" (onClick)="loadMore()"></p-button>
-    </div>
-  }
-
-  @if (loading && logs.length === 0) {
-    <div class="sh-audit__loading">
-      <i class="ti ti-loader-2 sh-audit__spinner"></i>
-      Loading…
-    </div>
-  }
 </div>

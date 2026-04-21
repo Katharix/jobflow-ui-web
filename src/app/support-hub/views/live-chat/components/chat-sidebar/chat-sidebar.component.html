@@ -1,60 +1,53 @@
-<aside class="cs" aria-label="Customer information">
-
+<aside class="cs-shell" aria-label="Customer information">
   @if (isLoading || !customer) {
     <!-- Skeleton state -->
-    <div class="cs__skeleton-wrap">
-      <div class="sh-skeleton cs-sk-avatar"></div>
-      <div class="sh-skeleton" style="width:55%;height:0.9rem;"></div>
-      <div class="sh-skeleton" style="width:70%;height:0.75rem;"></div>
-      <div class="cs-sk-rows">
-        @for (i of [1,2,3]; track i) {
-          <div class="cs-sk-row">
-            <div class="sh-skeleton" style="width:35%;height:0.65rem;"></div>
-            <div class="sh-skeleton" style="width:60%;height:0.8rem;margin-top:0.25rem;"></div>
-          </div>
-        }
+    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+      <div class="cs-customer">
+        <div class="cs-avatar sh-skeleton"></div>
+        <div class="cs-customer-info" style="width: 100%;">
+          <div class="sh-skeleton" style="width: 70%; height: 1rem;"></div>
+          <div class="sh-skeleton" style="width: 40%; height: 0.75rem;"></div>
+        </div>
       </div>
     </div>
-
   } @else {
-    <!-- Customer card -->
-    <div class="cs__customer-card">
-      <div class="cs__avatar" aria-hidden="true">{{ customer.name.charAt(0) }}</div>
-      <span class="cs__name">{{ customer.name }}</span>
-      <span class="cs__email">{{ customer.email }}</span>
+    <!-- Customer Card -->
+    <div class="cs-customer">
+      <div class="cs-avatar" aria-hidden="true">{{ customer.name.charAt(0) }}</div>
+      <div class="cs-customer-info">
+        <div class="cs-customer-name">{{ customer.name }}</div>
+        <span class="status-chip status-chip--success" style="font-size: 0.75rem; color: var(--jf-text-muted);">{{ customer.email }}</span>
+      </div>
     </div>
 
-    <!-- Info -->
-    <div class="cs__info-rows">
-      <div class="cs__info-row">
-        <span class="cs__info-label">Organization</span>
-        <span class="cs__info-value">{{ customer.organizationName }}</span>
+    <!-- Info Rows -->
+    <div class="cs-info-section">
+      <div class="cs-section-label">Contact</div>
+      
+      <div class="cs-info-row">
+        <span class="cs-info-icon"><i class="ti ti-building" aria-hidden="true"></i></span>
+        <span class="cs-info-value">{{ customer.organizationName }}</span>
       </div>
-      <div class="cs__info-row">
-        <span class="cs__info-label">Session started</span>
-        <span class="cs__info-value">{{ customer.sessionStartedAt }}</span>
+      <div class="cs-info-row">
+        <span class="cs-info-icon"><i class="ti ti-clock" aria-hidden="true"></i></span>
+        <span class="cs-info-value">{{ customer.sessionStartedAt }}</span>
       </div>
-      <div class="cs__info-row">
-        <span class="cs__info-label">Session ID</span>
-        <span class="cs__info-value cs__info-value--mono">{{ customer.sessionId }}</span>
+      <div class="cs-info-row">
+        <span class="cs-info-icon"><i class="ti ti-id" aria-hidden="true"></i></span>
+        <span class="cs-info-value" style="font-family: monospace;">{{ customer.sessionId }}</span>
       </div>
     </div>
 
     <!-- Actions -->
-    <div class="cs__actions">
-      <a
-        class="cs__action"
-        [routerLink]="['/support-hub/tickets']"
-        [queryParams]="{ newFor: customer.organizationName }"
-      >
+    <div class="cs-actions">
+      <a class="cs-action-btn" [routerLink]="['/support-hub/tickets']" [queryParams]="{ newFor: customer.organizationName }">
         <i class="ti ti-ticket" aria-hidden="true"></i>
         <span>Create ticket</span>
       </a>
-      <a class="cs__action" [routerLink]="['/support-hub/people']">
+      <a class="cs-action-btn" [routerLink]="['/support-hub/people']">
         <i class="ti ti-user-search" aria-hidden="true"></i>
         <span>View profile</span>
       </a>
     </div>
   }
-
 </aside>
