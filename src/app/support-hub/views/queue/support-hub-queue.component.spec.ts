@@ -5,6 +5,7 @@ import { SupportHubQueueComponent } from './support-hub-queue.component';
 import {
   SupportHubChatApiService,
   SupportChatQueueItemDto,
+  SupportChatSessionDto,
 } from '../../services/support-hub-chat-api.service';
 import { SupportHubSignalRService } from '../../services/support-hub-signalr.service';
 
@@ -35,8 +36,8 @@ describe('SupportHubQueueComponent', () => {
       'pickCustomer',
     ]);
     chatApi.getQueue.and.returnValue(of(mockQueueItems));
-    chatApi.removeFromQueue.and.returnValue(of(undefined as any));
-    chatApi.pickCustomer.and.returnValue(of({} as any));
+    chatApi.removeFromQueue.and.returnValue(of(void 0));
+    chatApi.pickCustomer.and.returnValue(of({} as SupportChatSessionDto));
 
     signalR = jasmine.createSpyObj<SupportHubSignalRService>(
       'SupportHubSignalRService',

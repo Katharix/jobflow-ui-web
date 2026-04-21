@@ -24,7 +24,7 @@ describe('SupportHubChatApiService', () => {
   });
 
   it('removeFromQueue sends DELETE to the correct URL', () => {
-    api.delete.and.returnValue(of(undefined as any));
+    api.delete.and.returnValue(of(void 0));
     const sessionId = 'abc-session-123';
 
     service.removeFromQueue(sessionId).subscribe();
@@ -35,7 +35,7 @@ describe('SupportHubChatApiService', () => {
   });
 
   it('removeFromQueue returns the observable from the API', () => {
-    api.delete.and.returnValue(of(undefined as any));
+    api.delete.and.returnValue(of(void 0));
     let completed = false;
 
     service.removeFromQueue('some-id').subscribe({ complete: () => (completed = true) });

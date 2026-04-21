@@ -3,13 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, of } from 'rxjs';
 import { SupportHubQueueStatusComponent } from './support-hub-queue-status.component';
 import { SupportHubSignalRService, SupportChatAgentJoinedEvent } from '../../services/support-hub-signalr.service';
-import { SupportHubChatApiService } from '../../services/support-hub-chat-api.service';
+import { SupportHubChatApiService, SupportChatSessionDto } from '../../services/support-hub-chat-api.service';
 
 const SESSION_ID = 'test-session-abc';
 
 describe('SupportHubQueueStatusComponent', () => {
   let fixture: ComponentFixture<SupportHubQueueStatusComponent>;
-  let component: SupportHubQueueStatusComponent;
   let router: jasmine.SpyObj<Router>;
   let signalR: jasmine.SpyObj<SupportHubSignalRService>;
   let chatApi: jasmine.SpyObj<SupportHubChatApiService>;
@@ -26,7 +25,7 @@ describe('SupportHubQueueStatusComponent', () => {
       'getSession',
     ]);
     chatApi.getSession.and.returnValue(
-      of({ queuePosition: 1, estimatedWaitSeconds: 120 } as any)
+      of({ queuePosition: 1, estimatedWaitSeconds: 120 } as SupportChatSessionDto)
     );
 
     signalR = jasmine.createSpyObj<SupportHubSignalRService>(
@@ -48,13 +47,12 @@ describe('SupportHubQueueStatusComponent', () => {
         { provide: SupportHubSignalRService, useValue: signalR },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: (_: string) => SESSION_ID } } },
+          useValue: { snapshot: { paramMap: { get: () => SESSION_ID } } },
         },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SupportHubQueueStatusComponent);
-    component = fixture.componentInstance;
   });
 
   afterEach(() => {

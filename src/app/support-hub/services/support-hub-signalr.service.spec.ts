@@ -30,15 +30,15 @@ describe('SupportHubSignalRService', () => {
     };
 
     spyOn(HubConnectionBuilder.prototype, 'withUrl').and.returnValue(
-      HubConnectionBuilder.prototype as any
+      HubConnectionBuilder.prototype as unknown as HubConnectionBuilder
     );
     spyOn(HubConnectionBuilder.prototype, 'withAutomaticReconnect').and.returnValue(
-      HubConnectionBuilder.prototype as any
+      HubConnectionBuilder.prototype as unknown as HubConnectionBuilder
     );
     spyOn(HubConnectionBuilder.prototype, 'configureLogging').and.returnValue(
-      HubConnectionBuilder.prototype as any
+      HubConnectionBuilder.prototype as unknown as HubConnectionBuilder
     );
-    spyOn(HubConnectionBuilder.prototype, 'build').and.returnValue(mockConnection as any);
+    spyOn(HubConnectionBuilder.prototype, 'build').and.returnValue(mockConnection as unknown as ReturnType<HubConnectionBuilder['build']>);
 
     TestBed.configureTestingModule({
       providers: [
