@@ -22,7 +22,7 @@ describe('JobsService', () => {
   it('requests all jobs', () => {
     api.get.and.returnValue(of([]));
     service.getAllJobs().subscribe();
-    expect(api.get).toHaveBeenCalledWith('job/all');
+    expect(api.get).toHaveBeenCalledWith('job/all', undefined, undefined);
   });
 
   it('updates schedule via schedule endpoint', () => {

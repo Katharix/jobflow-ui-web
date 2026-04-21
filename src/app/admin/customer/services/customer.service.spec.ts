@@ -41,7 +41,7 @@ describe('CustomersService', () => {
 
       service.getAllByOrganization().subscribe();
 
-      expect(api.get).toHaveBeenCalledWith('organization/clients/orgall');
+      expect(api.get).toHaveBeenCalledWith('organization/clients/orgall', undefined, undefined);
    });
 
    it('deletes customer by client id', () => {
