@@ -69,7 +69,7 @@ export class SupportHubLoginComponent {
           this.isSubmitting = false;
           return;
         }
-      } catch (roleErr: unknown) {
+      } catch {
         await signOut(this.auth);
         this.error = 'Unable to verify your access. Please try again.';
         this.isSubmitting = false;
