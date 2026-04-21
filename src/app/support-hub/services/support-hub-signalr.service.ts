@@ -40,6 +40,7 @@ export class SupportHubSignalRService {
   private connection: HubConnection | null = null;
   private auth = inject(Auth);
   private zone = inject(NgZone);
+  private _isRepMode = false;
 
   private messageSubject = new Subject<SupportChatMessageDto>();
   private queueUpdatedSubject = new Subject<void>();
@@ -54,7 +55,12 @@ export class SupportHubSignalRService {
   readonly userTyping$ = this.userTypingSubject.asObservable();
 
   async startConnection(): Promise<void> {
-    if (this.connection) return;
+    if (this.connection) {
+      if (this.connection.state === 'Disconnected') {
+        await this.connection.start();
+      }
+      return;
+    }
 
     const auth = this.auth;
     this.connection = new HubConnectionBuilder()
@@ -68,6 +74,12 @@ export class SupportHubSignalRService {
       .withAutomaticReconnect()
       .configureLogging(LogLevel.Warning)
       .build();
+
+    this.connection.onreconnected(() => {
+      if (this._isRepMode) {
+        this.connection?.invoke('JoinRepGroup').catch(() => { /* ignore */ });
+      }
+    });
 
     this.connection.on('ReceiveMessage', (msg: SupportChatMessageDto) => {
       this.zone.run(() => this.messageSubject.next(msg));
@@ -97,6 +109,7 @@ export class SupportHubSignalRService {
   }
 
   async joinRepGroup(): Promise<void> {
+    this._isRepMode = true;
     await this.connection?.invoke('JoinRepGroup');
   }
 

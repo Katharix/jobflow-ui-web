@@ -21,9 +21,15 @@ export interface QueueCustomer {
 export class QueueCardComponent {
   @Input() customer!: QueueCustomer;
   @Input() compact = false;
+  @Input() showRemove = false;
   @Output() pickUp = new EventEmitter<string>();
+  @Output() remove = new EventEmitter<string>();
 
   onPickUp(): void {
     this.pickUp.emit(this.customer.id);
+  }
+
+  onRemove(): void {
+    this.remove.emit(this.customer.id);
   }
 }

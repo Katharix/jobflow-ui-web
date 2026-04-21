@@ -113,4 +113,8 @@ export class SupportHubChatApiService {
   getSession(sessionId: string): Observable<SupportChatSessionDto> {
     return this.api.get<SupportChatSessionDto>(`${this.apiUrl}/sessions/${sessionId}`);
   }
+
+  removeFromQueue(sessionId: string): Observable<void> {
+    return this.api.delete<void>(`${this.apiUrl}/sessions/${sessionId}/queue`);
+  }
 }
