@@ -29,7 +29,7 @@ describe('QueueCardComponent', () => {
       component.showRemove = false;
       fixture.detectChanges();
 
-      const btn = fixture.nativeElement.querySelector('.q-card__remove');
+      const btn = fixture.nativeElement.querySelector('button[aria-label="Remove from queue"]');
 
       expect(btn).toBeNull();
     });
@@ -40,7 +40,7 @@ describe('QueueCardComponent', () => {
       component.showRemove = true;
       fixture.detectChanges();
 
-      const btn = fixture.nativeElement.querySelector('.q-card__remove');
+      const btn = fixture.nativeElement.querySelector('button[aria-label="Remove from queue"]');
 
       expect(btn).not.toBeNull();
     });
@@ -51,7 +51,7 @@ describe('QueueCardComponent', () => {
       let emittedId: string | undefined;
       component.remove.subscribe((id: string) => (emittedId = id));
 
-      const btn: HTMLButtonElement = fixture.nativeElement.querySelector('.q-card__remove');
+      const btn: HTMLButtonElement = fixture.nativeElement.querySelector('button[aria-label="Remove from queue"]');
       btn.click();
 
       expect(emittedId).toBe(mockCustomer.id);
@@ -63,7 +63,7 @@ describe('QueueCardComponent', () => {
     let emittedId: string | undefined;
     component.pickUp.subscribe((id: string) => (emittedId = id));
 
-    const btn: HTMLButtonElement = fixture.nativeElement.querySelector('.q-card__pickup');
+    const btn: HTMLButtonElement = fixture.nativeElement.querySelector('button.qc-pickup-btn');
     btn.click();
 
     expect(emittedId).toBe(mockCustomer.id);
