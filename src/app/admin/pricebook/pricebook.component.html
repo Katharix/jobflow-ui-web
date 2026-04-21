@@ -1,7 +1,15 @@
-<app-page-header
-  title="Price Book"
-  subtitle="Organize materials and services into categories and keep pricing tidy."
-></app-page-header>
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Price Book</h1>
+      <p>Organize materials and services into categories and keep pricing tidy.</p>
+    </div>
+    <div class="page-actions">
+      <button type="button" class="btn btn-primary" (click)="openAddMaterialDialog()">
+        New Category
+      </button>
+    </div>
+  </div>
 
 @if (error) {
   <div class="alert alert-danger mb-3">{{ error }}</div>
@@ -31,8 +39,9 @@
   </div>
 </section>
 
+</div>
 <section class="pricebook-categories">
-  @for (category of materialCategories; track category) {
+  @for (category of materialCategories; track category.id) {
     <div class="pricebook-card">
       <div class="pricebook-card__header">
         <div class="pricebook-card__icon">

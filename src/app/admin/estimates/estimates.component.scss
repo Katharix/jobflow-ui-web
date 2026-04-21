@@ -1,3 +1,31 @@
+.inline-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--jf-border);
+
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--jf-text);
+    margin: 0;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--jf-text-muted);
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    &:hover { background: var(--jf-border); color: var(--jf-text); }
+  }
+}
+
 .estimate-client-cell {
   .estimate-client-name {
     font-weight: 600;

@@ -6,7 +6,6 @@ import {LucideAngularModule} from 'lucide-angular';
 
 import {getClickHandler} from '../../common/utils/page-action-dispatcher';
 import {ToastService} from '../../common/toast/toast.service';
-import {PageHeaderComponent} from '../dashboard/page-header/page-header.component';
 import {DeleteConfirmComponent} from '../../views/shared/delete-confirm/delete-confirm-component';
 import {OrganizationDto} from '../../models/organization';
 import {OrganizationContextService} from '../../services/shared/organization-context.service';
@@ -24,7 +23,6 @@ import {
    JobflowGridComponent,
    JobflowGridPageSettings
 } from '../../common/jobflow-grid/jobflow-grid.component';
-import { JobflowDrawerComponent } from '../../common/jobflow-drawer/jobflow-drawer.component';
 import { ModalComponent } from '../../views/shared/modal/modal.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription, catchError, interval, of, startWith, switchMap } from 'rxjs';
@@ -41,8 +39,6 @@ import { FormsModule } from '@angular/forms';
       NgClass,
       FormsModule,
     JobflowGridComponent,
-    PageHeaderComponent,
-   JobflowDrawerComponent,
     EmployeeFormComponent,
     EmployeeInviteFormComponent,
       DeleteConfirmComponent,
@@ -578,7 +574,7 @@ export class EmployeesComponent implements OnInit, OnDestroy {
          }
       }
 
-      this.summary = summary;
+      Promise.resolve().then(() => { this.summary = summary; });
    }
 
    // --- Import methods ---

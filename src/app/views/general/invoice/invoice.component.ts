@@ -5,7 +5,6 @@ import {CommonModule} from '@angular/common';
 import {Invoice, InvoiceStatus} from '../../../models/invoice';
 import {PaymentProvider} from '../../../models/customer-payment-profile';
 import {LucideAngularModule} from 'lucide-angular';
-import {LoadingService} from '../../../services/shared/loading-service.service';
 import {PaymentService} from "../../../services/shared/payment.service";
 import {firstValueFrom} from "rxjs";
 import {loadStripe, Stripe, StripeElements} from "@stripe/stripe-js";
@@ -23,7 +22,6 @@ import {BrandingDto} from '../../../models/organization-branding';
 })
 export class InvoiceComponent implements OnInit {
    private invoiceService = inject(InvoiceService);
-   private loadingService = inject(LoadingService);
    private route = inject(ActivatedRoute);
    private paymentService = inject(PaymentService);
    private router = inject(Router);

@@ -1,3 +1,4 @@
+@use 'sass:color';
 /* ── Billing & Payments — JobFlow branded ── */
 /* Uses global brand tokens from _variables.scss:
    $primary (#3F67DA), $secondary (#8595D1),
@@ -168,7 +169,7 @@ $phantom:    #1e1e24;
 
 .bp-badge--success {
   background: rgba($success, 0.12);
-  color: darken($success, 12%);
+  color: color.adjust($success, $lightness: -12%);
 }
 
 /* ── Table ─────────────────────────────────── */

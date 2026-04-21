@@ -8,7 +8,6 @@
 } from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {PageHeaderComponent} from "../dashboard/page-header/page-header.component";
 import {
    JobflowGridCommandClickEventArgs,
    JobflowGridColumn,
@@ -16,7 +15,6 @@ import {
    JobflowGridPageSettings,
    JobflowGridSortChangeEvent
 } from "../../common/jobflow-grid/jobflow-grid.component";
-import {JobflowDrawerComponent} from "../../common/jobflow-drawer/jobflow-drawer.component";
 import {ToastService} from "../../common/toast/toast.service";
 import {OrganizationContextService} from "../../services/shared/organization-context.service";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
@@ -44,10 +42,8 @@ import { LucideAngularModule } from 'lucide-angular';
    imports: [
       CommonModule,
       FormsModule,
-      PageHeaderComponent,
       ReactiveFormsModule,
       JobflowGridComponent,
-      JobflowDrawerComponent,
       CreateJobComponent,
       RouterLink,
       TranslateModule,

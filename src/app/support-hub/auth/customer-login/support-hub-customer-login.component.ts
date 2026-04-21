@@ -1,13 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { SupportHubChatApiService } from '../../services/support-hub-chat-api.service';
 
 @Component({
   selector: 'app-support-hub-customer-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './support-hub-customer-login.component.html',
   styleUrl: './support-hub-customer-login.component.scss',
 })

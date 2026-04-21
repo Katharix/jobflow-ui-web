@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { Draggable } from '@fullcalendar/interaction';
-import { PageHeaderComponent } from '../dashboard/page-header/page-header.component';
 import { JobflowCalendarComponent, CalendarDateClickInfo } from '../../common/jobflow-calendar/jobflow-calendar.component';
 import { JobflowDrawerComponent } from '../../common/jobflow-drawer/jobflow-drawer.component';
 import { LucideAngularModule } from 'lucide-angular';
@@ -26,7 +25,7 @@ interface DispatchOverviewRow {
 @Component({
   selector: 'app-dispatch',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, PageHeaderComponent, JobflowCalendarComponent, JobflowDrawerComponent, LucideAngularModule],
+  imports: [CommonModule, FormsModule, RouterLink, JobflowCalendarComponent, JobflowDrawerComponent, LucideAngularModule],
   templateUrl: './dispatch.component.html',
   styleUrl: './dispatch.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { take } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
-import { PageHeaderComponent } from '../dashboard/page-header/page-header.component';
 import { Invoice, InvoiceStatus } from '../../models/invoice';
 import { InvoiceService } from '../invoices/services/invoice.service';
 import { ToastService } from '../../common/toast/toast.service';
@@ -21,7 +20,7 @@ import { PaymentProvider } from '../../models/customer-payment-profile';
 @Component({
   selector: 'app-billing-payments',
   standalone: true,
-  imports: [CommonModule, RouterLink, PageHeaderComponent, TranslateModule, FormsModule, TabsModule],
+  imports: [CommonModule, RouterLink, TranslateModule, FormsModule, TabsModule],
   templateUrl: './billing-payments.component.html',
   styleUrl: './billing-payments.component.scss'
 })

@@ -1,7 +1,14 @@
-<app-page-header
-  title="Dispatch"
-  subtitle="Live command center for scheduling, crew assignment, and real-time status"
-></app-page-header>
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Dispatch</h1>
+      <p>Live command center for scheduling, crew assignment, and real-time status</p>
+    </div>
+    <div class="page-actions">
+      <a class="btn btn-primary" routerLink="/admin/jobs">Create Dispatch Ticket</a>
+      <a class="btn btn-outline-primary" routerLink="/admin/jobs">Open Jobs Board</a>
+    </div>
+  </div>
 
 <section class="dispatch-layout">
   <div class="card dispatch-hero mb-3">
@@ -11,10 +18,7 @@
         <h5 class="mb-1">Keep crews moving. Surface blockers early.</h5>
         <p class="text-muted mb-0">Drag, drop, and dispatch without leaving the board.</p>
       </div>
-      <div class="d-flex flex-wrap gap-2">
-        <a class="btn btn-primary" routerLink="/admin/jobs">Create Dispatch Ticket</a>
-        <a class="btn btn-outline-primary" routerLink="/admin/jobs">Open Jobs Board</a>
-      </div>
+
     </div>
   </div>
 
@@ -109,7 +113,7 @@
           </div>
 
           <div #unscheduledList class="dispatch-queue__list" [class.d-none]="unscheduledJobs.length === 0">
-            @for (job of unscheduledJobs; track job) {
+            @for (job of unscheduledJobs; track job.jobId) {
               <article
                 class="dispatch-queue__item"
                 [attr.data-job-id]="job.jobId"
@@ -141,7 +145,7 @@
           </div>
 
           <div class="dispatch-overview" [class.d-none]="overviewRows.length === 0">
-            @for (row of overviewRows; track row) {
+            @for (row of overviewRows; track $index) {
               <div class="dispatch-overview__row">
                 <div>
                   <p class="dispatch-overview__name mb-1">{{ row.employeeName }}</p>
@@ -150,7 +154,7 @@
                   }
                 </div>
                 <div class="dispatch-overview__chips">
-                  @for (item of row.assignments; track item) {
+                  @for (item of row.assignments; track item.id) {
                     <span class="dispatch-chip">
                       {{ item.jobTitle || 'Assignment' }}
                     </span>
@@ -220,7 +224,7 @@
       <label class="form-label" for="dispatchJob">Job</label>
       <select id="dispatchJob" class="form-select mb-3" [(ngModel)]="draftJobId">
         <option [ngValue]="null">Select an unscheduled job</option>
-        @for (job of unscheduledJobs; track job) {
+        @for (job of unscheduledJobs; track job.jobId) {
           <option [ngValue]="job.jobId">
             {{ job.jobTitle || 'Untitled job' }} · {{ job.clientName || 'Client TBD' }}
           </option>
@@ -261,7 +265,7 @@
       <div class="dispatch-drawer__block">
         <span class="form-label">Assigned Crew</span>
         <div class="dispatch-assignees">
-          @for (employee of employees; track employee) {
+          @for (employee of employees; track employee.id) {
             <label class="dispatch-assignee">
               <input
                 type="checkbox"
@@ -275,7 +279,7 @@
           <label class="form-label mt-3" for="dispatchLead">Lead</label>
           <select id="dispatchLead" class="form-select" [(ngModel)]="selectedLeadId">
             <option [ngValue]="null">No lead</option>
-            @for (employee of employees; track employee) {
+            @for (employee of employees; track employee.id) {
               <option [ngValue]="employee.id" [disabled]="!selectedAssigneeIds.has(employee.id)">
                 {{ employee.firstName }} {{ employee.lastName }}
               </option>
@@ -293,3 +297,4 @@
     }
   </app-jobflow-drawer>
 
+</div>

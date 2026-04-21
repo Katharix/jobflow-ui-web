@@ -1,7 +1,15 @@
-<app-page-header
-  [title]="'admin.jobs.title' | translate"
-  [subtitle]="'admin.jobs.subtitle' | translate"
-></app-page-header>
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ 'admin.jobs.title' | translate }}</h1>
+      <p>{{ 'admin.jobs.subtitle' | translate }}</p>
+    </div>
+    <div class="page-actions">
+      <button type="button" class="btn btn-primary" (click)="openAddJob()">
+        {{ 'admin.jobs.cta.button' | translate }}
+      </button>
+    </div>
+  </div>
 
 @if (error) {
   <div class="alert alert-danger mb-3">
@@ -9,13 +17,15 @@
   </div>
 }
 
-<app-jobflow-drawer
-  [open]="isDrawerOpen"
-  [title]="'admin.jobs.drawer.addTitle' | translate"
-  (closed)="onDrawerClosed()"
-  >
-  <app-job-create [job]="editingJob" (saved)="onCreateSaved()" (cancelled)="onCreateCancelled()"/>
-</app-jobflow-drawer>
+@if (isDrawerOpen) {
+  <div class="content-card">
+    <div class="drawer-content__intro">
+      <p class="drawer-content__eyebrow">{{ editingJob ? 'Update job' : 'New job' }}</p>
+      <h3 class="drawer-content__heading">{{ 'admin.jobs.drawer.addTitle' | translate }}</h3>
+    </div>
+    <app-job-create [job]="editingJob" (saved)="onCreateSaved()" (cancelled)="onCreateCancelled()"/>
+  </div>
+}
 
 <section class="jobflow-hero">
   <div class="jobflow-hero__intro">
@@ -352,4 +362,6 @@
       (sortChange)="onGridSortChange($event)"
     ></app-jobflow-grid>
   </section>
+
+</div>
 

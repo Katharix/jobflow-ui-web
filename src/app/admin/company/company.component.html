@@ -1,11 +1,11 @@
-<div class="company-page">
-  <div class="company-page__header">
-    <h1 class="company-page__title">{{ 'company.title' | translate }}</h1>
-    <p class="company-page__subtitle">{{ 'company.subtitle' | translate }}</p>
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">{{ 'company.title' | translate }}</h1>
+    <p>{{ 'company.subtitle' | translate }}</p>
   </div>
 
   @if (isLoading) {
-    <div class="company-page__loading">
+    <div class="content-card text-center py-4">
       <div class="spinner-border text-primary" role="status"></div>
       <p>{{ 'company.loading' | translate }}</p>
     </div>
@@ -16,13 +16,10 @@
 
     <form #companyForm="ngForm" (ngSubmit)="save(companyForm)" novalidate>
       <!-- Business Details -->
-      <section class="company-section">
-        <div class="company-section__heading">
-          <h2 class="company-section__title">{{ 'company.sectionBusiness' | translate }}</h2>
-          <p class="company-section__desc">{{ 'company.sectionBusinessDesc' | translate }}</p>
-        </div>
-        <div class="company-section__body">
-          <div class="row g-3">
+      <div class="content-card">
+        <span class="section-label">{{ 'company.sectionBusiness' | translate }}</span>
+        <p class="text-muted mb-3">{{ 'company.sectionBusinessDesc' | translate }}</p>
+        <div class="row g-3">
             <div class="col-md-7">
               <label class="form-label" for="organizationName">{{ 'company.organizationName' | translate }}</label>
               <input
@@ -58,17 +55,13 @@
               }
             </div>
           </div>
-        </div>
-      </section>
+      </div>
 
       <!-- Primary Contact -->
-      <section class="company-section">
-        <div class="company-section__heading">
-          <h2 class="company-section__title">{{ 'company.sectionContact' | translate }}</h2>
-          <p class="company-section__desc">{{ 'company.sectionContactDesc' | translate }}</p>
-        </div>
-        <div class="company-section__body">
-          <div class="row g-3">
+      <div class="content-card">
+        <span class="section-label">{{ 'company.sectionContact' | translate }}</span>
+        <p class="text-muted mb-3">{{ 'company.sectionContactDesc' | translate }}</p>
+        <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label" for="contactFirstName">{{ 'company.contactFirstName' | translate }}</label>
               <input
@@ -113,17 +106,13 @@
                 [(ngModel)]="model.phoneNumber" />
             </div>
           </div>
-        </div>
-      </section>
+      </div>
 
       <!-- Business Address -->
-      <section class="company-section">
-        <div class="company-section__heading">
-          <h2 class="company-section__title">{{ 'company.sectionAddress' | translate }}</h2>
-          <p class="company-section__desc">{{ 'company.sectionAddressDesc' | translate }}</p>
-        </div>
-        <div class="company-section__body">
-          <div class="row g-3">
+      <div class="content-card">
+        <span class="section-label">{{ 'company.sectionAddress' | translate }}</span>
+        <p class="text-muted mb-3">{{ 'company.sectionAddressDesc' | translate }}</p>
+        <div class="row g-3">
             <div class="col-12">
               <label class="form-label" for="address1">{{ 'company.address1' | translate }}</label>
               <input
@@ -182,11 +171,10 @@
                 [(ngModel)]="model.zipCode" />
             </div>
           </div>
-        </div>
-      </section>
+      </div>
 
       <!-- Save -->
-      <div class="company-page__footer">
+      <div class="text-end mt-3">
         <button class="btn btn-primary" type="submit" [disabled]="isSaving">
           @if (isSaving) {
             <span class="spinner-border spinner-border-sm me-1" role="status"></span>

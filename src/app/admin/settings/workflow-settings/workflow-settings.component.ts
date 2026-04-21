@@ -3,7 +3,6 @@ import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
-import { PageHeaderComponent } from '../../dashboard/page-header/page-header.component';
 import { WorkflowSettingsService } from '../services/workflow-settings.service';
 import { ScheduleSettingsService } from '../services/schedule-settings.service';
 import { InvoicingSettingsService } from '../services/invoicing-settings.service';
@@ -18,7 +17,7 @@ import { DataExportJobStatusResponse, DataExportService } from '../services/data
 @Component({
   selector: 'app-workflow-settings',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, InputNumberModule, InputTextModule, PageHeaderComponent],
+  imports: [ReactiveFormsModule, FormsModule, InputNumberModule, InputTextModule],
   templateUrl: './workflow-settings.component.html',
   styleUrl: './workflow-settings.component.scss'
 })

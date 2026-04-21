@@ -99,9 +99,9 @@ export class CustomersService {
       return this.api.delete<void>(`${this.apiUrl}delete?clientId=${clientId}`);
    }
 
-   getAllByOrganization(): Observable<Client[]> {
+   getAllByOrganization(options?: { context?: import('@angular/common/http').HttpContext }): Observable<Client[]> {
       return this.api.get(
-         `${this.apiUrl}orgall`
+         `${this.apiUrl}orgall`, undefined, options?.context
       );
    }
 

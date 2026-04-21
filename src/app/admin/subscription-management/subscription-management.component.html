@@ -1,9 +1,10 @@
-<app-page-header
-  title="Subscription Management"
-  subtitle="Manage plan pricing, plan changes, renewal, and cancellation settings."
-></app-page-header>
+<div class="page-container">
+<div class="page-header">
+  <h1 class="page-title">Subscription Management</h1>
+  <p>Manage plan pricing, plan changes, renewal, and cancellation settings.</p>
+</div>
 
-<section class="subscription-shell">
+<div class="subscription-shell">
   <section class="subscription-toolbar">
     <a class="btn btn-outline-secondary" routerLink="/admin/billing-payments">Back to Billing &amp; Payments</a>
     <button class="btn btn-outline-primary" [disabled]="refreshing" (click)="onRefresh()">
@@ -162,4 +163,5 @@
       }
     </article>
   </section>
-</section>
+</div>
+</div>

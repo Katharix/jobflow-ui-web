@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { InvoiceComponent } from './invoice.component';
 import { InvoiceService } from '../../../admin/invoices/services/invoice.service';
 import { OrganizationBrandingService } from '../../../admin/branding/services/organization-branding.service';
-import { LoadingService } from '../../../services/shared/loading-service.service';
 import { PaymentService } from '../../../services/shared/payment.service';
 import { Invoice, InvoiceStatus } from '../../../models/invoice';
 import { BrandingDto } from '../../../models/organization-branding';
@@ -64,7 +63,6 @@ describe('InvoiceComponent', () => {
         { provide: InvoiceService, useValue: invoiceService },
         { provide: OrganizationBrandingService, useValue: brandingService },
         { provide: PaymentService, useValue: paymentService },
-        { provide: LoadingService, useValue: {} },
         { provide: Router, useValue: jasmine.createSpyObj('Router', ['navigate']) },
         {
           provide: ActivatedRoute,

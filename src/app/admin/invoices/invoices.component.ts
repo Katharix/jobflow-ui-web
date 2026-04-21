@@ -6,9 +6,7 @@ import {RouterModule} from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {CreateInvoiceLineItemRequest, CreateInvoiceRequest, Invoice, InvoiceStatus, UpdateInvoiceRequest} from '../../models/invoice';
 import {InvoiceService} from './services/invoice.service';
-import {PageHeaderComponent} from '../dashboard/page-header/page-header.component';
 import {JobflowGridColumn, JobflowGridComponent, JobflowGridPageSettings, JobflowGridSortChangeEvent} from '../../common/jobflow-grid/jobflow-grid.component';
-import {JobflowDrawerComponent} from '../../common/jobflow-drawer/jobflow-drawer.component';
 import {ToastService} from '../../common/toast/toast.service';
 import {Job, JobLifecycleStatus, JobLifecycleStatusLabels} from '../jobs/models/job';
 import { WorkflowSettingsService } from '../settings/services/workflow-settings.service';
@@ -40,9 +38,7 @@ import { OrganizationContextService } from '../../services/shared/organization-c
       InputNumberModule,
       AutoCompleteModule,
       InvoiceJobPickerComponent,
-      PageHeaderComponent,
-      JobflowGridComponent,
-      JobflowDrawerComponent
+      JobflowGridComponent
    ],
    templateUrl: './invoices.component.html',
    styleUrl: './invoices.component.scss'

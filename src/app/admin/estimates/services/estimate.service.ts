@@ -18,8 +18,8 @@ export class EstimateService {
     return this.api.get<Estimate>(`${this.baseUrl}/${id}`);
   }
 
-  getByOrganization(): Observable<Estimate[]> {
-    return this.api.get<Estimate[]>(`${this.baseUrl}/organization`);
+  getByOrganization(options?: { context?: import('@angular/common/http').HttpContext }): Observable<Estimate[]> {
+    return this.api.get<Estimate[]>(`${this.baseUrl}/organization`, undefined, options?.context);
   }
 
   create(request: CreateEstimateRequest): Observable<Estimate> {
