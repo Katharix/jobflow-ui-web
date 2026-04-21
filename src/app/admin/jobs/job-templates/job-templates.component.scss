@@ -1,12 +1,12 @@
 .templates-list {
 	display: grid;
-	gap: 0.75rem;
+	gap: 1rem;
 }
 
 .template-card {
 	border: 1px solid var(--jf-border);
 	border-radius: var(--jf-radius-sm);
-	padding: 0.85rem 1rem;
+	padding: 1rem 1.25rem;
 	background: var(--jf-surface);
 	display: flex;
 	flex-wrap: wrap;
@@ -32,7 +32,7 @@
 	display: flex;
 	gap: 0.4rem;
 	align-items: center;
-	margin-bottom: 0.35rem;
+	margin-bottom: 0.5rem;
 }
 
 .template-card__tag,
@@ -85,7 +85,7 @@
 .templates-empty {
 	border: 1px dashed var(--jf-border);
 	border-radius: var(--jf-radius-sm);
-	padding: 1rem;
+	padding: 2rem 1.5rem;
 	text-align: center;
 
 	h4 {
@@ -110,7 +110,7 @@
 .template-drawer__intro {
 	border: 1px solid var(--jf-border);
 	border-radius: var(--jf-radius-sm);
-	padding: 0.9rem 1rem;
+	padding: 1rem 1.25rem;
 	background: var(--jf-bg);
 
 	h3 {
@@ -144,7 +144,7 @@
 .template-drawer__items {
 	border: 1px solid var(--jf-border);
 	border-radius: var(--jf-radius-sm);
-	padding: 0.85rem 1rem;
+	padding: 1rem 1.25rem;
 	background: var(--jf-bg);
 	display: grid;
 	gap: 0.75rem;

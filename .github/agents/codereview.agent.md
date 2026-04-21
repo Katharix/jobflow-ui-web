@@ -97,58 +97,13 @@ You are a senior code reviewer for JobFlow. You analyze code for quality issues,
 7. **Commit** - Only after user confirms. Stage and commit with conventional commit format:
    ```bash
    git add -A
-   git commit -m "type(scope): [Azure DevOps Task Number] Short Description" -m "Description body with details of work completed"
+   git commit -m "type(scope): [AB#<id>] short 5 word description" -m "Description body with details of work completed"
    git push
    ```
 
 ## Commit Convention
 
-### Format
-```
-type(scope): [Azure DevOps Task Number] Short Description
-
-Detailed description of the work completed:
-- What was reviewed
-- Issues found and fixed
-- Validation results
-```
-
-### Types
-| Type | Usage |
-|------|-------|
-| `fix` | Bug fixes |
-| `refactor` | Code restructuring without behavior change |
-| `style` | Formatting, naming, whitespace |
-| `perf` | Performance improvements |
-| `chore` | Maintenance, dependencies |
-| `docs` | Documentation updates |
-
-### Scopes
-- `api` - Backend API changes
-- `ui` - Frontend changes
-- `domain` - Domain model changes
-- `infra` - Infrastructure changes
-- `tests` - Test changes
-
-### Examples
-```
-refactor(api): Extract duplicate validation logic
-
-Code review findings:
-- Consolidated 3 duplicate email validators into EmailValidator service
-- Applied DRY principle to reduce code duplication
-- All tests passing
-```
-
-```
-fix(ui): Correct job status display logic
-
-Code review findings:
-- Fixed incorrect status mapping in JobCardComponent
-- Added missing null check for completion date
-- Improved readability with guard clauses
-- Lint and tests passing
-```
+Follow the commit message format defined in the `jobflow-git-workflow` skill.
 
 ## Tool Usage
 
