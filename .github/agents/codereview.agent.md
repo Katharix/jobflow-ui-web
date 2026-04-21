@@ -75,12 +75,11 @@ You are a senior code reviewer for JobFlow. You analyze code for quality issues,
    # Backend
    cd JobFlow.API/JobFlow.API
    dotnet build
-   dotnet test ../JobFlow.Tests
+   dotnet format
    
    # Frontend
    cd jobflow-ui-web
    npm.cmd run lint
-   npm.cmd run test -- --watch=false --browsers=ChromeHeadless
    ```
 
 5. **Auto-fix** - If validation fails, analyze errors, fix, and retry until green

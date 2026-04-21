@@ -201,6 +201,8 @@ gh pr create \
 - Always include the Work Item section with AB# reference
 - PR body is required — always populate all three sections (Summary, Changes, Work Item). Never leave the body empty or use a placeholder.
 
+> **Note:** The `References:` section in the commit body is plain text only — file paths are not clickable in git log or Azure DevOps work item history. For clickable file links, add them to the **PR description** in Azure DevOps, which renders Markdown.
+
 ## Rules
 
 - Never `git push --force` without explicit user approval
