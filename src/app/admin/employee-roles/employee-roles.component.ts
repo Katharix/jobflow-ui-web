@@ -11,12 +11,7 @@ import {EmployeeRoleService} from './services/employee-role.service';
 import {EmployeeRolePresetService} from './services/employee-role-preset.service';
 import {OrganizationService} from '../../services/shared/organization.service';
 import {OrganizationContextService} from '../../services/shared/organization-context.service';
-import {PageHeaderComponent} from "../dashboard/page-header/page-header.component";
-import { JobflowDrawerComponent } from '../../common/jobflow-drawer/jobflow-drawer.component';
-import {
-   JobflowGridColumn,
-   JobflowGridComponent,
-   JobflowGridPageSettings
+import { JobflowGridColumn, JobflowGridComponent, JobflowGridPageSettings
 } from '../../common/jobflow-grid/jobflow-grid.component';
 import { Subscription } from 'rxjs';
 
@@ -25,7 +20,7 @@ import { Subscription } from 'rxjs';
    standalone: true,
    templateUrl: './employee-roles.component.html',
    styleUrls: ['./employee-roles.component.scss'],
-   imports: [ReactiveFormsModule, FormsModule, InputTextModule, JobflowGridComponent, PageHeaderComponent, JobflowDrawerComponent]
+   imports: [ReactiveFormsModule, FormsModule, InputTextModule, JobflowGridComponent]
 })
 export class EmployeeRolesComponent implements OnInit, OnDestroy {
    private employeeRoleService = inject(EmployeeRoleService);

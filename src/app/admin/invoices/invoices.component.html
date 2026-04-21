@@ -1,75 +1,89 @@
-<app-page-header
-  [title]="'admin.invoices.title' | translate"
-  [subtitle]="'admin.invoices.subtitle' | translate"
-></app-page-header>
+<div class="page-container">
 
-@if (error) {
-  <div class="alert alert-danger mb-3">
-    {{ error }}
+<!-- ── Page Header ──────────────────────────────────────────────────────── -->
+<header class="page-header">
+  <div class="page-header__title-group">
+    <h1 class="page-header__title">{{ 'admin.invoices.title' | translate }}</h1>
+    <p class="page-header__subtitle">{{ 'admin.invoices.subtitle' | translate }}</p>
   </div>
-}
-
-<section class="invoices-overview">
-  @if (summary$ | async; as summaryVm) {
-    <div class="invoices-overview__metrics">
-      <article class="invoices-card">
-        <p class="invoices-card__label">{{ 'admin.invoices.metrics.total' | translate }}</p>
-        <h3>{{ summaryVm.total }}</h3>
-        <p class="invoices-card__note">{{ 'admin.invoices.metrics.totalNote' | translate }}</p>
-      </article>
-      <article class="invoices-card">
-        <p class="invoices-card__label">{{ 'admin.invoices.metrics.sent' | translate }}</p>
-        <h3>{{ summaryVm.sent }}</h3>
-        <p class="invoices-card__note">{{ 'admin.invoices.metrics.sentNote' | translate }}</p>
-      </article>
-      <article class="invoices-card">
-        <p class="invoices-card__label">{{ 'admin.invoices.metrics.overdue' | translate }}</p>
-        <h3>{{ summaryVm.overdue }}</h3>
-        <p class="invoices-card__note">{{ 'admin.invoices.metrics.overdueNote' | translate }}</p>
-      </article>
-      <article class="invoices-card">
-        <p class="invoices-card__label">{{ 'admin.invoices.metrics.totalBilled' | translate }}</p>
-        <h3>{{ formatMoney(summaryVm.totalBilled) }}</h3>
-        <p class="invoices-card__note">{{ 'admin.invoices.metrics.totalBilledNote' | translate }}</p>
-      </article>
-      <article class="invoices-card invoices-card--accent">
-        <p class="invoices-card__label">{{ 'admin.invoices.metrics.outstanding' | translate }}</p>
-        <h3>{{ formatMoney(summaryVm.balanceDue) }}</h3>
-        <p class="invoices-card__note">{{ 'admin.invoices.metrics.outstandingNote' | translate }}</p>
-      </article>
-    </div>
-  }
-  <div class="invoices-cta">
-    <div>
-      <p class="invoices-cta__eyebrow">{{ 'admin.invoices.cta.eyebrow' | translate }}</p>
-      <h3>{{ 'admin.invoices.cta.title' | translate }}</h3>
-      <p>{{ 'admin.invoices.cta.subtitle' | translate }}</p>
-    </div>
+  <div class="page-header__actions">
     <button type="button" class="btn btn-primary" (click)="openCreateInvoiceDrawer()">
       {{ 'admin.invoices.cta.button' | translate }}
     </button>
   </div>
-</section>
+</header>
 
-<section class="invoices-filters" aria-label="Invoice filters">
-  <div class="invoices-filters__group">
+@if (error) {
+  <div class="page-alert page-alert--danger">{{ error }}</div>
+}
+
+@if (summary$ | async; as summaryVm) {
+  <!-- KPI Metrics -->
+  <div class="kpi-grid kpi-grid--5" role="list" aria-label="Invoice metrics">
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ summaryVm.total }}</span>
+        <span class="kpi-tile__label">{{ 'admin.invoices.metrics.total' | translate }}</span>
+        <span class="kpi-tile__note">{{ 'admin.invoices.metrics.totalNote' | translate }}</span>
+      </div>
+    </div>
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--info"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ summaryVm.sent }}</span>
+        <span class="kpi-tile__label">{{ 'admin.invoices.metrics.sent' | translate }}</span>
+        <span class="kpi-tile__note">{{ 'admin.invoices.metrics.sentNote' | translate }}</span>
+      </div>
+    </div>
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--danger"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ summaryVm.overdue }}</span>
+        <span class="kpi-tile__label">{{ 'admin.invoices.metrics.overdue' | translate }}</span>
+        <span class="kpi-tile__note">{{ 'admin.invoices.metrics.overdueNote' | translate }}</span>
+      </div>
+    </div>
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--success"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ formatMoney(summaryVm.totalBilled) }}</span>
+        <span class="kpi-tile__label">{{ 'admin.invoices.metrics.totalBilled' | translate }}</span>
+        <span class="kpi-tile__note">{{ 'admin.invoices.metrics.totalBilledNote' | translate }}</span>
+      </div>
+    </div>
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--warning"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ formatMoney(summaryVm.balanceDue) }}</span>
+        <span class="kpi-tile__label">{{ 'admin.invoices.metrics.outstanding' | translate }}</span>
+        <span class="kpi-tile__note">{{ 'admin.invoices.metrics.outstandingNote' | translate }}</span>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Filter Bar -->
+<div class="filter-bar" aria-label="Invoice filters">
+  <div class="filter-bar__group">
     @for (filter of statusFilters; track filter.key) {
       <button
         type="button"
-        class="invoices-filter"
-        [class.invoices-filter--active]="selectedStatusFilter === filter.key"
+        class="filter-chip"
+        [class.filter-chip--active]="selectedStatusFilter === filter.key"
         (click)="setStatusFilter(filter.key)">
         {{ filter.label }}
-        <span class="invoices-filter__count">{{ getFilterCount(filter.key) }}</span>
+        <span class="filter-chip__count">{{ getFilterCount(filter.key) }}</span>
       </button>
     }
   </div>
-</section>
+</div>
 
-<section class="list-pagination-controls">
+<!-- Pagination -->
+<div class="page-pagination">
   <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBack || listLoading" (click)="onPrevPage()">Previous</button>
   <button type="button" class="btn btn-sm btn-outline-primary" [disabled]="!nextCursor || listLoading" (click)="onNextPage()">Next</button>
-</section>
+</div>
 
 <ng-template #clientTemplate let-invoice>
   <div class="invoice-client-cell">
@@ -101,6 +115,7 @@
   </div>
 </ng-template>
 
+<div class="content-card content-card--no-pad">
 <app-jobflow-grid
   [data]="displayItems"
   [columns]="columns"
@@ -109,78 +124,79 @@
   (searchChange)="onGridSearchChange($event)"
   (sortChange)="onGridSortChange($event)"
 ></app-jobflow-grid>
+</div>
 
-<app-jobflow-drawer
-  [open]="isCreateDrawerOpen"
-  [title]="selectedJob ? ('admin.invoices.drawer.createTitle' | translate) : ('admin.invoices.drawer.selectTitle' | translate)"
-  [width]="760"
-  (closed)="onCreateDrawerClosed()"
-  >
-  <div class="invoice-drawer">
-    @if (!selectedJob) {
-      <div class="invoice-drawer__intro">
-        <p class="invoice-drawer__eyebrow">
-          {{ isInvoiceOnboardingFlow ? ('admin.invoices.drawer.onboardingStep' | translate) : ('admin.invoices.drawer.createTitle' | translate) }}
-        </p>
-        <h3>{{ 'admin.invoices.drawer.pickJobTitle' | translate }}</h3>
-        <p>{{ 'admin.invoices.drawer.pickJobSubtitle' | translate }}</p>
-        <div class="invoice-drawer__intro-tags">
-          <span>{{ 'admin.invoices.drawer.tags.recent' | translate }}</span>
-          <span>{{ 'admin.invoices.drawer.tags.search' | translate }}</span>
-          <span>{{ 'admin.invoices.drawer.tags.fast' | translate }}</span>
-        </div>
-      </div>
-      <section class="invoice-drawer__picker" [class.invoice-drawer__picker--onboarding]="isInvoiceOnboardingFlow">
-        <div class="invoice-drawer__picker-header">
-          <h3>{{ 'admin.invoices.drawer.chooseJobTitle' | translate }}</h3>
-          <p>{{ 'admin.invoices.drawer.chooseJobSubtitle' | translate }}</p>
-        </div>
-        <input
-          type="search"
-          class="form-control"
-          [placeholder]="'admin.invoices.drawer.searchPlaceholder' | translate"
-          [(ngModel)]="jobSearchText"
-          (ngModelChange)="onJobSearchChange($event)"
-          />
-          <app-invoice-job-picker
-            [rows]="(filteredRecentJobRows$ | async) ?? []"
-            [hasJobSearchTerm]="hasJobSearchTerm"
-            [jobPickerError]="jobPickerError"
-            [returnToCommandCenter]="returnToCommandCenter"
-            (selectJob)="selectJobForInvoice($event)"
-          ></app-invoice-job-picker>
-        </section>
-      } @else {
-        <form [formGroup]="invoiceForm" (ngSubmit)="createInvoice()" class="invoice-form">
-          <div class="invoice-form__intro">
-            <p class="invoice-drawer__eyebrow">{{ 'admin.invoices.drawer.detailsEyebrow' | translate }}</p>
-            <h3>{{ 'admin.invoices.drawer.detailsTitle' | translate }}</h3>
-            <p>{{ 'admin.invoices.drawer.detailsSubtitle' | translate }}</p>
+@if (isCreateDrawerOpen) {
+  <div class="content-card">
+    <div class="inline-card-header">
+      <h3>{{ !selectedJob ? ('admin.invoices.drawer.createTitle' | translate) : ('admin.invoices.drawer.detailsTitle' | translate) }}</h3>
+      <button class="close-btn" (click)="closeCreateInvoiceDrawer()">×</button>
+    </div>
+    <div class="invoice-drawer">
+      @if (!selectedJob) {
+        <div class="invoice-drawer__intro">
+          <p class="invoice-drawer__eyebrow">
+            {{ isInvoiceOnboardingFlow ? ('admin.invoices.drawer.onboardingStep' | translate) : ('admin.invoices.drawer.createTitle' | translate) }}
+          </p>
+          <h3>{{ 'admin.invoices.drawer.pickJobTitle' | translate }}</h3>
+          <p>{{ 'admin.invoices.drawer.pickJobSubtitle' | translate }}</p>
+          <div class="invoice-drawer__intro-tags">
+            <span>{{ 'admin.invoices.drawer.tags.recent' | translate }}</span>
+            <span>{{ 'admin.invoices.drawer.tags.search' | translate }}</span>
+            <span>{{ 'admin.invoices.drawer.tags.fast' | translate }}</span>
           </div>
-          <div class="invoice-form__job-summary">
-            <button type="button" class="btn btn-sm btn-link px-0" (click)="backToJobPicker()">
-              <i class="pi pi-arrow-left me-1"></i>
-              {{ 'admin.invoices.drawer.backToJobs' | translate }}
-            </button>
-            <h4>{{ selectedJob.title || ('admin.invoices.drawer.untitledJob' | translate) }}</h4>
-            <p>{{ getJobClientName(selectedJob) }} • {{ formatJobDate(selectedJob.assignments?.[0]?.scheduledStart || selectedJob.scheduledStart) }}</p>
-            <span class="job-status-chip" [ngClass]="getJobStatusClass(selectedJob)">
-              {{ getJobStatusLabel(selectedJob) }}
-            </span>
+        </div>
+        <section class="invoice-drawer__picker" [class.invoice-drawer__picker--onboarding]="isInvoiceOnboardingFlow">
+          <div class="invoice-drawer__picker-header">
+            <h3>{{ 'admin.invoices.drawer.chooseJobTitle' | translate }}</h3>
+            <p>{{ 'admin.invoices.drawer.chooseJobSubtitle' | translate }}</p>
           </div>
-          @if (prefillEstimate) {
-            <div class="alert alert-info mb-4">
-              {{ 'admin.invoices.drawer.prefill' | translate }}
-              <strong>#{{ prefillEstimate.estimateNumber }}</strong>.
-              {{ 'admin.invoices.drawer.prefillHint' | translate }}
+          <input
+            type="search"
+            class="form-control"
+            [placeholder]="'admin.invoices.drawer.searchPlaceholder' | translate"
+            [(ngModel)]="jobSearchText"
+            (ngModelChange)="onJobSearchChange($event)"
+            />
+            <app-invoice-job-picker
+              [rows]="(filteredRecentJobRows$ | async) ?? []"
+              [hasJobSearchTerm]="hasJobSearchTerm"
+              [jobPickerError]="jobPickerError"
+              [returnToCommandCenter]="returnToCommandCenter"
+              (selectJob)="selectJobForInvoice($event)"
+            ></app-invoice-job-picker>
+          </section>
+        } @else {
+          <form [formGroup]="invoiceForm" (ngSubmit)="createInvoice()" class="invoice-form">
+            <div class="invoice-form__intro">
+              <p class="invoice-drawer__eyebrow">{{ 'admin.invoices.drawer.detailsEyebrow' | translate }}</p>
+              <h3>{{ 'admin.invoices.drawer.detailsTitle' | translate }}</h3>
+              <p>{{ 'admin.invoices.drawer.detailsSubtitle' | translate }}</p>
             </div>
-          }
-          @if (createInvoiceError) {
-            <div class="alert alert-danger mb-4">
-              {{ createInvoiceError }}
+            <div class="invoice-form__job-summary">
+              <button type="button" class="btn btn-sm btn-link px-0" (click)="backToJobPicker()">
+                <i class="pi pi-arrow-left me-1"></i>
+                {{ 'admin.invoices.drawer.backToJobs' | translate }}
+              </button>
+              <h4>{{ selectedJob.title || ('admin.invoices.drawer.untitledJob' | translate) }}</h4>
+              <p>{{ getJobClientName(selectedJob) }} • {{ formatJobDate(selectedJob.assignments?.[0]?.scheduledStart || selectedJob.scheduledStart) }}</p>
+              <span class="job-status-chip" [ngClass]="getJobStatusClass(selectedJob)">
+                {{ getJobStatusLabel(selectedJob) }}
+              </span>
             </div>
-          }
-          <div class="row g-3 mb-4">
+            @if (prefillEstimate) {
+              <div class="alert alert-info mb-4">
+                {{ 'admin.invoices.drawer.prefill' | translate }}
+                <strong>#{{ prefillEstimate.estimateNumber }}</strong>.
+                {{ 'admin.invoices.drawer.prefillHint' | translate }}
+              </div>
+            }
+            @if (createInvoiceError) {
+              <div class="alert alert-danger mb-4">
+                {{ createInvoiceError }}
+              </div>
+            }
+            <div class="row g-3 mb-4">
             <div class="col-12 col-md-6">
               <label class="invoice-form__label" for="invoiceDate">{{ 'admin.invoices.form.invoiceDate' | translate }} <span class="text-danger">*</span></label>
               <input
@@ -313,19 +329,17 @@
                 </div>
               </form>
             }
-
-
           </div>
-        </app-jobflow-drawer>
+    </div>
+}
 
-<app-jobflow-drawer
-  [open]="isEditDrawerOpen"
-  [title]="'Edit Invoice'"
-  [width]="760"
-  (closed)="onEditDrawerClosed()"
->
-  @if (editingInvoice) {
-  <div class="invoice-drawer">
+@if (isEditDrawerOpen && editingInvoice) {
+  <div class="content-card">
+    <div class="inline-card-header">
+      <h3>{{ 'admin.invoices.drawer.editTitle' | translate : { number: editingInvoice.invoiceNumber } }}</h3>
+      <button class="close-btn" (click)="onEditDrawerClosed()">×</button>
+    </div>
+    <div class="invoice-drawer">
     <form [formGroup]="editInvoiceForm" (ngSubmit)="saveEditInvoice()" class="invoice-form">
       <div class="invoice-form__intro">
         <p class="invoice-drawer__eyebrow">Edit Invoice</p>
@@ -473,6 +487,8 @@
         </button>
       </div>
     </form>
+    </div>
   </div>
-  }
-</app-jobflow-drawer>
+}
+
+</div>

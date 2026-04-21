@@ -69,9 +69,9 @@ export class JobsService {
       return this.api.get<Job>(`${this.apiUrl}${id}`);
    }
 
-   getAllJobs(): Observable<Job[]> {
+   getAllJobs(options?: { context?: import('@angular/common/http').HttpContext }): Observable<Job[]> {
       return this.api.get<Job[]>(
-         `${this.apiUrl}all`
+         `${this.apiUrl}all`, undefined, options?.context
       )
    }
 

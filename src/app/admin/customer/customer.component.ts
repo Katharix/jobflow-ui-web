@@ -3,10 +3,8 @@ import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {OrganizationContextService} from "../../services/shared/organization-context.service";
-import {PageHeaderComponent} from "../dashboard/page-header/page-header.component";
 import {getClickHandler} from "../../common/utils/page-action-dispatcher";
-import {
-   JobflowGridColumn,
+import {JobflowGridColumn,
    JobflowGridCommandClickEventArgs,
    JobflowGridCommandModel,
    JobflowGridComponent,
@@ -15,7 +13,6 @@ import {
 } from "../../common/jobflow-grid/jobflow-grid.component";
 import {ToastService} from "../../common/toast/toast.service";
 import {Client} from "./models/customer";
-import {JobflowDrawerComponent} from "../../common/jobflow-drawer/jobflow-drawer.component";
 import {ModalComponent} from "../../views/shared/modal/modal.component";
 import {DeleteConfirmComponent} from "../../views/shared/delete-confirm/delete-confirm-component";
 import {CustomerCreateComponent} from "./customer-create/customer-create.component";
@@ -31,7 +28,7 @@ import {BehaviorSubject, Subscription, Subject, catchError, debounceTime, distin
 @Component({
    selector: 'app-jobflow-create-customer',
    standalone: true,
-   imports: [CommonModule, FormsModule, PageHeaderComponent, ReactiveFormsModule, JobflowGridComponent, JobflowDrawerComponent, CustomerCreateComponent, ModalComponent, DeleteConfirmComponent],
+   imports: [CommonModule, FormsModule, ReactiveFormsModule, JobflowGridComponent, CustomerCreateComponent, ModalComponent, DeleteConfirmComponent],
    templateUrl: './customer.component.html',
    styleUrls: ['./customer.component.scss'],
 })

@@ -1,0 +1,726 @@
+// ─── JobFlow Shared Design System ────────────────────────────────────────────
+// Mirror of dashboard.component.scss tokens, promoted to global scope.
+// Import order: added at the bottom of styles.scss AFTER all Bootstrap imports.
+// ─────────────────────────────────────────────────────────────────────────────
+
+@keyframes jf-shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+@keyframes jf-spin {
+  to { transform: rotate(360deg); }
+}
+
+// ─── Design Tokens ────────────────────────────────────────────────────────────
+:root {
+  --jf-bg:             #FAFBFF;
+  --jf-surface:        #ffffff;
+  --jf-border:         #E8ECF8;
+  --jf-shadow:         0 2px 12px rgba(63, 103, 218, 0.08);
+  --jf-shadow-hover:   0 6px 24px rgba(63, 103, 218, 0.16);
+  --jf-radius:         12px;
+  --jf-radius-sm:      8px;
+
+  --jf-primary:        #3F67DA;
+  --jf-primary-soft:   rgba(63, 103, 218, 0.10);
+  --jf-success:        #2D898B;
+  --jf-success-soft:   rgba(45, 137, 139, 0.12);
+  --jf-warning:        #FFA630;
+  --jf-warning-soft:   rgba(255, 166, 48, 0.14);
+  --jf-danger:         #E03616;
+  --jf-danger-soft:    rgba(224, 54, 22, 0.10);
+  --jf-info:           #8595D1;
+  --jf-info-soft:      rgba(133, 149, 209, 0.16);
+
+  --jf-text:           #1E1E24;
+  --jf-text-muted:     #6B7280;
+  --jf-text-section:   #9BA3B2;
+  --jf-text-on-accent: #ffffff;
+
+  --jf-skeleton-from:  #e8ecf8;
+  --jf-skeleton-mid:   #f4f6fd;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --jf-bg:            #0D1117;
+    --jf-surface:       #161B27;
+    --jf-border:        #252D45;
+    --jf-shadow:        0 2px 16px rgba(0, 0, 0, 0.35);
+    --jf-shadow-hover:  0 6px 28px rgba(0, 0, 0, 0.5);
+    --jf-text:          #F0F4FF;
+    --jf-text-muted:    #8595D1;
+    --jf-text-section:  #4A5470;
+    --jf-skeleton-from: #1a2035;
+    --jf-skeleton-mid:  #212840;
+  }
+}
+
+// ─── Page Container ──────────────────────────────────────────────────────────
+.page-container {
+  font-family: 'Manrope', sans-serif;
+  background: var(--jf-bg);
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+// ─── Page Header ─────────────────────────────────────────────────────────────
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+
+  &__title-group { flex: 1; min-width: 0; }
+
+  &__title {
+    font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+    font-weight: 700;
+    color: var(--jf-text);
+    margin: 0 0 0.25rem;
+    line-height: 1.2;
+  }
+
+  &__subtitle {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--jf-text-muted);
+    margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    align-items: center;
+    flex-shrink: 0;
+
+    @media (max-width: 576px) {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+}
+
+// ─── Section Label ───────────────────────────────────────────────────────────
+.section-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--jf-text-section);
+  margin: 0 0 0.875rem;
+}
+
+// ─── KPI Grid ────────────────────────────────────────────────────────────────
+.kpi-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  margin-bottom: 1.5rem;
+
+  @media (min-width: 576px)  { grid-template-columns: repeat(2, 1fr); }
+  @media (min-width: 992px)  { grid-template-columns: repeat(4, 1fr); }
+
+  &--2 {
+    @media (min-width: 576px) { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  &--3 {
+    @media (min-width: 576px) { grid-template-columns: repeat(2, 1fr); }
+    @media (min-width: 992px) { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  &--5 {
+    @media (min-width: 768px)  { grid-template-columns: repeat(3, 1fr); }
+    @media (min-width: 1200px) { grid-template-columns: repeat(5, 1fr); }
+  }
+}
+
+// ─── KPI Tile ────────────────────────────────────────────────────────────────
+.kpi-tile {
+  display: flex;
+  align-items: stretch;
+  background: var(--jf-surface);
+  border: 1px solid var(--jf-border);
+  border-radius: var(--jf-radius);
+  box-shadow: var(--jf-shadow);
+  overflow: hidden;
+  min-height: 100px;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:is(a):hover { box-shadow: var(--jf-shadow-hover); transform: translateY(-2px); }
+  &:focus-visible { outline: 2px solid var(--jf-primary); outline-offset: 2px; }
+
+  &__accent {
+    width: 4px;
+    flex-shrink: 0;
+    background: var(--jf-primary);
+
+    &--success { background: var(--jf-success); }
+    &--warning { background: var(--jf-warning); }
+    &--danger  { background: var(--jf-danger); }
+    &--info    { background: var(--jf-info); }
+    &--neutral { background: var(--jf-text-muted); }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.2rem;
+    padding: 1.125rem 1.25rem;
+    flex: 1;
+  }
+
+  &__value {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--jf-text);
+    line-height: 1;
+    margin-bottom: 0.2rem;
+  }
+
+  &__label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--jf-text);
+  }
+
+  &__note {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--jf-text-muted);
+  }
+}
+
+// ─── Content Card ────────────────────────────────────────────────────────────
+.content-card {
+  background: var(--jf-surface);
+  border: 1px solid var(--jf-border);
+  border-radius: var(--jf-radius);
+  box-shadow: var(--jf-shadow);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+
+  &--no-pad {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  &__title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--jf-text);
+    margin: 0 0 0.15rem;
+  }
+
+  &__subtitle {
+    font-size: 0.8rem;
+    color: var(--jf-text-muted);
+    margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    align-items: center;
+  }
+}
+
+// ─── CTA Card ────────────────────────────────────────────────────────────────
+.cta-card {
+  background: var(--jf-surface);
+  border: 1px solid var(--jf-border);
+  border-radius: var(--jf-radius);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--jf-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+
+  &__eyebrow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--jf-primary);
+    margin: 0 0 0.3rem;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--jf-text);
+    margin: 0 0 0.25rem;
+  }
+
+  &__body {
+    font-size: 0.875rem;
+    color: var(--jf-text-muted);
+    margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    flex-shrink: 0;
+    align-items: center;
+  }
+}
+
+// ─── Filter Bar ──────────────────────────────────────────────────────────────
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+
+  &__group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--jf-text-section);
+    white-space: nowrap;
+  }
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.875rem;
+  border: 1px solid var(--jf-border);
+  border-radius: 100px;
+  background: var(--jf-surface);
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--jf-text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  line-height: 1.4;
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.2rem;
+    height: 1.2rem;
+    padding: 0 0.2rem;
+    border-radius: 100px;
+    background: rgba(107, 114, 128, 0.12);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--jf-text-muted);
+    transition: background 0.15s, color 0.15s;
+  }
+
+  &:hover {
+    border-color: rgba(63, 103, 218, 0.4);
+    color: var(--jf-primary);
+    background: rgba(63, 103, 218, 0.04);
+  }
+
+  &--active {
+    background: var(--jf-primary);
+    border-color: var(--jf-primary);
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(63, 103, 218, 0.25);
+
+    .filter-chip__count {
+      background: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+    }
+  }
+
+  &--clear {
+    border-style: dashed;
+    color: var(--jf-danger);
+    border-color: rgba(224, 54, 22, 0.3);
+
+    &:hover {
+      background: rgba(224, 54, 22, 0.06);
+      border-color: var(--jf-danger);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--jf-primary);
+    outline-offset: 2px;
+  }
+}
+
+// ─── Status Chips ─────────────────────────────────────────────────────────────
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.7rem;
+  border-radius: 100px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+
+  &--success { background: var(--jf-success-soft); color: var(--jf-success); }
+  &--warning { background: var(--jf-warning-soft); color: #a86300; }
+  &--danger  { background: var(--jf-danger-soft);  color: var(--jf-danger); }
+  &--primary { background: var(--jf-primary-soft); color: var(--jf-primary); }
+  &--info    { background: var(--jf-info-soft);    color: #4f62a8; }
+  &--neutral { background: rgba(107, 114, 128, 0.10); color: var(--jf-text-muted); }
+}
+
+// ─── Component Loader (Skeleton) ─────────────────────────────────────────────
+.component-loader {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+
+  &__row {
+    height: 52px;
+    background: linear-gradient(
+      90deg,
+      var(--jf-skeleton-from) 25%,
+      var(--jf-skeleton-mid)  50%,
+      var(--jf-skeleton-from) 75%
+    );
+    background-size: 600px 100%;
+    animation: jf-shimmer 1.5s ease-in-out infinite;
+    border-radius: var(--jf-radius-sm);
+  }
+
+  &__card {
+    height: 110px;
+    background: linear-gradient(
+      90deg,
+      var(--jf-skeleton-from) 25%,
+      var(--jf-skeleton-mid)  50%,
+      var(--jf-skeleton-from) 75%
+    );
+    background-size: 600px 100%;
+    animation: jf-shimmer 1.5s ease-in-out infinite;
+    border-radius: var(--jf-radius);
+  }
+}
+
+// ─── Button Loader ────────────────────────────────────────────────────────────
+.btn-loader {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.75;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1rem;
+    height: 1rem;
+    margin: -0.5rem 0 0 -0.5rem;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: jf-spin 0.7s linear infinite;
+  }
+
+  > * { visibility: hidden; }
+}
+
+// ─── Form Section ────────────────────────────────────────────────────────────
+.form-section {
+  background: var(--jf-surface);
+  border: 1px solid var(--jf-border);
+  border-radius: var(--jf-radius);
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+
+  &__heading {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--jf-border);
+    background: linear-gradient(180deg, rgba(63, 103, 218, 0.03) 0%, transparent 100%);
+  }
+
+  &__title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--jf-text);
+    margin: 0;
+  }
+
+  &__desc {
+    margin: 0.2rem 0 0;
+    font-size: 0.82rem;
+    color: var(--jf-text-muted);
+  }
+
+  &__body {
+    padding: 1.25rem;
+  }
+}
+
+// ─── Empty State ──────────────────────────────────────────────────────────────
+.empty-state {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  font-size: 0.875rem;
+  color: var(--jf-text-muted);
+
+  h4 { font-size: 1rem; font-weight: 700; color: var(--jf-text); margin: 0 0 0.4rem; }
+  p  { margin: 0; }
+}
+
+// ─── Page Pagination ──────────────────────────────────────────────────────────
+.page-pagination {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+// ─── Page Alert ───────────────────────────────────────────────────────────────
+.page-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 0.875rem 1.125rem;
+  border-radius: var(--jf-radius-sm);
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+  font-family: 'Manrope', sans-serif;
+
+  &--danger {
+    background: rgba(224, 54, 22, 0.08);
+    border: 1px solid rgba(224, 54, 22, 0.25);
+    color: #c0290f;
+  }
+
+  &--warning {
+    background: rgba(255, 166, 48, 0.10);
+    border: 1px solid rgba(255, 166, 48, 0.3);
+    color: #8a5000;
+  }
+
+  &--info {
+    background: rgba(133, 149, 209, 0.12);
+    border: 1px solid rgba(133, 149, 209, 0.3);
+    color: #4f62a8;
+  }
+}
+
+// ─── Drawer Content (shared intro pattern) ───────────────────────────────────
+.drawer-content {
+  display: grid;
+  gap: 1rem;
+
+  &__intro {
+    padding: 1rem 1.125rem;
+    border: 1px solid var(--jf-border);
+    border-radius: var(--jf-radius);
+    background: rgba(255, 255, 255, 0.5);
+    display: grid;
+    gap: 0.3rem;
+
+    &--danger {
+      border-color: rgba(224, 54, 22, 0.25);
+      background: rgba(224, 54, 22, 0.04);
+    }
+  }
+
+  &__eyebrow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--jf-primary);
+    margin: 0;
+  }
+
+  &__heading {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--jf-text);
+    margin: 0;
+  }
+
+  &__body {
+    font-size: 0.875rem;
+    color: var(--jf-text-muted);
+    margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.625rem;
+    padding-top: 0.5rem;
+  }
+}
+
+// ─── Toast overrides (PrimeNG p-toast → jobflow-toast styleClass) ─────────────
+.jobflow-toast {
+  .p-toast-message {
+    border-radius: var(--jf-radius) !important;
+    border-left-width: 4px !important;
+    border-left-style: solid !important;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12) !important;
+    font-family: 'Manrope', sans-serif !important;
+    min-width: min(28rem, calc(100vw - 2rem)) !important;
+    background: var(--jf-surface) !important;
+
+    .p-toast-message-content {
+      padding: 0.875rem 1rem !important;
+      gap: 0.75rem !important;
+    }
+
+    .p-toast-message-icon {
+      font-size: 1.1rem !important;
+    }
+
+    .p-toast-summary {
+      font-weight: 700 !important;
+      font-size: 0.875rem !important;
+      color: var(--jf-text) !important;
+    }
+
+    .p-toast-detail {
+      font-size: 0.825rem !important;
+      color: var(--jf-text-muted) !important;
+    }
+
+    .p-toast-icon-close {
+      color: var(--jf-primary) !important;
+    }
+  }
+
+  .p-toast-message-success {
+    border-left-color: var(--jf-success) !important;
+    .p-toast-message-icon { color: var(--jf-success) !important; }
+  }
+
+  .p-toast-message-info {
+    border-left-color: var(--jf-info) !important;
+    .p-toast-message-icon { color: var(--jf-info) !important; }
+  }
+
+  .p-toast-message-warn {
+    border-left-color: var(--jf-warning) !important;
+    .p-toast-message-icon { color: #a86300 !important; }
+  }
+
+  .p-toast-message-error {
+    border-left-color: var(--jf-danger) !important;
+    .p-toast-message-icon { color: var(--jf-danger) !important; }
+  }
+}
+
+// ─── JF Dialog (PrimeNG p-dialog override) ───────────────────────────────────
+.jf-dialog {
+  .p-dialog-header {
+    padding: 1.25rem 1.5rem 0.75rem !important;
+    border-bottom: 1px solid var(--jf-border) !important;
+    background: var(--jf-surface) !important;
+
+    .p-dialog-title {
+      font-family: 'Manrope', sans-serif !important;
+      font-size: 1rem !important;
+      font-weight: 700 !important;
+      color: var(--jf-text) !important;
+    }
+  }
+
+  .p-dialog-content {
+    padding: 1.25rem 1.5rem !important;
+    background: var(--jf-bg) !important;
+  }
+
+  .p-dialog-footer {
+    padding: 0.75rem 1.5rem 1.25rem !important;
+    border-top: 1px solid var(--jf-border) !important;
+    background: var(--jf-surface) !important;
+  }
+
+  &.p-dialog {
+    border-radius: var(--jf-radius) !important;
+    box-shadow: 0 12px 40px rgba(63, 103, 218, 0.18) !important;
+    border: 1px solid var(--jf-border) !important;
+  }
+}
+
+// ─── Dialog inner sections ────────────────────────────────────────────────────
+.dialog-intro {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--jf-border);
+  border-radius: var(--jf-radius-sm);
+  background: rgba(255, 255, 255, 0.5);
+  margin-bottom: 1.25rem;
+  display: grid;
+  gap: 0.3rem;
+
+  &--danger {
+    border-color: rgba(224, 54, 22, 0.25);
+    background: rgba(224, 54, 22, 0.04);
+  }
+
+  &__eyebrow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--jf-primary);
+    margin: 0;
+  }
+
+  &__heading {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--jf-text);
+    margin: 0;
+  }
+
+  &__body {
+    font-size: 0.875rem;
+    color: var(--jf-text-muted);
+    margin: 0;
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.625rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--jf-border);
+  margin-top: 1.25rem;
+}

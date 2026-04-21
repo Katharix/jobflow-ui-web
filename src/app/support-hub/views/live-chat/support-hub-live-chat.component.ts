@@ -7,14 +7,12 @@ import { SupportHubChatApiService, SupportChatSendMessageRequest, SupportChatSes
 import { SupportHubSignalRService, SupportChatMessageDto } from '../../services/support-hub-signalr.service';
 import { SupportHubSoundService } from '../../services/support-hub-sound.service';
 import { ChatWindowComponent, ChatMessage } from '../../components/chat-window/chat-window.component';
-import { ChatSidebarComponent, ChatSidebarCustomer } from './components/chat-sidebar/chat-sidebar.component';
-import { ChatQueueComponent } from './components/chat-queue/chat-queue.component';
 import { QueueCardComponent, QueueCustomer } from '../../components/queue-card/queue-card.component';
 
 @Component({
   selector: 'app-support-hub-live-chat',
   standalone: true,
-  imports: [CommonModule, RouterLink, ChatWindowComponent, ChatSidebarComponent, ChatQueueComponent, QueueCardComponent],
+  imports: [CommonModule, RouterLink, ChatWindowComponent, QueueCardComponent],
   templateUrl: './support-hub-live-chat.component.html',
   styleUrl: './support-hub-live-chat.component.scss',
 })
@@ -37,7 +35,7 @@ export class SupportHubLiveChatComponent implements OnInit, OnDestroy {
   messageText = '';
   sidebarOpen = true;
   queuePanelOpen = true;
-  sidebarCustomer: ChatSidebarCustomer | null = null;
+  sidebarCustomer: { name: string; email: string; organizationName: string; sessionId: string; sessionStartedAt: string; } | null = null;
 
   get soundEnabled(): boolean { return this.soundService.isSoundEnabled(); }
 

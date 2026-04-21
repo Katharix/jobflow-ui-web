@@ -15,7 +15,6 @@ import {OrganizationDto} from '../../models/organization';
 import {BrandingDto} from '../../models/organization-branding';
 import {FileUploadService} from './services/file-upload.service';
 import {OrganizationContextService} from '../../services/shared/organization-context.service';
-import {PageHeaderComponent} from '../dashboard/page-header/page-header.component';
 import {OrganizationBrandingService} from './services/organization-branding.service';
 
 interface ColorChangeEvent {
@@ -38,7 +37,6 @@ interface ColorChangeEvent {
          ColorBlockModule,
          ColorTwitterModule,
          LucideAngularModule,
-         PageHeaderComponent,
          TranslateModule
       ],
    templateUrl: './branding.component.html',

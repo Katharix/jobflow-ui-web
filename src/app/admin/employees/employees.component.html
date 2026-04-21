@@ -1,7 +1,20 @@
-<app-page-header
-  [title]="'admin.employees.title' | translate"
-  [subtitle]="'admin.employees.subtitle' | translate"
-></app-page-header>
+<div class="page-container">
+
+<!-- ── Page Header ─────────────────────────────────────────────────────── -->
+<header class="page-header">
+  <div class="page-header__title-group">
+    <h1 class="page-header__title">{{ 'admin.employees.title' | translate }}</h1>
+    <p class="page-header__subtitle">{{ 'admin.employees.subtitle' | translate }}</p>
+  </div>
+  @if (rolesExist && !checkingRoles()) {
+    <div class="page-header__actions">
+      <button type="button" class="btn btn-outline-primary" (click)="openImportModal()">Import Data</button>
+      <button type="button" class="btn btn-outline-primary" (click)="openBulkAddModal()">Bulk Add</button>
+      <button type="button" class="btn btn-outline-primary" (click)="onInviteClick()">{{ 'admin.employees.actions.invite' | translate }}</button>
+      <button type="button" class="btn btn-primary" (click)="onAddEmployeeClick()">{{ 'admin.employees.actions.add' | translate }}</button>
+    </div>
+  }
+</header>
 
 <ng-template #actionsTemplate let-employee>
   <div class="jf-grid-actions">
@@ -19,21 +32,22 @@
   </span>
 </ng-template>
 
-<!-- Loading or Checking Roles -->
+<!-- ── Loading ──────────────────────────────────────────────────────────── -->
 @if (checkingRoles()) {
-  <div class="text-center py-5">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p class="mt-3 text-muted">{{ 'admin.employees.loading.roles' | translate }}</p>
+  <div class="kpi-grid" aria-busy="true" aria-label="Loading employee data">
+    <div class="component-loader__card"></div>
+    <div class="component-loader__card"></div>
+    <div class="component-loader__card"></div>
+    <div class="component-loader__card"></div>
   </div>
 }
 
-<!-- No Roles Found -->
+<!-- ── No Roles Alert ───────────────────────────────────────────────────── -->
 @if (!checkingRoles() && !rolesExist) {
-  <div
-    class="alert alert-warning d-flex justify-content-between align-items-center mt-3 shadow-sm">
+  <div class="page-alert page-alert--warning d-flex justify-content-between align-items-center">
     <div>
-      <i class="bi bi-exclamation-triangle-fill me-2"></i>
-      <strong>{{ 'admin.employees.empty.rolesTitle' | translate }}</strong> {{ 'admin.employees.empty.rolesSubtitle' | translate }}
+      <strong>{{ 'admin.employees.empty.rolesTitle' | translate }}</strong>
+      {{ 'admin.employees.empty.rolesSubtitle' | translate }}
     </div>
     <button class="btn btn-outline-primary btn-sm" (click)="router.navigate(['/admin/employees/roles']);">
       {{ 'admin.employees.actions.goToRoles' | translate }}
@@ -41,77 +55,69 @@
   </div>
 }
 
-<!-- Employee Grid -->
+<!-- ── Main Content ─────────────────────────────────────────────────────── -->
 @if (rolesExist && !checkingRoles()) {
-  <section class="employees-overview">
-    <div class="employees-overview__metrics">
-      <article class="employees-card">
-        <p class="employees-card__label">{{ 'admin.employees.metrics.total' | translate }}</p>
-        <h3>{{ summary.total }}</h3>
-        <p class="employees-card__note">{{ 'admin.employees.metrics.totalNote' | translate }}</p>
-      </article>
-      <article class="employees-card">
-        <p class="employees-card__label">{{ 'admin.employees.metrics.active' | translate }}</p>
-        <h3>{{ summary.active }}</h3>
-        <p class="employees-card__note">{{ 'admin.employees.metrics.activeNote' | translate }}</p>
-      </article>
-      <article class="employees-card">
-        <p class="employees-card__label">{{ 'admin.employees.metrics.inactive' | translate }}</p>
-        <h3>{{ summary.inactive }}</h3>
-        <p class="employees-card__note">{{ 'admin.employees.metrics.inactiveNote' | translate }}</p>
-      </article>
-      <article class="employees-card employees-card--accent">
-        <p class="employees-card__label">{{ 'admin.employees.metrics.roles' | translate }}</p>
-        <h3>{{ summary.roles }}</h3>
-        <p class="employees-card__note">{{ 'admin.employees.metrics.rolesNote' | translate }}</p>
-      </article>
-    </div>
-    <div class="employees-cta">
-      <div>
-        <p class="employees-cta__eyebrow">{{ 'admin.employees.cta.eyebrow' | translate }}</p>
-        <h3>{{ 'admin.employees.cta.title' | translate }}</h3>
-        <p>{{ 'admin.employees.cta.subtitle' | translate }}</p>
-      </div>
-      <div class="employees-cta__actions">
-        <button type="button" class="btn btn-outline-primary" (click)="openImportModal()">
-          Import Data
-        </button>
-        <button type="button" class="btn btn-outline-primary" (click)="openBulkAddModal()">
-          Bulk Add
-        </button>
-        <button type="button" class="btn btn-outline-primary" (click)="onInviteClick()">
-          {{ 'admin.employees.actions.invite' | translate }}
-        </button>
-        <button type="button" class="btn btn-primary" (click)="onAddEmployeeClick()">
-          {{ 'admin.employees.actions.add' | translate }}
-        </button>
-      </div>
-    </div>
-  </section>
 
-  <section class="employees-filters" aria-label="Employee filters">
-    <div class="employees-filters__group">
+  <!-- KPI Metrics -->
+  <div class="kpi-grid kpi-grid--5" role="list" aria-label="Employee metrics">
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ summary.total }}</span>
+        <span class="kpi-tile__label">{{ 'admin.employees.metrics.total' | translate }}</span>
+        <span class="kpi-tile__note">{{ 'admin.employees.metrics.totalNote' | translate }}</span>
+      </div>
+    </div>
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--success"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ summary.active }}</span>
+        <span class="kpi-tile__label">{{ 'admin.employees.metrics.active' | translate }}</span>
+        <span class="kpi-tile__note">{{ 'admin.employees.metrics.activeNote' | translate }}</span>
+      </div>
+    </div>
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--warning"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ summary.inactive }}</span>
+        <span class="kpi-tile__label">{{ 'admin.employees.metrics.inactive' | translate }}</span>
+        <span class="kpi-tile__note">{{ 'admin.employees.metrics.inactiveNote' | translate }}</span>
+      </div>
+    </div>
+    <div class="kpi-tile" role="listitem">
+      <div class="kpi-tile__accent kpi-tile__accent--info"></div>
+      <div class="kpi-tile__body">
+        <span class="kpi-tile__value">{{ summary.roles }}</span>
+        <span class="kpi-tile__label">{{ 'admin.employees.metrics.roles' | translate }}</span>
+        <span class="kpi-tile__note">{{ 'admin.employees.metrics.rolesNote' | translate }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar" aria-label="Employee filters">
+    <div class="filter-bar__group">
       @for (filter of statusFilters; track filter.key) {
         <button
           type="button"
-          class="employees-filter"
-          [class.employees-filter--active]="selectedStatusFilter === filter.key"
+          class="filter-chip"
+          [class.filter-chip--active]="selectedStatusFilter === filter.key"
           (click)="setStatusFilter(filter.key)">
           {{ filter.label }}
-          <span class="employees-filter__count">{{ getFilterCount(filter.key) }}</span>
+          <span class="filter-chip__count">{{ getFilterCount(filter.key) }}</span>
         </button>
       }
       @if (hasActiveFilters) {
-        <button type="button" class="employees-filter employees-filter--clear" (click)="clearFilters()">
+        <button type="button" class="filter-chip filter-chip--clear" (click)="clearFilters()">
           {{ 'admin.employees.filters.clear' | translate }}
         </button>
       }
     </div>
-    <div class="employees-filters__role">
-      <label class="employees-filters__label" for="employeeRoleFilter">{{ 'admin.employees.filters.role' | translate }}</label>
+    <div class="d-flex align-items-center gap-2 ms-auto">
+      <label class="filter-bar__label" for="employeeRoleFilter">{{ 'admin.employees.filters.role' | translate }}</label>
       <select
         id="employeeRoleFilter"
-        class="form-select"
+        class="form-select form-select-sm"
         [value]="selectedRoleFilter"
         (change)="setRoleFilter(roleSelect.value)"
         #roleSelect>
@@ -121,9 +127,51 @@
         }
       </select>
     </div>
-  </section>
+  </div>
 
-  <div class="employees-grid">
+  @if (showAddEmployeeDrawer) {
+    <div class="content-card">
+      <div class="inline-card-header">
+        <h3>{{ isEditing ? ('admin.employees.drawer.editTitle' | translate) : ('admin.employees.drawer.addTitle' | translate) }}</h3>
+        <button class="close-btn" type="button" (click)="onModalCancel()">&#x2715;</button>
+      </div>
+      <app-employee-form
+        [employee]="selectedEmployee"
+        (submitted)="onFormSubmit($event)">
+      </app-employee-form>
+      <div class="drawer-content__actions">
+        <button type="button" class="btn btn-outline-secondary" (click)="onModalCancel()">
+          {{ 'admin.employees.actions.cancel' | translate }}
+        </button>
+        <button type="button" class="btn btn-primary" (click)="employeeFormComponent.onSubmit()">
+          {{ 'admin.employees.actions.save' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (showInviteDrawer) {
+    <div class="content-card">
+      <div class="inline-card-header">
+        <h3>{{ 'admin.employees.inviteDrawer.title' | translate }}</h3>
+        <button class="close-btn" type="button" (click)="closeInviteModal()">&#x2715;</button>
+      </div>
+      <app-employee-invite-form #inviteForm
+        (submitted)="onInviteSuccess($event)">
+      </app-employee-invite-form>
+      <div class="drawer-content__actions">
+        <button type="button" class="btn btn-outline-secondary" (click)="closeInviteModal()">
+          {{ 'admin.employees.actions.cancel' | translate }}
+        </button>
+        <button type="button" class="btn btn-primary" (click)="onInviteSubmit()">
+          {{ 'admin.employees.invites.send' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Employee Grid -->
+  <div class="content-card content-card--no-pad">
     <app-jobflow-grid
       [data]="filteredEmployees"
       [columns]="columns"
@@ -136,16 +184,40 @@
     ></app-jobflow-grid>
   </div>
 
-  <section class="employees-invites" aria-label="Employee invites">
-    <div class="employees-invites__header">
-      <div>
-        <p class="employees-invites__eyebrow">{{ 'admin.employees.invites.eyebrow' | translate }}</p>
-        <h3>{{ 'admin.employees.invites.title' | translate }}</h3>
-        <p>{{ 'admin.employees.invites.subtitle' | translate }}</p>
+  @if (showDeleteDrawer) {
+    <div class="content-card content-card--danger-outline">
+      <div class="inline-card-header">
+        <h3>{{ 'admin.employees.delete.title' | translate }}</h3>
+        <button class="close-btn" type="button" (click)="closeDeleteModal()">&#x2715;</button>
       </div>
-      <button type="button" class="btn btn-outline-primary" (click)="onInviteClick()">
-        {{ 'admin.employees.invites.send' | translate }}
-      </button>
+      <app-delete-confirm
+        [title]="'admin.employees.delete.title' | translate"
+        [message]="('admin.employees.delete.confirm' | translate:{ name: selectedEmployeeName })">
+      </app-delete-confirm>
+      <div class="drawer-content__actions">
+        <button type="button" class="btn btn-outline-secondary" (click)="closeDeleteModal()">
+          {{ 'admin.employees.actions.cancel' | translate }}
+        </button>
+        <button type="button" class="btn btn-danger" (click)="confirmDelete()">
+          {{ 'admin.employees.delete.confirmButton' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Pending Invites -->
+  <section class="content-card" aria-label="Employee invites">
+    <div class="content-card__header">
+      <div>
+        <p class="section-label">{{ 'admin.employees.invites.eyebrow' | translate }}</p>
+        <h3 class="content-card__title">{{ 'admin.employees.invites.title' | translate }}</h3>
+        <p class="content-card__subtitle">{{ 'admin.employees.invites.subtitle' | translate }}</p>
+      </div>
+      <div class="content-card__actions">
+        <button type="button" class="btn btn-outline-primary" (click)="onInviteClick()">
+          {{ 'admin.employees.invites.send' | translate }}
+        </button>
+      </div>
     </div>
     <div class="employees-invites__list" [class.d-none]="sortedInvites.length === 0">
       @for (invite of sortedInvites; track invite.id) {
@@ -170,94 +242,11 @@
         </article>
       }
     </div>
-    <div class="employees-invites__empty" [class.d-none]="sortedInvites.length > 0">
+    <div class="empty-state" [class.d-none]="sortedInvites.length > 0">
       <h4>{{ 'admin.employees.invites.emptyTitle' | translate }}</h4>
       <p>{{ 'admin.employees.invites.emptySubtitle' | translate }}</p>
     </div>
   </section>
-}
-
-@if (showAddEmployeeDrawer) {
-  <app-jobflow-drawer
-    [open]="showAddEmployeeDrawer"
-    [title]="isEditing ? ('admin.employees.drawer.editTitle' | translate) : ('admin.employees.drawer.addTitle' | translate)"
-    [width]="520"
-    (closed)="onModalCancel()">
-    <div class="employee-drawer">
-      <div class="employee-drawer__intro">
-        <p class="employee-drawer__eyebrow">{{ isEditing ? ('admin.employees.drawer.updateEyebrow' | translate) : ('admin.employees.drawer.newEyebrow' | translate) }}</p>
-        <h3>{{ isEditing ? ('admin.employees.drawer.editTitle' | translate) : ('admin.employees.drawer.addTitle' | translate) }}</h3>
-        <p>{{ 'admin.employees.drawer.subtitle' | translate }}</p>
-      </div>
-      <app-employee-form
-        [employee]="selectedEmployee"
-        (submitted)="onFormSubmit($event)">
-      </app-employee-form>
-      <div class="employee-drawer__actions">
-        <button type="button" class="btn btn-outline-secondary" (click)="onModalCancel()">
-          {{ 'admin.employees.actions.cancel' | translate }}
-        </button>
-        <button type="button" class="btn btn-primary" (click)="employeeFormComponent.onSubmit()">
-          {{ 'admin.employees.actions.save' | translate }}
-        </button>
-      </div>
-    </div>
-  </app-jobflow-drawer>
-}
-
-@if (showInviteDrawer) {
-  <app-jobflow-drawer
-    [open]="showInviteDrawer"
-    [title]="'admin.employees.inviteDrawer.title' | translate"
-    [width]="520"
-    (closed)="closeInviteModal()">
-    <div class="employee-drawer">
-      <div class="employee-drawer__intro">
-        <p class="employee-drawer__eyebrow">{{ 'admin.employees.inviteDrawer.eyebrow' | translate }}</p>
-        <h3>{{ 'admin.employees.inviteDrawer.title' | translate }}</h3>
-        <p>{{ 'admin.employees.inviteDrawer.subtitle' | translate }}</p>
-      </div>
-      <app-employee-invite-form #inviteForm
-        (submitted)="onInviteSuccess($event)">
-      </app-employee-invite-form>
-      <div class="employee-drawer__actions">
-        <button type="button" class="btn btn-outline-secondary" (click)="closeInviteModal()">
-          {{ 'admin.employees.actions.cancel' | translate }}
-        </button>
-        <button type="button" class="btn btn-primary" (click)="onInviteSubmit()">
-          {{ 'admin.employees.invites.send' | translate }}
-        </button>
-      </div>
-    </div>
-  </app-jobflow-drawer>
-}
-
-@if (showDeleteDrawer) {
-  <app-jobflow-drawer
-    [open]="showDeleteDrawer"
-    [title]="'admin.employees.delete.title' | translate"
-    [width]="520"
-    (closed)="closeDeleteModal()">
-    <div class="employee-drawer">
-      <div class="employee-drawer__intro employee-drawer__intro--danger">
-        <p class="employee-drawer__eyebrow">{{ 'admin.employees.delete.eyebrow' | translate }}</p>
-        <h3>{{ 'admin.employees.delete.title' | translate }}</h3>
-        <p>{{ 'admin.employees.delete.subtitle' | translate }}</p>
-      </div>
-      <app-delete-confirm
-        [title]="'admin.employees.delete.title' | translate"
-        [message]="('admin.employees.delete.confirm' | translate:{ name: selectedEmployeeName })">
-      </app-delete-confirm>
-      <div class="employee-drawer__actions">
-        <button type="button" class="btn btn-outline-secondary" (click)="closeDeleteModal()">
-          {{ 'admin.employees.actions.cancel' | translate }}
-        </button>
-        <button type="button" class="btn btn-danger" (click)="confirmDelete()">
-          {{ 'admin.employees.delete.confirmButton' | translate }}
-        </button>
-      </div>
-    </div>
-  </app-jobflow-drawer>
 }
 
 @if (showImportModal) {
@@ -456,3 +445,5 @@
     </div>
   </app-jobflow-modal>
 }
+
+</div>

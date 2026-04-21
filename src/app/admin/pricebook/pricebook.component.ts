@@ -20,12 +20,11 @@ import {
 } from './add-edit-pricebook-category-dialog/add-edit-pricebook-category-dialog.component';
 import {ToastService} from '../../common/toast/toast.service';
 import {ActivatedRoute, RouterLink} from '@angular/router';
-import {PageHeaderComponent} from '../dashboard/page-header/page-header.component';
 
 @Component({
    selector: 'app-pricebook',
    standalone: true,
-   imports: [LucideAngularModule, RouterLink, PageHeaderComponent],
+   imports: [LucideAngularModule, RouterLink],
    templateUrl: './pricebook.component.html',
    styleUrls: ['./pricebook.component.scss']
 })

@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { HttpContext } from '@angular/common/http';
 import { forkJoin, of, Subject } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { Auth } from '@angular/fire/auth';
 import { TranslateModule } from '@ngx-translate/core';
+import { SKIP_LOADING } from '../../interceptors/loading-interceptor';
 
 import { OrganizationContextService } from '../../services/shared/organization-context.service';
 import { OrganizationService } from '../../services/shared/organization.service';
@@ -230,7 +232,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
    }
 
    private loadUserProfile(): void {
-      this.userProfileService.getMe()
+      const ctx = { context: new HttpContext().set(SKIP_LOADING, true) };
+      this.userProfileService.getMe(ctx)
          .pipe(
             catchError(() => of(null)),
             takeUntil(this.destroy$)
@@ -278,11 +281,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.loadingAppointments = true;
       this.loadingPerformance = true;
 
+      const skipCtx = { context: new HttpContext().set(SKIP_LOADING, true) };
+
       forkJoin({
-         jobs: this.jobsService.getAllJobs().pipe(catchError(() => of([] as Job[]))),
-         invoices: this.invoiceService.getByOrganization().pipe(catchError(() => of([] as Invoice[]))),
-         estimates: this.estimateService.getByOrganization().pipe(catchError(() => of([] as Estimate[]))),
-         customers: this.customersService.getAllByOrganization().pipe(catchError(() => of([] as Client[])))
+         jobs: this.jobsService.getAllJobs(skipCtx).pipe(catchError(() => of([] as Job[]))),
+         invoices: this.invoiceService.getByOrganization(skipCtx).pipe(catchError(() => of([] as Invoice[]))),
+         estimates: this.estimateService.getByOrganization(skipCtx).pipe(catchError(() => of([] as Estimate[]))),
+         customers: this.customersService.getAllByOrganization(skipCtx).pipe(catchError(() => of([] as Client[])))
       })
          .pipe(takeUntil(this.destroy$))
          .subscribe(({ jobs, invoices, estimates, customers }) => {

@@ -1,7 +1,8 @@
-<app-page-header
-  [title]="'admin.billing.title' | translate"
-  [subtitle]="'admin.billing.subtitle' | translate"
-></app-page-header>
+<div class="page-container">
+<div class="page-header">
+  <h1 class="page-title">{{ 'admin.billing.title' | translate }}</h1>
+  <p>{{ 'admin.billing.subtitle' | translate }}</p>
+</div>
 
 <section class="bp">
   <!-- ── Summary strip ────────────────────────────────── -->
@@ -85,7 +86,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      @for (invoice of overdueInvoices | slice:0:5; track invoice) {
+                      @for (invoice of overdueInvoices | slice:0:5; track invoice.id) {
                         <tr>
                           <td>{{ invoice.invoiceNumber }}</td>
                           <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
@@ -177,7 +178,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @for (invoice of draftInvoices; track invoice) {
+                    @for (invoice of draftInvoices; track invoice.id) {
                       <tr>
                         <td>{{ invoice.invoiceNumber }}</td>
                         <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
@@ -220,7 +221,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @for (invoice of sentInvoices; track invoice) {
+                    @for (invoice of sentInvoices; track invoice.id) {
                       <tr>
                         <td>{{ invoice.invoiceNumber }}</td>
                         <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
@@ -263,7 +264,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @for (invoice of overdueInvoices; track invoice) {
+                    @for (invoice of overdueInvoices; track invoice.id) {
                       <tr>
                         <td>{{ invoice.invoiceNumber }}</td>
                         <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
@@ -304,7 +305,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @for (invoice of paidInvoices | slice:0:8; track invoice) {
+                    @for (invoice of paidInvoices | slice:0:8; track invoice.id) {
                       <tr>
                         <td>{{ invoice.invoiceNumber }}</td>
                         <td>{{ invoice.organizationClient.firstName }} {{ invoice.organizationClient.lastName }}</td>
@@ -502,3 +503,4 @@
     </p-tabpanels>
   </p-tabs>
 </section>
+</div>

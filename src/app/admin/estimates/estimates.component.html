@@ -1,7 +1,15 @@
-<app-page-header
-  [title]="'admin.estimates.title' | translate"
-  [subtitle]="'admin.estimates.subtitle' | translate">
-</app-page-header>
+<div class="page-container">
+<header class="page-header">
+  <div class="page-header__title-group">
+    <h1 class="page-header__title">{{ 'admin.estimates.title' | translate }}</h1>
+    <p class="page-header__subtitle">{{ 'admin.estimates.subtitle' | translate }}</p>
+  </div>
+  <div class="page-header__actions">
+    <button type="button" class="btn btn-primary" (click)="openNew()">
+      {{ 'admin.estimates.cta.button' | translate }}
+    </button>
+  </div>
+</header>
 
 @if (error) {
   <div class="alert alert-danger mb-3">{{ error }}</div>
@@ -104,87 +112,72 @@
   [showSearchBar]="true">
 </app-jobflow-grid>
 
-<!-- Create / Edit Drawer -->
-<app-jobflow-drawer
-  [open]="isFormDrawerOpen"
-  [title]="editingEstimate ? ('admin.estimates.drawer.editTitle' | translate) : ('admin.estimates.drawer.newTitle' | translate)"
-  [width]="660"
-  (closed)="onFormCancelled()">
-  @if (isFormDrawerOpen) {
-    <div class="estimate-drawer">
-      <div class="estimate-drawer__intro">
-        <p class="estimate-drawer__eyebrow">
-          {{ editingEstimate ? ('admin.estimates.drawer.updateEyebrow' | translate) : ('admin.estimates.drawer.newEyebrow' | translate) }}
-        </p>
-        <h3>
-          {{ editingEstimate ? ('admin.estimates.drawer.updateTitle' | translate) : ('admin.estimates.drawer.newTitleMain' | translate) }}
-        </h3>
-        <p>{{ 'admin.estimates.drawer.subtitle' | translate }}</p>
-      </div>
-      <app-estimate-form
-        [estimate]="editingEstimate"
-        (saved)="onFormSaved($event)"
-        (cancelled)="onFormCancelled()">
-      </app-estimate-form>
+<!-- Create / Edit Panel -->
+@if (isFormDrawerOpen) {
+  <div class="content-card">
+    <div class="inline-card-header">
+      <h3>{{ editingEstimate ? ('admin.estimates.drawer.updateTitle' | translate) : ('admin.estimates.drawer.newTitleMain' | translate) }}</h3>
+      <button class="close-btn" (click)="onFormCancelled()">×</button>
     </div>
-  }
-</app-jobflow-drawer>
+    <app-estimate-form
+      [estimate]="editingEstimate"
+      (saved)="onFormSaved($event)"
+      (cancelled)="onFormCancelled()">
+    </app-estimate-form>
+  </div>
+}
 
-<!-- Send Drawer -->
-<app-jobflow-drawer
-  [open]="isSendDrawerOpen"
-  [title]="'admin.estimates.send.title' | translate"
-  [width]="440"
-  (closed)="isSendDrawerOpen = false">
-  @if (isSendDrawerOpen && estimateToSend) {
-    <div class="send-form">
-      <p class="text-muted mb-4">
-        {{ 'admin.estimates.send.intro' | translate }} <strong>{{ estimateToSend.estimateNumber }}</strong>.
-        {{ 'admin.estimates.send.subtitle' | translate }}
-      </p>
-      @if (sendError) {
-        <div class="alert alert-danger mb-3">{{ sendError }}</div>
-      }
-      <div class="mb-3">
-        <label class="form-label fw-semibold" for="estimateSendEmail">
-          {{ 'admin.estimates.send.recipientEmail' | translate }} <span class="text-danger">*</span>
-        </label>
-        <input
-          id="estimateSendEmail"
-          type="email"
-          class="form-control"
-          [(ngModel)]="sendEmail"
-          [placeholder]="'admin.estimates.send.recipientPlaceholder' | translate" />
-        </div>
-        <div class="mb-4">
-          <label class="form-label fw-semibold" for="estimateSendMessage">
-            {{ 'admin.estimates.send.message' | translate }} <span class="text-muted fw-normal">({{ 'admin.estimates.send.optional' | translate }})</span>
-          </label>
-          <textarea
-            id="estimateSendMessage"
-            class="form-control"
-            rows="4"
-            [(ngModel)]="sendMessage"
-            [placeholder]="'admin.estimates.send.messagePlaceholder' | translate">
-          </textarea>
-        </div>
-        <div class="d-flex justify-content-end gap-2">
-          <button
-            type="button"
-            class="btn btn-outline-secondary"
-            (click)="isSendDrawerOpen = false"
-            [disabled]="sending">
-            {{ 'admin.estimates.send.cancel' | translate }}
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            (click)="confirmSend()"
-            [disabled]="sending || !sendEmail.trim()">
-            {{ sending ? ('admin.estimates.send.sending' | translate) : ('admin.estimates.send.send' | translate) }}
-          </button>
-        </div>
-      </div>
+<!-- Send Panel -->
+@if (isSendDrawerOpen && estimateToSend) {
+  <div class="content-card">
+    <div class="inline-card-header">
+      <h3>{{ 'admin.estimates.send.title' | translate }} — {{ estimateToSend.estimateNumber }}</h3>
+      <button class="close-btn" (click)="isSendDrawerOpen = false">×</button>
+    </div>
+    @if (sendError) {
+      <div class="alert alert-danger mb-3">{{ sendError }}</div>
     }
-  </app-jobflow-drawer>
+    <div class="mb-3">
+      <label class="form-label fw-semibold" for="estimateSendEmail">
+        {{ 'admin.estimates.send.recipientEmail' | translate }} <span class="text-danger">*</span>
+      </label>
+      <input
+        id="estimateSendEmail"
+        type="email"
+        class="form-control"
+        [(ngModel)]="sendEmail"
+        [placeholder]="'admin.estimates.send.recipientPlaceholder' | translate" />
+    </div>
+    <div class="mb-4">
+      <label class="form-label fw-semibold" for="estimateSendMessage">
+        {{ 'admin.estimates.send.message' | translate }} <span class="text-muted fw-normal">({{ 'admin.estimates.send.optional' | translate }})</span>
+      </label>
+      <textarea
+        id="estimateSendMessage"
+        class="form-control"
+        rows="4"
+        [(ngModel)]="sendMessage"
+        [placeholder]="'admin.estimates.send.messagePlaceholder' | translate">
+      </textarea>
+    </div>
+    <div class="drawer-content__actions">
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="isSendDrawerOpen = false"
+        [disabled]="sending">
+        {{ 'admin.estimates.send.cancel' | translate }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="confirmSend()"
+        [disabled]="sending || !sendEmail.trim()">
+        {{ sending ? ('admin.estimates.send.sending' | translate) : ('admin.estimates.send.send' | translate) }}
+      </button>
+    </div>
+  </div>
+}
+
+</div>
 

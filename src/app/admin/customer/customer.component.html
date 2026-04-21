@@ -1,7 +1,8 @@
-<app-page-header
-  title="Clients"
-  subtitle="Keep client data tidy and ready for every workflow."
-></app-page-header>
+<div class="page-container">
+<div class="page-header">
+  <h1 class="page-title">Clients</h1>
+  <p>Keep client data tidy and ready for every workflow.</p>
+</div>
 @if (error) {
   <div class="alert alert-danger mb-3">
     {{ error }}
@@ -97,16 +98,18 @@
   </section>
 }
 
-<app-jobflow-drawer
-  [open]="isDrawerOpen"
-  [title]="editingClient ? 'Edit Client' : 'Add Client'"
-  (closed)="onDrawerClosed()"
-  >
-  <app-customer-create
-    [client]="editingClient"
-    (saved)="onCreateSaved()"
-    (cancelled)="onCreateCancelled()"/>
-  </app-jobflow-drawer>
+@if (isDrawerOpen) {
+  <div class="content-card">
+    <div class="drawer-content__intro">
+      <p class="drawer-content__eyebrow">{{ editingClient ? 'Update client' : 'New client' }}</p>
+      <h3 class="drawer-content__heading">{{ editingClient ? 'Edit Client' : 'Add Client' }}</h3>
+    </div>
+    <app-customer-create
+      [client]="editingClient"
+      (saved)="onCreateSaved()"
+      (cancelled)="onCreateCancelled()"/>
+  </div>
+}
 
   @if (showDeleteModal) {
     <app-jobflow-modal
@@ -332,3 +335,4 @@
     </app-jobflow-modal>
   }
 
+</div>

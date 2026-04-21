@@ -1,21 +1,12 @@
-<app-page-header
-  [title]="'admin.branding.title' | translate"
-  [subtitle]="'admin.branding.subtitle' | translate">
-</app-page-header>
-
-<section class="branding-layout">
-  <div class="card mb-3">
-    <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
-      <div>
-        <h6 class="mb-1">{{ 'admin.branding.hero.title' | translate }}</h6>
-        <p class="text-muted mb-0">{{ 'admin.branding.hero.subtitle' | translate }}</p>
-      </div>
-      <button pButton type="button" [label]="'admin.branding.actions.save' | translate" icon="pi pi-save" (click)="onSave()" [loading]="isSaving"
-      [disabled]="isSaving">
-        <span class="visually-hidden">{{ 'admin.branding.actions.save' | translate }}</span>
-      </button>
-    </div>
-  </div>
+<div class="page-container">
+<div class="page-header">
+  <h1 class="page-title">{{ 'admin.branding.title' | translate }}</h1>
+  <p>{{ 'admin.branding.subtitle' | translate }}</p>
+  <button pButton type="button" [label]="'admin.branding.actions.save' | translate" icon="pi pi-save" (click)="onSave()" [loading]="isSaving"
+  [disabled]="isSaving">
+    <span class="visually-hidden">{{ 'admin.branding.actions.save' | translate }}</span>
+  </button>
+</div>
 
   @if (saveStatus === 'success') {
     <div class="alert alert-success mb-3">{{ saveMessage }}</div>
@@ -28,8 +19,7 @@
     <div class="col-lg-6">
       <form [formGroup]="brandingForm" class="d-grid gap-3">
         <!-- Logo -->
-        <div class="card">
-          <div class="card-body">
+        <div class="content-card">
             <h6 class="mb-3">{{ 'admin.branding.sections.logo.title' | translate }}</h6>
             <div class="d-flex flex-wrap align-items-center gap-3">
               <label for="logoUpload" class="btn btn-outline-primary mb-0">{{ 'admin.branding.sections.logo.cta' | translate }}</label>
@@ -42,12 +32,10 @@
                 <button type="button" class="btn btn-sm btn-outline-danger ms-3" (click)="removeLogo()">Remove</button>
               </div>
             }
-          </div>
         </div>
 
         <!-- Colors -->
-        <div class="card">
-          <div class="card-body">
+        <div class="content-card">
             <h6 class="mb-3">{{ 'admin.branding.sections.colors.title' | translate }}</h6>
             <div class="row g-3">
               <div class="col-md-6">
@@ -69,12 +57,10 @@
                   (onChangeComplete)="onSecondaryColorChange($event)"></color-twitter>
               </div>
             </div>
-          </div>
         </div>
 
         <!-- Text & Contact -->
-        <div class="card">
-          <div class="card-body">
+        <div class="content-card">
             <h6 class="mb-3">{{ 'admin.branding.sections.text.title' | translate }}</h6>
 
             <p-floatlabel class="w-100 mb-3">
@@ -107,7 +93,6 @@
                 <a routerLink="/admin/company" class="small mt-1 d-inline-block">Edit in Company settings</a>
               </div>
             }
-          </div>
         </div>
 
         <div class="text-end">
@@ -252,4 +237,4 @@
       </div>
     </div>
   </div>
-</section>
+</div>

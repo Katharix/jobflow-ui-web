@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { take } from 'rxjs';
 import { plans } from '../../views/home/components/data';
-import { PageHeaderComponent } from '../dashboard/page-header/page-header.component';
 import { ToastService } from '../../common/toast/toast.service';
 import { PaymentService, CurrentSubscription } from '../../services/shared/payment.service';
 import { OrganizationContextService } from '../../services/shared/organization-context.service';
@@ -27,7 +26,7 @@ interface PlanCard {
 @Component({
   selector: 'app-subscription-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, PageHeaderComponent],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './subscription-management.component.html',
   styleUrl: './subscription-management.component.scss'
 })

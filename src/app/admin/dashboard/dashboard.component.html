@@ -1,176 +1,209 @@
-<section class="dashboard-page">
+﻿<div class="dashboard-page">
 
-  <!-- Tab Toggle -->
-  <nav class="dashboard-tabs">
+  <!-- ── Tab Strip ─────────────────────────────────────────────── -->
+  <nav class="db-tabs" role="tablist" aria-label="Dashboard sections">
     @if (showOnboardingChecklist) {
       <button
-        type="button"
-        class="dashboard-tabs__btn"
-        [class.dashboard-tabs__btn--active]="activeTab === 'setup-guide'"
+        role="tab"
+        class="db-tab"
+        [class.active]="activeTab === 'setup-guide'"
+        [attr.aria-selected]="activeTab === 'setup-guide'"
         (click)="setActiveTab('setup-guide')"
-        >{{ 'dashboard.tabSetupGuide' | translate }}</button>
+      >
+        {{ 'dashboard.tabSetupGuide' | translate }}
+      </button>
     }
     <button
-      type="button"
-      class="dashboard-tabs__btn"
-      [class.dashboard-tabs__btn--active]="activeTab === 'dashboard'"
+      role="tab"
+      class="db-tab"
+      [class.active]="activeTab === 'dashboard'"
+      [attr.aria-selected]="activeTab === 'dashboard'"
       (click)="setActiveTab('dashboard')"
-      >{{ 'dashboard.tabDashboard' | translate }}</button>
+    >
+      {{ 'dashboard.tabDashboard' | translate }}
+    </button>
   </nav>
 
-  <!-- First Steps Tab -->
+  <!-- ── Setup Guide Tab ───────────────────────────────────────── -->
   @if (activeTab === 'setup-guide' && showOnboardingChecklist) {
-    <section class="dashboard-first-steps">
-      <app-jobflow-onboarding-checklist
-        [organizationId]="organizationId"
-        (allCompleted)="onChecklistCompleted()"
-      ></app-jobflow-onboarding-checklist>
-    </section>
+    <app-jobflow-onboarding-checklist
+      [organizationId]="organizationId"
+      (allCompleted)="onChecklistCompleted()"
+    ></app-jobflow-onboarding-checklist>
   }
 
-  <!-- Dashboard Tab -->
+  <!-- ── Dashboard Tab ─────────────────────────────────────────── -->
   @if (activeTab === 'dashboard') {
 
-    <!-- Greeting Header -->
-    <header class="dashboard-header">
-      <div class="dashboard-header__date">{{ currentDateTime }}</div>
-      <h1 class="dashboard-header__greeting">{{ greetingText }}</h1>
+    <!-- Greeting -->
+    <header class="db-greeting" aria-label="Dashboard greeting">
+      <h1 class="db-greeting__title">{{ greetingText }}</h1>
+      <p class="db-greeting__date">{{ currentDateTime }}</p>
     </header>
 
-    <!-- Workflow Cards -->
-    <section class="dashboard-section">
-      <h2 class="dashboard-section__title">{{ 'dashboard.workflowTitle' | translate }}</h2>
+    <!-- ── Workflow Cards ───────────────────────────────────────── -->
+    <section class="db-section" aria-labelledby="section-workflow">
+      <h2 class="db-section__label" id="section-workflow">
+        {{ 'dashboard.workflowTitle' | translate }}
+      </h2>
+
       @if (loadingWorkflow) {
-        <div class="dashboard-loader">
-          <div class="dashboard-loader__cards">
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-          </div>
+        <div class="db-kpi-grid" aria-busy="true" aria-label="Loading workflow data">
+          <div class="db-skeleton db-skeleton--kpi"></div>
+          <div class="db-skeleton db-skeleton--kpi"></div>
+          <div class="db-skeleton db-skeleton--kpi"></div>
+          <div class="db-skeleton db-skeleton--kpi"></div>
         </div>
       } @else {
-        <div class="workflow-cards">
+        <div class="db-kpi-grid">
           @for (card of workflowCards; track card.id) {
-            <a class="workflow-card workflow-card--{{ card.tone }}" [routerLink]="card.route">
-              <span class="workflow-card__count">{{ card.count }}</span>
-              <span class="workflow-card__label">{{ card.label }}</span>
-              <span class="workflow-card__detail">{{ card.detail }}</span>
+            <a
+              [routerLink]="card.route"
+              class="db-kpi-tile"
+              [ngClass]="'tone-' + card.tone"
+              [attr.aria-label]="card.label + ': ' + card.count"
+            >
+              <div class="db-kpi-tile__accent" aria-hidden="true"></div>
+              <div class="db-kpi-tile__body">
+                <span class="db-kpi-tile__count">{{ card.count }}</span>
+                <span class="db-kpi-tile__label">{{ card.label }}</span>
+                <span class="db-kpi-tile__detail">{{ card.detail }}</span>
+              </div>
             </a>
           }
         </div>
       }
     </section>
 
-    <!-- Today's Appointments -->
-    <section class="dashboard-section">
-      <h2 class="dashboard-section__title">{{ 'dashboard.appointmentsTitle' | translate }}</h2>
+    <!-- ── Appointments ─────────────────────────────────────────── -->
+    <section class="db-section" aria-labelledby="section-appointments">
+      <h2 class="db-section__label" id="section-appointments">
+        {{ 'dashboard.appointmentsTitle' | translate }}
+      </h2>
+
       @if (loadingAppointments) {
-        <div class="dashboard-loader">
-          <div class="skeleton-bar"></div>
-        </div>
+        <div class="db-skeleton db-skeleton--bar" aria-busy="true" aria-label="Loading appointments"></div>
       } @else {
-        <div class="appointments-strip">
-          <div class="appointments-strip__stat">
-            <span class="appointments-strip__value">{{ appointmentStats.total }}</span>
-            <span class="appointments-strip__label">Total</span>
+        <div class="db-appointments-bar" role="list">
+          <div class="db-appt-stat" role="listitem">
+            <span class="db-appt-stat__dot dot--blue" aria-hidden="true"></span>
+            <span class="db-appt-stat__label">Total</span>
+            <span class="db-appt-stat__value">{{ appointmentStats.total }}</span>
           </div>
-          <div class="appointments-strip__stat appointments-strip__stat--active">
-            <span class="appointments-strip__value">{{ appointmentStats.active }}</span>
-            <span class="appointments-strip__label">Active</span>
+          <div class="db-appt-stat__divider" aria-hidden="true"></div>
+          <div class="db-appt-stat" role="listitem">
+            <span class="db-appt-stat__dot dot--teal" aria-hidden="true"></span>
+            <span class="db-appt-stat__label">Active</span>
+            <span class="db-appt-stat__value">{{ appointmentStats.active }}</span>
           </div>
-          <div class="appointments-strip__stat appointments-strip__stat--completed">
-            <span class="appointments-strip__value">{{ appointmentStats.completed }}</span>
-            <span class="appointments-strip__label">Completed</span>
+          <div class="db-appt-stat__divider" aria-hidden="true"></div>
+          <div class="db-appt-stat" role="listitem">
+            <span class="db-appt-stat__dot dot--green" aria-hidden="true"></span>
+            <span class="db-appt-stat__label">Completed</span>
+            <span class="db-appt-stat__value">{{ appointmentStats.completed }}</span>
           </div>
-          <div class="appointments-strip__stat appointments-strip__stat--overdue">
-            <span class="appointments-strip__value">{{ appointmentStats.overdue }}</span>
-            <span class="appointments-strip__label">Overdue</span>
+          <div class="db-appt-stat__divider" aria-hidden="true"></div>
+          <div class="db-appt-stat" role="listitem">
+            <span class="db-appt-stat__dot dot--red" aria-hidden="true"></span>
+            <span class="db-appt-stat__label">Overdue</span>
+            <span class="db-appt-stat__value">{{ appointmentStats.overdue }}</span>
           </div>
-          <div class="appointments-strip__stat">
-            <span class="appointments-strip__value">{{ appointmentStats.remaining }}</span>
-            <span class="appointments-strip__label">Remaining</span>
+          <div class="db-appt-stat__divider" aria-hidden="true"></div>
+          <div class="db-appt-stat" role="listitem">
+            <span class="db-appt-stat__dot dot--orange" aria-hidden="true"></span>
+            <span class="db-appt-stat__label">Remaining</span>
+            <span class="db-appt-stat__value">{{ appointmentStats.remaining }}</span>
           </div>
         </div>
       }
     </section>
 
-    <!-- Business Performance -->
-    <section class="dashboard-section">
-      <h2 class="dashboard-section__title">{{ 'dashboard.performanceTitle' | translate }}</h2>
+    <!-- ── Business Performance ─────────────────────────────────── -->
+    <section class="db-section" aria-labelledby="section-performance">
+      <h2 class="db-section__label" id="section-performance">
+        {{ 'dashboard.performanceTitle' | translate }}
+      </h2>
+
       @if (loadingPerformance) {
-        <div class="dashboard-loader">
-          <div class="dashboard-loader__cards">
-            <div class="skeleton-card skeleton-card--wide"></div>
-            <div class="skeleton-card skeleton-card--wide"></div>
-          </div>
+        <div class="db-perf-grid" aria-busy="true" aria-label="Loading performance data">
+          <div class="db-skeleton db-skeleton--card"></div>
+          <div class="db-skeleton db-skeleton--card"></div>
         </div>
       } @else {
-        <div class="performance-grid">
-          <article class="performance-card">
-            <h3 class="performance-card__title">{{ 'dashboard.receivablesTitle' | translate }}</h3>
-            <div class="performance-card__rows">
-              <div class="performance-card__row">
-                <span>{{ 'dashboard.revenue30d' | translate }}</span>
-                <strong class="tone-success">{{ miniTiles[0]?.value }}</strong>
-              </div>
-              <div class="performance-card__row">
-                <span>{{ 'dashboard.outstanding' | translate }}</span>
-                <strong class="tone-warning">{{ miniTiles[1]?.value }}</strong>
-              </div>
-              <div class="performance-card__row">
-                <span>{{ 'dashboard.overdue' | translate }}</span>
-                <strong class="tone-danger">{{ miniTiles[2]?.value }}</strong>
-              </div>
-            </div>
-          </article>
+        <div class="db-perf-grid">
 
-          <article class="performance-card">
-            <h3 class="performance-card__title">{{ 'dashboard.upcomingJobsTitle' | translate }}</h3>
-            <div class="performance-card__rows">
-              <div class="performance-card__row">
-                <span>{{ 'dashboard.openJobs' | translate }}</span>
-                <strong>{{ kpiMetrics.openJobs }}</strong>
-              </div>
-              <div class="performance-card__row">
-                <span>{{ 'dashboard.needsScheduling' | translate }}</span>
-                <strong class="tone-warning">{{ kpiMetrics.jobsWithoutSchedule }}</strong>
-              </div>
-              <div class="performance-card__row">
-                <span>{{ 'dashboard.inProgress' | translate }}</span>
-                <strong class="tone-success">{{ kpiMetrics.jobsInProgress }}</strong>
-              </div>
+          <!-- Receivables Card -->
+          <div class="db-perf-card" role="region" aria-label="Receivables">
+            <h3 class="db-perf-card__title">
+              {{ 'dashboard.receivablesTitle' | translate }}
+            </h3>
+            <div class="db-perf-row">
+              <span class="db-perf-row__label">{{ 'dashboard.revenue30d' | translate }}</span>
+              <span class="db-badge db-badge--success">{{ miniTiles[0]?.value }}</span>
             </div>
-          </article>
+            <div class="db-perf-row">
+              <span class="db-perf-row__label">{{ 'dashboard.outstanding' | translate }}</span>
+              <span class="db-badge db-badge--warning">{{ miniTiles[1]?.value }}</span>
+            </div>
+            <div class="db-perf-row">
+              <span class="db-perf-row__label">{{ 'dashboard.overdue' | translate }}</span>
+              <span class="db-badge db-badge--danger">{{ miniTiles[2]?.value }}</span>
+            </div>
+          </div>
+
+          <!-- Jobs Card -->
+          <div class="db-perf-card" role="region" aria-label="Upcoming jobs">
+            <h3 class="db-perf-card__title">
+              {{ 'dashboard.upcomingJobsTitle' | translate }}
+            </h3>
+            <div class="db-perf-row">
+              <span class="db-perf-row__label">{{ 'dashboard.openJobs' | translate }}</span>
+              <span class="db-badge db-badge--primary">{{ kpiMetrics.openJobs }}</span>
+            </div>
+            <div class="db-perf-row">
+              <span class="db-perf-row__label">{{ 'dashboard.needsScheduling' | translate }}</span>
+              <span class="db-badge db-badge--warning">{{ kpiMetrics.jobsWithoutSchedule }}</span>
+            </div>
+            <div class="db-perf-row">
+              <span class="db-perf-row__label">{{ 'dashboard.inProgress' | translate }}</span>
+              <span class="db-badge db-badge--info">{{ kpiMetrics.jobsInProgress }}</span>
+            </div>
+          </div>
+
         </div>
       }
     </section>
 
-    <!-- Client Activity -->
-    <section class="dashboard-section">
-      <h2 class="dashboard-section__title">{{ 'dashboard.clientActivityTitle' | translate }}</h2>
+    <!-- ── Client Activity ──────────────────────────────────────── -->
+    <section class="db-section" aria-labelledby="section-activity">
+      <h2 class="db-section__label" id="section-activity">
+        {{ 'dashboard.clientActivityTitle' | translate }}
+      </h2>
+
       @if (clientActivity.length === 0) {
-        <p class="dashboard-empty-state">{{ 'dashboard.clientActivityEmpty' | translate }}</p>
+        <p class="db-empty">{{ 'dashboard.clientActivityEmpty' | translate }}</p>
       } @else {
-        <ul class="dashboard-activity-list">
-          @for (activity of clientActivity; track activity.id) {
-            <li class="dashboard-activity-item">
-              <div class="dashboard-activity-item__top">
-                <span class="dashboard-activity-badge" [ngClass]="getActivityClass(activity.type)">
-                  {{ getActivityLabel(activity.type) }}
-                </span>
-                <time>{{ formatActivityDate(activity.occurredAt) }}</time>
+        <ul class="db-activity-feed" role="list">
+          @for (item of clientActivity; track item.id) {
+            <li class="db-activity-item" role="listitem">
+              <span
+                class="db-activity-badge"
+                [ngClass]="getActivityClass(item.type)"
+              >{{ getActivityLabel(item.type) }}</span>
+              <div class="db-activity-content">
+                <span class="db-activity-title">{{ item.title }}</span>
+                <span class="db-activity-detail">{{ item.detail }}</span>
               </div>
-              <p>{{ activity.title }}</p>
-              <small>{{ activity.detail }}</small>
-              <a [routerLink]="activity.route">{{ 'dashboard.open' | translate }}</a>
+              <time class="db-activity-time">{{ formatActivityDate(item.occurredAt) }}</time>
+              <a
+                [routerLink]="item.route"
+                class="db-activity-link"
+              >{{ 'dashboard.open' | translate }}</a>
             </li>
           }
         </ul>
       }
     </section>
 
-
   }
-</section>
-
+</div>

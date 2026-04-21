@@ -1,0 +1,106 @@
+// ─── Page Layout Utilities ────────────────────────────────────────────────────
+// Complements src/styles/admin/_shared.scss (already globally applied via
+// AdminLayoutComponent with ViewEncapsulation.None).
+//
+// Classes already in _shared.scss (no duplication needed):
+//   .page-container  .page-header  .content-card  .kpi-grid  .kpi-tile
+//   .section-label   .filter-bar   .filter-chip   .status-chip
+//   .btn-loader      .component-loader  .form-section  .empty-state
+//
+// This file adds the MISSING aliases and helpers for the redesign.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Keyframes — duplicated here so these utilities work outside the admin layout
+// (public/auth layouts). Identical definitions are harmless in CSS.
+@keyframes jf-shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+@keyframes jf-spin {
+  to { transform: rotate(360deg); }
+}
+
+// ─── Page Section ─────────────────────────────────────────────────────────────
+// Mirrors .db-section from the dashboard. Use as a structural wrapper around
+// a .section-label heading + its content.
+.page-section {
+  margin-bottom: 2.25rem;
+
+  &__label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--jf-text-section, #9ba3b2);
+    margin: 0 0 0.875rem;
+  }
+}
+
+// ─── Button Loading State ─────────────────────────────────────────────────────
+// Semantic alias for .btn-loader. Apply with [class.btn-loading]="isSaving".
+// The spinner replaces visible button content; pointer events are disabled.
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.7;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1rem;
+    height: 1rem;
+    margin: -0.5rem 0 0 -0.5rem;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: jf-spin 0.7s linear infinite;
+  }
+
+  > * { visibility: hidden; }
+}
+
+// ─── Skeleton Line ────────────────────────────────────────────────────────────
+// Single-line shimmer placeholder. Use standalone or inside a content area.
+// Modifiers: --sm, --lg, --xl for height; --w50, --w75 for partial width.
+.skeleton-line {
+  height: 1rem;
+  border-radius: var(--jf-radius-sm, 8px);
+  background: linear-gradient(
+    90deg,
+    var(--jf-skeleton-from, #e8ecf8) 25%,
+    var(--jf-skeleton-mid,  #f4f6fd) 50%,
+    var(--jf-skeleton-from, #e8ecf8) 75%
+  );
+  background-size: 600px 100%;
+  animation: jf-shimmer 1.5s ease-in-out infinite;
+  margin-bottom: 0.5rem;
+
+  &--sm  { height: 0.75rem; }
+  &--lg  { height: 1.5rem; }
+  &--xl  { height: 2.5rem; }
+  &--w50 { width: 50%; }
+  &--w75 { width: 75%; }
+}
+
+// ─── Inline Component Spinner ─────────────────────────────────────────────────
+// Centred spinner for in-card/in-section async loading states.
+// (Distinct from .component-loader in _shared.scss which renders skeleton rows.)
+.component-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 120px;
+
+  &::after {
+    content: '';
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid var(--jf-border, #e8ecf8);
+    border-top-color: var(--jf-primary, #3f67da);
+    border-radius: 50%;
+    animation: jf-spin 0.8s linear infinite;
+  }
+}

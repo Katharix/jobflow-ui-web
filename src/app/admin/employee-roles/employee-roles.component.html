@@ -1,7 +1,8 @@
-<app-page-header
-  title="Roles"
-  subtitle="Team roles for scheduling and assignments"
-></app-page-header>
+<div class="page-container">
+<div class="page-header">
+  <h1 class="page-title">Roles</h1>
+  <p>Team roles for scheduling and assignments</p>
+</div>
 
 <section class="roles-overview">
   <div class="roles-overview__metrics">
@@ -168,57 +169,47 @@
 </section>
 
 @if (showRoleDrawer) {
-  <app-jobflow-drawer
-    [open]="showRoleDrawer"
-    [title]="editingRoleId ? 'Edit Role' : 'Add Role'"
-    [width]="460"
-    (closed)="closeRoleModal()">
-    <div class="role-drawer">
-      <div class="role-drawer__intro">
-        <p class="role-drawer__eyebrow">{{ editingRoleId ? 'Update role' : 'New role' }}</p>
-        <h3>{{ editingRoleId ? 'Refine role details' : 'Create a role' }}</h3>
-        <p>Use concise labels that match how you assign work in JobFlow.</p>
-      </div>
-      <div [formGroup]="roleForm" class="role-drawer__form">
-        <label class="form-label fw-semibold" for="roleName">Role Name</label>
-        <input pInputText pSize="small" id="roleName" type="text" formControlName="name" placeholder="Enter role name" class="w-100" />
-        @if (roleForm.controls.name.touched && roleForm.controls.name.invalid) {
-          <div class="text-danger small mt-2">
-            Role name is required.
-          </div>
-        }
-        <label class="form-label fw-semibold" for="roleDescription">Description</label>
-        <textarea
-          id="roleDescription"
-          rows="3"
-          class="form-control"
-          formControlName="description"
-          placeholder="Optional details about this role"></textarea>
-      </div>
-      <div class="role-drawer__actions">
-        <button type="button" class="btn btn-outline-secondary" (click)="closeRoleModal()">
-          Cancel
-        </button>
-        <button type="button" class="btn btn-primary" (click)="saveRole()">
-          {{ editingRoleId ? 'Save Changes' : 'Create Role' }}
-        </button>
-      </div>
+  <div class="content-card">
+    <div class="drawer-content__intro">
+      <p class="drawer-content__eyebrow">{{ editingRoleId ? 'Update role' : 'New role' }}</p>
+      <h3 class="drawer-content__heading">{{ editingRoleId ? 'Refine role details' : 'Create a role' }}</h3>
+      <p class="drawer-content__body">Use concise labels that match how you assign work in JobFlow.</p>
     </div>
-  </app-jobflow-drawer>
+    <div [formGroup]="roleForm" class="role-drawer__form">
+      <label class="form-label fw-semibold" for="roleName">Role Name</label>
+      <input pInputText pSize="small" id="roleName" type="text" formControlName="name" placeholder="Enter role name" class="w-100" />
+      @if (roleForm.controls.name.touched && roleForm.controls.name.invalid) {
+        <div class="text-danger small mt-2">
+          Role name is required.
+        </div>
+      }
+      <label class="form-label fw-semibold" for="roleDescription">Description</label>
+      <textarea
+        id="roleDescription"
+        rows="3"
+        class="form-control"
+        formControlName="description"
+        placeholder="Optional details about this role"></textarea>
+    </div>
+    <div class="drawer-content__actions">
+      <button type="button" class="btn btn-outline-secondary" (click)="closeRoleModal()">
+        Cancel
+      </button>
+      <button type="button" class="btn btn-primary" (click)="saveRole()">
+        {{ editingRoleId ? 'Save Changes' : 'Create Role' }}
+      </button>
+    </div>
+  </div>
 }
 
 @if (showPresetDrawer) {
-  <app-jobflow-drawer
-    [open]="showPresetDrawer"
-    [title]="editingPresetId ? 'Edit Preset' : 'Add Preset'"
-    [width]="560"
-    (closed)="closePresetDrawer()">
+  <div class="content-card">
+    <div class="drawer-content__intro">
+      <p class="drawer-content__eyebrow">{{ editingPresetId ? 'Update preset' : 'New preset' }}</p>
+      <h3 class="drawer-content__heading">{{ editingPresetId ? 'Refine the preset pack' : 'Create a preset pack' }}</h3>
+      <p class="drawer-content__body">Group roles so new teams can be set up quickly.</p>
+    </div>
     <div class="preset-drawer" [formGroup]="presetForm">
-      <div class="role-drawer__intro">
-        <p class="role-drawer__eyebrow">{{ editingPresetId ? 'Update preset' : 'New preset' }}</p>
-        <h3>{{ editingPresetId ? 'Refine the preset pack' : 'Create a preset pack' }}</h3>
-        <p>Group roles so new teams can be set up quickly.</p>
-      </div>
       <div class="preset-drawer__form">
         <label class="form-label fw-semibold" for="presetName">Preset name</label>
         <input
@@ -250,7 +241,7 @@
       <div class="preset-drawer__items">
         <div class="preset-drawer__items-header">
           <div>
-            <p class="role-drawer__eyebrow">Preset roles</p>
+            <p class="drawer-content__eyebrow">Preset roles</p>
             <h4>Roles in this preset</h4>
           </div>
           <button type="button" class="btn btn-sm btn-outline-primary" (click)="addPresetItem()">
@@ -285,7 +276,7 @@
           }
         </div>
       </div>
-      <div class="role-drawer__actions">
+      <div class="drawer-content__actions">
         <button type="button" class="btn btn-outline-secondary" (click)="closePresetDrawer()">
           Cancel
         </button>
@@ -294,6 +285,7 @@
         </button>
       </div>
     </div>
-  </app-jobflow-drawer>
+  </div>
 }
 
+</div>

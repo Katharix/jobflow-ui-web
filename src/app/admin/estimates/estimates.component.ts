@@ -4,9 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { PageHeaderComponent } from '../dashboard/page-header/page-header.component';
 import { JobflowGridColumn, JobflowGridComponent, JobflowGridPageSettings } from '../../common/jobflow-grid/jobflow-grid.component';
-import { JobflowDrawerComponent } from '../../common/jobflow-drawer/jobflow-drawer.component';
 import { ToastService } from '../../common/toast/toast.service';
 import { EstimateService } from './services/estimate.service';
 import { EstimateFormComponent } from './estimate-form/estimate-form.component';
@@ -20,9 +18,7 @@ import { useNotifierHub, NotifierHubHandle } from '../services/useNotifierHub';
     CommonModule,
     FormsModule,
     TranslateModule,
-    PageHeaderComponent,
     JobflowGridComponent,
-    JobflowDrawerComponent,
     EstimateFormComponent,
   ],
   templateUrl: './estimates.component.html',

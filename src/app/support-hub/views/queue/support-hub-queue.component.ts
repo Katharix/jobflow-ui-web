@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SupportHubChatApiService } from '../../services/support-hub-chat-api.service';
@@ -10,7 +10,7 @@ import { QueueCardComponent, QueueCustomer } from '../../components/queue-card/q
 @Component({
   selector: 'app-support-hub-queue',
   standalone: true,
-  imports: [CommonModule, RouterLink, QueueCardComponent],
+  imports: [CommonModule, QueueCardComponent],
   templateUrl: './support-hub-queue.component.html',
   styleUrl: './support-hub-queue.component.scss',
 })

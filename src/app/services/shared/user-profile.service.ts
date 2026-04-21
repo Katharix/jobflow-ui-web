@@ -8,8 +8,8 @@ export class UserProfileService {
   private api = inject(BaseApiService);
   private readonly baseUrl = 'users/me';
 
-  getMe(): Observable<UserProfile> {
-    return this.api.get<UserProfile>(this.baseUrl);
+  getMe(options?: { context?: import('@angular/common/http').HttpContext }): Observable<UserProfile> {
+    return this.api.get<UserProfile>(this.baseUrl, undefined, options?.context);
   }
 
   updateMe(request: UserProfileUpdateRequest): Observable<UserProfile> {

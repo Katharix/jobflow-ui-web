@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpContext, HttpHeaders, HttpParams} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {Observable} from 'rxjs';
 
@@ -48,10 +48,11 @@ export class BaseApiService {
       return httpParams;
    }
 
-   get<T>(endpoint: string, params?: QueryParams): Observable<T> {
+   get<T>(endpoint: string, params?: QueryParams, context?: HttpContext): Observable<T> {
       return this.http.get<T>(`${this.baseUrl}/${endpoint}`, {
          headers: this.getHeaders(),
-         params: this.toHttpParams(params)
+         params: this.toHttpParams(params),
+         context
       });
    }
 
