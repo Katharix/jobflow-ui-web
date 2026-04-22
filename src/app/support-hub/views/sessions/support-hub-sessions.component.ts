@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '@angular/fire/auth';
-import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { SupportHubDataService } from '../../services/support-hub-data.service';
 import { SupportHubSession } from '../../models/support-hub-session';
 import { OrganizationService } from '../../../services/shared/organization.service';
@@ -24,7 +23,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   imports: [
     CommonModule,
     FormsModule,
-    PageHeaderComponent,
     JobflowGridComponent,
     ButtonModule,
     SelectModule,

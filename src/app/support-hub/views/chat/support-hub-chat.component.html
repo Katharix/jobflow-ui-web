@@ -6,7 +6,7 @@
       <span class="cc-header__label">Support Hub</span>
     </div>
     
-    <div style="display:flex; align-items:center; gap: 1rem;">
+    <div class="cc-header__controls">
       <div class="cc-header__status" [class.is-online]="agentOnline" [attr.aria-label]="agentOnline ? 'Agent online' : 'Agent offline'">
         <span class="cc-online-dot"></span>
         <span class="cc-status-text">{{ agentOnline ? 'Online' : 'Offline' }}</span>
@@ -18,7 +18,6 @@
         [attr.aria-pressed]="soundEnabled"
         [attr.aria-label]="soundEnabled ? 'Mute message notifications' : 'Unmute message notifications'"
         title="{{ soundEnabled ? 'Mute notifications' : 'Unmute notifications' }}"
-        style="border:none; background:transparent; cursor:pointer; font-size:1.2rem; color:var(--jf-text-muted);"
       >
         <i [class]="soundEnabled ? 'ti ti-bell' : 'ti ti-bell-off'" aria-hidden="true"></i>
       </button>

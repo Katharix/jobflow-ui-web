@@ -16,14 +16,27 @@
   border-left: 3px solid var(--jf-danger);
 }
 
+.sh-audit__expand {
+  margin-top: 0.5rem;
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  color: var(--jf-primary);
+  cursor: pointer;
+  padding: 0;
+}
+
 .sh-audit__details {
-  margin: 0;
-  padding: 0.75rem 1rem;
-  font-size: 0.78rem;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: var(--jf-bg);
+  border-radius: var(--jf-radius-sm);
+  font-size: 0.75rem;
   color: #6e7180;
   white-space: pre-wrap;
   word-break: break-all;
   max-height: 240px;
+  overflow-x: auto;
   overflow-y: auto;
   font-family: 'Courier New', monospace;
 }
@@ -44,7 +57,9 @@
 .sh-audit__more {
   display: flex;
   justify-content: center;
-  padding: 0.5rem 0;
+  padding: 1rem;
+  text-align: center;
+  border-top: 1px solid var(--jf-border);
 }
 
 .sh-audit__loading {
@@ -53,7 +68,8 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 2rem;
-  color: #9da2b3;
+  text-align: center;
+  color: var(--jf-text-muted);
 }
 
 .sh-audit__spinner {

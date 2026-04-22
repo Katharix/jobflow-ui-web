@@ -111,7 +111,7 @@
           />
           <span class="sh-field__hint">How often the dashboard data reloads automatically.</span>
         </div>
-        <div class="sh-settings__actions" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--jf-border);">
+        <div class="sh-settings__actions">
           <button
             pButton
             type="button"
@@ -119,7 +119,7 @@
             (click)="savePrefs()"
           >Save preferences</button>
           @if (saved) {
-            <span class="sh-settings__saved" style="color: var(--jf-success);">
+            <span class="sh-settings__saved">
               <i class="ti ti-check"></i> Saved
             </span>
           }
@@ -133,14 +133,13 @@
         </div>
         <div class="sh-toggle-row">
           <div class="sh-toggle-row__info">
-            <div class="sh-toggle-row__label" style="color: var(--jf-text);">Reset settings</div>
+            <div class="sh-toggle-row__label">Reset settings</div>
             <div class="sh-toggle-row__desc">Revert your preferences to system defaults.</div>
           </div>
           <button
             pButton
             type="button"
-            class="p-button-outlined p-button-danger"
-            style="border-color: var(--jf-danger); color: var(--jf-danger);"
+            class="p-button-outlined p-button-danger sh-settings__danger-btn"
             label="Reset to defaults"
             (click)="resetPrefs()"
           >Reset to defaults</button>

@@ -59,6 +59,9 @@
   flex-direction: column;
 }
 
+.sh-queue-skel__line--1 { width: 44%; height: 0.875rem; }
+.sh-queue-skel__line--2 { width: 62%; height: 0.75rem; margin-top: 0.35rem; }
+
 .sh-queue-skel__btn {
   width: 80px;
   height: 36px;

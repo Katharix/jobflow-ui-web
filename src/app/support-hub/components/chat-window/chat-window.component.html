@@ -10,26 +10,26 @@
 >
   @if (isDragOver && canUpload) {
     <!-- Drag-and-drop overlay -->
-    <div class="chat-win__drop-overlay" aria-hidden="true" style="position: absolute; inset: 0; background: rgba(63, 103, 218, 0.07); border: 2px dashed var(--jf-primary); border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6rem; z-index: 10; pointer-events: none;">
-      <i class="ti ti-upload" style="font-size: 2rem; color: var(--jf-primary);"></i>
-      <span style="font-size: 0.9rem; font-weight: 700; color: var(--jf-primary);">Drop files to attach</span>
+    <div class="chat-win__drop-overlay" aria-hidden="true">
+      <i class="ti ti-upload cw-drop-icon" aria-hidden="true"></i>
+      <span class="cw-drop-label">Drop files to attach</span>
     </div>
   }
 
   <div class="cw-messages" #messagesContainer>
     @if (isLoading) {
       <!-- Skeleton loaders -->
-      <div aria-label="Loading messages" style="display: flex; flex-direction: column; gap: 0.85rem;">
-        <div class="cw-msg cw-msg--incoming"><div class="cw-bubble sh-skeleton" style="width: 52%; height: 38px;"></div></div>
-        <div class="cw-msg cw-msg--outgoing"><div class="cw-bubble sh-skeleton" style="width: 40%; height: 38px;"></div></div>
-        <div class="cw-msg cw-msg--incoming"><div class="cw-bubble sh-skeleton" style="width: 65%; height: 38px;"></div></div>
-        <div class="cw-msg cw-msg--outgoing"><div class="cw-bubble sh-skeleton" style="width: 30%; height: 38px;"></div></div>
+      <div class="cw-skeleton-list" aria-label="Loading messages">
+        <div class="cw-msg cw-msg--incoming"><div class="cw-bubble sh-skeleton cw-skel-msg--1"></div></div>
+        <div class="cw-msg cw-msg--outgoing"><div class="cw-bubble sh-skeleton cw-skel-msg--2"></div></div>
+        <div class="cw-msg cw-msg--incoming"><div class="cw-bubble sh-skeleton cw-skel-msg--3"></div></div>
+        <div class="cw-msg cw-msg--outgoing"><div class="cw-bubble sh-skeleton cw-skel-msg--4"></div></div>
       </div>
     } @else if (messages.length === 0) {
       <!-- Empty state -->
-      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; gap: 0.5rem; color: var(--jf-text-muted); padding: 2rem;">
-        <i class="ti ti-messages" style="font-size: 2rem; opacity: 0.4;" aria-hidden="true"></i>
-        <p style="margin: 0; font-size: 0.875rem;">No messages yet. Say hello!</p>
+      <div class="cw-empty-state">
+        <i class="ti ti-messages cw-empty-icon" aria-hidden="true"></i>
+        <p class="cw-empty-text">No messages yet. Say hello!</p>
       </div>
     } @else {
       @for (msg of messages; track msg.id) {
@@ -38,21 +38,21 @@
              [class.cw-msg--incoming]="msg.perspective === 'inbound'">
           <div class="cw-bubble">
             @if (msg.text) {
-              <p style="margin: 0; font-size: 0.875rem;">{{ msg.text }}</p>
+              <p class="cw-bubble-text">{{ msg.text }}</p>
             }
             @if (msg.fileUrl) {
-              <div style="margin-top: 0.3rem;">
+              <div class="cw-file-wrap">
                 @if (msg.uploading) {
-                  <div style="font-size: 0.8rem; font-weight: 600;">
+                  <div class="cw-file-uploading">
                     <i class="ti ti-file" aria-hidden="true"></i>
                     <span>Uploading…</span>
                   </div>
                 } @else {
-                  <a [href]="msg.fileUrl" target="_blank" rel="noopener" [attr.aria-label]="'Download ' + msg.fileName" style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.8rem; font-weight: 600; text-decoration: none; color: inherit;">
+                  <a [href]="msg.fileUrl" target="_blank" rel="noopener" [attr.aria-label]="'Download ' + msg.fileName" class="cw-file-link">
                     <i class="ti ti-file-download" aria-hidden="true"></i>
-                    <span style="max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ msg.fileName }}</span>
+                    <span class="cw-file-name">{{ msg.fileName }}</span>
                     @if (msg.fileSize) {
-                      <span style="opacity: 0.65; font-size: 0.7rem;">{{ msg.fileSize | number }}KB</span>
+                      <span class="cw-file-size">{{ msg.fileSize | number }}KB</span>
                     }
                   </a>
                 }
@@ -67,10 +67,10 @@
         <!-- Typing indicator -->
         <div class="cw-msg cw-msg--incoming" role="status" aria-label="Agent is typing">
           <div class="cw-bubble">
-            <span style="display: flex; align-items: center; gap: 4px;">
-              <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--jf-text-muted);"></span>
-              <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--jf-text-muted);"></span>
-              <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--jf-text-muted);"></span>
+            <span class="cw-typing-dots">
+              <span class="cw-typing-dot"></span>
+              <span class="cw-typing-dot"></span>
+              <span class="cw-typing-dot"></span>
             </span>
           </div>
         </div>
@@ -79,7 +79,7 @@
   </div>
 
   @if (sessionEnded) {
-    <div role="alert" aria-live="assertive" style="padding: 0.875rem; background: var(--jf-surface); color: var(--jf-success); text-align: center; border-top: 1px solid var(--jf-border); font-size: 0.875rem;">
+    <div role="alert" aria-live="assertive" class="cw-session-ended">
       <i class="ti ti-circle-check" aria-hidden="true"></i>
       <span>This support session has ended. Thank you!</span>
     </div>
@@ -88,15 +88,15 @@
   @if (!sessionEnded) {
     <div class="cw-input-bar">
       @if (canUpload) {
-        <label for="chat-file-input" title="Attach file (images, PDF, doc · max 10MB)" aria-label="Attach file" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; color: var(--jf-text-muted);">
-          <i class="ti ti-paperclip" style="font-size: 1.25rem;" aria-hidden="true"></i>
-          <input type="file" id="chat-file-input" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" (change)="onFileChange($event)" aria-hidden="true" tabindex="-1" style="display: none;" />
+        <label for="chat-file-input" title="Attach file (images, PDF, doc · max 10MB)" aria-label="Attach file" class="cw-attach-label">
+          <i class="ti ti-paperclip cw-attach-icon" aria-hidden="true"></i>
+          <input type="file" id="chat-file-input" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" (change)="onFileChange($event)" aria-hidden="true" tabindex="-1" class="cw-file-input-hidden" />
         </label>
       }
 
       <textarea class="cw-textarea" placeholder="Type a message… (Enter to send, Shift+Enter for new line)" [(ngModel)]="messageText" (keydown)="onKeydown($event)" rows="1" aria-label="Message input" [disabled]="sessionEnded"></textarea>
 
-      <button class="cw-send-btn" (click)="onSend()" [disabled]="!messageText?.trim()" aria-label="Send message">
+      <button class="cw-send-btn" (click)="onSend()" [disabled]="!messageText.trim()" aria-label="Send message">
         <i class="ti ti-send" aria-hidden="true"></i>
       </button>
     </div>

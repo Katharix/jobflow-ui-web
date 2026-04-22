@@ -1,7 +1,11 @@
 .cq-shell { overflow-y: auto; height: 100%; }
 .cq-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1.25rem; cursor: pointer; border-bottom: 1px solid var(--jf-border); transition: background 0.15s; &:hover, &.active { background: var(--jf-primary-soft); } &:last-child { border-bottom: none; } }
 .cq-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--jf-primary-soft); color: var(--jf-primary); font-size: 0.8125rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.cq-skel-avatar { background: transparent; }
 .cq-info { flex: 1; min-width: 0; }
 .cq-name { font-size: 0.875rem; font-weight: 600; color: var(--jf-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
 .cq-channel { font-size: 0.75rem; color: var(--jf-text-muted); display: block; }
 .cq-wait { font-size: 0.75rem; font-weight: 600; color: var(--jf-warning); flex-shrink: 0; }
+.cq-skel-name { width: 60%; height: 0.75rem; }
+.cq-skel-channel { width: 40%; height: 0.65rem; margin-top: 0.3rem; }
+.cq-empty { text-align: center; padding: 1.25rem; color: var(--jf-text-muted); font-size: 0.875rem; margin: 0; }

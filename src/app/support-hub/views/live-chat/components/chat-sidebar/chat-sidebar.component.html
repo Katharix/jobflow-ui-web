@@ -1,12 +1,12 @@
 <aside class="cs-shell" aria-label="Customer information">
   @if (isLoading || !customer) {
     <!-- Skeleton state -->
-    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+    <div class="cs-skeleton-state">
       <div class="cs-customer">
         <div class="cs-avatar sh-skeleton"></div>
-        <div class="cs-customer-info" style="width: 100%;">
-          <div class="sh-skeleton" style="width: 70%; height: 1rem;"></div>
-          <div class="sh-skeleton" style="width: 40%; height: 0.75rem;"></div>
+        <div class="cs-customer-info">
+          <div class="sh-skeleton cs-skel-name"></div>
+          <div class="sh-skeleton cs-skel-email"></div>
         </div>
       </div>
     </div>
@@ -16,7 +16,7 @@
       <div class="cs-avatar" aria-hidden="true">{{ customer.name.charAt(0) }}</div>
       <div class="cs-customer-info">
         <div class="cs-customer-name">{{ customer.name }}</div>
-        <span class="status-chip status-chip--success" style="font-size: 0.75rem; color: var(--jf-text-muted);">{{ customer.email }}</span>
+        <span class="cs-customer-email">{{ customer.email }}</span>
       </div>
     </div>
 
@@ -34,7 +34,7 @@
       </div>
       <div class="cs-info-row">
         <span class="cs-info-icon"><i class="ti ti-id" aria-hidden="true"></i></span>
-        <span class="cs-info-value" style="font-family: monospace;">{{ customer.sessionId }}</span>
+        <span class="cs-info-value cs-info-value--mono">{{ customer.sessionId }}</span>
       </div>
     </div>
 

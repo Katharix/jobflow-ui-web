@@ -2,6 +2,16 @@
 .sh-session-agent { font-size: 0.8125rem; color: var(--jf-text-muted); }
 .sh-session-duration { font-size: 0.8125rem; font-weight: 500; color: var(--jf-text); }
 
+.sh-org-select {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.sh-agent-select {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .sh-grid-actions {
   display: inline-flex;
   align-items: center;

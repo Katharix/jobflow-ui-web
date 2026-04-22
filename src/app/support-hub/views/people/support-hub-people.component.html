@@ -41,7 +41,7 @@
             @for (member of staff; track member.id) {
               <tr [class.sh-row--inactive]="!member.isActive">
                 <td>
-                  <div class="sh-user" style="display: flex; align-items: center; gap: 0.75rem;">
+                  <div class="sh-user">
                     <span class="sh-avatar">{{ initials(member) }}</span>
                     <span class="sh-person-name">{{ displayName(member) }}</span>
                   </div>
@@ -51,7 +51,7 @@
                   <span class="status-chip" [ngClass]="roleSeverityStyles(member.role)">{{ roleLabel(member.role) }}</span>
                 </td>
                 <td class="sh-cell--muted">{{ member.createdAt | date:'mediumDate' }}</td>
-                <td class="sh-cell--actions" style="text-align: right;">
+                <td class="sh-cell--actions">
                   @if (member.isActive) {
                     <button class="sh-icon-btn" title="Change role" (click)="openRoleDialog(member)">
                       <i class="ti ti-switch-horizontal"></i>
@@ -71,7 +71,7 @@
     }
 
     @if (activeTab === 'invites') {
-      <div class="filter-bar" style="padding: 1.25rem; border-bottom: 1px solid var(--jf-border);">
+      <div class="filter-bar sh-people-filter-bar">
         <div class="filter-bar__group sh-invite-bar">
           <p-select
             [options]="roleOptions"

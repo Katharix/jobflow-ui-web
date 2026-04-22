@@ -9,9 +9,9 @@
     }
   </div>
 } @else if (messages.length === 0) {
-  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem 1rem; color: var(--jf-text-muted); text-align: center;">
-    <i class="ti ti-messages" aria-hidden="true" style="font-size: 1.75rem; opacity: 0.3;"></i>
-    <p style="margin: 0; font-size: 0.85rem; margin-top: 0.5rem;">No messages yet.</p>
+  <div class="cw-empty-state">
+    <i class="ti ti-messages cw-empty-icon" aria-hidden="true"></i>
+    <p class="cw-empty-text">No messages yet.</p>
   </div>
 } @else {
   <div class="cw-messages" role="log" aria-label="Chat messages" aria-live="polite">
@@ -20,7 +20,7 @@
         [class.cw-msg--outgoing]="msg.perspective === 'outbound'"
         [class.cw-msg--incoming]="msg.perspective === 'inbound'">
         <div class="cw-bubble">
-          @if (msg.text) { <p style="margin: 0;">{{ msg.text }}</p> }
+          @if (msg.text) { <p class="cw-bubble-text">{{ msg.text }}</p> }
         </div>
         <div class="cw-timestamp">{{ msg.sentAt }}</div>
       </div>
@@ -29,10 +29,10 @@
     @if (isTyping) {
       <div class="cw-msg cw-msg--incoming" role="status" aria-label="Typing">
         <div class="cw-bubble">
-          <span style="display: flex; align-items: center; gap: 4px;">
-            <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--jf-text-muted);"></span>
-            <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--jf-text-muted);"></span>
-            <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--jf-text-muted);"></span>
+          <span class="cw-typing-dots">
+            <span class="cw-typing-dot"></span>
+            <span class="cw-typing-dot"></span>
+            <span class="cw-typing-dot"></span>
           </span>
         </div>
       </div>

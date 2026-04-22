@@ -1,12 +1,19 @@
 .cs-shell { padding: 1.25rem; display: flex; flex-direction: column; gap: 1.25rem; }
 .cs-customer { display: flex; align-items: center; gap: 0.875rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--jf-border); }
 .cs-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--jf-primary-soft); color: var(--jf-primary); font-size: 1rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.cs-customer-info { display: flex; flex-direction: column; gap: 0.25rem; }
+.cs-customer-info { display: flex; flex-direction: column; gap: 0.25rem; width: 100%; }
 .cs-customer-name { font-size: 1rem; font-weight: 700; color: var(--jf-text); }
 .cs-info-section { }
 .cs-section-label { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--jf-text-section); margin-bottom: 0.625rem; }
 .cs-info-row { display: flex; align-items: center; gap: 0.625rem; padding: 0.375rem 0; font-size: 0.875rem; color: var(--jf-text); }
 .cs-info-icon { color: var(--jf-text-muted); width: 16px; flex-shrink: 0; }
+.cs-info-value { font-size: 0.875rem; font-weight: 500; color: var(--jf-text); }
+.cs-info-value--mono { font-family: monospace; }
 .cs-actions { display: flex; flex-direction: column; gap: 0.5rem; }
 .cs-action-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.7rem; border-radius: 9px; color: var(--jf-text-muted); font-size: 0.8rem; font-weight: 600; text-decoration: none; transition: background 0.15s, color 0.15s; cursor: pointer; border: none; background: transparent; }
 .cs-action-btn:hover { background: var(--jf-primary-soft); color: var(--jf-primary); }
+
+.cs-skeleton-state { display: flex; flex-direction: column; gap: 1.25rem; }
+.cs-skel-name { width: 70%; height: 1rem; }
+.cs-skel-email { width: 40%; height: 0.75rem; }
+.cs-customer-email { font-size: 0.75rem; color: var(--jf-text-muted); }

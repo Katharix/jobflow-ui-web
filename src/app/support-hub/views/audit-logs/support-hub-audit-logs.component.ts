@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { SupportHubDataService } from '../../services/support-hub-data.service';
@@ -10,7 +9,7 @@ import { SupportHubAuditLog } from '../../models/support-hub-audit-log';
 @Component({
   selector: 'app-support-hub-audit-logs',
   standalone: true,
-  imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonModule, SelectModule],
+  imports: [CommonModule, FormsModule, ButtonModule, SelectModule],
   templateUrl: './support-hub-audit-logs.component.html',
   styleUrl: './support-hub-audit-logs.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

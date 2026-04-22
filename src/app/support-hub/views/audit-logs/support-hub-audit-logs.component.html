@@ -45,12 +45,12 @@
             <div class="sh-audit-time">{{ log.createdAt | date:'short' }} • {{ log.category }} • {{ log.method }} {{ log.path }} ({{ log.statusCode }})</div>
             
             @if (log.detailsJson) {
-              <button class="sh-audit__expand" (click)="toggleDetails(log.id)" style="margin-top: 0.5rem; background: none; border: none; font-size: 0.75rem; color: var(--jf-primary); cursor: pointer; padding: 0;">
+              <button class="sh-audit__expand" (click)="toggleDetails(log.id)">
                 {{ expandedId === log.id ? 'Hide Details' : 'View Details' }}
               </button>
             }
             @if (expandedId === log.id && log.detailsJson) {
-              <pre class="sh-audit__details" style="margin-top: 0.5rem; padding: 0.75rem; background: var(--jf-bg); border-radius: var(--jf-radius-sm); font-size: 0.75rem; overflow-x: auto;">{{ log.detailsJson }}</pre>
+              <pre class="sh-audit__details">{{ log.detailsJson }}</pre>
             }
           </div>
         </div>
@@ -66,14 +66,14 @@
 
     <!-- Load more -->
     @if (nextCursor) {
-      <div class="sh-audit__more" style="padding: 1rem; text-align: center; border-top: 1px solid var(--jf-border);">
+      <div class="sh-audit__more">
         <p-button label="Load more" icon="ti ti-arrow-down" [outlined]="true" [loading]="loading" (onClick)="loadMore()"></p-button>
       </div>
     }
 
     @if (loading && logs.length === 0) {
-      <div class="sh-audit__loading" style="padding: 2rem; text-align: center; color: var(--jf-text-muted);">
-        <i class="ti ti-loader-2 sh-audit__spinner" style="animation: spin 1s linear infinite;"></i>
+      <div class="sh-audit__loading">
+        <i class="ti ti-loader-2 sh-audit__spinner"></i>
         Loading…
       </div>
     }

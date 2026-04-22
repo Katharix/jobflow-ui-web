@@ -76,6 +76,12 @@
   flex-direction: column;
 }
 
+.cc-header__controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .cust-chat__icon-btn {
   width: 36px;
   height: 36px;

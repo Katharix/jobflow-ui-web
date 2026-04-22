@@ -10,4 +10,39 @@
   }
 }
 .cw-bubble { padding: 0.625rem 1rem; font-size: 0.875rem; line-height: 1.5; word-break: break-word; box-shadow: var(--jf-shadow); }
+.cw-bubble-text { margin: 0; }
 .cw-timestamp { font-size: 0.6875rem; color: var(--jf-text-section); margin-top: 0.25rem; }
+
+.cw-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1rem;
+  color: var(--jf-text-muted);
+  text-align: center;
+}
+
+.cw-empty-icon {
+  font-size: 1.75rem;
+  opacity: 0.3;
+}
+
+.cw-empty-text {
+  margin: 0;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.cw-typing-dots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cw-typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--jf-text-muted);
+}
