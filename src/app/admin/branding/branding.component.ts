@@ -7,6 +7,7 @@ import {InputTextModule} from 'primeng/inputtext';
 import {TextareaModule} from 'primeng/textarea';
 import {FloatLabelModule} from 'primeng/floatlabel';
 import {ButtonModule} from 'primeng/button';
+import {MessageModule} from 'primeng/message';
 import {ColorBlockModule} from 'ngx-color/block';
 import {ColorTwitterModule} from 'ngx-color/twitter';
 import {LucideAngularModule} from 'lucide-angular';
@@ -34,6 +35,7 @@ interface ColorChangeEvent {
          TextareaModule,
          FloatLabelModule,
          ButtonModule,
+         MessageModule,
          ColorBlockModule,
          ColorTwitterModule,
          LucideAngularModule,
