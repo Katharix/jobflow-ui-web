@@ -1,343 +1,483 @@
-<div class="page-container">
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  chat.component.html — Designer-authored template                ║
+  ║  Engineer: bindings are already wired in chat.component.ts       ║
+  ╠══════════════════════════════════════════════════════════════════╣
+  ║  Template bindings used:                                         ║
+  ║    filteredConversations, selectedConversation                    ║
+  ║    selectConversation(convo), backToChatList(), startNewChat()    ║
+  ║    filteredContacts, employeeContacts, clientContacts             ║
+  ║    isLoadingContacts, canStartClientChat(contact)                 ║
+  ║    openContactChat(contact), searchQuery (ngModel)                ║
+  ║    messages, messageText (ngModel), sendMessage()                 ║
+  ║    notifyTyping(), defaultNavActiveId (ngbNav)                    ║
+  ║    hasMoreMessages, isLoadingMessages, loadMoreMessages()         ║
+  ║    isSending, attachmentPreviewUrl                                ║
+  ║    onAttachmentSelected($event), clearAttachment()                ║
+  ║    isRemoteTyping, chatPanelVisible                               ║
+  ║    getConversationName/Preview/Role(), getAvatarInitials()        ║
+  ║    getContactBadge/Subtitle(), getMessageStatusLabel()            ║
+  ║    trackByConversationId, trackByContactId, trackByMessage        ║
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
 
-<header class="page-header">
-  <div class="page-header__title-group">
-    <h1 class="page-header__title">Inbox</h1>
-    <p class="page-header__subtitle">Manage conversations with employees and customers</p>
-  </div>
-</header>
+<div class="chat-page">
 
-<div class="content-card">
-<div class="row chat-wrapper">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-body">
-        <div class="row position-relative">
-          <div class="col-lg-4 chat-aside border-end-lg">
-            <div class="aside-content">
-              <div class="aside-header">
-                <div class="d-flex justify-content-between align-items-center pb-2 mb-2">
-                  <div class="d-flex align-items-center">
-                    <figure class="me-2 mb-0">
-                      <div class="avatar-initials img-sm rounded-circle">JF</div>
-                      <div class="status online"></div>
-                    </figure>
-                    <div>
-                      <h6 class="mb-0">JobFlow Inbox</h6>
-                      <p class="text-secondary fs-13px mb-0">{{ conversations.length }} active conversation{{ conversations.length === 1 ? '' : 's' }}</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="d-grid mb-3">
-                  <button class="btn btn-primary" type="button" (click)="startNewChat()">
-                    <i class="feather icon-plus me-1"></i>
-                    New Chat
-                  </button>
-                </div>
-                <form class="search-form">
-                  <div class="input-group">
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Search conversations..."
-                      [(ngModel)]="searchQuery"
-                      name="searchQuery"
+  <!-- ── Page Header ─────────────────────────────────────────── -->
+  <header class="page-header chat-page__header">
+    <div class="page-header__title-group">
+      <h1 class="page-header__title">Messaging</h1>
+      <p class="page-header__subtitle">Manage conversations with employees and customers</p>
+    </div>
+  </header>
+
+  <!-- ── Chat Panel ─────────────────────────────────────────── -->
+  <div class="chat-panel">
+
+    <!-- ── Left Aside: Conversations / Contacts ─────────────── -->
+    <aside
+      class="chat-panel__aside"
+      [class.chat-panel__aside--hidden]="chatPanelVisible"
+      aria-label="Conversations and contacts"
+    >
+
+      <!-- Search + New Chat -->
+      <div class="chat-aside__search">
+        <div class="chat-aside__search-wrap">
+          <i class="feather icon-search chat-aside__search-icon" aria-hidden="true"></i>
+          <input
+            type="search"
+            class="chat-aside__search-field"
+            placeholder="Search…"
+            [(ngModel)]="searchQuery"
+            name="searchQuery"
+            aria-label="Search conversations and contacts"
+          />
+        </div>
+        <button
+          type="button"
+          class="chat-aside__new-btn"
+          (click)="startNewChat()"
+          aria-label="Start new chat"
+        >
+          <i class="feather icon-edit-2" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <!-- Tabs: Chats / Contacts -->
+      <div class="chat-aside__tabs">
+        <ul
+          ngbNav
+          #defaultNav="ngbNav"
+          [(activeId)]="defaultNavActiveId"
+          class="chat-aside__nav"
+          role="tablist"
+        >
+
+          <!-- ─ Chats Tab ─ -->
+          <li [ngbNavItem]="1" class="chat-aside__nav-item">
+            <button ngbNavLink type="button" class="chat-aside__nav-link">
+              <i class="feather icon-message-square" aria-hidden="true"></i>
+              <span>Chats</span>
+            </button>
+            <ng-template ngbNavContent>
+              <div class="chat-aside__scroll-wrap">
+                <ng-scrollbar>
+                  <ul class="chat-aside__list" role="listbox" aria-label="Conversations">
+                    @for (convo of filteredConversations; track trackByConversationId($index, convo)) {
+                      <li
+                        class="chat-thread"
+                        [class.chat-thread--active]="selectedConversation?.id === convo.id"
+                        role="option"
+                        [attr.aria-selected]="selectedConversation?.id === convo.id"
                       >
-                      <div class="input-group-text bg-transparent">
-                        <i class="feather icon-search icon-md cursor-pointer"></i>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-                <div class="aside-body">
-                  <ul ngbNav #defaultNav="ngbNav" [(activeId)]="defaultNavActiveId" class="nav-tabs nav-fill mt-3">
-                    <li [ngbNavItem]="1">
-                      <button ngbNavLink type="button">
-                        <div class="d-flex flex-row flex-lg-column flex-xl-row align-items-center justify-content-center">
-                          <i class="feather icon-message-square icon-xs me-sm-2 me-lg-0 me-xxl-2"></i>
-                          <p class="d-none d-sm-block d-lg-none d-xxl-block mb-0">Chats</p>
-                        </div>
-                      </button>
-                      <ng-template ngbNavContent>
-                        <ng-scrollbar>
-                          <p class="text-secondary mb-1">Recent chats</p>
-                          <ul class="list-unstyled chat-list px-1">
-                            @for (convo of filteredConversations; track trackByConversationId($index, convo)) {
-                              <li
-                                class="chat-item pe-1"
-                                [class.active]="selectedConversation?.id === convo.id"
-                                >
-                                <button type="button" class="chat-link d-flex align-items-center w-100 text-start border-0 bg-transparent p-0" (click)="selectConversation(convo)">
-                                  <figure class="mb-0 me-2">
-                                    @if (convo.avatarUrl) {
-                                      <img [src]="convo.avatarUrl" class="img-xs rounded-circle" alt="conversation avatar">
-                                    } @else {
-                                      <div class="avatar-initials img-xs rounded-circle">{{ getAvatarInitials(getConversationName(convo)) }}</div>
-                                    }
-                                    <div class="status" [ngClass]="convo.status === 'offline' ? 'offline' : 'online'"></div>
-                                  </figure>
-                                  <div class="d-flex justify-content-between flex-grow-1 border-bottom">
-                                    <div class="conversation-copy">
-                                      <p class="text-body fw-bolder mb-1">{{ getConversationName(convo) }}</p>
-                                      <p class="text-secondary fs-13px mb-0 text-truncate">{{ getConversationPreview(convo) }}</p>
-                                    </div>
-                                    <div class="d-flex flex-column align-items-end conversation-meta">
-                                      <p class="text-secondary fs-13px mb-1">{{ convo.lastMessage?.timestamp ? (convo.lastMessage?.timestamp | date:'shortTime') : '' }}</p>
-                                      @if (convo.unreadCount) {
-                                        <div class="badge rounded-pill bg-primary ms-auto">{{ convo.unreadCount }}</div>
-                                      }
-                                    </div>
-                                  </div>
-                                </button>
-                              </li>
+                        <button
+                          type="button"
+                          class="chat-thread__btn"
+                          (click)="selectConversation(convo)"
+                        >
+                          <div class="chat-thread__avatar">
+                            @if (convo.avatarUrl) {
+                              <img
+                                [src]="convo.avatarUrl"
+                                class="chat-thread__avatar-img"
+                                [alt]="getConversationName(convo) + ' avatar'"
+                              />
+                            } @else {
+                              <span class="chat-thread__avatar-initials" aria-hidden="true">
+                                {{ getAvatarInitials(getConversationName(convo)) }}
+                              </span>
                             }
-                            <li class="tab-empty-state" [class.d-none]="filteredConversations.length > 0">
-                              <p class="text-muted mb-0">No conversations match your search.</p>
-                            </li>
-                          </ul>
-                        </ng-scrollbar>
-                      </ng-template>
-                    </li>
-                    <li [ngbNavItem]="2">
-                      <button ngbNavLink type="button">
-                        <div class="d-flex flex-row flex-lg-column flex-xl-row align-items-center justify-content-center">
-                          <i class="feather icon-users icon-xs me-sm-2 me-lg-0 me-xxl-2"></i>
-                          <p class="d-none d-sm-block d-lg-none d-xxl-block mb-0">Contacts</p>
-                        </div>
-                      </button>
-                      <ng-template ngbNavContent>
-                        <ng-scrollbar>
-                          @if (isLoadingContacts) {
-                            <div class="tab-empty-state">
-                              <p class="text-muted mb-0">Loading contacts...</p>
+                            <span
+                              class="chat-thread__status"
+                              [class.chat-thread__status--online]="convo.status !== 'offline'"
+                              aria-hidden="true"
+                            ></span>
+                          </div>
+                          <div class="chat-thread__body">
+                            <div class="chat-thread__top">
+                              <span class="chat-thread__name">{{ getConversationName(convo) }}</span>
+                              <span class="chat-thread__time">
+                                {{ convo.lastMessage?.timestamp ? (convo.lastMessage?.timestamp | date:'shortTime') : '' }}
+                              </span>
                             </div>
-                          }
-
-                          @if (!isLoadingContacts) {
-                            <p class="text-secondary mb-1">Employees</p>
-                            <ul class="list-unstyled chat-list px-1" [class.d-none]="employeeContacts.length === 0">
-                              @for (contact of employeeContacts; track trackByContactId($index, contact)) {
-                                <li class="chat-item pe-1">
-                                  <div class="d-flex align-items-center">
-                                    <figure class="mb-0 me-2">
-                                      @if (contact.avatarUrl) {
-                                        <img [src]="contact.avatarUrl" class="img-xs rounded-circle" alt="employee avatar">
-                                      } @else {
-                                        <div class="avatar-initials img-xs rounded-circle">{{ getAvatarInitials(contact.name) }}</div>
-                                      }
-                                      <div class="status" [ngClass]="contact.status === 'offline' ? 'offline' : 'online'"></div>
-                                    </figure>
-                                    <div class="d-flex align-items-center justify-content-between flex-grow-1 border-bottom">
-                                      <div>
-                                        <div class="d-flex align-items-center gap-2">
-                                          <p class="text-body mb-1">{{ contact.name }}</p>
-                                          <span class="badge rounded-pill contact-badge">{{ getContactBadge(contact) }}</span>
-                                        </div>
-                                        <p class="text-secondary fs-13px mb-0">{{ getContactSubtitle(contact) }}</p>
-                                      </div>
-                                      <div class="d-flex align-items-end text-body contact-actions">
-                                        <button type="button" class="btn btn-link p-0 text-secondary me-2" (click)="openContactChat(contact)" ngbTooltip="Open chat">
-                                          <i class="feather icon-message-square icon-sm"></i>
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </li>
+                            <div class="chat-thread__bottom">
+                              <span class="chat-thread__preview">{{ getConversationPreview(convo) }}</span>
+                              @if (convo.unreadCount) {
+                                <span
+                                  class="chat-thread__badge"
+                                  [attr.aria-label]="convo.unreadCount + ' unread'"
+                                >{{ convo.unreadCount }}</span>
                               }
-                            </ul>
-                            <div class="tab-empty-state" [class.d-none]="employeeContacts.length > 0">
-                              <p class="text-muted mb-0">No employees found.</p>
                             </div>
-                            <p class="text-secondary mt-3 mb-1">Clients</p>
-                            <ul class="list-unstyled chat-list px-1" [class.d-none]="clientContacts.length === 0">
-                              @for (contact of clientContacts; track trackByContactId($index, contact)) {
-                                <li class="chat-item pe-1">
-                                  <div class="d-flex align-items-center">
-                                    <figure class="mb-0 me-2">
-                                      <div class="avatar-initials img-xs rounded-circle">{{ getAvatarInitials(contact.name) }}</div>
-                                      <div class="status" [ngClass]="contact.status === 'offline' ? 'offline' : 'online'"></div>
-                                    </figure>
-                                    <div class="d-flex align-items-center justify-content-between flex-grow-1 border-bottom">
-                                      <div>
-                                        <div class="d-flex align-items-center gap-2">
-                                          <p class="text-body mb-1">{{ contact.name }}</p>
-                                          <span class="badge rounded-pill contact-badge">{{ getContactBadge(contact) }}</span>
-                                          @if (contact.hasClientHub) {
-                                            <span
-                                              class="badge rounded-pill hub-badge"
-                                              ngbTooltip="Client Hub linked"
-                                              >
-                                              Hub
-                                            </span>
-                                          }
-                                        </div>
-                                        <p class="text-secondary fs-13px mb-0">{{ getContactSubtitle(contact) }}</p>
-                                      </div>
-                                      <div class="d-flex align-items-end text-body contact-actions">
-                                        <button
-                                          type="button"
-                                          class="btn btn-link p-0 text-secondary me-2"
-                                          (click)="openContactChat(contact)"
-                                          [disabled]="!canStartClientChat(contact)"
-                                          [ngbTooltip]="contact.phoneNumber ? 'Start SMS chat' : 'Client needs a phone number'"
-                                          >
-                                          <i class="feather icon-message-square icon-sm"></i>
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </li>
-                              }
-                            </ul>
-                            <div class="tab-empty-state" [class.d-none]="clientContacts.length > 0">
-                              <p class="text-muted mb-0">No clients found.</p>
-                            </div>
-                          }
-                        </ng-scrollbar>
-                      </ng-template>
-                    </li>
-                  </ul>
-                  <div [ngbNavOutlet]="defaultNav" class="mt-3"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-8 chat-content" [class.show]="chatPanelVisible">
-              @if (selectedConversation) {
-                <div class="chat-header border-bottom pb-2">
-                  <div class="d-flex justify-content-between align-items-center gap-3">
-                    <div class="d-flex align-items-center">
-                      <button type="button" (click)="backToChatList()" class="btn btn-link p-0 me-2 ms-n2 text-secondary d-lg-none" aria-label="Back to chat list">
-                        <i class="feather icon-corner-up-left icon-md"></i>
-                      </button>
-                      <figure class="mb-0 me-2">
-                        @if (selectedConversation.avatarUrl) {
-                          <img [src]="selectedConversation.avatarUrl" class="img-sm rounded-circle" alt="selected conversation avatar">
-                        } @else {
-                          <div class="avatar-initials img-sm rounded-circle">{{ getAvatarInitials(getConversationName(selectedConversation)) }}</div>
-                        }
-                        <div class="status" [ngClass]="selectedConversation.status === 'offline' ? 'offline' : 'online'"></div>
-                      </figure>
-                      <div>
-                        <p class="mb-0 fw-semibold">{{ getConversationName(selectedConversation) }}</p>
-                        <p class="text-secondary fs-13px mb-0">{{ getConversationRole(selectedConversation) }}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="chat-body">
-                  <ng-scrollbar #chatBodyScrollbar>
-                    @if (selectedConversation && hasMoreMessages) {
-                      <div class="text-center my-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="loadMoreMessages()" [disabled]="isLoadingMessages">
-                          {{ isLoadingMessages ? 'Loading...' : 'Load earlier messages' }}
+                          </div>
                         </button>
-                      </div>
+                      </li>
                     }
-                    @if (messages.length) {
-                      <ul class="messages">
-                        @for (msg of messages; track trackByMessage($index, msg)) {
-                          <li class="message-item" [ngClass]="{ 'me': msg.isMine, 'friend': !msg.isMine }">
-                            @if (!msg.isMine) {
-                              @if (selectedConversation.avatarUrl) {
-                                <img [src]="selectedConversation.avatarUrl || ''" class="img-xs rounded-circle" alt="message sender avatar">
-                              } @else {
-                                <div class="avatar-initials img-xs rounded-circle">{{ getAvatarInitials(getConversationName(selectedConversation)) }}</div>
-                              }
-                            }
-                            <div class="content">
-                              <div class="message">
-                                <div class="bubble">
-                                  @if (msg.content) {
-                                    <p class="mb-1">{{ msg.content }}</p>
-                                  }
-                                  @if (msg.attachmentUrl) {
-                                    <a class="d-inline-block" [href]="msg.attachmentUrl" target="_blank" rel="noopener">
-                                      <img [src]="msg.attachmentUrl" class="img-fluid rounded" alt="attachment">
-                                    </a>
-                                  }
-                                </div>
-                                <div class="message-meta">
-                                  <span>{{ msg.timestamp | date:'shortTime' }}</span>
-                                  @if (getMessageStatusLabel(msg)) {
-                                    <span class="message-chip">
-                                      {{ getMessageStatusLabel(msg) }}
-                                    </span>
-                                  }
-                                </div>
-                              </div>
-                            </div>
-                          </li>
-                        }
-                      </ul>
-                    } @else {
-                      <div class="thread-empty-state">
-                        <i class="feather icon-message-square icon-lg text-secondary mb-2"></i>
-                        <p class="mb-1">No messages yet</p>
-                        <p class="text-muted mb-0">Send the first message to start this conversation.</p>
-                      </div>
+                    @if (filteredConversations.length === 0) {
+                      <li class="chat-aside__empty" aria-live="polite">
+                        <i class="feather icon-inbox" aria-hidden="true"></i>
+                        <p>No conversations match your search.</p>
+                      </li>
                     }
-                  </ng-scrollbar>
-                </div>
-                <div class="chat-footer d-flex">
-                  <div class="d-none d-md-block">
-                    <label class="btn border btn-icon rounded-circle me-2" ngbTooltip="Add image" aria-label="Add image">
-                      <input type="file" class="d-none" accept="image/*" (change)="onAttachmentSelected($event)">
-                      <i class="feather icon-paperclip text-secondary"></i>
-                    </label>
-                  </div>
-                  <form class="search-form flex-grow-1 me-2" (ngSubmit)="sendMessage()">
-                    <div class="input-group">
-                      <input
-                        type="text"
-                        class="form-control rounded-pill"
-                        name="messageText"
-                        [(ngModel)]="messageText"
-                        (ngModelChange)="notifyTyping()"
-                        placeholder="Type a message"
-                        >
-                      </div>
-                      @if (attachmentPreviewUrl) {
-                        <div class="d-flex align-items-center mt-2 gap-2">
-                          <img [src]="attachmentPreviewUrl" class="img-sm rounded" alt="attachment preview">
-                          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="clearAttachment()">Remove</button>
-                        </div>
-                      }
-                      @if (attachmentUploadError) {
-                        <div class="text-danger fs-13px mt-1">{{ attachmentUploadError }}</div>
-                      }
-                    </form>
-                    <div class="d-flex flex-column align-items-end gap-1">
-                      @if (isRemoteTyping) {
-                        <div class="typing-indicator">Client typing...</div>
-                      }
-                      <button
-                        type="button"
-                        class="btn btn-primary btn-icon rounded-circle"
-                        (click)="sendMessage()"
-                        [disabled]="isSending || (!messageText.trim() && !attachmentPreviewUrl)"
-                        >
-                        <i class="feather icon-send"></i>
-                      </button>
-                    </div>
-                  </div>
-                } @else {
-                  <div class="chat-panel-empty d-none d-lg-flex">
-                    <div class="text-center">
-                      <div class="empty-state-icon mx-auto mb-3">
-                        <i class="feather icon-message-square icon-lg"></i>
-                      </div>
-                      <h5 class="mb-2">Select a conversation</h5>
-                      <p class="text-muted mb-0">Choose a chat from the left to view messages and reply.</p>
-                    </div>
-                  </div>
-                }
-
+                  </ul>
+                </ng-scrollbar>
               </div>
+            </ng-template>
+          </li>
+
+          <!-- ─ Contacts Tab ─ -->
+          <li [ngbNavItem]="2" class="chat-aside__nav-item">
+            <button ngbNavLink type="button" class="chat-aside__nav-link">
+              <i class="feather icon-users" aria-hidden="true"></i>
+              <span>Contacts</span>
+            </button>
+            <ng-template ngbNavContent>
+              <div class="chat-aside__scroll-wrap">
+                <ng-scrollbar>
+                  @if (isLoadingContacts) {
+                    <div class="chat-aside__empty" aria-live="polite">
+                      <p>Loading contacts…</p>
+                    </div>
+                  }
+                  @if (!isLoadingContacts) {
+                    <!-- Employees -->
+                    <p class="chat-aside__section-label">Employees</p>
+                    @if (employeeContacts.length === 0) {
+                      <p class="chat-aside__empty-inline">No employees found.</p>
+                    }
+                    <ul class="chat-aside__list" [class.chat-aside__list--hidden]="employeeContacts.length === 0">
+                      @for (contact of employeeContacts; track trackByContactId($index, contact)) {
+                        <li class="chat-contact">
+                          <button
+                            type="button"
+                            class="chat-contact__btn"
+                            (click)="openContactChat(contact)"
+                          >
+                            <div class="chat-contact__avatar">
+                              @if (contact.avatarUrl) {
+                                <img
+                                  [src]="contact.avatarUrl"
+                                  class="chat-contact__avatar-img"
+                                  [alt]="contact.name + ' avatar'"
+                                />
+                              } @else {
+                                <span class="chat-contact__avatar-initials" aria-hidden="true">
+                                  {{ getAvatarInitials(contact.name) }}
+                                </span>
+                              }
+                              <span
+                                class="chat-contact__status"
+                                [class.chat-contact__status--online]="contact.status !== 'offline'"
+                                aria-hidden="true"
+                              ></span>
+                            </div>
+                            <div class="chat-contact__body">
+                              <div class="chat-contact__top">
+                                <span class="chat-contact__name">{{ contact.name }}</span>
+                                <span class="chat-contact__badge chat-contact__badge--role">{{ getContactBadge(contact) }}</span>
+                              </div>
+                              <span class="chat-contact__sub">{{ getContactSubtitle(contact) }}</span>
+                            </div>
+                            <i class="feather icon-message-square chat-contact__action-icon" aria-hidden="true"></i>
+                          </button>
+                        </li>
+                      }
+                    </ul>
+                    <!-- Clients -->
+                    <p class="chat-aside__section-label">Clients</p>
+                    @if (clientContacts.length === 0) {
+                      <p class="chat-aside__empty-inline">No clients found.</p>
+                    }
+                    <ul class="chat-aside__list" [class.chat-aside__list--hidden]="clientContacts.length === 0">
+                      @for (contact of clientContacts; track trackByContactId($index, contact)) {
+                        <li class="chat-contact">
+                          <button
+                            type="button"
+                            class="chat-contact__btn"
+                            (click)="openContactChat(contact)"
+                            [disabled]="!canStartClientChat(contact)"
+                            [attr.aria-label]="contact.phoneNumber
+                              ? 'Start SMS chat with ' + contact.name
+                              : contact.name + ' — phone number required'"
+                          >
+                            <div class="chat-contact__avatar">
+                              <span class="chat-contact__avatar-initials" aria-hidden="true">
+                                {{ getAvatarInitials(contact.name) }}
+                              </span>
+                              <span
+                                class="chat-contact__status"
+                                [class.chat-contact__status--online]="contact.status !== 'offline'"
+                                aria-hidden="true"
+                              ></span>
+                            </div>
+                            <div class="chat-contact__body">
+                              <div class="chat-contact__top">
+                                <span class="chat-contact__name">{{ contact.name }}</span>
+                                <span class="chat-contact__badge chat-contact__badge--client">{{ getContactBadge(contact) }}</span>
+                                @if (contact.hasClientHub) {
+                                  <span class="chat-contact__badge chat-contact__badge--hub" aria-label="Client Hub linked">Hub</span>
+                                }
+                              </div>
+                              <span class="chat-contact__sub">{{ getContactSubtitle(contact) }}</span>
+                            </div>
+                            <i class="feather icon-message-square chat-contact__action-icon" aria-hidden="true"></i>
+                          </button>
+                        </li>
+                      }
+                    </ul>
+                  }
+                </ng-scrollbar>
+              </div>
+            </ng-template>
+          </li>
+
+        </ul>
+
+        <!-- Tab Outlet -->
+        <div [ngbNavOutlet]="defaultNav" class="chat-aside__tab-outlet"></div>
+      </div>
+
+    </aside><!-- /chat-panel__aside -->
+
+
+    <!-- ── Right Content: Chat Area ─────────────────────────── -->
+    <section
+      class="chat-panel__content"
+      [class.show]="chatPanelVisible"
+      aria-label="Chat conversation"
+    >
+
+      @if (selectedConversation) {
+
+        <!-- Chat Header -->
+        <header class="chat-content__header">
+          <div class="chat-content__header-left">
+            <button
+              type="button"
+              class="chat-content__back-btn"
+              (click)="backToChatList()"
+              aria-label="Back to conversation list"
+            >
+              <i class="feather icon-arrow-left" aria-hidden="true"></i>
+            </button>
+            <div class="chat-content__avatar">
+              @if (selectedConversation.avatarUrl) {
+                <img
+                  [src]="selectedConversation.avatarUrl"
+                  class="chat-content__avatar-img"
+                  [alt]="getConversationName(selectedConversation) + ' avatar'"
+                />
+              } @else {
+                <span class="chat-content__avatar-initials" aria-hidden="true">
+                  {{ getAvatarInitials(getConversationName(selectedConversation)) }}
+                </span>
+              }
+              <span class="chat-content__online-dot" aria-hidden="true"></span>
+            </div>
+            <div class="chat-content__header-info">
+              <span class="chat-content__header-name">
+                {{ getConversationName(selectedConversation) }}
+              </span>
+              <span class="chat-content__header-role">
+                {{ getConversationRole(selectedConversation) }}
+              </span>
             </div>
           </div>
+          <div class="chat-content__header-actions" aria-label="Conversation actions"></div>
+        </header>
+
+        <!-- Chat Body -->
+        <div class="chat-content__body">
+          <ng-scrollbar #chatBodyScrollbar>
+
+            @if (selectedConversation && hasMoreMessages) {
+              <div class="chat-messages__load-more">
+                <button
+                  type="button"
+                  class="chat-messages__load-more-btn"
+                  (click)="loadMoreMessages()"
+                  [disabled]="isLoadingMessages"
+                >
+                  {{ isLoadingMessages ? 'Loading…' : 'Load earlier messages' }}
+                </button>
+              </div>
+            }
+
+            @if (messages.length) {
+              <ul class="chat-messages" role="log" aria-live="polite" aria-label="Messages">
+                @for (msg of messages; track trackByMessage($index, msg)) {
+                  <li
+                    class="chat-message"
+                    [class.chat-message--me]="msg.isMine"
+                    [class.chat-message--friend]="!msg.isMine"
+                  >
+                    @if (!msg.isMine) {
+                      <div class="chat-message__avatar">
+                        @if (selectedConversation.avatarUrl) {
+                          <img
+                            [src]="selectedConversation.avatarUrl"
+                            class="chat-message__avatar-img"
+                            [alt]="getConversationName(selectedConversation)"
+                          />
+                        } @else {
+                          <span class="chat-message__avatar-initials" aria-hidden="true">
+                            {{ getAvatarInitials(getConversationName(selectedConversation)) }}
+                          </span>
+                        }
+                      </div>
+                    }
+                    <div class="chat-message__content">
+                      <div class="chat-message__bubble">
+                        @if (msg.content) {
+                          <p class="chat-message__text">{{ msg.content }}</p>
+                        }
+                        @if (msg.attachmentUrl) {
+                          <a
+                            class="chat-message__attachment"
+                            [href]="msg.attachmentUrl"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="View attachment"
+                          >
+                            <img
+                              [src]="msg.attachmentUrl"
+                              class="chat-message__attachment-img"
+                              alt="Attachment"
+                            />
+                          </a>
+                        }
+                      </div>
+                      <div class="chat-message__meta">
+                        <span class="chat-message__time">{{ msg.timestamp | date:'shortTime' }}</span>
+                        @if (getMessageStatusLabel(msg)) {
+                          <span class="chat-message__status-chip">{{ getMessageStatusLabel(msg) }}</span>
+                        }
+                      </div>
+                    </div>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <div class="chat-messages__empty">
+                <div class="chat-messages__empty-icon" aria-hidden="true">
+                  <i class="feather icon-message-square"></i>
+                </div>
+                <p class="chat-messages__empty-title">No messages yet</p>
+                <p class="chat-messages__empty-sub">Send the first message to start this conversation.</p>
+              </div>
+            }
+
+            <!-- Typing Indicator -->
+            @if (isRemoteTyping) {
+              <div class="chat-typing" aria-live="polite" aria-label="Contact is typing">
+                <div class="chat-message__avatar">
+                  @if (selectedConversation.avatarUrl) {
+                    <img [src]="selectedConversation.avatarUrl" class="chat-message__avatar-img" alt="" />
+                  } @else {
+                    <span class="chat-message__avatar-initials" aria-hidden="true">
+                      {{ getAvatarInitials(getConversationName(selectedConversation)) }}
+                    </span>
+                  }
+                </div>
+                <div class="chat-typing__bubble" aria-hidden="true">
+                  <span class="chat-typing__dot"></span>
+                  <span class="chat-typing__dot"></span>
+                  <span class="chat-typing__dot"></span>
+                </div>
+              </div>
+            }
+
+          </ng-scrollbar>
+        </div><!-- /chat-content__body -->
+
+        <!-- Chat Footer -->
+        <footer class="chat-content__footer">
+          @if (attachmentPreviewUrl) {
+            <div class="chat-compose__attachment-preview">
+              <img
+                [src]="attachmentPreviewUrl"
+                class="chat-compose__attachment-thumb"
+                alt="Attachment preview"
+              />
+              <button
+                type="button"
+                class="chat-compose__attachment-remove"
+                (click)="clearAttachment()"
+                aria-label="Remove attachment"
+              >
+                <i class="feather icon-x" aria-hidden="true"></i>
+              </button>
+            </div>
+          }
+          <div class="chat-compose">
+            <label class="chat-compose__clip" aria-label="Attach a file">
+              <input
+                type="file"
+                class="chat-compose__clip-input"
+                accept="image/*"
+                (change)="onAttachmentSelected($event)"
+              />
+              <i class="feather icon-paperclip" aria-hidden="true"></i>
+            </label>
+            <form class="chat-compose__form" (ngSubmit)="sendMessage()">
+              <textarea
+                class="chat-compose__input"
+                name="messageText"
+                [(ngModel)]="messageText"
+                (ngModelChange)="notifyTyping()"
+                placeholder="Type a message…"
+                rows="1"
+                aria-label="Message input"
+              ></textarea>
+            </form>
+            <button
+              type="button"
+              class="chat-compose__send"
+              (click)="sendMessage()"
+              [disabled]="isSending || (!messageText.trim() && !attachmentPreviewUrl)"
+              aria-label="Send message"
+            >
+              <i class="feather icon-send" aria-hidden="true"></i>
+            </button>
+          </div>
+        </footer>
+
+      } @else {
+
+        <!-- ── Empty State: No Conversation Selected ─────────── -->
+        <div class="chat-panel__empty">
+          <div class="chat-panel__empty-icon" aria-hidden="true">
+            <i class="feather icon-message-square"></i>
+          </div>
+          <h2 class="chat-panel__empty-title">Select a conversation</h2>
+          <p class="chat-panel__empty-sub">Choose a chat from the left to view messages and reply.</p>
         </div>
-      </div>
-    </div>
-</div><!-- /.content-card -->
-</div><!-- /.page-container -->
+
+      }
+
+    </section><!-- /chat-panel__content -->
+
+  </div><!-- /chat-panel -->
+
+</div><!-- /chat-page -->
