@@ -1,3 +1,5 @@
+@use 'admin/admin-styles' as *;
+
 :host { display: block; }
 
 .sh-layout {
@@ -175,4 +177,21 @@
     &__topbar { left: 0; }
     &__content { margin-left: 0; padding: 1rem; }
   }
+}
+
+.sh-token-copied {
+  font-size: 0.6875rem;
+  color: #86efac;
+  margin-top: 0.25rem;
+}
+
+.sh-internal-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: var(--jf-primary-soft);
+  color: var(--jf-primary);
 }

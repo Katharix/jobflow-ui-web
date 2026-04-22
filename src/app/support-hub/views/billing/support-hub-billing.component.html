@@ -7,13 +7,13 @@
   </div>
 
   <div class="filter-bar">
-    <div class="filter-bar__group" style="align-items: center; gap: 1rem;">
-      <label for="orgSelect" style="font-size: 0.875rem; font-weight: 600;">Organization</label>
+    <div class="filter-bar__group sh-billing-org-bar">
+      <label for="orgSelect" class="sh-billing-org-label">Organization</label>
       <select
         id="orgSelect"
         [(ngModel)]="selectedOrganizationId"
         (change)="loadOrganizationBilling()"
-        style="padding: 0.5rem; border-radius: var(--jf-radius-sm); border: 1px solid var(--jf-border); min-width: 200px; font-family: inherit;"
+        class="sh-billing-org-select"
       >
         @for (org of organizations; track org.id) {
           <option [value]="org.id">{{ org.organizationName || 'Unknown org' }}</option>
@@ -63,7 +63,7 @@
 
   <div class="sh-billing-tables-grid">
     <div class="content-card content-card--no-pad sh-billing-table-card">
-      <div class="content-card__header" style="display:flex; justify-content: space-between; align-items: center;">
+      <div class="content-card__header sh-billing-card-header">
         <h2 class="content-card__title">Recent Payment Events</h2>
         <div class="sh-page-controls">
           <button [disabled]="!canGoBackPayments || paymentsLoading" (click)="onPrevPaymentsPage()">Previous</button>
@@ -105,7 +105,7 @@
     </div>
 
     <div class="content-card content-card--no-pad sh-billing-table-card">
-      <div class="content-card__header" style="display:flex; justify-content: space-between; align-items: center;">
+      <div class="content-card__header sh-billing-card-header">
         <h2 class="content-card__title">Disputes</h2>
         <div class="sh-page-controls">
           <button [disabled]="!canGoBackDisputes || disputesLoading" (click)="onPrevDisputesPage()">Previous</button>

@@ -7,20 +7,20 @@
   <!-- Card -->
   <div class="qs-card">
     @if (isLoading) {
-      <div class="qs-skeleton" style="width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 1.75rem;"></div>
-      <div class="qs-skeleton" style="width: 55%; height: 1.75rem; margin: 0 auto 0.5rem;"></div>
-      <div class="qs-skeleton" style="width: 75%; height: 1rem; margin: 0 auto 1.75rem;"></div>
-      <div class="qs-skeleton" style="width: 40%; height: 0.875rem; margin: 0 auto;"></div>
+      <div class="qs-skeleton qs-skel-avatar"></div>
+      <div class="qs-skeleton qs-skel-title"></div>
+      <div class="qs-skeleton qs-skel-subtitle"></div>
+      <div class="qs-skeleton qs-skel-estimate"></div>
     } @else if (agentJoined) {
-      <div class="qs-status-icon" style="color: var(--jf-success); font-size: 2rem; display:flex; align-items:center; justify-content:center; background: var(--jf-success-soft); border-radius: 50%;">
+      <div class="qs-status-icon qs-status-icon--success">
         <i class="ti ti-check" aria-hidden="true"></i>
       </div>
       <h1 class="qs-title">Agent Connected!</h1>
       <p class="qs-subtitle">
         <strong>{{ agentName }}</strong> is ready to help you. Redirecting to chat…
       </p>
-      <div style="width: 100%; height: 4px; background: var(--jf-success-soft); border-radius: 999px; overflow: hidden; margin-top: 1.5rem;">
-        <div style="height: 100%; background: var(--jf-success); border-radius: 999px; animation: qs-redirect 2.5s ease-in-out forwards;"></div>
+      <div class="qs-progress">
+        <div class="qs-progress-bar"></div>
       </div>
     } @else {
       <div class="qs-status-icon">

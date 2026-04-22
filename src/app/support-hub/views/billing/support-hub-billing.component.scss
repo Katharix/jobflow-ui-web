@@ -108,3 +108,28 @@
   font-weight: 600;
   color: var(--jf-text);
 }
+
+.sh-billing-org-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sh-billing-org-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.sh-billing-org-select {
+  padding: 0.5rem;
+  border-radius: var(--jf-radius-sm);
+  border: 1px solid var(--jf-border);
+  min-width: 200px;
+  font-family: inherit;
+}
+
+.sh-billing-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

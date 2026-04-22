@@ -27,7 +27,7 @@
         <div class="sh-user-name" (dblclick)="copyToken()">{{ userDisplayName }}</div>
         <div class="sh-user-role">{{ userEmail }}</div>
         @if (tokenCopiedMessage) {
-          <div style="font-size: 0.6875rem; color: #86efac; margin-top: 0.25rem;">{{ tokenCopiedMessage }}</div>
+          <div class="sh-token-copied">{{ tokenCopiedMessage }}</div>
         }
       </div>
       <button class="sh-logout-btn" (click)="logout()">
@@ -42,7 +42,7 @@
     </button>
     <div class="sh-layout__topbar-title">Support Hub</div>
     <div class="sh-layout__topbar-actions">
-      <span style="font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; padding: 0.3rem 0.7rem; border-radius: 999px; background: var(--jf-primary-soft); color: var(--jf-primary);">Internal</span>
+      <span class="sh-internal-badge">Internal</span>
     </div>
   </header>
 

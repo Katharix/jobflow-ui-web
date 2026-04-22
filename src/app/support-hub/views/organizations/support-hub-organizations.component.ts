@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { OrganizationService } from '../../../services/shared/organization.service';
 import { OrganizationDto } from '../../../models/organization';
 import {
@@ -13,7 +12,7 @@ import { MessageModule } from 'primeng/message';
 @Component({
   selector: 'app-support-hub-organizations',
   standalone: true,
-  imports: [CommonModule, PageHeaderComponent, JobflowGridComponent, MessageModule],
+  imports: [CommonModule, JobflowGridComponent, MessageModule],
   templateUrl: './support-hub-organizations.component.html',
   styleUrl: './support-hub-organizations.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

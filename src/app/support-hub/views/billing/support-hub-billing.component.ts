@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { OrganizationService } from '../../../services/shared/organization.service';
 import { OrganizationDto } from '../../../models/organization';
 import {
@@ -13,7 +12,7 @@ import {
 @Component({
   selector: 'app-support-hub-billing',
   standalone: true,
-  imports: [CommonModule, FormsModule, PageHeaderComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './support-hub-billing.component.html',
   styleUrl: './support-hub-billing.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

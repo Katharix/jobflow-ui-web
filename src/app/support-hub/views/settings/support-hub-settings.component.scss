@@ -164,6 +164,9 @@
   align-items: center;
   gap: 0.6rem;
   flex-wrap: wrap;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--jf-border);
 }
 
 .sh-settings__saved {
@@ -172,12 +175,18 @@
   gap: 0.3rem;
   font-size: 0.875rem;
   font-weight: 600;
+  color: var(--jf-success);
   animation: sh-fade-in 0.2s ease;
 }
 
 @keyframes sh-fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+.sh-settings__danger-btn {
+  border-color: var(--jf-danger) !important;
+  color: var(--jf-danger) !important;
 }
 
 @media (max-width: 768px) {

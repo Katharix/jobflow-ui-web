@@ -241,3 +241,102 @@
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+// ── Drop overlay ──────────────────────────────────────
+
+.chat-win__drop-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(63, 103, 218, 0.07);
+  border: 2px dashed var(--jf-primary);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.cw-drop-icon { font-size: 2rem; color: var(--jf-primary); }
+.cw-drop-label { font-size: 0.9rem; font-weight: 700; color: var(--jf-primary); }
+
+// ── Skeleton list ─────────────────────────────────────
+
+.cw-skeleton-list { display: flex; flex-direction: column; gap: 0.85rem; }
+.cw-skel-msg--1 { width: 52%; height: 38px; }
+.cw-skel-msg--2 { width: 40%; height: 38px; }
+.cw-skel-msg--3 { width: 65%; height: 38px; }
+.cw-skel-msg--4 { width: 30%; height: 38px; }
+
+// ── Empty state ───────────────────────────────────────
+
+.cw-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 0.5rem;
+  color: var(--jf-text-muted);
+  padding: 2rem;
+}
+
+.cw-empty-icon { font-size: 2rem; opacity: 0.4; }
+.cw-empty-text { margin: 0; font-size: 0.875rem; }
+
+// ── Bubble content ────────────────────────────────────
+
+.cw-bubble-text { margin: 0; font-size: 0.875rem; }
+.cw-file-wrap { margin-top: 0.3rem; }
+.cw-file-uploading { font-size: 0.8rem; font-weight: 600; }
+
+.cw-file-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: inherit;
+}
+
+.cw-file-name { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cw-file-size { opacity: 0.65; font-size: 0.7rem; }
+
+// ── Typing dots ───────────────────────────────────────
+
+.cw-typing-dots { display: flex; align-items: center; gap: 4px; }
+.cw-typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--jf-text-muted);
+}
+
+// ── Session ended ─────────────────────────────────────
+
+.cw-session-ended {
+  padding: 0.875rem;
+  background: var(--jf-surface);
+  color: var(--jf-success);
+  text-align: center;
+  border-top: 1px solid var(--jf-border);
+  font-size: 0.875rem;
+}
+
+// ── File attach label ─────────────────────────────────
+
+.cw-attach-label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--jf-text-muted);
+}
+
+.cw-attach-icon { font-size: 1.25rem; }
+.cw-file-input-hidden { display: none; }

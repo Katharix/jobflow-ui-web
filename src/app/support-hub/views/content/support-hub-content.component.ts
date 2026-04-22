@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { HelpContentService } from '../../../services/shared/help-content.service';
 import {
   HelpArticle,
@@ -33,7 +32,6 @@ type EditorMode = 'create' | 'edit';
   imports: [
     CommonModule,
     FormsModule,
-    PageHeaderComponent,
     ButtonModule,
     SelectModule,
     InputTextModule,

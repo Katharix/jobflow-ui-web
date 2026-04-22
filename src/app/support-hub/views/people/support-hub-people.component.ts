@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { SupportHubInviteService } from '../../services/support-hub-invite.service';
 import { SupportHubDataService } from '../../services/support-hub-data.service';
 import { SupportHubInvite } from '../../models/support-hub-invite';
@@ -17,7 +16,6 @@ import { DialogModule } from 'primeng/dialog';
   imports: [
     CommonModule,
     FormsModule,
-    PageHeaderComponent,
     ButtonModule,
     SelectModule,
     TagModule,

@@ -2,15 +2,15 @@
   @if (isLoading) {
     @for (i of [1,2]; track i) {
       <div class="cq-item">
-        <div class="cq-avatar sh-skeleton" style="background: transparent;"></div>
+        <div class="cq-avatar sh-skeleton cq-skel-avatar"></div>
         <div class="cq-info">
-          <div class="sh-skeleton" style="width: 60%; height: 0.75rem;"></div>
-          <div class="sh-skeleton" style="width: 40%; height: 0.65rem; margin-top: 0.3rem;"></div>
+          <div class="sh-skeleton cq-skel-name"></div>
+          <div class="sh-skeleton cq-skel-channel"></div>
         </div>
       </div>
     }
   } @else if (customers.length === 0) {
-    <p style="text-align: center; padding: 1.25rem; color: var(--jf-text-muted); font-size: 0.875rem;">Queue is clear.</p>
+    <p class="cq-empty">Queue is clear.</p>
   } @else {
     @for (customer of customers; track customer.id) {
       <div

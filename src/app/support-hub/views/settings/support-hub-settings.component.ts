@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '@angular/fire/auth';
-import { PageHeaderComponent } from '../../../admin/dashboard/page-header/page-header.component';
 import { ButtonModule } from 'primeng/button';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { SelectModule } from 'primeng/select';
@@ -30,7 +29,7 @@ const DEFAULT_PREFS: SupportHubPreferences = {
 @Component({
   selector: 'app-support-hub-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonModule, ToggleSwitchModule, SelectModule],
+  imports: [CommonModule, FormsModule, ButtonModule, ToggleSwitchModule, SelectModule],
   templateUrl: './support-hub-settings.component.html',
   styleUrl: './support-hub-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
