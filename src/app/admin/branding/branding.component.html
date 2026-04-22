@@ -1,98 +1,129 @@
 <div class="page-container">
-<div class="page-header">
-  <h1 class="page-title">{{ 'admin.branding.title' | translate }}</h1>
-  <p>{{ 'admin.branding.subtitle' | translate }}</p>
-  <button pButton type="button" [label]="'admin.branding.actions.save' | translate" icon="pi pi-save" (click)="onSave()" [loading]="isSaving"
-  [disabled]="isSaving">
-    <span class="visually-hidden">{{ 'admin.branding.actions.save' | translate }}</span>
-  </button>
-</div>
+  <header class="page-header">
+    <div class="page-header__title-group">
+      <h1 class="page-title">{{ 'admin.branding.title' | translate }}</h1>
+      <p>{{ 'admin.branding.subtitle' | translate }}</p>
+    </div>
+    <div class="page-header__actions">
+      <button pButton type="button" [label]="'admin.branding.actions.save' | translate" icon="pi pi-save" (click)="onSave()" [loading]="isSaving" [disabled]="isSaving">
+        <span class="visually-hidden">{{ 'admin.branding.actions.save' | translate }}</span>
+      </button>
+    </div>
+  </header>
 
   @if (saveStatus === 'success') {
-    <div class="alert alert-success mb-3">{{ saveMessage }}</div>
+    <p-message severity="success" [text]="saveMessage" styleClass="w-100 mb-3"></p-message>
   }
   @if (saveStatus === 'error') {
-    <div class="alert alert-danger mb-3">{{ saveMessage }}</div>
+    <p-message severity="error" [text]="saveMessage" styleClass="w-100 mb-3"></p-message>
   }
 
-  <div class="row g-3 align-items-start">
+  <div class="row g-4 align-items-start">
     <div class="col-lg-6">
-      <form [formGroup]="brandingForm" class="d-grid gap-3">
+      <form [formGroup]="brandingForm" class="d-grid gap-4">
         <!-- Logo -->
         <div class="content-card">
-            <h6 class="mb-3">{{ 'admin.branding.sections.logo.title' | translate }}</h6>
-            <div class="d-flex flex-wrap align-items-center gap-3">
-              <label for="logoUpload" class="btn btn-outline-primary mb-0">{{ 'admin.branding.sections.logo.cta' | translate }}</label>
-              <input type="file" id="logoUpload" hidden (change)="onLogoSelected($event)" accept="image/png,image/jpeg,image/webp" />
-              <span class="text-muted small">{{ 'admin.branding.sections.logo.note' | translate }}</span>
+          <div class="content-card__header">
+            <div>
+              <h3 class="content-card__title">{{ 'admin.branding.sections.logo.title' | translate }}</h3>
+              <p class="content-card__subtitle">Upload your company logo for estimates and invoices.</p>
             </div>
-            @if (logoPreview) {
-              <div class="logo-preview mt-3">
-                <img [src]="logoPreview" [alt]="'admin.branding.sections.logo.previewAlt' | translate" class="img-fluid" />
-                <button type="button" class="btn btn-sm btn-outline-danger ms-3" (click)="removeLogo()">Remove</button>
-              </div>
-            }
+          </div>
+          
+          <div class="logo-upload-zone" role="button" tabindex="0" (click)="fileInput.click()" (keydown.enter)="fileInput.click()" (keydown.space)="fileInput.click()">
+            <i class="pi pi-cloud-upload logo-upload-icon"></i>
+            <p class="fw-semibold mb-1">{{ 'admin.branding.sections.logo.cta' | translate }}</p>
+            <span class="text-muted small">{{ 'admin.branding.sections.logo.note' | translate }}</span>
+            <input #fileInput type="file" id="logoUpload" hidden (change)="onLogoSelected($event)" accept="image/png,image/jpeg,image/webp" />
+          </div>
+
+          @if (logoPreview) {
+            <div class="logo-preview mt-3">
+              <img [src]="logoPreview" [alt]="'admin.branding.sections.logo.previewAlt' | translate" />
+              <button pButton type="button" icon="pi pi-trash" class="p-button-danger p-button-text p-button-sm ms-3" aria-label="Remove logo" (click)="removeLogo()"></button>
+            </div>
+          }
         </div>
 
         <!-- Colors -->
         <div class="content-card">
-            <h6 class="mb-3">{{ 'admin.branding.sections.colors.title' | translate }}</h6>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <span class="form-label fw-semibold d-block">{{ 'admin.branding.sections.colors.primary' | translate }}</span>
-                <div class="color-swatch-row">
-                  <span class="color-swatch" [style.backgroundColor]="primaryColor"></span>
-                  <code class="small text-muted">{{ primaryColor }}</code>
+          <div class="content-card__header">
+            <div>
+              <h3 class="content-card__title">{{ 'admin.branding.sections.colors.title' | translate }}</h3>
+              <p class="content-card__subtitle">Choose colors that match your brand identity.</p>
+            </div>
+          </div>
+          <div class="row g-4">
+            <div class="col-md-6">
+              <span class="form-label fw-semibold">{{ 'admin.branding.sections.colors.primary' | translate }}</span>
+              <div class="color-swatch-box">
+                <div class="swatch-display" [style.backgroundColor]="primaryColor">
+                  <color-twitter class="color-picker-overlay" formControlName="primaryColor" [color]="brandingForm.value.primaryColor" (onChangeComplete)="onPrimaryColorChange($event)"></color-twitter>
                 </div>
-                <color-twitter formControlName="primaryColor" [color]="brandingForm.value.primaryColor"
-                  (onChangeComplete)="onPrimaryColorChange($event)"></color-twitter>
-              </div>
-              <div class="col-md-6">
-                <span class="form-label fw-semibold d-block">{{ 'admin.branding.sections.colors.secondary' | translate }}</span>
-                <div class="color-swatch-row">
-                  <span class="color-swatch" [style.backgroundColor]="secondaryColor"></span>
-                  <code class="small text-muted">{{ secondaryColor }}</code>
+                <div class="swatch-info">
+                  <span class="fw-semibold">Primary</span>
+                  <span class="hex-value">{{ primaryColor }}</span>
                 </div>
-                <color-twitter formControlName="secondaryColor" [color]="brandingForm.value.secondaryColor"
-                  (onChangeComplete)="onSecondaryColorChange($event)"></color-twitter>
               </div>
             </div>
+            <div class="col-md-6">
+              <span class="form-label fw-semibold">{{ 'admin.branding.sections.colors.secondary' | translate }}</span>
+              <div class="color-swatch-box">
+                <div class="swatch-display" [style.backgroundColor]="secondaryColor">
+                  <color-twitter class="color-picker-overlay" formControlName="secondaryColor" [color]="brandingForm.value.secondaryColor" (onChangeComplete)="onSecondaryColorChange($event)"></color-twitter>
+                </div>
+                <div class="swatch-info">
+                  <span class="fw-semibold">Secondary</span>
+                  <span class="hex-value">{{ secondaryColor }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Text & Contact -->
         <div class="content-card">
-            <h6 class="mb-3">{{ 'admin.branding.sections.text.title' | translate }}</h6>
+          <div class="content-card__header">
+            <div>
+              <h3 class="content-card__title">{{ 'admin.branding.sections.text.title' | translate }}</h3>
+              <p class="content-card__subtitle">Update textual information appearing on documents.</p>
+            </div>
+          </div>
 
-            <p-floatlabel class="w-100 mb-3">
+          <div class="row g-4">
+            <div class="col-12">
+              <label for="businessName" class="form-label fw-semibold">{{ 'admin.branding.sections.text.businessName' | translate }}</label>
               <input pInputText id="businessName" type="text" formControlName="businessName" class="w-100" />
-              <label for="businessName">{{ 'admin.branding.sections.text.businessName' | translate }}</label>
-            </p-floatlabel>
+            </div>
 
-            <p-floatlabel class="w-100 mb-3">
+            <div class="col-12">
+              <label for="taglineInput" class="form-label fw-semibold">{{ 'admin.branding.sections.text.tagline' | translate }}</label>
               <input pInputText id="taglineInput" type="text" formControlName="tagline" class="w-100" />
-              <label for="taglineInput">{{ 'admin.branding.sections.text.tagline' | translate }}</label>
-            </p-floatlabel>
+            </div>
 
-            <p-floatlabel class="w-100">
+            <div class="col-12">
+              <label for="footerNote" class="form-label fw-semibold">{{ 'admin.branding.sections.text.footerNote' | translate }}</label>
               <textarea pTextarea id="footerNote" rows="3" formControlName="footerNote" class="w-100"></textarea>
-              <label for="footerNote">{{ 'admin.branding.sections.text.footerNote' | translate }}</label>
-            </p-floatlabel>
+            </div>
+          </div>
 
-            @if (organization) {
-              <div class="mt-3 p-3 bg-light rounded small">
-                <div class="fw-semibold mb-1">Contact info from your organization</div>
+          @if (organization) {
+            <div class="organization-contact-card mt-4 p-3 rounded d-flex justify-content-between align-items-center">
+              <div>
+                <div class="organization-contact-card__title fw-semibold mb-1">Contact info from your organization</div>
                 @if (organization.email) {
-                  <div class="text-muted">{{ organization.email }}</div>
+                  <div class="text-muted small">{{ organization.email }}</div>
                 }
                 @if (organization.phoneNumber) {
-                  <div class="text-muted">{{ organization.phoneNumber }}</div>
+                  <div class="text-muted small">{{ organization.phoneNumber }}</div>
                 }
                 @if (orgAddress) {
-                  <div class="text-muted" style="white-space: pre-line">{{ orgAddress }}</div>
+                  <div class="organization-contact-card__address text-muted small mt-1">{{ orgAddress }}</div>
                 }
-                <a routerLink="/admin/company" class="small mt-1 d-inline-block">Edit in Company settings</a>
               </div>
-            }
+              <a routerLink="/admin/company" class="organization-contact-card__link btn btn-sm btn-outline-primary">Edit Company</a>
+            </div>
+          }
         </div>
 
         <div class="text-end">
@@ -107,130 +138,132 @@
     <!-- Live Preview -->
     <div class="col-lg-6">
       <div class="preview-sticky">
-        <div class="d-flex align-items-center justify-content-between mb-2">
-          <h6 class="mb-0">{{ 'admin.branding.preview.title' | translate }}</h6>
-          <div class="btn-group btn-group-sm">
-            <button type="button" class="btn" [class.btn-primary]="previewTab === 'invoice'" [class.btn-outline-secondary]="previewTab !== 'invoice'" (click)="previewTab = 'invoice'">Invoice</button>
-            <button type="button" class="btn" [class.btn-primary]="previewTab === 'estimate'" [class.btn-outline-secondary]="previewTab !== 'estimate'" (click)="previewTab = 'estimate'">Estimate</button>
-          </div>
-        </div>
-
-        <div class="preview-document">
-          <!-- Branded header bar -->
-          <div class="preview-header" [style.backgroundColor]="primaryColor">
-            <div class="d-flex align-items-center gap-3">
-              @if (logoPreview) {
-                <div class="preview-header-logo">
-                  <img [src]="logoPreview" alt="Logo" />
-                </div>
-              }
-              <div class="text-white">
-                <div class="fw-bold fs-6">{{ brandingForm.value.businessName || 'Your Business Name' }}</div>
-                @if (brandingForm.value.tagline) {
-                  <div class="small opacity-75">{{ brandingForm.value.tagline }}</div>
-                }
-              </div>
-            </div>
-            <div class="text-white text-end small">
-              @if (organization.email) {
-                <div>{{ organization.email }}</div>
-              }
-              @if (organization.phoneNumber) {
-                <div>{{ organization.phoneNumber }}</div>
-              }
+        <div class="content-card p-0 overflow-hidden border-0 bg-transparent shadow-none">
+          <div class="d-flex align-items-center justify-content-between mb-3 px-1">
+            <h3 class="content-card__title m-0">{{ 'admin.branding.preview.title' | translate }}</h3>
+            <div class="btn-group btn-group-sm">
+              <button type="button" class="btn" [class.btn-primary]="previewTab === 'invoice'" [class.btn-outline-secondary]="previewTab !== 'invoice'" (click)="previewTab = 'invoice'">Invoice</button>
+              <button type="button" class="btn" [class.btn-primary]="previewTab === 'estimate'" [class.btn-outline-secondary]="previewTab !== 'estimate'" (click)="previewTab = 'estimate'">Estimate</button>
             </div>
           </div>
 
-          <!-- Document body -->
-          <div class="preview-body">
-            <div class="d-flex justify-content-between align-items-start mb-4">
-              <div>
-                <div class="text-uppercase fw-bold fs-5" [style.color]="primaryColor">
-                  {{ previewTab === 'invoice' ? 'INVOICE' : 'ESTIMATE' }}
-                </div>
-                <div class="text-muted small mt-1">
-                  {{ previewTab === 'invoice' ? '#INV-1001' : '#EST-1001' }}
+          <div class="preview-document">
+            <!-- Branded header bar -->
+            <div class="preview-header" [style.backgroundColor]="primaryColor">
+              <div class="d-flex align-items-center gap-3">
+                @if (logoPreview) {
+                  <div class="preview-header-logo">
+                    <img [src]="logoPreview" alt="Logo" />
+                  </div>
+                }
+                <div class="text-white">
+                  <div class="fw-bold fs-6">{{ brandingForm.value.businessName || 'Your Business Name' }}</div>
+                  @if (brandingForm.value.tagline) {
+                    <div class="small opacity-75">{{ brandingForm.value.tagline }}</div>
+                  }
                 </div>
               </div>
-              <div class="text-end small">
-                <div><span class="text-muted">Date:</span> Apr 4, 2026</div>
-                @if (previewTab === 'invoice') {
-                  <div><span class="text-muted">Due:</span> Apr 18, 2026</div>
-                } @else {
-                  <div><span class="text-muted">Expires:</span> May 4, 2026</div>
+              <div class="text-white text-end small">
+                @if (organization.email) {
+                  <div>{{ organization.email }}</div>
+                }
+                @if (organization.phoneNumber) {
+                  <div>{{ organization.phoneNumber }}</div>
                 }
               </div>
             </div>
 
-            <!-- Bill to -->
-            <div class="row mb-4">
-              <div class="col-6">
-                <div class="small fw-semibold" [style.color]="secondaryColor">FROM</div>
-                <div class="small">{{ brandingForm.value.businessName || 'Your Business Name' }}</div>
-                @if (orgAddress) {
-                  <div class="small text-muted" style="white-space: pre-line">{{ orgAddress }}</div>
-                }
+            <!-- Document body -->
+            <div class="preview-body">
+              <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                  <div class="text-uppercase fw-bold fs-5" [style.color]="primaryColor">
+                    {{ previewTab === 'invoice' ? 'INVOICE' : 'ESTIMATE' }}
+                  </div>
+                  <div class="text-muted small mt-1">
+                    {{ previewTab === 'invoice' ? '#INV-1001' : '#EST-1001' }}
+                  </div>
+                </div>
+                <div class="text-end small">
+                  <div><span class="text-muted">Date:</span> Apr 4, 2026</div>
+                  @if (previewTab === 'invoice') {
+                    <div><span class="text-muted">Due:</span> Apr 18, 2026</div>
+                  } @else {
+                    <div><span class="text-muted">Expires:</span> May 4, 2026</div>
+                  }
+                </div>
               </div>
-              <div class="col-6">
-                <div class="small fw-semibold" [style.color]="secondaryColor">BILL TO</div>
-                <div class="small">Jane Cooper</div>
-                <div class="small text-muted">456 Oak Avenue<br>Austin, TX 78701</div>
-              </div>
-            </div>
 
-            <!-- Line items -->
-            <table class="preview-table">
-              <thead>
-                <tr [style.borderBottomColor]="primaryColor">
-                  <th>Description</th>
-                  <th class="text-end">Qty</th>
-                  <th class="text-end">Price</th>
-                  <th class="text-end">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Consultation service</td>
-                  <td class="text-end">2</td>
-                  <td class="text-end">$75.00</td>
-                  <td class="text-end">$150.00</td>
-                </tr>
-                <tr>
-                  <td>On-site repair</td>
-                  <td class="text-end">1</td>
-                  <td class="text-end">$149.00</td>
-                  <td class="text-end">$149.00</td>
-                </tr>
-              </tbody>
-            </table>
+              <!-- Bill to -->
+              <div class="row mb-4">
+                <div class="col-6">
+                  <div class="small fw-semibold" [style.color]="secondaryColor">FROM</div>
+                  <div class="small fw-medium">{{ brandingForm.value.businessName || 'Your Business Name' }}</div>
+                  @if (orgAddress) {
+                    <div class="address-preline small text-muted">{{ orgAddress }}</div>
+                  }
+                </div>
+                <div class="col-6">
+                  <div class="small fw-semibold" [style.color]="secondaryColor">BILL TO</div>
+                  <div class="small fw-medium">Jane Cooper</div>
+                  <div class="small text-muted">456 Oak Avenue<br>Austin, TX 78701</div>
+                </div>
+              </div>
 
-            <!-- Totals -->
-            <div class="preview-totals">
-              <div class="d-flex justify-content-between">
-                <span class="text-muted">Subtotal</span>
-                <span>$299.00</span>
-              </div>
-              <div class="d-flex justify-content-between">
-                <span class="text-muted">Tax (8%)</span>
-                <span>$23.92</span>
-              </div>
-              <div class="d-flex justify-content-between fw-bold pt-2" [style.borderTopColor]="primaryColor" style="border-top: 2px solid">
-                <span>{{ previewTab === 'invoice' ? 'Balance Due' : 'Estimated Total' }}</span>
-                <span [style.color]="primaryColor">$322.92</span>
-              </div>
-            </div>
+              <!-- Line items -->
+              <table class="preview-table">
+                <thead>
+                  <tr [style.borderBottomColor]="primaryColor">
+                    <th>Description</th>
+                    <th class="text-end">Qty</th>
+                    <th class="text-end">Price</th>
+                    <th class="text-end">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Consultation service</td>
+                    <td class="text-end">2</td>
+                    <td class="text-end">$75.00</td>
+                    <td class="text-end">$150.00</td>
+                  </tr>
+                  <tr>
+                    <td>On-site repair</td>
+                    <td class="text-end">1</td>
+                    <td class="text-end">$149.00</td>
+                    <td class="text-end">$149.00</td>
+                  </tr>
+                </tbody>
+              </table>
 
-            @if (previewTab === 'invoice') {
-              <div class="text-center mt-4">
-                <button type="button" class="btn btn-sm" [style.backgroundColor]="primaryColor" style="color: #fff; pointer-events: none">
-                  Pay Invoice
-                </button>
+              <!-- Totals -->
+              <div class="preview-totals">
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted">Subtotal</span>
+                  <span>$299.00</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted">Tax (8%)</span>
+                  <span>$23.92</span>
+                </div>
+                <div class="preview-totals__grand-total d-flex justify-content-between fw-bold pt-2 mt-2" [style.borderTopColor]="primaryColor">
+                  <span>{{ previewTab === 'invoice' ? 'Balance Due' : 'Estimated Total' }}</span>
+                  <span [style.color]="primaryColor">$322.92</span>
+                </div>
               </div>
-            }
 
-            <!-- Footer -->
-            <div class="preview-footer" [style.borderTopColor]="secondaryColor">
-              {{ brandingForm.value.footerNote || 'Thanks for your business.' }}
+              @if (previewTab === 'invoice') {
+                <div class="text-center mt-4">
+                  <button type="button" class="preview-pay-button btn btn-sm px-4 py-2 rounded-pill fw-semibold border-0" [style.backgroundColor]="primaryColor">
+                    Pay Invoice
+                  </button>
+                </div>
+              }
+
+              <!-- Footer -->
+              <div class="preview-footer" [style.borderTopColor]="secondaryColor">
+                {{ brandingForm.value.footerNote || 'Thanks for your business.' }}
+              </div>
             </div>
           </div>
         </div>
