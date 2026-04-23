@@ -10,6 +10,55 @@
 // This file adds the MISSING aliases and helpers for the redesign.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ─── Design Tokens (global) ──────────────────────────────────────────────────
+// Declared here so all routes (including Support Hub auth pages that don't load
+// AdminLayoutComponent) have access to --jf-* custom properties.
+// _shared.scss re-declares the same values via ViewEncapsulation.None — harmless
+// since identical :root declarations overwrite each other at equal specificity.
+:root {
+  --jf-bg:             #FAFBFF;
+  --jf-surface:        #ffffff;
+  --jf-border:         #E8ECF8;
+  --jf-shadow:         0 2px 12px rgba(63, 103, 218, 0.08);
+  --jf-shadow-hover:   0 6px 24px rgba(63, 103, 218, 0.16);
+  --jf-radius:         12px;
+  --jf-radius-sm:      8px;
+
+  --jf-primary:        #3F67DA;
+  --jf-primary-soft:   rgba(63, 103, 218, 0.10);
+  --jf-success:        #2D898B;
+  --jf-success-soft:   rgba(45, 137, 139, 0.12);
+  --jf-warning:        #FFA630;
+  --jf-warning-soft:   rgba(255, 166, 48, 0.14);
+  --jf-danger:         #E03616;
+  --jf-danger-soft:    rgba(224, 54, 22, 0.10);
+  --jf-info:           #8595D1;
+  --jf-info-soft:      rgba(133, 149, 209, 0.16);
+
+  --jf-text:           #1E1E24;
+  --jf-text-muted:     #6B7280;
+  --jf-text-section:   #9BA3B2;
+  --jf-text-on-accent: #ffffff;
+
+  --jf-skeleton-from:  #e8ecf8;
+  --jf-skeleton-mid:   #f4f6fd;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --jf-bg:            #0D1117;
+    --jf-surface:       #161B27;
+    --jf-border:        #252D45;
+    --jf-shadow:        0 2px 16px rgba(0, 0, 0, 0.35);
+    --jf-shadow-hover:  0 6px 28px rgba(0, 0, 0, 0.5);
+    --jf-text:          #F0F4FF;
+    --jf-text-muted:    #8595D1;
+    --jf-text-section:  #4A5470;
+    --jf-skeleton-from: #1a2035;
+    --jf-skeleton-mid:  #212840;
+  }
+}
+
 // Keyframes — duplicated here so these utilities work outside the admin layout
 // (public/auth layouts). Identical definitions are harmless in CSS.
 @keyframes jf-shimmer {

@@ -9,15 +9,16 @@
   <div class="sh-settings-layout">
     <!-- Left nav -->
     <nav class="sh-settings-nav">
-      <div class="sh-settings-nav-item active"><i class="ti ti-user-circle"></i> Profile</div>
-      <div class="sh-settings-nav-item"><i class="ti ti-bell"></i> Notifications</div>
-      <div class="sh-settings-nav-item"><i class="ti ti-settings"></i> Preferences</div>
+      <div class="sh-settings-nav-item" role="button" tabindex="0" [class.active]="activeTab === 'profile'" (click)="activeTab = 'profile'" (keydown.enter)="activeTab = 'profile'" (keydown.space)="activeTab = 'profile'"><i class="ti ti-user-circle"></i> Profile</div>
+      <div class="sh-settings-nav-item" role="button" tabindex="0" [class.active]="activeTab === 'notifications'" (click)="activeTab = 'notifications'" (keydown.enter)="activeTab = 'notifications'" (keydown.space)="activeTab = 'notifications'"><i class="ti ti-bell"></i> Notifications</div>
+      <div class="sh-settings-nav-item" role="button" tabindex="0" [class.active]="activeTab === 'preferences'" (click)="activeTab = 'preferences'" (keydown.enter)="activeTab = 'preferences'" (keydown.space)="activeTab = 'preferences'"><i class="ti ti-settings"></i> Preferences</div>
     </nav>
 
     <!-- Right content -->
     <div class="sh-settings-body">
       
       <!-- Profile Section -->
+      @if (activeTab === 'profile') {
       <div class="content-card sh-settings-section">
         <div class="content-card__header">
           <h2 class="content-card__title">Profile</h2>
@@ -47,8 +48,10 @@
           </div>
         </div>
       </div>
+      } <!-- /profile -->
 
       <!-- Notifications -->
+      @if (activeTab === 'notifications') {
       <div class="content-card sh-settings-section">
         <div class="content-card__header">
           <h2 class="content-card__title">Notifications</h2>
@@ -82,8 +85,10 @@
           <p-toggleswitch [(ngModel)]="prefs.notifyOnChatMessage" />
         </div>
       </div>
+      } <!-- /notifications -->
 
       <!-- Preferences -->
+      @if (activeTab === 'preferences') {
       <div class="content-card sh-settings-section">
         <div class="content-card__header">
           <h2 class="content-card__title">Preferences</h2>
@@ -145,6 +150,7 @@
           >Reset to defaults</button>
         </div>
       </div>
+      } <!-- /preferences -->
 
     </div>
   </div>
