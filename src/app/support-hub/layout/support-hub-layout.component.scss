@@ -70,6 +70,16 @@
         border-left: 3px solid var(--jf-primary);
         padding-left: calc(0.875rem - 3px);
       }
+
+      &--logout {
+        width: 100%;
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.5);
+        margin-top: 0.25rem;
+
+        &:hover { background: rgba(255,255,255,0.06); color: #ff6b6b; }
+      }
     }
 
     .sh-nav-section {
@@ -108,23 +118,6 @@
       min-width: 0;
       .sh-user-name { font-size: 0.8125rem; font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; user-select: none; cursor: default; }
       .sh-user-role { font-size: 0.6875rem; color: rgba(255,255,255,0.45); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    }
-
-    .sh-logout-btn {
-      background: none;
-      border: none;
-      color: rgba(255,255,255,0.65);
-      cursor: pointer;
-      padding: 0.4rem;
-      border-radius: var(--jf-radius-sm);
-      font-size: 1.125rem;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: color 0.15s;
-      &:hover { color: #E03616; }
     }
   }
 

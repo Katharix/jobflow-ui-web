@@ -19,6 +19,10 @@
           </a>
         }
       }
+      <button class="sh-nav-item sh-nav-item--logout" (click)="logout()">
+        <i class="ti ti-logout"></i>
+        <span>Logout</span>
+      </button>
     </nav>
 
     <div class="sh-layout__user">
@@ -30,9 +34,6 @@
           <div class="sh-token-copied">{{ tokenCopiedMessage }}</div>
         }
       </div>
-      <button class="sh-logout-btn" (click)="logout()">
-        <i class="ti ti-logout"></i>
-      </button>
     </div>
   </aside>
 

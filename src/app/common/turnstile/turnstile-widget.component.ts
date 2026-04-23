@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, DOCUMENT, ElementRef, EventEmitter, Input, NgZone, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
 
 type TurnstileWidgetId = string | number;
 
@@ -29,6 +29,7 @@ declare global {
 })
 export class TurnstileWidgetComponent implements AfterViewInit, OnChanges, OnDestroy {
   private zone = inject(NgZone);
+  private document = inject(DOCUMENT);
 
   @Input({ required: true }) siteKey = '';
   @Input() action = 'submit';
@@ -45,7 +46,9 @@ export class TurnstileWidgetComponent implements AfterViewInit, OnChanges, OnDes
 
   ngAfterViewInit(): void {
     this.viewReady = true;
-    this.renderWidget();
+    this.loadTurnstile()
+      .then(() => this.renderWidget())
+      .catch(() => this.errored.emit());
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -61,6 +64,20 @@ export class TurnstileWidgetComponent implements AfterViewInit, OnChanges, OnDes
 
   ngOnDestroy(): void {
     this.removeWidget();
+  }
+
+  private loadTurnstile(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      if (window.turnstile) {
+        resolve();
+        return;
+      }
+      const script = this.document.createElement('script');
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      script.addEventListener('load', () => resolve());
+      script.addEventListener('error', () => reject(new Error('Turnstile failed to load')));
+      this.document.head.appendChild(script);
+    });
   }
 
   private renderWidget(): void {
