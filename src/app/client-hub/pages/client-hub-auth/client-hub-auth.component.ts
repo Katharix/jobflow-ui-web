@@ -48,11 +48,7 @@ export class ClientHubAuthComponent implements OnInit {
       this.route.snapshot.queryParamMap.get('accessToken');
 
     if (token) {
-      if (this.authService.isLikelyJwt(token)) {
-        this.completeSignIn(token);
-      } else {
-        this.consumeToken(token);
-      }
+      this.consumeToken(token);
       return;
     }
 
@@ -172,7 +168,7 @@ export class ClientHubAuthComponent implements OnInit {
     this.isConsumingToken = true;
 
     this.authService.redeemMagicLink(token).subscribe({
-      next: (jwt) => this.completeSignIn(jwt),
+      next: (expiresAt) => this.completeSignIn(expiresAt),
       error: (err: unknown) => {
         this.isConsumingToken = false;
         this.stripTokenFromUrl();
@@ -195,8 +191,8 @@ export class ClientHubAuthComponent implements OnInit {
     window.history.replaceState({}, '', url.pathname + url.search);
   }
 
-  private completeSignIn(token: string): void {
-    this.authService.setToken(token);
+  private completeSignIn(expiresAt: string): void {
+    this.authService.markAuthenticated(expiresAt);
 
     this.router.navigateByUrl(this.returnUrl).finally(() => {
       this.isConsumingToken = false;

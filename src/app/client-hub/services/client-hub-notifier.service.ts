@@ -1,7 +1,6 @@
 import { Injectable, inject, NgZone } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { environment } from '../../../environments/environment';
-import { ClientHubAuthService } from './client-hub-auth.service';
 
 export interface ClientHubInvoicePaidEvent {
   invoiceId: string;
@@ -15,7 +14,6 @@ export interface ClientHubInvoicePaidEvent {
 
 @Injectable({ providedIn: 'root' })
 export class ClientHubNotifierService {
-  private readonly authService = inject(ClientHubAuthService);
   private readonly ngZone = inject(NgZone);
   private hubConnection: signalR.HubConnection | null = null;
 
@@ -23,7 +21,7 @@ export class ClientHubNotifierService {
     if (!this.hubConnection) {
       this.hubConnection = new signalR.HubConnectionBuilder()
         .withUrl(`${environment.baseUrl.replace(/\/$/, '')}/hubs/client-portal`, {
-          accessTokenFactory: async () => this.authService.getToken() ?? '',
+          withCredentials: true,
         })
         .withAutomaticReconnect()
         .build();

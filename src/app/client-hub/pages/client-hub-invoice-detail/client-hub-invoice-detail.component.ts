@@ -1,5 +1,5 @@
 
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { timeout } from 'rxjs';
@@ -162,15 +162,10 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const token = this.clientHubAuth.getToken();
-    if (!token) {
+    if (!this.clientHubAuth.hasToken()) {
       this.clientHubAuth.handleUnauthorized(this.router, this.router.url);
       return;
     }
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
 
     const provider = this.paymentProvider;
 
@@ -178,7 +173,7 @@ export class ClientHubInvoiceDetailComponent implements OnInit, OnDestroy {
       .post<{ url?: string; clientSecret?: string }>(
         `${environment.apiUrl.replace(/\/$/, '')}/payments/checkout`,
         { invoiceId: this.invoice.id },
-        { headers },
+        { withCredentials: true },
       )
       .subscribe({
       next: (result) => {

@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { BaseApiService } from '../../services/shared/base-api.service';
-import { ClientHubAuthService } from './client-hub-auth.service';
+import { environment } from '../../../environments/environment';
 import {
   ClientHubEstimate,
   ClientHubInvoice,
@@ -19,86 +19,77 @@ import {
 @Injectable({ providedIn: 'root' })
 export class ClientHubService {
   private readonly api = inject(BaseApiService);
-  private readonly auth = inject(ClientHubAuthService);
+  private readonly http = inject(HttpClient);
   private readonly baseUrl = 'client-hub';
+  private readonly apiUrl = environment.apiUrl.replace(/\/$/, '');
 
   getMe(): Observable<ClientHubProfile> {
-    return this.api.getWithHeaders<ClientHubProfile>(`${this.baseUrl}/me`, this.getAuthHeaders());
+    return this.api.get<ClientHubProfile>(`${this.baseUrl}/me`);
   }
 
   updateMe(request: UpdateClientHubProfileRequest): Observable<ClientHubProfile> {
-    return this.api.putWithHeaders<ClientHubProfile>(`${this.baseUrl}/me`, request, this.getAuthHeaders());
+    return this.api.put<ClientHubProfile>(`${this.baseUrl}/me`, request);
   }
 
   getEstimates(): Observable<ClientHubEstimate[]> {
-    return this.api.getWithHeaders<unknown>(
+    return this.api.get<unknown>(
       `${this.baseUrl}/estimates`,
-      this.getAuthHeaders(),
     ).pipe(map((response) => this.normalizeCollection<ClientHubEstimate>(response)));
   }
 
   getEstimateById(id: string): Observable<ClientHubEstimate> {
-    return this.api.getWithHeaders<unknown>(
+    return this.api.get<unknown>(
       `${this.baseUrl}/estimates/${id}`,
-      this.getAuthHeaders(),
     ).pipe(map((response) => this.normalizeItem<ClientHubEstimate>(response)));
   }
 
   acceptEstimate(id: string): Observable<void> {
-    return this.api.postWithHeaders<void>(
+    return this.api.post<void>(
       `${this.baseUrl}/estimates/${id}/accept`,
       {},
-      this.getAuthHeaders(),
     );
   }
 
   declineEstimate(id: string): Observable<void> {
-    return this.api.postWithHeaders<void>(
+    return this.api.post<void>(
       `${this.baseUrl}/estimates/${id}/decline`,
       {},
-      this.getAuthHeaders(),
     );
   }
 
   getInvoices(): Observable<ClientHubInvoice[]> {
-    return this.api.getWithHeaders<unknown>(
+    return this.api.get<unknown>(
       `${this.baseUrl}/invoices`,
-      this.getAuthHeaders(),
     ).pipe(map((response) => this.normalizeCollection<ClientHubInvoice>(response)));
   }
 
   getInvoiceById(id: string): Observable<ClientHubInvoice> {
-    return this.api.getWithHeaders<unknown>(
+    return this.api.get<unknown>(
       `${this.baseUrl}/invoices/${id}`,
-      this.getAuthHeaders(),
     ).pipe(map((response) => this.normalizeItem<ClientHubInvoice>(response)));
   }
 
   getJobs(): Observable<ClientHubJobSummary[]> {
-    return this.api.getWithHeaders<unknown>(
+    return this.api.get<unknown>(
       `${this.baseUrl}/jobs`,
-      this.getAuthHeaders(),
     ).pipe(map((response) => this.normalizeCollection<ClientHubJobSummary>(response)));
   }
 
   getJobById(id: string): Observable<ClientHubJobSummary> {
-    return this.api.getWithHeaders<unknown>(
+    return this.api.get<unknown>(
       `${this.baseUrl}/jobs/${id}`,
-      this.getAuthHeaders(),
     ).pipe(map((response) => this.normalizeItem<ClientHubJobSummary>(response)));
   }
 
   getJobTimeline(id: string): Observable<ClientHubTimelineItem[]> {
-    return this.api.getWithHeaders<unknown>(
+    return this.api.get<unknown>(
       `${this.baseUrl}/jobs/${id}/timeline`,
-      this.getAuthHeaders(),
     ).pipe(map((response) => this.normalizeCollection<ClientHubTimelineItem>(response)));
   }
 
   getJobUpdateAttachment(jobId: string, updateId: string, attachmentId: string): Observable<Blob> {
-    return this.api.getBlobWithHeaders(
+    return this.api.getBlob(
       `${this.baseUrl}/jobs/${jobId}/updates/${updateId}/attachments/${attachmentId}`,
-      this.getAuthHeaders(),
     );
   }
 
@@ -113,37 +104,26 @@ export class ClientHubService {
     return this.api.postFormWithHeaders(
       `${this.baseUrl}/jobs/${jobId}/updates`,
       formData,
-      this.getAuthHeaders(),
     );
   }
 
   requestWork(request: ClientHubWorkRequest): Observable<ClientHubWorkRequestResponse> {
-    return this.api.postWithHeaders<ClientHubWorkRequestResponse>(
+    return this.api.post<ClientHubWorkRequestResponse>(
       `${this.baseUrl}/work-requests`,
       request,
-      this.getAuthHeaders(),
     );
   }
 
   createDepositPayment(invoiceId: string, amount: number): Observable<ClientHubDepositResponse> {
-    return this.api.postWithHeaders<ClientHubDepositResponse>(
-      `payments/deposit`,
+    return this.http.post<ClientHubDepositResponse>(
+      `${this.apiUrl}/payments/deposit`,
       { invoiceId, amount, productName: 'Deposit' },
-      this.getAuthHeaders(),
+      { withCredentials: true },
     );
   }
 
   getOrganizationBranding(organizationId: string): Observable<OrganizationBranding> {
     return this.api.get<OrganizationBranding>(`OrganizationBranding/${organizationId}`);
-  }
-
-  private getAuthHeaders(): HttpHeaders | undefined {
-    const token = this.auth.getToken();
-    if (!token) return undefined;
-
-    return new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
   }
 
   private normalizeCollection<T>(response: unknown): T[] {

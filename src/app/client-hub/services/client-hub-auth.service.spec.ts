@@ -1,22 +1,32 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 import { ClientHubAuthService } from './client-hub-auth.service';
 import { BaseApiService } from '../../services/shared/base-api.service';
+import { of } from 'rxjs';
 
 describe('ClientHubAuthService', () => {
   let service: ClientHubAuthService;
   let api: jasmine.SpyObj<BaseApiService>;
+  let httpMock: HttpTestingController;
 
   beforeEach(() => {
     api = jasmine.createSpyObj<BaseApiService>('BaseApiService', ['post']);
     TestBed.configureTestingModule({
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         ClientHubAuthService,
         { provide: BaseApiService, useValue: api }
       ]
     });
     service = TestBed.inject(ClientHubAuthService);
-    localStorage.clear();
+    httpMock = TestBed.inject(HttpTestingController);
+    sessionStorage.clear();
+  });
+
+  afterEach(() => {
+    httpMock.verify();
   });
 
   it('requests magic link without auth', () => {
@@ -28,35 +38,30 @@ describe('ClientHubAuthService', () => {
     );
   });
 
-  it('redeems magic link and returns access token', () => {
-    const token = buildJwtToken(Math.floor(Date.now() / 1000) + 3600);
-    api.post.and.returnValue(of({ accessToken: token }));
-
+  it('redeems magic link and returns expiresAt', () => {
+    const expiresAt = '2099-01-01T00:00:00Z';
     service.redeemMagicLink('token-1').subscribe((result) => {
-      expect(result).toBe(token);
+      expect(result).toBe(expiresAt);
     });
+
+    const req = httpMock.expectOne((r) => r.url.includes('client-portal/redeem'));
+    expect(req.request.withCredentials).toBeTrue();
+    req.flush({ expiresAt });
   });
 
-  it('detects valid JWT shape', () => {
-    expect(service.isLikelyJwt('a.b.c')).toBeTrue();
-    expect(service.isLikelyJwt('a.b')).toBeFalse();
+  it('markAuthenticated stores expiry and hasToken returns true', () => {
+    const future = new Date(Date.now() + 3_600_000).toISOString();
+    service.markAuthenticated(future);
+    expect(service.hasToken()).toBeTrue();
   });
 
-  it('clears expired token on getToken', () => {
-    const expired = buildJwtToken(Math.floor(Date.now() / 1000) - 10);
-    service.setToken(expired);
-    expect(service.getToken()).toBeNull();
+  it('hasToken returns false after expiry', () => {
+    const past = new Date(Date.now() - 1000).toISOString();
+    service.markAuthenticated(past);
+    expect(service.hasToken()).toBeFalse();
+  });
+
+  it('hasToken returns false when no session is stored', () => {
+    expect(service.hasToken()).toBeFalse();
   });
 });
-
-function buildJwtToken(exp: number): string {
-  const header = btoa(JSON.stringify({ alg: 'none', typ: 'JWT' }))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
-  const payload = btoa(JSON.stringify({ exp }))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
-  return `${header}.${payload}.signature`;
-}

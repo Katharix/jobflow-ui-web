@@ -14,16 +14,7 @@ export const clientHubAuthInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  const token = authService.getToken();
-  if (!token) {
-    return next(req);
-  }
-
-  const authedReq = req.clone({
-    setHeaders: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const authedReq = req.clone({ withCredentials: true });
 
   const router = inject(Router);
 

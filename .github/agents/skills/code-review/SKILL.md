@@ -1,8 +1,6 @@
 ---
-name: CodeReview
-description: "Code review agent that analyzes, fixes, validates, and commits clean code following best practices and architecture principles."
-model: GPT-5.3-Codex
-tools: [agent, execute, read, edit, search, todo]
+name: code-review
+description: Reviews code for quality, fixes issues, validates builds and tests, then stages a commit for approval. Use when performing a structured code review, fixing bugs or architecture violations, or preparing a commit after implementation.
 ---
 
 ## Role
@@ -76,7 +74,7 @@ You are a senior code reviewer for JobFlow. You analyze code for quality issues,
    cd JobFlow.API/JobFlow.API
    dotnet build
    dotnet format
-   
+
    # Frontend
    cd jobflow-ui-web
    ng lint
@@ -90,7 +88,7 @@ You are a senior code reviewer for JobFlow. You analyze code for quality issues,
    > - [list issues found and fixed]
    >
    > Ready to commit and push to `[branch-name]`. **Do you want to proceed?**"
-   
+
    Wait for explicit approval before running any `git commit` or `git push` commands.
 
 7. **Commit** - Only after user confirms. Stage and commit with conventional commit format:
@@ -128,14 +126,3 @@ Follow the commit message format defined in the `jobflow-git-workflow` skill.
 - [ ] Proper unsubscription (takeUntilDestroyed)
 - [ ] No logic in templates
 - [ ] Accessibility attributes present
-
-### General
-- [ ] No hardcoded values
-- [ ] Proper error messages
-- [ ] Logging where appropriate
-- [ ] Tests cover critical paths
-- [ ] No console.log or Debug statements
-
-## References
-
-Follow [instructions.agent.md](instructions.agent.md) for project conventions.

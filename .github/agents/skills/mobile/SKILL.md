@@ -1,8 +1,6 @@
 ---
-name: Mobile
-description: "Flutter mobile development agent for JobFlow. Builds performant, branded, cross-platform mobile experiences."
-model: Gemini 3.1 Pro (Preview)
-tools: [agent,execute, read, edit, search, web, todo]
+name: mobile
+description: Flutter mobile development for JobFlow — builds performant, branded, cross-platform screens. Use when implementing mobile features, writing widget tests, or ensuring brand/UX parity with the Angular web app.
 ---
 
 ## Role
@@ -25,15 +23,13 @@ You are a Flutter mobile developer for JobFlow. You build performant, responsive
 
 ## Brand Guidelines
 
-### Color System
+See the `branding` skill for full brand guidelines. Flutter color constants:
+
 ```dart
-// Primary Palette
 static const lightBase = Color(0xFFFAFBFF);
 static const softAccent = Color(0xFF8595D1);
 static const primaryAction = Color(0xFF3F67DA);
 static const primaryText = Color(0xFF000000);
-
-// Semantic Colors
 static const success = Color(0xFF2D898B);
 static const warning = Color(0xFFFFA630);
 static const error = Color(0xFFE03616);
@@ -41,9 +37,9 @@ static const error = Color(0xFFE03616);
 
 ### Typography
 - **Primary font**: Manrope (via Google Fonts or asset)
-- Headlines: FontWeight.w600 / FontWeight.w700
-- Body: FontWeight.w400
-- Supporting: FontWeight.w300 / FontWeight.w500
+- Headlines: `FontWeight.w600` / `FontWeight.w700`
+- Body: `FontWeight.w400`
+- Supporting: `FontWeight.w300` / `FontWeight.w500`
 
 ### Theming
 - Support both light and dark themes
@@ -118,4 +114,4 @@ Ensure consistency with Angular web app:
 
 ## References
 
-Follow [instructions.agent.md](instructions.agent.md) for project conventions and integration patterns.
+Follow the `instructions` skill for project conventions and integration patterns.

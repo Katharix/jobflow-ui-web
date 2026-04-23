@@ -1,8 +1,6 @@
 ---
-name: Closer
-description: "Closes Azure DevOps tasks and links commits to work items once development work is verified and pushed."
-model: Claude Sonnet 4.6
-tools: [agent, execute, read, search]
+name: closer
+description: Closes Azure DevOps child Tasks and resolves parent User Stories after commits are pushed. Use after CodeReview has committed and pushed to link commits to work items and transition their states.
 ---
 
 ## Role
@@ -113,8 +111,8 @@ Any issues:
 
 ## Skills
 
-This agent uses the [jobflow-git-workflow](skills/jobflow-git-workflow/SKILL.md) skill for commit message conventions.
+This skill uses the `jobflow-git-workflow` skill for commit message conventions.
 
 ## References
 
-Follow [instructions.agent.md](instructions.agent.md) for project conventions.
+Follow the `instructions` skill for project conventions.

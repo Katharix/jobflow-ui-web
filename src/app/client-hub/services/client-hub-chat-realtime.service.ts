@@ -1,7 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { environment } from '../../../environments/environment';
-import { ClientHubAuthService } from './client-hub-auth.service';
 import { ClientHubChatMessage } from './client-hub-chat.service';
 
 export interface ClientHubChatReadReceiptPayload {
@@ -17,7 +16,6 @@ export interface ClientHubChatTypingPayload {
 
 @Injectable({ providedIn: 'root' })
 export class ClientHubChatRealtimeService {
-  private readonly authService = inject(ClientHubAuthService);
   private hubConnection: signalR.HubConnection | null = null;
   private activeConversationId: string | null = null;
 
@@ -29,7 +27,7 @@ export class ClientHubChatRealtimeService {
     if (!this.hubConnection) {
       this.hubConnection = new signalR.HubConnectionBuilder()
         .withUrl(`${environment.baseUrl.replace(/\/$/, '')}/hubs/client-chat`, {
-          accessTokenFactory: async () => this.authService.getToken() ?? '',
+          withCredentials: true,
         })
         .withAutomaticReconnect()
         .build();

@@ -1,18 +1,24 @@
 import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, map } from 'rxjs';
 import { BaseApiService } from '../../services/shared/base-api.service';
+import { environment } from '../../../environments/environment';
 import {
   ClientHubMagicLinkOrganizationClient,
   ClientHubMagicLinkRequestResponse,
 } from '../models/client-hub.models';
 
+const SESSION_EXPIRY_KEY = 'jobflow.clientHub.sessionExpiry';
+
 @Injectable({ providedIn: 'root' })
 export class ClientHubAuthService {
   private readonly api = inject(BaseApiService);
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = environment.apiUrl.replace(/\/$/, '');
   private readonly authUrl = 'client-hub-auth';
   private readonly clientPortalRedeemUrl = 'client-portal/redeem';
-  private readonly tokenStorageKey = 'jobflow.clientHub.token';
+  private readonly clientPortalLogoutUrl = 'client-portal/logout';
 
   requestMagicLink(
     emailAddress: string,
@@ -30,50 +36,33 @@ export class ClientHubAuthService {
   }
 
   redeemMagicLink(token: string): Observable<string> {
-    return this.api
+    return this.http
       .post<unknown>(
-        this.clientPortalRedeemUrl,
-        { token }
+        `${this.apiUrl}/${this.clientPortalRedeemUrl}`,
+        { token },
+        { withCredentials: true }
       )
       .pipe(
         map((response) => {
-          const accessToken = this.extractAccessToken(response);
-          if (!accessToken) {
-            throw new Error('No access token was returned after redeeming the magic link.');
+          const expiresAt = this.extractExpiresAt(response);
+          if (!expiresAt) {
+            throw new Error('No session expiry returned after redeeming the magic link.');
           }
-          return accessToken;
+          return expiresAt;
         }),
       );
   }
 
-  isLikelyJwt(token: string): boolean {
-    const parts = token.split('.');
-    return parts.length === 3 && parts.every((part) => part.length > 0);
-  }
-
-  setToken(token: string): void {
-    localStorage.setItem(this.tokenStorageKey, token);
-  }
-
-  getToken(): string | null {
-    const token = localStorage.getItem(this.tokenStorageKey);
-    if (!token) return null;
-
-    if (!this.isLikelyJwt(token)) {
-      this.clearToken();
-      return null;
-    }
-
-    if (this.isTokenExpired(token)) {
-      this.clearToken();
-      return null;
-    }
-
-    return token;
+  markAuthenticated(expiresAt: string): void {
+    sessionStorage.setItem(SESSION_EXPIRY_KEY, expiresAt);
   }
 
   hasToken(): boolean {
-    return !!this.getToken();
+    const expiry = sessionStorage.getItem(SESSION_EXPIRY_KEY);
+    if (!expiry) return false;
+
+    const expiresAt = new Date(expiry).getTime();
+    return expiresAt > Date.now();
   }
 
   handleUnauthorized(router: Router, returnUrl: string): void {
@@ -84,78 +73,36 @@ export class ClientHubAuthService {
   }
 
   clearToken(): void {
-    localStorage.removeItem(this.tokenStorageKey);
+    sessionStorage.removeItem(SESSION_EXPIRY_KEY);
+    this.http.post<unknown>(
+      `${this.apiUrl}/${this.clientPortalLogoutUrl}`,
+      {},
+      { withCredentials: true }
+    ).subscribe({
+      error: () => { /* best effort — cookie will expire on its own */ }
+    });
   }
 
-  private isTokenExpired(token: string): boolean {
-    if (!this.isLikelyJwt(token)) {
-      return false;
-    }
-
-    const payload = this.parseJwtPayload(token);
-    if (!payload?.exp || typeof payload.exp !== 'number') {
-      return false;
-    }
-
-    const nowSeconds = Math.floor(Date.now() / 1000);
-    const leewaySeconds = 30;
-    return payload.exp <= nowSeconds + leewaySeconds;
-  }
-
-  private parseJwtPayload(token: string): Record<string, unknown> | null {
-    const parts = token.split('.');
-    if (parts.length !== 3) return null;
-
-    try {
-      const payload = parts[1]
-        .replace(/-/g, '+')
-        .replace(/_/g, '/')
-        .padEnd(Math.ceil(parts[1].length / 4) * 4, '=');
-
-      return JSON.parse(atob(payload)) as Record<string, unknown>;
-    } catch {
-      return null;
-    }
-  }
-
-  private extractAccessToken(response: unknown): string | null {
+  private extractExpiresAt(response: unknown): string | null {
     if (!response || typeof response !== 'object') {
       return null;
     }
 
     const source = response as Record<string, unknown>;
-    const candidates: unknown[] = [
-      response,
-      source['result'],
-      source['value'],
-      source['data'],
-      source['auth'],
-      source['authentication'],
-    ];
+    const candidates: Record<string, unknown>[] = [
+      source,
+      source['result'] as Record<string, unknown>,
+      source['value'] as Record<string, unknown>,
+    ].filter((c): c is Record<string, unknown> => !!c && typeof c === 'object');
 
     for (const candidate of candidates) {
-      const token = this.extractTokenFromValue(candidate);
-      if (token) {
-        return token;
+      const raw = candidate['expiresAt'] ?? candidate['ExpiresAt'];
+      if (typeof raw === 'string' && raw.length > 0) {
+        return raw;
       }
     }
 
     return null;
-  }
-
-  private extractTokenFromValue(value: unknown): string | null {
-    if (!value || typeof value !== 'object') {
-      return null;
-    }
-
-    const source = value as Record<string, unknown>;
-    const rawToken =
-      source['accessToken'] ??
-      source['token'] ??
-      source['jwt'] ??
-      source['access_token'];
-
-    return typeof rawToken === 'string' && this.isLikelyJwt(rawToken) ? rawToken : null;
   }
 
   private normalizeMagicLinkRequestResponse(response: unknown): ClientHubMagicLinkRequestResponse {

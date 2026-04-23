@@ -1,8 +1,6 @@
 ---
-name: DependencyUpdater
-description: "Updates npm/NuGet/pub packages across all repos, validates builds/tests, opens PRs — runs monthly."
-model: Claude Sonnet 4.6
-tools: [execute, read, edit, search, todo]
+name: dependency-updater
+description: Updates npm/NuGet/pub packages across all JobFlow repos, validates builds and tests, and prepares commits for PR. Use when performing monthly dependency maintenance or upgrading packages on demand.
 ---
 
 ## Role
@@ -98,36 +96,18 @@ git push -u origin chore/dependency-updates-<YYYY-MM>
 ```
 📦 Dependency Update Report — [Month YYYY]
 
-## UI (npm)
-  Updated X packages:
-  • angular/core: 18.x → 19.x
-  • primeng: 17.x → 18.x
-  Skipped: <package> — breaking change
+UI (npm):
+  Updated: package@old → new, ...
+  Skipped: package — reason
 
-## API (NuGet)
-  Updated X packages:
-  • Microsoft.EntityFrameworkCore: 8.x → 9.x
+API (NuGet):
+  Updated: Package old → new, ...
+  Skipped: Package — reason
 
-## Mobile (Flutter pub)
-  Updated X packages:
-  • flutter_bloc: 8.x → 9.x
+Mobile (pub):
+  Updated: package old → new, ...
+  Skipped: package — reason
 
-## Build Status
-  UI:     ✅ Build passing | ✅ Tests passing | ✅ Lint clean
-  API:    ✅ Build passing | ✅ Tests passing
-  Mobile: ✅ Build passing | ✅ Tests passing
-
-Branch pushed. Ready for PR review.
+Build status: ✅ All passing
+PR ready: chore/dependency-updates-<YYYY-MM>
 ```
-
-## Rules
-
-- Never update `package-lock.json` / `pubspec.lock` manually — let the package manager regenerate them
-- Never force-update a package that causes test failures — skip and document it
-- Major version updates require extra scrutiny — read the changelog before applying
-- Do not commit — push the branch and let a human open the PR
-- If auth tokens for private feeds are missing, report and stop
-
-## References
-
-Follow [instructions.agent.md](instructions.agent.md) for project conventions.

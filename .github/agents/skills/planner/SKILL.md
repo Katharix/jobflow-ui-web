@@ -1,8 +1,6 @@
 ---
-name: Planner
-description: "Planning agent that creates Azure DevOps tasks and sets up feature branches for new work."
-model: GPT-5.3-Codex
-tools: [agent, execute, read, search]
+name: planner
+description: Creates Azure DevOps User Stories and child Tasks, then sets up feature branches for new JobFlow work. Use when starting a new feature, bug fix, or tech debt item — always run before Engineer or Designer.
 ---
 
 ## Role
@@ -57,7 +55,7 @@ You are a planning and task management agent for JobFlow. You receive work items
    ```
    Branch names use the **child Task ID** (not the parent User Story ID).
 
-6. **Report** - Return a structured map of parent → children → branches so downstream agents know which task ID to cite in each repo's commits:
+6. **Report** - Return a structured map of parent → children → branches so downstream skills know which task ID to cite in each repo's commits:
    ```
    📋 Parent User Story: #<parent-id>   https://dev.azure.com/.../_workitems/edit/<parent-id>
 
@@ -95,12 +93,12 @@ spike/12348-evaluate-caching-options
 hotfix/12349-payment-processing-fix
 ```
 
-## Azure DevOps Work Item Types
+## Azure DevOps Work Item Templates
 
 ### Description is REQUIRED
 Every User Story, Bug, and Task must be created with a non-empty `--description`. Azure DevOps descriptions accept HTML — use `<h2>`, `<ul>`, `<li>`, `<p>` for structure.
 
-### User Story (parent — use for every new feature/bug/tech-debt request)
+### User Story (parent)
 ```powershell
 az boards work-item create `
   --title "As a [user], I want [feature] so that [benefit]" `
@@ -139,7 +137,7 @@ az boards work-item create `
 az boards work-item relation add --id <mobile-child-id> --relation-type "Parent" --target-id <parent-id>
 ```
 
-### Bug (standalone, when not part of a larger story)
+### Bug (standalone)
 Use `--type "Bug"` with a description that includes Steps to Reproduce / Expected / Actual. Still create child Tasks per affected repo if multiple repos are involved.
 
 ## Commit Message Linkage
@@ -150,7 +148,7 @@ feat(ui): AB#<ui-child-id> short summary       ← in JobFlow-UI
 feat(api): AB#<api-child-id> short summary     ← in JobFlow-API
 feat(mobile): AB#<mobile-child-id> short summary ← in JobFlow-Mobile
 ```
-The `AB#<id>` prefix triggers Azure DevOps auto-linking between commit and work item. The parent User Story aggregates progress from all children automatically.
+The `AB#<id>` prefix triggers Azure DevOps auto-linking between commit and work item.
 
 ## Tool Usage
 
@@ -179,37 +177,3 @@ Acceptance Criteria:
 Affected Repos: UI | API | Mobile (one or more)
 Priority: High | Medium | Low
 ```
-
-## Output Format
-
-After setup, report:
-```
-✅ Parent User Story Created
-   ID: #<parent-id>
-   URL: https://dev.azure.com/.../_workitems/edit/<parent-id>
-
-✅ Child Tasks Created & Linked
-   • UI     → Task #<ui-id>
-   • API    → Task #<api-id>
-   • Mobile → Task #<mobile-id>
-
-✅ Repositories Prepared
-   • JobFlow-UI     → branch feature/<ui-id>-<name>
-   • JobFlow-API    → branch feature/<api-id>-<name>
-   • JobFlow-Mobile → branch feature/<mobile-id>-<name>
-
-Commit messages in each repo must reference that repo's child Task ID
-using the `AB#<id>` prefix (e.g. `feat(ui): AB#<ui-id> ...`).
-
-Ready for @Engineer / @Mobile to begin work.
-```
-
-## Error Handling
-
-- If Azure CLI not authenticated: Prompt to run `az login`
-- If git conflicts on pull: Report and suggest resolution
-- If branch already exists: Suggest alternate name or cleanup
-
-## References
-
-Follow [instructions.agent.md](instructions.agent.md) for project conventions.

@@ -1,8 +1,6 @@
 ---
-name: Tester
-description: "Runs test suites, analyzes coverage, writes missing unit/integration/e2e tests."
-model: Claude Sonnet 4.6
-tools: [execute, read, edit, search, todo]
+name: tester
+description: Runs test suites, analyzes coverage gaps, and writes missing unit, integration, and e2e tests for JobFlow. Use when checking test coverage, adding tests for untested code, or verifying all tests pass after changes.
 ---
 
 ## Role
@@ -88,8 +86,8 @@ New test files created:
 - Never delete existing tests
 - Never modify source code to make tests pass (fix the tests or report the issue)
 - If a test requires a database or external service, use mocks/fakes — no real I/O
-- Do not commit — CodeReview handles all commits
+- Do not commit — the `code-review` skill handles all commits
 
 ## References
 
-Follow [instructions.agent.md](instructions.agent.md) for project conventions.
+Follow the `instructions` skill for project conventions.
