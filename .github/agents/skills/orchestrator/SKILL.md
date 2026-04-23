@@ -99,6 +99,37 @@ Execute in proper order respecting dependencies.
    - Patches affected `SKILL.md` files directly
    - Self-skips (reports `⏭️ skill-improver skipped — no issues observed.`) if the workflow completed with zero friction and zero corrections
 
+### Parallelization
+
+#### In-Chat (VS Code Copilot Chat)
+
+Tasks with **no shared file dependencies** can be parallelized. Detection rule: tasks are independent when they touch different components with no shared imports, state, or style cascade.
+
+| Stage | Parallelizable? | How |
+|-------|----------------|-----|
+| `Explore` | ✅ Always | Split into 2–3 parallel targeted `runSubagent` calls (A/B/C pattern in step 0 above) |
+| `engineer` | ✅ When 3+ independent file groups | Run parallel `runSubagent('Explore')` prefetch passes per group; then implement all changes in one sequential inline engineer pass with the batched context |
+| `code-review` | ❌ Never | Build → lint → test must be sequential; commit order matters |
+| `planner` / `closer` | ❌ Never | ADO state transitions must be sequential |
+
+> **Constraint:** Even when engineer prefetch runs in parallel, actual file edits must remain in a single sequential inline pass to avoid conflicting writes to the same files.
+
+#### CLI Mode (GitHub Copilot CLI — `gh copilot`)
+
+When starting this workflow from a **Copilot CLI** terminal session (not VS Code Chat), prefix the prompt with `/fleet`:
+
+```
+/fleet Fix these 4 Support Hub bugs: [list bugs here]
+```
+
+`/fleet` automatically breaks the request into parallel subtasks run by isolated subagents, each with its own context window. The main agent acts as orchestrator.
+
+- **Best for:** 3+ fully independent subtasks (per-file bug fixes, per-component refactors, test suite generation)
+- **Cost:** Each subagent consumes LLM requests independently — more parallelism = more usage
+- **Pair with:** `autopilot` mode (Shift+Tab in Copilot CLI) for fully autonomous execution
+- **Not for:** Sequential workflows where each step depends on the prior output (planner → engineer → code-review chain)
+- **Not available in VS Code Chat** — use the in-chat parallel `runSubagent` prefetch pattern above instead
+
 ### 4. Monitor & Coordinate
 - Track progress across skills
 - Handle blockers or failures

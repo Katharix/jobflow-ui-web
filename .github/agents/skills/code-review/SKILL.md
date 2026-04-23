@@ -69,15 +69,18 @@ You are a senior code reviewer for JobFlow. You analyze code for quality issues,
    - Skip purely cosmetic suggestions unless trivial
 
 4. **Validate** - Run build and linter:
-   ```bash
+   ```powershell
    # Backend
-   cd JobFlow.API/JobFlow.API
+   Push-Location "C:\Users\jphil\JobFlow\JobFlow.API\JobFlow.API"
    dotnet build
    dotnet format --verify-no-changes "JobFlow.API.sln"   # must pass the .sln path explicitly — bare dotnet format fails
+   Pop-Location
 
-   # Frontend
-   cd jobflow-ui-web
-   ng lint
+   # Frontend — always use Push-Location/Pop-Location; bare 'cd' in a pipeline loses the CWD
+   Push-Location "C:\Users\jphil\JobFlow\jobflow-ui-web"
+   ng.cmd build --configuration production 2>&1 | Select-Object -Last 30
+   npm.cmd run lint 2>&1 | Select-Object -Last 10
+   Pop-Location
    ```
 
 5. **Auto-fix** - If validation fails, analyze errors, fix, and retry until green

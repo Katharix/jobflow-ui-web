@@ -113,10 +113,16 @@
     .sh-logout-btn {
       background: none;
       border: none;
-      color: rgba(255,255,255,0.4);
+      color: rgba(255,255,255,0.65);
       cursor: pointer;
-      padding: 0.25rem;
+      padding: 0.4rem;
       border-radius: var(--jf-radius-sm);
+      font-size: 1.125rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
       transition: color 0.15s;
       &:hover { color: #E03616; }
     }
@@ -171,6 +177,8 @@
     .sh-layout__topbar { left: 70px; }
     .sh-layout__content { margin-left: 70px; }
     .sh-nav-item span, .sh-layout__brand-label, .sh-user-info, .sh-nav-section { display: none; }
+    .sh-user-avatar { display: none; }
+    .sh-layout__user { padding: 0.875rem 0; justify-content: center; }
   }
 }
 

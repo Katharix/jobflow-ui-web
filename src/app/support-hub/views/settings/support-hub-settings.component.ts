@@ -60,6 +60,7 @@ export class SupportHubSettingsComponent implements OnInit {
   ];
 
   saved = false;
+  activeTab: 'profile' | 'notifications' | 'preferences' = 'profile';
 
   ngOnInit(): void {
     const user = this.auth.currentUser;
