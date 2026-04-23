@@ -5,7 +5,6 @@ import { Router, RouterLink } from '@angular/router';
 import { Auth, signInWithEmailAndPassword, signOut } from '@angular/fire/auth';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -18,7 +17,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     RouterLink,
     InputTextModule,
     PasswordModule,
-    ButtonModule,
     MessageModule,
     TranslateModule
   ],
