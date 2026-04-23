@@ -40,7 +40,9 @@ Create execution plan with skill assignments:
 ```
 
 ### 3. Delegate Sequentially
-Execute in proper order respecting dependencies:
+Execute in proper order respecting dependencies.
+
+> **Execution model:** Only `Explore` is invoked as a named subagent (`runSubagent` with `agentName: 'Explore'`). All other skills — planner, designer, engineer, mobile, code-review, closer — are executed **inline**: read the skill's `SKILL.md` and follow its steps directly as the orchestrator. Do NOT attempt to call them via `runSubagent` with a skill name — it will fail.
 
 0. **Explore** (ALWAYS first — before any other skill)
    - Split into **2–3 parallel targeted calls** — never one large "get everything" call

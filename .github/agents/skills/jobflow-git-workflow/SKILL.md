@@ -113,18 +113,22 @@ Changes:
 [3] Short description of change three
 
 References:
-[1] path/to/file.ts:42
-[2] path/to/other.scss:88
-[3] path/to/another.component.html:15
+[1] [path/to/file.ts:42](https://github.com/<org>/<repo>/blob/<branch>/path/to/file.ts#L42)
+[2] [path/to/other.scss:88](https://github.com/<org>/<repo>/blob/<branch>/path/to/other.scss#L88)
+[3] [path/to/another.component.html:15](https://github.com/<org>/<repo>/blob/<branch>/path/to/another.component.html#L15)
 ```
 
 **Rules:**
 - The summary sentence comes first — one line, plain English, no bullet
 - `Changes:` lists what was done, numbered with `[n]`
-- `References:` maps each number to the exact file and line where that change lives
+- `References:` maps each number to the exact file and line where that change lives, formatted as a Markdown permalink
+- Permalink format: `[path/to/file:line](https://github.com/<org>/<repo>/blob/<branch>/path/to/file#L<line>)`
+- Derive `<org>/<repo>` from `git remote get-url origin` (strip `.git` suffix, extract the last two path segments)
+- `<branch>` is the current feature branch (e.g. `bugfix/39-support-hub-login-button`)
+- `<path>` is relative from the repo root (no leading slash)
 - Line numbers should be accurate — point to the method, rule, or element changed
 - Every number in Changes must have a matching entry in References
-- Use relative paths from the repo root
+- Use relative paths from the repo root in the link display text
 
 **Example:**
 ```
@@ -139,10 +143,10 @@ Changes:
 [4] Fixed sub-menu hover and active states to match top-level
 
 References:
-[1] src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.html:12
-[2] src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.ts:45
-[3] src/styles/admin/_sidebar.scss:88
-[4] src/styles/admin/_sidebar.scss:142
+[1] [src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.html:12](https://github.com/Katharix/jobflow-ui-web/blob/feature/20-mobile-sidebar/src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.html#L12)
+[2] [src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.ts:45](https://github.com/Katharix/jobflow-ui-web/blob/feature/20-mobile-sidebar/src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.ts#L45)
+[3] [src/styles/admin/_sidebar.scss:88](https://github.com/Katharix/jobflow-ui-web/blob/feature/20-mobile-sidebar/src/styles/admin/_sidebar.scss#L88)
+[4] [src/styles/admin/_sidebar.scss:142](https://github.com/Katharix/jobflow-ui-web/blob/feature/20-mobile-sidebar/src/styles/admin/_sidebar.scss#L142)
 ```
 
 **Git command:**
@@ -156,10 +160,10 @@ Changes:
 [4] Fixed sub-menu hover and active states to match top-level
 
 References:
-[1] src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.html:12
-[2] src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.ts:45
-[3] src/styles/admin/_sidebar.scss:88
-[4] src/styles/admin/_sidebar.scss:142"
+[1] [src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.html:12](https://github.com/Katharix/jobflow-ui-web/blob/feature/20-mobile-sidebar/src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.html#L12)
+[2] [src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.ts:45](https://github.com/Katharix/jobflow-ui-web/blob/feature/20-mobile-sidebar/src/app/layouts/admin-layout/admin-navbar/admin-navbar.component.ts#L45)
+[3] [src/styles/admin/_sidebar.scss:88](https://github.com/Katharix/jobflow-ui-web/blob/feature/20-mobile-sidebar/src/styles/admin/_sidebar.scss#L88)
+[4] [src/styles/admin/_sidebar.scss:142](https://github.com/Katharix/jobflow-ui-web/blob/feature/20-mobile-sidebar/src/styles/admin/_sidebar.scss#L142)"
 ```
 
 ## Pull Request Creation (required after every push)
