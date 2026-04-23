@@ -96,9 +96,33 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
 
    ngAfterViewInit(): void {
       if (!this.addressInput?.nativeElement) return;
+      this.loadGoogleMapsScript()
+         .then(() => this.initPlacesAutocomplete())
+         .catch(() => console.warn('Google Maps failed to load.'));
+   }
+
+   private loadGoogleMapsScript(): Promise<void> {
+      return new Promise<void>((resolve, reject) => {
+         if ((window as Window & { google?: unknown }).google) {
+            resolve();
+            return;
+         }
+         const script = document.createElement('script');
+         script.src =
+            'https://maps.googleapis.com/maps/api/js?key=AIzaSyA6EiKJ8OJvywKeOFy_EoyxO4UepISyGDk&libraries=places&v=weekly&loading=async';
+         script.addEventListener('load', () => resolve());
+         script.addEventListener('error', () =>
+            reject(new Error('Google Maps failed to load'))
+         );
+         document.head.appendChild(script);
+      });
+   }
+
+   private initPlacesAutocomplete(): void {
+      if (!this.addressInput?.nativeElement) return;
 
       if (!google?.maps?.places?.Autocomplete) {
-         console.warn('Google Places is not available yet.');
+         console.warn('Google Places is not available.');
          return;
       }
 
