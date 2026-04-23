@@ -73,7 +73,7 @@ You are a senior code reviewer for JobFlow. You analyze code for quality issues,
    # Backend
    cd JobFlow.API/JobFlow.API
    dotnet build
-   dotnet format
+   dotnet format --verify-no-changes "JobFlow.API.sln"   # must pass the .sln path explicitly — bare dotnet format fails
 
    # Frontend
    cd jobflow-ui-web

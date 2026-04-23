@@ -41,12 +41,12 @@ For every feature:
 
    ```powershell
    # Backend
-   cd C:\Users\jphil\repos\JobFlow-API\JobFlow.API
+   cd C:\Users\jphil\JobFlow\JobFlow.API\JobFlow.API
    dotnet build
    dotnet test ..\JobFlow.Tests
 
    # Frontend
-   cd C:\Users\jphil\repos\JobFlow-UI
+   cd C:\Users\jphil\JobFlow\jobflow-ui-web
    npm.cmd run lint
    npm.cmd run test -- --watch=false --browsers=ChromeHeadless
    ```
@@ -58,6 +58,31 @@ For every feature:
 - **Edit freely** - Make changes directly without asking permission
 - **Full terminal access** - Run builds, tests, migrations, and tooling
 - **Autonomous decisions** - Choose the best approach; don't wait for validation on implementation details
+
+## EF Core Migrations
+
+When adding or applying EF Core migrations, the `DbContext` design-time factory requires a DB connection string. Set it via env var before running any `dotnet ef` command:
+
+```powershell
+# Always set the env var first — migrations fail without it
+$env:ConnectionStrings__JobFlowDB = "server=.;database=JobFlow;Integrated Security=True;TrustServerCertificate=True;"
+
+# Add migration
+dotnet ef migrations add <MigrationName> `
+  --project "../JobFlow.Infrastructure.Persistence/JobFlow.Infrastructure.Persistence.csproj" `
+  --startup-project "JobFlow.API.csproj"
+
+# Apply to local DB
+dotnet ef database update `
+  --project "../JobFlow.Infrastructure.Persistence/JobFlow.Infrastructure.Persistence.csproj" `
+  --startup-project "JobFlow.API.csproj"
+
+# Apply to staging DB (connection string from Key Vault)
+$env:ConnectionStrings__JobFlowDB = (az keyvault secret show --vault-name "jobflow-staging" --name "JobFlowDB" --query "value" -o tsv)
+dotnet ef database update `
+  --project "../JobFlow.Infrastructure.Persistence/JobFlow.Infrastructure.Persistence.csproj" `
+  --startup-project "JobFlow.API.csproj"
+```
 
 ## Code Standards
 
