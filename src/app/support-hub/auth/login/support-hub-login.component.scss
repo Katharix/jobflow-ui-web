@@ -45,13 +45,26 @@
   }
 }
 .sh-login-btn {
-  height: 46px;
-  border-radius: var(--jf-radius) !important;
-  font-weight: 600;
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  border-radius: var(--jf-radius);
+  background: var(--jf-primary);
+  color: #ffffff;
+  border: none;
+  font-family: Manrope, sans-serif;
   font-size: 0.9375rem;
-  background: var(--jf-primary) !important;
-  border-color: var(--jf-primary) !important;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.2s;
   margin-top: 1rem;
+  &:hover:not(:disabled) {
+    filter: brightness(1.08);
+  }
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
 }
 .sh-login-footer {
   text-align: center;

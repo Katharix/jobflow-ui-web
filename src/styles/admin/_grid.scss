@@ -1,4 +1,11 @@
 ﻿
+.jobflow-grid-wrapper {
+   padding: 1.25rem;
+   background: var(--jf-surface);
+   border-radius: 12px;
+   border: 1px solid var(--jf-border);
+}
+
 .jobflow-grid.p-datatable {
    border-radius: 12px;
    overflow: hidden;
