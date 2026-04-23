@@ -4,20 +4,21 @@ import {
   initializeAuth
 } from '@angular/fire/auth';
 import {
-  browserLocalPersistence,
-  browserPopupRedirectResolver
-} from 'firebase/auth'; // ✅ persistence constant comes from firebase/auth
+  browserLocalPersistence
+} from 'firebase/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { firebaseConfig } from '../configs/firebase-config';
 
 export const firebaseProviders = [
   provideFirebaseApp(() => initializeApp(firebaseConfig)),
 
-  // ✅ Set default persistence globally
+  // Omit popupRedirectResolver here so Firebase does not load gapi.js on every
+  // page initialisation. The resolver is passed directly to signInWithPopup()
+  // in AuthService so it is only loaded when the user explicitly triggers
+  // Google Sign-In.
   provideAuth(() =>
     initializeAuth(getApp(), {
-      persistence: browserLocalPersistence,
-      popupRedirectResolver: browserPopupRedirectResolver
+      persistence: browserLocalPersistence
     })
   ),
 

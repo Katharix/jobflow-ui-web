@@ -7,6 +7,7 @@ import {
 } from '@angular/fire/auth';
 import {
   GoogleAuthProvider,
+  browserPopupRedirectResolver,
   signInWithPopup as firebaseSignInWithPopup,
   UserCredential
 } from 'firebase/auth';
@@ -35,7 +36,7 @@ export class AuthService {
   loginWithGoogle(): Promise<UserCredential> {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
-    return firebaseSignInWithPopup(this.auth, provider);
+    return firebaseSignInWithPopup(this.auth, provider, browserPopupRedirectResolver);
   }
 
   register(email: string, password: string) {
