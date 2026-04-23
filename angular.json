@@ -72,7 +72,14 @@
                   "maximumError": "4mb"
                 }
               ],
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
               "namedChunks": false,
               "extractLicenses": true,
               "sourceMap": false,
@@ -102,7 +109,14 @@
                   "maximumError": "4mb"
                 }
               ],
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
               "namedChunks": false,
               "extractLicenses": true,
               "sourceMap": false,
