@@ -199,20 +199,6 @@ gh pr create \
   --body "<body>"
 ```
 
-## Post-Workflow: Run the Skill Improver (last step)
-
-After the PR is created and all commits are pushed, invoke the `skill-improver` skill as the final step.
-
-The skill-improver audits every skill that ran during this workflow and patches any `SKILL.md` files where:
-- A command had to be corrected mid-execution
-- A file path was wrong and had to be looked up
-- A step was slow or caused unexpected friction
-- A cross-reference to another skill or file was stale
-
-If the workflow completed with zero friction and zero corrections, the skill-improver will self-skip and report: `⏭️ skill-improver skipped — no issues observed.`
-
-Skill file: `.github/agents/skills/skill-improver/SKILL.md`
-
 ### Rules
 - Never leave a pushed branch without a PR
 - PR title must NOT be a copy of the commit message — write a clean human-readable title

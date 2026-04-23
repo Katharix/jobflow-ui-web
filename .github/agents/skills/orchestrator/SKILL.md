@@ -93,6 +93,12 @@ Execute in proper order respecting dependencies.
    - Close each child Task with completion notes
    - If all children closed, transition parent User Story to `Resolved`
 
+7. **skill-improver** (always after closer)
+   - Read `.github/agents/skills/skill-improver/SKILL.md` and follow its steps
+   - Audits every skill that ran during this workflow for commands that failed, wrong paths, slow steps, or stale cross-references
+   - Patches affected `SKILL.md` files directly
+   - Self-skips (reports `⏭️ skill-improver skipped — no issues observed.`) if the workflow completed with zero friction and zero corrections
+
 ### 4. Monitor & Coordinate
 - Track progress across skills
 - Handle blockers or failures
