@@ -97,7 +97,6 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
 
    ngAfterViewInit(): void {
       if (!this.addressInput?.nativeElement) return;
-
       this.loadGoogleMaps()
          .then(() => this.initAddressAutocomplete())
          .catch(() => console.warn('Google Places could not be loaded.'));
@@ -123,7 +122,7 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
       if (!this.addressInput?.nativeElement) return;
 
       if (!google?.maps?.places?.Autocomplete) {
-         console.warn('Google Places is not available yet.');
+         console.warn('Google Places is not available.');
          return;
       }
 
