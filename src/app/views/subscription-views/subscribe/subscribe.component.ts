@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef, inject, DOCUMENT } from '@angular/core';
 import { OrganizationType } from '../../../models/organization-type';
 import { OrganizationTypeService } from '../../../services/shared/organization-type.service';
 import { CommonModule } from '@angular/common';
@@ -60,6 +60,7 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
    private paymentService = inject(PaymentService);
    private loadingService = inject(LoadingService);
    private translate = inject(TranslateService);
+   private document = inject(DOCUMENT);
 
 
    @ViewChild('addressInput') addressInput?: ElementRef<HTMLInputElement>;
@@ -121,6 +122,30 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
    private initPlacesAutocomplete(): void {
       if (!this.addressInput?.nativeElement) return;
 
+      this.loadGoogleMaps()
+         .then(() => this.initAddressAutocomplete())
+         .catch(() => console.warn('Google Places could not be loaded.'));
+   }
+
+   private loadGoogleMaps(): Promise<void> {
+      return new Promise((resolve, reject) => {
+         const win = this.document.defaultView as (Window & { google?: { maps?: unknown } }) | null;
+         if (win?.google?.maps) {
+            resolve();
+            return;
+         }
+         const script = this.document.createElement('script');
+         script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyA6EiKJ8OJvywKeOFy_EoyxO4UepISyGDk&libraries=places&v=weekly&loading=async';
+         script.async = true;
+         script.addEventListener('load', () => resolve());
+         script.addEventListener('error', () => reject(new Error('Failed to load Google Maps')));
+         this.document.head.appendChild(script);
+      });
+   }
+
+   private initAddressAutocomplete(): void {
+      if (!this.addressInput?.nativeElement) return;
+
       if (!google?.maps?.places?.Autocomplete) {
          console.warn('Google Places is not available.');
          return;
@@ -132,7 +157,6 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
       });
 
       autocomplete.addListener('place_changed', () => {
-
          const place = autocomplete.getPlace();
          if (!place.address_components) return;
 
