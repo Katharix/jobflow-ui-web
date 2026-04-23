@@ -27,8 +27,9 @@ You are a planning and task management agent for JobFlow. You receive work items
    az boards work-item create `
      --title "As a [user], I want [feature] so that [benefit]" `
      --type "User Story" `
-     --description "<html description — see template below>" `
-     --tags "<relevant;tags>"
+     --description "<html description — see template below>"
+   # Then apply tags (--tags flag not supported; use --fields instead):
+   az boards work-item update --id <parent-id> --fields "System.Tags=<tag1;tag2>"
    ```
    Capture the returned `id` — this is the **parent User Story ID**.
 
@@ -103,8 +104,9 @@ Every User Story, Bug, and Task must be created with a non-empty `--description`
 az boards work-item create `
   --title "As a [user], I want [feature] so that [benefit]" `
   --type "User Story" `
-  --description "<h2>Description</h2><p>[Detailed description]</p><h2>Acceptance Criteria</h2><ul><li>Criterion 1</li><li>Criterion 2</li></ul><h2>Technical Notes</h2><p>[Implementation considerations]</p><h2>Affected Repos</h2><ul><li>UI</li><li>API</li><li>Mobile</li></ul>" `
-  --tags "feature"
+  --description "<h2>Description</h2><p>[Detailed description]</p><h2>Acceptance Criteria</h2><ul><li>Criterion 1</li><li>Criterion 2</li></ul><h2>Technical Notes</h2><p>[Implementation considerations]</p><h2>Affected Repos</h2><ul><li>UI</li><li>API</li><li>Mobile</li></ul>"
+# Apply tags after creation:
+az boards work-item update --id <parent-id> --fields "System.Tags=feature"
 ```
 
 ### Child Task — UI
@@ -112,9 +114,9 @@ az boards work-item create `
 az boards work-item create `
   --title "UI: <short description>" `
   --type "Task" `
-  --description "<h2>Scope</h2><p>Changes required in JobFlow-UI (Angular).</p><h2>Notes</h2><p>[component paths, design refs]</p>" `
-  --tags "frontend;ui"
+  --description "<h2>Scope</h2><p>Changes required in JobFlow-UI (Angular).</p><h2>Notes</h2><p>[component paths, design refs]</p>"
 az boards work-item relation add --id <ui-child-id> --relation-type "Parent" --target-id <parent-id>
+az boards work-item update --id <ui-child-id> --fields "System.Tags=frontend;ui"
 ```
 
 ### Child Task — API
@@ -122,9 +124,9 @@ az boards work-item relation add --id <ui-child-id> --relation-type "Parent" --t
 az boards work-item create `
   --title "API: <short description>" `
   --type "Task" `
-  --description "<h2>Scope</h2><p>Changes required in JobFlow-API (.NET).</p><h2>Notes</h2><p>[endpoints, domain models, migrations]</p>" `
-  --tags "backend;api"
+  --description "<h2>Scope</h2><p>Changes required in JobFlow-API (.NET).</p><h2>Notes</h2><p>[endpoints, domain models, migrations]</p>"
 az boards work-item relation add --id <api-child-id> --relation-type "Parent" --target-id <parent-id>
+az boards work-item update --id <api-child-id> --fields "System.Tags=backend;api"
 ```
 
 ### Child Task — Mobile
@@ -132,9 +134,9 @@ az boards work-item relation add --id <api-child-id> --relation-type "Parent" --
 az boards work-item create `
   --title "Mobile: <short description>" `
   --type "Task" `
-  --description "<h2>Scope</h2><p>Changes required in JobFlow-Mobile (Flutter).</p><h2>Notes</h2><p>[screens, state, platform specifics]</p>" `
-  --tags "mobile;flutter"
+  --description "<h2>Scope</h2><p>Changes required in JobFlow-Mobile (Flutter).</p><h2>Notes</h2><p>[screens, state, platform specifics]</p>"
 az boards work-item relation add --id <mobile-child-id> --relation-type "Parent" --target-id <parent-id>
+az boards work-item update --id <mobile-child-id> --fields "System.Tags=mobile;flutter"
 ```
 
 ### Bug (standalone)
