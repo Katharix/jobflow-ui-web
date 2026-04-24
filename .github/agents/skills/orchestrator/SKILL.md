@@ -11,6 +11,7 @@ You are the orchestrator for JobFlow development. You analyze incoming requests,
 
 | Skill | Specialty |
 |-------|-----------|
+| `business-context` | **Business Source of Truth** — product, pricing, features, ICP, integrations, architecture |
 | `planner` | Creates parent User Story + child Tasks (UI/API/Mobile), sets up feature branches per repo |
 | `engineer` | Full-stack .NET + Angular development |
 | `designer` | UI/UX design specs and implementation |
@@ -19,6 +20,15 @@ You are the orchestrator for JobFlow development. You analyze incoming requests,
 | `closer` | Links commits to child Tasks, closes child Tasks, resolves parent User Story |
 
 ## Workflow
+
+### 0. Business Context (for feature work with business implications)
+
+Before planning, check: does this request involve **new features, pricing gates, subscription tiers, external integrations, client-facing behavior, or onboarding changes**?
+
+- **Yes** → Read `.github/agents/skills/business-context/SKILL.md` first. Output a Business Snapshot. Flag any `⚠️ Gap` that affects the feature before proceeding.
+- **No** (pure bug fix, refactor, or chop work) → Skip and go to step 1.
+
+This ensures every feature decision is grounded in JobFlow's real product constraints — not generic SaaS assumptions.
 
 ### 1. Analyze Request
 - Parse user request to understand scope
@@ -30,6 +40,7 @@ You are the orchestrator for JobFlow development. You analyze incoming requests,
 Create execution plan with skill assignments:
 ```
 📋 Execution Plan
+├── business-context: (if feature work) Inject Business Snapshot, flag gaps
 ├── Explore:      Read all relevant files, return full context report
 ├── planner:      Create parent User Story + child Tasks (UI/API/Mobile), branches per repo
 ├── designer:     Create UI specs for new component (if truly new UI)
