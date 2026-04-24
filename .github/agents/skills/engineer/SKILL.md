@@ -41,12 +41,12 @@ For every feature:
 
    ```powershell
    # Backend
-   cd C:\Users\jphil\JobFlow\JobFlow.API\JobFlow.API
+   cd C:\Users\jphil\repos\JobFlow-API\JobFlow.API
    dotnet build
    dotnet test ..\JobFlow.Tests
 
    # Frontend
-   cd C:\Users\jphil\JobFlow\jobflow-ui-web
+   cd C:\Users\jphil\repos\JobFlow-UI
    npm.cmd run lint
    npm.cmd run test -- --watch=false --browsers=ChromeHeadless
    ```
@@ -117,6 +117,11 @@ Environment URL constants:
 When an HTTP interceptor applies `withCredentials` only for URLs containing a specific segment (e.g. `/client-hub`), routes that don't match (e.g. `/payments/*`) need explicit `withCredentials: true` on the raw `HttpClient` call.
 
 When migrating auth token patterns (e.g. localStorage JWT → HttpOnly cookie), always grep for **all** callsites before starting: `getToken`, `setToken`, `clearToken`, `getAuthHeaders`, `Authorization` header construction. Missing a callsite causes a second fix pass.
+
+### Angular Import Hygiene
+
+- When generating a new Angular standalone component, every item in the `imports: []` array must actually be used in the template. Unused imports trigger `NG8113` build warnings. Verify before finalizing.
+- When a service file lives in `src/app/<module>/services/`, imports from the same folder must use `./` (not `../`). Example: `rep-chat-panel.service.ts` importing `SupportHubSignalRService` uses `'./support-hub-signalr.service'`, not `'../support-hub-signalr.service'`.
 
 ### Testing
 - xUnit + Moq for .NET

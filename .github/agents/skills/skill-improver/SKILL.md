@@ -11,7 +11,7 @@ You are the self-improvement agent for JobFlow's skill library. After a skill ru
 
 All skills live under:
 ```
-C:\Users\jphil\JobFlow\jobflow-ui-web\.github\agents\skills\<skill-name>\SKILL.md
+C:\Users\jphil\repos\JobFlow-UI\.github\agents\skills\<skill-name>\SKILL.md
 ```
 
 ## When to Run
@@ -40,12 +40,12 @@ For the skill that just ran, check each of the following:
 Common path problems in this repo:
 ```
 # WRONG — old path that no longer exists
-cd C:\Users\jphil\repos\JobFlow-UI
-cd C:\Users\jphil\repos\JobFlow-API
+cd C:\Users\jphil\JobFlow\jobflow-ui-web
+cd C:\Users\jphil\JobFlow\JobFlow.API
 
 # CORRECT — actual repo paths
-cd C:\Users\jphil\JobFlow\jobflow-ui-web   # UI (Angular)
-cd C:\Users\jphil\JobFlow\JobFlow.API      # API (.NET)
+cd C:\Users\jphil\repos\JobFlow-UI        # UI (Angular)
+cd C:\Users\jphil\repos\JobFlow-API       # API (.NET)
 ```
 
 ### 2. Commands and Tool Aliases
@@ -73,11 +73,11 @@ Alias correction table:
 Correct test commands for this repo:
 ```powershell
 # Frontend tests (non-interactive)
-Set-Location "C:\Users\jphil\JobFlow\jobflow-ui-web"
+Set-Location "C:\Users\jphil\repos\JobFlow-UI"
 npm.cmd run test -- --watch=false --browsers=ChromeHeadless
 
 # Backend tests
-Set-Location "C:\Users\jphil\JobFlow\JobFlow.API\JobFlow.API"
+Set-Location "C:\Users\jphil\repos\JobFlow-API\JobFlow.API"
 dotnet test ..\JobFlow.Tests
 
 # Flutter tests (if mobile repo exists)
@@ -111,7 +111,7 @@ Look for steps that are unnecessarily sequential and could be parallelized, or s
 
 2. **For each skill that ran, read its SKILL.md**:
    ```powershell
-   Get-Content "C:\Users\jphil\JobFlow\jobflow-ui-web\.github\agents\skills\<skill-name>\SKILL.md"
+   Get-Content "C:\Users\jphil\repos\JobFlow-UI\.github\agents\skills\<skill-name>\SKILL.md"
    ```
 
 3. **Collect execution observations for that skill** - Review what happened when it ran:
