@@ -1,15 +1,27 @@
-<p-drawer
-   [visible]="open"
-   [position]="'right'"
-   [header]="title"
-   [modal]="true"
-   [dismissible]="closeOnBackdrop"
-   [closeOnEscape]="true"
-   [style]="drawerStyle"
-   styleClass="jobflow-prime-drawer"
-   [baseZIndex]="1050"
-   (onShow)="opened.emit()"
-   (visibleChange)="onVisibleChange($event)"
+<div
+  class="offcanvas offcanvas-end jf-drawer-panel"
+  [class.show]="open"
+  [style.width.px]="width"
+  tabindex="-1"
+  role="dialog"
+  [attr.aria-modal]="open ? 'true' : null"
+  [attr.aria-label]="title"
 >
-   <ng-content></ng-content>
-</p-drawer>
+  <div class="offcanvas-header jf-drawer__header">
+    <div class="jf-drawer__header-content">
+      <h5 class="jf-drawer__title">{{ title }}</h5>
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+  </div>
+  <div class="offcanvas-body jf-drawer__body">
+    <ng-content></ng-content>
+  </div>
+</div>
+
+@if (open) {
+  <div
+    class="offcanvas-backdrop fade show"
+    aria-hidden="true"
+    (click)="closeOnBackdrop && close()"
+  ></div>
+}

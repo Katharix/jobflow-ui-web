@@ -5,12 +5,12 @@ import {
    EventEmitter
 } from '@angular/core';
 
-import {Drawer} from 'primeng/drawer';
+import { CommonModule } from '@angular/common';
 
 @Component({
    selector: 'app-jobflow-drawer',
    standalone: true,
-   imports: [Drawer],
+   imports: [CommonModule],
    templateUrl: './jobflow-drawer.component.html',
    styleUrls: ['./jobflow-drawer.component.scss']
 })
@@ -23,19 +23,7 @@ export class JobflowDrawerComponent {
    @Output() closed = new EventEmitter<void>();
    @Output() opened = new EventEmitter<void>();
 
-   get drawerStyle(): Record<string, string> {
-      return {
-         width: `${this.width}px`
-      };
-   }
-
    close(): void {
       this.closed.emit();
-   }
-
-   onVisibleChange(visible: boolean): void {
-      if (!visible) {
-         this.close();
-      }
    }
 }
