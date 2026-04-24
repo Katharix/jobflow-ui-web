@@ -59,19 +59,21 @@
   </div>
 </div>
 
-<!-- CTA Card -->
-<div class="cta-card">
-  <div>
-    <p class="cta-card__eyebrow">{{ 'admin.estimates.cta.eyebrow' | translate }}</p>
-    <h3 class="cta-card__title">{{ 'admin.estimates.cta.title' | translate }}</h3>
-    <p class="cta-card__body">{{ 'admin.estimates.cta.subtitle' | translate }}</p>
+<!-- CTA Card (zero-state only) -->
+@if (items.length === 0) {
+  <div class="cta-card">
+    <div>
+      <p class="cta-card__eyebrow">{{ 'admin.estimates.cta.eyebrow' | translate }}</p>
+      <h3 class="cta-card__title">{{ 'admin.estimates.cta.title' | translate }}</h3>
+      <p class="cta-card__body">{{ 'admin.estimates.cta.subtitle' | translate }}</p>
+    </div>
+    <div class="cta-card__actions">
+      <button type="button" class="btn btn-primary" (click)="openNew()">
+        {{ 'admin.estimates.cta.button' | translate }}
+      </button>
+    </div>
   </div>
-  <div class="cta-card__actions">
-    <button type="button" class="btn btn-primary" (click)="openNew()">
-      {{ 'admin.estimates.cta.button' | translate }}
-    </button>
-  </div>
-</div>
+}
 
 <!-- Filter Bar -->
 <div class="filter-bar" aria-label="Estimate filters">
@@ -133,72 +135,83 @@
   </app-jobflow-grid>
 </div>
 
-<!-- Create / Edit Panel -->
-@if (isFormDrawerOpen) {
-  <div class="content-card">
-    <div class="inline-card-header">
-      <h3>{{ editingEstimate ? ('admin.estimates.drawer.updateTitle' | translate) : ('admin.estimates.drawer.newTitleMain' | translate) }}</h3>
-      <button class="close-btn" (click)="onFormCancelled()">×</button>
-    </div>
-    <app-estimate-form
-      [estimate]="editingEstimate"
-      (saved)="onFormSaved($event)"
-      (cancelled)="onFormCancelled()">
-    </app-estimate-form>
-  </div>
-}
+</div>
 
-<!-- Send Panel -->
-@if (isSendDrawerOpen && estimateToSend) {
-  <div class="content-card">
-    <div class="inline-card-header">
-      <h3>{{ 'admin.estimates.send.title' | translate }} — {{ estimateToSend.estimateNumber }}</h3>
-      <button class="close-btn" (click)="isSendDrawerOpen = false">×</button>
+<!-- Create / Edit Offcanvas -->
+<ng-template #formOffcanvas>
+  <div class="jf-drawer__header">
+    <div class="jf-drawer__header-content">
+      <span class="jf-drawer__eyebrow">{{ editingEstimate ? ('admin.estimates.drawer.updateEyebrow' | translate) : ('admin.estimates.drawer.newEyebrow' | translate) }}</span>
+      <h5 class="jf-drawer__title">
+        {{ editingEstimate ? ('admin.estimates.drawer.updateTitle' | translate) : ('admin.estimates.drawer.newTitleMain' | translate) }}
+      </h5>
+      <p class="jf-drawer__subtitle">{{ 'admin.estimates.drawer.subtitle' | translate }}</p>
     </div>
+    <button class="btn-close" aria-label="Close" (click)="onFormCancelled()"></button>
+  </div>
+  <app-estimate-form
+    [estimate]="editingEstimate"
+    (saved)="onFormSaved($event)"
+    (cancelled)="onFormCancelled()">
+  </app-estimate-form>
+</ng-template>
+
+<!-- Send Offcanvas -->
+<ng-template #sendOffcanvas>
+  <div class="jf-drawer__header">
+    <div class="jf-drawer__header-content">
+      <span class="jf-drawer__eyebrow">{{ 'admin.estimates.drawer.newEyebrow' | translate }}</span>
+      <h5 class="jf-drawer__title">{{ 'admin.estimates.send.title' | translate }}</h5>
+      @if (estimateToSend) {
+        <p class="jf-drawer__subtitle">{{ estimateToSend.estimateNumber }}</p>
+      }
+    </div>
+    <button class="btn-close" aria-label="Close" (click)="activeSendRef?.close()"></button>
+  </div>
+  <div class="jf-drawer__body">
     @if (sendError) {
-      <div class="page-alert page-alert--danger">{{ sendError }}</div>
+      <div class="alert alert-danger py-2 px-3 mb-0">{{ sendError }}</div>
     }
-    <div class="mb-3">
-      <label class="form-label fw-semibold" for="estimateSendEmail">
+    <div class="jf-drawer__field">
+      <label class="form-label" for="estimateSendEmail">
         {{ 'admin.estimates.send.recipientEmail' | translate }} <span class="text-danger">*</span>
       </label>
       <input
         id="estimateSendEmail"
         type="email"
-        class="form-control"
+        class="form-control form-control-sm"
         [(ngModel)]="sendEmail"
         [placeholder]="'admin.estimates.send.recipientPlaceholder' | translate" />
     </div>
-    <div class="mb-4">
-      <label class="form-label fw-semibold" for="estimateSendMessage">
-        {{ 'admin.estimates.send.message' | translate }} <span class="text-muted fw-normal">({{ 'admin.estimates.send.optional' | translate }})</span>
+    <div class="jf-drawer__field">
+      <label class="form-label" for="estimateSendMessage">
+        {{ 'admin.estimates.send.message' | translate }}
+        <span class="jf-drawer__hint d-inline ms-1">({{ 'admin.estimates.send.optional' | translate }})</span>
       </label>
       <textarea
         id="estimateSendMessage"
-        class="form-control"
+        class="form-control form-control-sm"
         rows="4"
         [(ngModel)]="sendMessage"
         [placeholder]="'admin.estimates.send.messagePlaceholder' | translate">
       </textarea>
     </div>
-    <div class="drawer-content__actions">
-      <button
-        type="button"
-        class="btn btn-outline-secondary"
-        (click)="isSendDrawerOpen = false"
-        [disabled]="sending">
-        {{ 'admin.estimates.send.cancel' | translate }}
-      </button>
-      <button
-        type="button"
-        class="btn btn-primary"
-        (click)="confirmSend()"
-        [disabled]="sending || !sendEmail.trim()">
-        {{ sending ? ('admin.estimates.send.sending' | translate) : ('admin.estimates.send.send' | translate) }}
-      </button>
-    </div>
   </div>
-}
-
-</div>
+  <div class="jf-drawer__footer">
+    <button
+      type="button"
+      class="btn btn-outline-secondary btn-sm"
+      (click)="activeSendRef?.close()"
+      [disabled]="sending">
+      {{ 'admin.estimates.send.cancel' | translate }}
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary btn-sm"
+      (click)="confirmSend()"
+      [disabled]="sending || !sendEmail.trim()">
+      {{ sending ? ('admin.estimates.send.sending' | translate) : ('admin.estimates.send.send' | translate) }}
+    </button>
+  </div>
+</ng-template>
 

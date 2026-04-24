@@ -1,11 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { TextareaModule } from 'primeng/textarea';
-import { AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { LucideAngularModule } from 'lucide-angular';
 import { take } from 'rxjs';
 import { EstimateService } from '../services/estimate.service';
 import { CustomersService } from '../../customer/services/customer.service';
@@ -25,12 +21,9 @@ import {
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    InputTextModule,
-    SelectModule,
-    InputNumberModule,
-    TextareaModule,
-    AutoCompleteModule
-],
+    FormsModule,
+    LucideAngularModule,
+  ],
   templateUrl: './estimate-form.component.html',
   styleUrl: './estimate-form.component.scss',
 })
@@ -53,6 +46,7 @@ export class EstimateFormComponent implements OnInit {
   priceBookItems: PriceBookItemDto[] = [];
   filteredPriceBookItems: PriceBookItemDto[] = [];
   hasPriceBookAccess = false;
+  priceBookSearch = '';
 
   ngOnInit(): void {
     this.buildForm();
@@ -87,23 +81,28 @@ export class EstimateFormComponent implements OnInit {
     }
   }
 
-  searchPriceBookItems(event: { query: string }): void {
-    const query = (event.query ?? '').toLowerCase();
+  searchPriceBookItems(query: string): void {
+    const q = (query ?? '').toLowerCase();
     this.filteredPriceBookItems = this.priceBookItems.filter(
-      item => item.name.toLowerCase().includes(query)
-        || (item.description ?? '').toLowerCase().includes(query)
+      item => item.name.toLowerCase().includes(q)
+        || (item.description ?? '').toLowerCase().includes(q)
     );
   }
 
-  onPriceBookItemSelected(event: AutoCompleteSelectEvent): void {
-    const item: PriceBookItemDto = event.value;
-    this.lineItems.push(this.newLineGroup({
-      priceBookItemId: item.id,
-      name: item.name,
-      description: item.description ?? item.name,
-      unitPrice: item.price,
-      quantity: 1
-    } as EstimateLineItem));
+  onPriceBookInputChange(value: string): void {
+    this.searchPriceBookItems(value);
+    const match = this.priceBookItems.find(item => item.name === value);
+    if (match) {
+      this.lineItems.push(this.newLineGroup({
+        priceBookItemId: match.id,
+        name: match.name,
+        description: match.description ?? match.name,
+        unitPrice: match.price,
+        quantity: 1
+      } as EstimateLineItem));
+      this.priceBookSearch = '';
+      this.filteredPriceBookItems = [];
+    }
   }
 
   save(): void {

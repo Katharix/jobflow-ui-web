@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NgbOffcanvas, NgbOffcanvasRef } from '@ng-bootstrap/ng-bootstrap';
 import { JobflowGridColumn, JobflowGridComponent, JobflowGridPageSettings } from '../../common/jobflow-grid/jobflow-grid.component';
 import { ToastService } from '../../common/toast/toast.service';
 import { EstimateService } from './services/estimate.service';
@@ -29,10 +30,16 @@ export class EstimatesComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private translate = inject(TranslateService);
   private auth = inject(Auth);
+  private offcanvasService = inject(NgbOffcanvas);
 
   @ViewChild('clientTemplate', { static: true }) clientTemplate!: TemplateRef<unknown>;
   @ViewChild('statusTemplate', { static: true }) statusTemplate!: TemplateRef<unknown>;
   @ViewChild('actionsTemplate', { static: true }) actionsTemplate!: TemplateRef<unknown>;
+  @ViewChild('formOffcanvas') formOffcanvasTemplate!: TemplateRef<unknown>;
+  @ViewChild('sendOffcanvas') sendOffcanvasTemplate!: TemplateRef<unknown>;
+
+  private activeFormRef: NgbOffcanvasRef | null = null;
+  activeSendRef: NgbOffcanvasRef | null = null;
 
   columns: JobflowGridColumn[] = [];
   items: Estimate[] = [];
@@ -53,8 +60,6 @@ export class EstimatesComponent implements OnInit, OnDestroy {
 
   headerActions = [] as { label: string; icon: string; class: string; click: () => void }[];
 
-  isFormDrawerOpen = false;
-  isSendDrawerOpen = false;
   editingEstimate: Estimate | null = null;
   estimateToSend: Estimate | null = null;
 
@@ -125,7 +130,7 @@ export class EstimatesComponent implements OnInit, OnDestroy {
 
   openNew(): void {
     this.editingEstimate = null;
-    this.isFormDrawerOpen = true;
+    this.openFormDrawer();
   }
 
   get filteredItems(): Estimate[] {
@@ -160,13 +165,28 @@ export class EstimatesComponent implements OnInit, OnDestroy {
 
   openEdit(estimate: Estimate): void {
     this.editingEstimate = estimate;
-    this.isFormDrawerOpen = true;
+    this.openFormDrawer();
+  }
+
+  private openFormDrawer(): void {
+    if (this.activeFormRef) { return; }
+    this.activeFormRef = this.offcanvasService.open(this.formOffcanvasTemplate, {
+      position: 'end',
+      panelClass: 'jf-drawer-panel',
+      backdrop: true,
+      keyboard: true,
+    });
+    this.activeFormRef.result.then(
+      () => { this.activeFormRef = null; },
+      () => { this.activeFormRef = null; }
+    );
   }
 
   onFormSaved(result: Estimate): void {
     const isCreate = !this.editingEstimate;
 
-    this.isFormDrawerOpen = false;
+    this.activeFormRef?.close();
+    this.activeFormRef = null;
     this.editingEstimate = null;
 
     if (!isCreate) {
@@ -199,7 +219,8 @@ export class EstimatesComponent implements OnInit, OnDestroy {
   }
 
   onFormCancelled(): void {
-    this.isFormDrawerOpen = false;
+    this.activeFormRef?.close();
+    this.activeFormRef = null;
     this.editingEstimate = null;
   }
 
@@ -208,7 +229,17 @@ export class EstimatesComponent implements OnInit, OnDestroy {
     this.sendEmail = estimate.organizationClient?.emailAddress ?? '';
     this.sendMessage = '';
     this.sendError = null;
-    this.isSendDrawerOpen = true;
+    if (this.activeSendRef) { return; }
+    this.activeSendRef = this.offcanvasService.open(this.sendOffcanvasTemplate, {
+      position: 'end',
+      panelClass: 'jf-drawer-panel',
+      backdrop: true,
+      keyboard: true,
+    });
+    this.activeSendRef.result.then(
+      () => { this.activeSendRef = null; },
+      () => { this.activeSendRef = null; }
+    );
   }
 
   confirmSend(): void {
@@ -224,7 +255,8 @@ export class EstimatesComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.sending = false;
-          this.isSendDrawerOpen = false;
+          this.activeSendRef?.close();
+          this.activeSendRef = null;
           this.load();
             this.toast.success(this.translate.instant('admin.estimates.toast.sent'));
         },
