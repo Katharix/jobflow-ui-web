@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, OnDestroy, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, OnDestroy, ViewChild, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Auth } from '@angular/fire/auth';
 import { NgScrollbar, NgScrollbarModule } from 'ngx-scrollbar';
@@ -56,6 +56,7 @@ interface ChatConversation {
   photoUrl?: string | null;
   subtitle?: string;
   participantRole?: string;
+  starred?: boolean;
   [key: string]: unknown;
 }
 
@@ -103,6 +104,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('chatBodyScrollbar', { read: NgScrollbar }) chatBodyScrollbar?: NgScrollbar;
+  @ViewChild('replyEditor') replyEditorEl?: ElementRef<HTMLDivElement>;
+  @ViewChild('composeEditor') composeEditorEl?: ElementRef<HTMLDivElement>;
   private auth = inject(Auth);
   private readonly apiBaseUrl = environment.apiUrl.replace(/\/$/, '');
   conversations: ChatConversation[] = [];
@@ -125,6 +128,11 @@ export class ChatComponent implements OnInit, OnDestroy {
   attachmentUploadError: string | null = null;
   isLoadingContacts = false;
   isRemoteTyping = false;
+  activeFolder: 'all' | 'unread' | 'starred' | 'sent' = 'all';
+  composePanelOpen = false;
+  composeSubject = '';
+  composeTo = '';
+  composeBodyText = '';
   private typingTimeoutId: number | null = null;
   private typingIndicatorTimeoutId: number | null = null;
   private readonly uploadPreset = 'company_logos_unsigned';
@@ -301,6 +309,9 @@ export class ChatComponent implements OnInit, OnDestroy {
       });
 
       this.messageText = '';
+      if (this.replyEditorEl?.nativeElement) {
+        this.replyEditorEl.nativeElement.innerHTML = '';
+      }
       this.clearAttachment();
       this.isSending = false;
     };
@@ -354,14 +365,107 @@ export class ChatComponent implements OnInit, OnDestroy {
     return (convo.status ?? 'online') === 'offline' ? 'Offline' : 'Online';
   }
 
+  getConversationSubject(convo: ChatConversation | null | undefined): string {
+    if (!convo) return '';
+    const channel = this.getConversationChannel(convo);
+    const name = this.getConversationName(convo);
+    if (channel === 'sms')      return `SMS with ${name}`;
+    if (channel === 'hub')      return `Client Hub — ${name}`;
+    return `Conversation with ${name}`;
+  }
+
+  openCompose(): void {
+    this.composePanelOpen = true;
+    this.composeSubject = '';
+    this.composeTo = '';
+    this.composeBodyText = '';
+    this.clearAttachment();
+    this.cdr.markForCheck();
+  }
+
+  closeCompose(): void {
+    this.composePanelOpen = false;
+    if (this.composeEditorEl?.nativeElement) {
+      this.composeEditorEl.nativeElement.innerHTML = '';
+    }
+    this.clearAttachment();
+    this.cdr.markForCheck();
+  }
+
+  setFolder(folder: 'all' | 'unread' | 'starred' | 'sent'): void {
+    this.activeFolder = folder;
+    this.cdr.markForCheck();
+  }
+
+  toggleStar(convo: ChatConversation | null | undefined, event?: MouseEvent): void {
+    event?.stopPropagation();
+    if (!convo) return;
+    convo.starred = !convo.starred;
+    this.cdr.markForCheck();
+  }
+
+  toggleReadState(convo: ChatConversation | null | undefined): void {
+    if (!convo) return;
+    if ((convo.unreadCount ?? 0) > 0) {
+      this.resetUnreadCount(convo.id);
+    } else {
+      this.conversations = this.conversations.map((c) =>
+        c.id === convo.id ? { ...c, unreadCount: 1 } : c
+      );
+      if (this.selectedConversation?.id === convo.id) {
+        this.selectedConversation = { ...this.selectedConversation, unreadCount: 1 };
+      }
+    }
+    this.cdr.markForCheck();
+  }
+
+  markAllRead(): void {
+    this.conversations = this.conversations.map((c) => ({ ...c, unreadCount: 0 }));
+    if (this.selectedConversation) {
+      this.selectedConversation = { ...this.selectedConversation, unreadCount: 0 };
+    }
+    this.cdr.markForCheck();
+  }
+
+  execFormat(command: string): void {
+    // document.execCommand is deprecated but remains the simplest cross-browser
+    // approach for inline rich-text formatting on contenteditable without a library.
+    document.execCommand(command, false, undefined);
+  }
+
+  onReplyInput(event: Event): void {
+    this.messageText = (event.target as HTMLElement).innerText || '';
+    this.notifyTyping();
+  }
+
+  onComposeInput(event: Event): void {
+    this.composeBodyText = (event.target as HTMLElement).innerText || '';
+  }
+
+  sendComposedMessage(): void {
+    if (!this.composeTo.trim()) return;
+    const contact = this.filteredContacts.find(
+      (c) => c.name.toLowerCase() === this.composeTo.trim().toLowerCase()
+    );
+    if (contact) {
+      this.openContactChat(contact);
+    }
+    this.closeCompose();
+  }
+
   get filteredConversations(): ChatConversation[] {
     const query = this.searchQuery.trim().toLowerCase();
+    let result = this.conversations;
 
-    if (!query) {
-      return this.conversations;
+    switch (this.activeFolder) {
+      case 'unread':   result = result.filter((c) => (c.unreadCount ?? 0) > 0); break;
+      case 'starred':  result = result.filter((c) => Boolean(c.starred));       break;
+      case 'sent':     result = result.filter((c) => Boolean(c.lastMessage?.isMine)); break;
     }
 
-    return this.conversations.filter((convo) => {
+    if (!query) return result;
+
+    return result.filter((convo) => {
       const haystack = [
         convo.name,
         convo.role,
@@ -370,6 +474,10 @@ export class ChatComponent implements OnInit, OnDestroy {
 
       return haystack.includes(query);
     });
+  }
+
+  get totalUnreadCount(): number {
+    return this.conversations.reduce((sum, c) => sum + (c.unreadCount ?? 0), 0);
   }
 
   get contactConversations(): ChatConversation[] {

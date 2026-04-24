@@ -30,6 +30,7 @@ type ClientHubChatMessageWithDates = ClientHubChatMessage & {
 })
 export class ClientHubChatComponent implements OnInit, OnDestroy {
   @ViewChild('chatBody') chatBody?: ElementRef<HTMLDivElement>;
+  @ViewChild('replyEditor') replyEditorEl?: ElementRef<HTMLDivElement>;
   private readonly chatService = inject(ClientHubChatService);
   private readonly realtimeService = inject(ClientHubChatRealtimeService);
   private readonly authService = inject(ClientHubAuthService);
@@ -44,6 +45,8 @@ export class ClientHubChatComponent implements OnInit, OnDestroy {
   messages: ClientHubChatMessage[] = [];
   messageText = '';
   isRemoteTyping = false;
+  attachmentFile: File | null = null;
+  attachmentPreviewUrl: string | null = null;
   private typingTimeoutId: number | null = null;
   private typingIndicatorTimeoutId: number | null = null;
 
@@ -85,7 +88,7 @@ export class ClientHubChatComponent implements OnInit, OnDestroy {
     if (!this.conversation) return;
 
     const trimmed = this.messageText.trim();
-    if (!trimmed) return;
+    if (!trimmed && !this.attachmentFile) return;
 
     const tempId = `temp-${Date.now()}`;
     const pendingMessage: ClientHubChatMessage = {
@@ -101,6 +104,9 @@ export class ClientHubChatComponent implements OnInit, OnDestroy {
 
     this.messages = [...this.messages, pendingMessage];
     this.messageText = '';
+    if (this.replyEditorEl?.nativeElement) {
+      this.replyEditorEl.nativeElement.innerHTML = '';
+    }
     this.scrollToBottom();
 
     this.chatService.sendMessage(this.conversation.id, trimmed).subscribe({
@@ -146,6 +152,32 @@ export class ClientHubChatComponent implements OnInit, OnDestroy {
         void this.realtimeService.sendTyping(this.conversation.id, false);
       }
     }, 1800);
+  }
+
+  execFormat(command: string): void {
+    // document.execCommand is deprecated but remains the simplest cross-browser
+    // approach for inline rich-text formatting without adding a library dependency.
+    document.execCommand(command, false, undefined);
+  }
+
+  onReplyInput(event: Event): void {
+    this.messageText = (event.target as HTMLElement).innerText || '';
+    this.notifyTyping();
+  }
+
+  onAttachmentSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.attachmentFile = file;
+    this.attachmentPreviewUrl = URL.createObjectURL(file);
+  }
+
+  clearAttachment(): void {
+    if (this.attachmentPreviewUrl) {
+      URL.revokeObjectURL(this.attachmentPreviewUrl);
+    }
+    this.attachmentFile = null;
+    this.attachmentPreviewUrl = null;
   }
 
   trackByMessageId(_index: number, message: ClientHubChatMessage): string {

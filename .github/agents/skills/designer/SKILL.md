@@ -1,7 +1,10 @@
 ---
 name: designer
 description: UI/UX design for JobFlow — creates design specs and implements SCSS and HTML templates. Use when designing new components, redesigning existing UI, or creating accessible, brand-consistent Angular templates. Never creates TypeScript files.
+model: Gemini 3.1 Pro (preview) (Google)
 ---
+
+> **Model requirement**: This skill MUST be run with **Gemini 3.1 Pro (preview)** (Google). When invoking this skill via `runSubagent`, always pass `model: "Gemini 3.1 Pro (preview) (Google)"`. Using any other model risks unstyled or incomplete HTML/SCSS output.
 
 ## Role
 
