@@ -1,62 +1,132 @@
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  client-hub-chat.component.html — Designer-authored template     ║
+  ╠══════════════════════════════════════════════════════════════════╣
+  ║  Existing bindings:                                              ║
+  ║    conversationName (getter), isReady (getter)                   ║
+  ║    isLoading, isLoadingMessages, error, hasMore                  ║
+  ║    messages, messageText (ngModel), sendMessage()                ║
+  ║    loadMoreMessages(), refreshMessages(), notifyTyping()         ║
+  ║    isRemoteTyping, trackByMessageId, getAvatarInitials()         ║
+  ║  NEW bindings (engineer must add):                               ║
+  ║    scrollToBottom(): void  (public method via chatBody ref)      ║
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
 <section class="client-page client-chat">
   <header class="client-page-head">
     <div>
       <h1>Messages</h1>
       <p class="client-page-subtitle">
-        Stay in touch with {{ conversationName }} and keep work moving without phone tag.
+        Stay in touch with {{ conversationName }} — messages sync across SMS and Client Hub.
       </p>
     </div>
-    <button class="btn btn-outline-secondary" type="button" (click)="refreshMessages()" [disabled]="isLoadingMessages">
+    <button
+      class="btn btn-outline-secondary btn-sm"
+      type="button"
+      (click)="refreshMessages()"
+      [disabled]="isLoadingMessages"
+      aria-label="Refresh messages"
+    >
+      <i class="feather icon-refresh-cw" aria-hidden="true"></i>
       Refresh
     </button>
   </header>
 
-  @if (isLoading) {
-    <div class="alert alert-info">Loading your conversation...</div>
+  @if (error) {
+    <div class="alert alert-danger" role="alert">{{ error }}</div>
   }
 
-  @if (error) {
-    <div class="alert alert-danger">{{ error }}</div>
+  @if (isLoading) {
+    <!-- Loading skeleton -->
+    <div class="client-surface client-chat__skeleton-shell" aria-busy="true" aria-label="Loading conversation">
+      <div class="client-chat-skeleton__header">
+        <div class="client-chat-skeleton__avatar"></div>
+        <div class="client-chat-skeleton__title-group">
+          <div class="client-chat-skeleton__line client-chat-skeleton__line--title"></div>
+          <div class="client-chat-skeleton__line client-chat-skeleton__line--sub"></div>
+        </div>
+      </div>
+      <div class="client-chat-skeleton__body">
+        <div class="client-chat-skeleton__bubble client-chat-skeleton__bubble--friend client-chat-skeleton__bubble--sm"></div>
+        <div class="client-chat-skeleton__bubble client-chat-skeleton__bubble--me client-chat-skeleton__bubble--md"></div>
+        <div class="client-chat-skeleton__bubble client-chat-skeleton__bubble--friend client-chat-skeleton__bubble--lg"></div>
+        <div class="client-chat-skeleton__bubble client-chat-skeleton__bubble--me client-chat-skeleton__bubble--sm"></div>
+      </div>
+    </div>
   }
 
   @if (isReady) {
     <div class="client-surface chat-shell">
-      <div class="chat-header">
-        <div class="chat-title">
-          <div class="avatar-initials">{{ getAvatarInitials(conversationName) }}</div>
-          <div>
-            <h2>{{ conversationName }}</h2>
-            <p>Messages are shared across SMS and Client Hub.</p>
+
+      <!-- ── Header ──────────────────────────────────────────── -->
+      <header class="chat-header">
+        <div class="chat-header__identity">
+          <div class="chat-header__avatar" aria-hidden="true">
+            {{ getAvatarInitials(conversationName) }}
+          </div>
+          <div class="chat-header__info">
+            <h2 class="chat-header__name">{{ conversationName }}</h2>
+            <p class="chat-header__desc">Replies via SMS and Client Hub</p>
           </div>
         </div>
-        <div class="chat-meta">
-          <span class="status-dot"></span>
-          <span class="status-text">Online</span>
+        <div class="chat-header__status">
+          <span class="chat-header__status-dot" aria-hidden="true"></span>
+          <span class="chat-header__status-text">Online</span>
         </div>
-      </div>
+      </header>
 
+      <!-- ── Body ────────────────────────────────────────────── -->
       <div class="chat-body" #chatBody>
+
         @if (hasMore) {
           <div class="chat-load-more">
-            <button class="btn btn-sm btn-outline-secondary" type="button" (click)="loadMoreMessages()" [disabled]="isLoadingMessages">
-              {{ isLoadingMessages ? 'Loading...' : 'Load earlier messages' }}
+            <button
+              class="btn btn-sm btn-outline-secondary"
+              type="button"
+              (click)="loadMoreMessages()"
+              [disabled]="isLoadingMessages"
+            >
+              {{ isLoadingMessages ? 'Loading…' : 'Load earlier messages' }}
             </button>
           </div>
         }
 
         @if (messages.length) {
-          <ul class="chat-messages">
-            @for (message of messages; track message.id) {
+          <ul class="chat-messages" role="log" aria-live="polite" aria-label="Messages">
+            @for (message of messages; track trackByMessageId($index, message)) {
               <li class="chat-message" [class.is-mine]="message.isMine">
+                @if (!message.isMine && message.senderName) {
+                  <span class="chat-sender-name">{{ message.senderName }}</span>
+                }
                 <div class="chat-bubble">
-                  <p class="message-text">{{ message.content }}</p>
+                  @if (message.content) {
+                    <p class="message-text">{{ message.content }}</p>
+                  }
+                  @if (message.attachmentUrl) {
+                    <a
+                      class="message-attachment"
+                      [href]="message.attachmentUrl"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="View attachment"
+                    >
+                      <img
+                        [src]="message.attachmentUrl"
+                        class="message-attachment__img"
+                        alt="Attachment"
+                      />
+                    </a>
+                  }
                   <div class="message-meta">
                     <span class="message-time">{{ message.sentAt | date: 'shortTime' }}</span>
                     @if (message.isMine && message.isRead) {
-                      <span class="message-chip">Read</span>
+                      <span class="message-chip message-chip--read">Read</span>
                     } @else if (message.deliveryStatus) {
-                      <span class="message-chip">
-                        {{ message.deliveryStatus === 'sending' ? 'Sending...' : (message.deliveryStatus === 'sent' ? 'Sent' : 'Failed') }}
+                      <span
+                        class="message-chip"
+                        [class.message-chip--failed]="message.deliveryStatus === 'failed'"
+                      >
+                        {{ message.deliveryStatus === 'sending' ? 'Sending…' : message.deliveryStatus === 'sent' ? 'Sent' : 'Failed' }}
                       </span>
                     }
                   </div>
@@ -66,27 +136,63 @@
           </ul>
         } @else {
           <div class="chat-empty">
-            <p>No messages yet. Say hello to start the conversation.</p>
+            <div class="chat-empty__icon" aria-hidden="true">
+              <i class="feather icon-message-square"></i>
+            </div>
+            <p class="chat-empty__title">No messages yet</p>
+            <p class="chat-empty__sub">Say hello to start the conversation.</p>
           </div>
         }
-      </div>
 
+        <!-- Typing indicator -->
+        @if (isRemoteTyping) {
+          <div class="chat-typing" aria-live="polite" aria-label="Your team is typing">
+            <div class="chat-typing__bubble" aria-hidden="true">
+              <span class="chat-typing__dot"></span>
+              <span class="chat-typing__dot"></span>
+              <span class="chat-typing__dot"></span>
+            </div>
+            <span class="chat-typing__label">{{ conversationName }} is typing</span>
+          </div>
+        }
+
+      </div><!-- /chat-body -->
+
+      <!-- Scroll-to-bottom FAB -->
+      @if (messages.length > 10) {
+        <button
+          type="button"
+          class="chat-scroll-fab"
+          (click)="scrollToBottom()"
+          aria-label="Scroll to latest messages"
+          title="Jump to latest"
+        >
+          <i class="feather icon-chevron-down" aria-hidden="true"></i>
+        </button>
+      }
+
+      <!-- ── Input ────────────────────────────────────────────── -->
       <form class="chat-input" (ngSubmit)="sendMessage()">
         <input
           type="text"
           name="messageText"
-          class="form-control"
-          placeholder="Type a message"
+          class="chat-input__field"
+          placeholder="Type a message…"
           [(ngModel)]="messageText"
           (ngModelChange)="notifyTyping()"
-          />
-          <div class="chat-actions">
-            @if (isRemoteTyping) {
-              <div class="typing-indicator">Team typing...</div>
-            }
-            <button class="btn btn-primary" type="submit" [disabled]="!messageText.trim()">Send</button>
-          </div>
-        </form>
-      </div>
-    }
-  </section>
+          autocomplete="off"
+          aria-label="Message input"
+        />
+        <button
+          class="chat-input__send"
+          type="submit"
+          [disabled]="!messageText.trim()"
+          aria-label="Send message"
+        >
+          <i class="feather icon-send" aria-hidden="true"></i>
+        </button>
+      </form>
+
+    </div><!-- /chat-shell -->
+  }
+</section>
