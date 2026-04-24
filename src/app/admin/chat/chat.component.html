@@ -14,8 +14,8 @@
       <h1 class="page-header__title">Messaging</h1>
       <p class="page-header__subtitle">Manage conversations with your team and clients</p>
     </div>
-    <button type="button" class="mail-page__compose-btn" (click)="openCompose()">
-      <i class="feather icon-edit" aria-hidden="true"></i>
+    <button type="button" class="btn btn-outline-primary btn-sm mail-page__compose-btn" (click)="openCompose()">
+      <lucide-icon name="pencil" [size]="14" aria-hidden="true"></lucide-icon>
       Compose
     </button>
   </header>
@@ -28,7 +28,7 @@
 
       <!-- Compose button (sidebar version, desktop) -->
       <button type="button" class="mail-compose-btn" (click)="openCompose()">
-        <i class="feather icon-edit" aria-hidden="true"></i>
+        <lucide-icon name="pencil" [size]="14" aria-hidden="true"></lucide-icon>
         <span>Compose</span>
       </button>
 
@@ -37,7 +37,7 @@
         <button type="button" class="mail-folder"
           [class.mail-folder--active]="activeFolder === 'all'"
           (click)="setFolder('all')">
-          <i class="feather icon-inbox" aria-hidden="true"></i>
+          <lucide-icon name="inbox" [size]="14" aria-hidden="true"></lucide-icon>
           <span>All Messages</span>
           @if (totalUnreadCount > 0) {
             <span class="mail-folder__badge" aria-label="{{ totalUnreadCount }} unread">{{ totalUnreadCount }}</span>
@@ -46,19 +46,19 @@
         <button type="button" class="mail-folder"
           [class.mail-folder--active]="activeFolder === 'unread'"
           (click)="setFolder('unread')">
-          <i class="feather icon-mail" aria-hidden="true"></i>
+          <lucide-icon name="mail" [size]="14" aria-hidden="true"></lucide-icon>
           <span>Unread</span>
         </button>
         <button type="button" class="mail-folder"
           [class.mail-folder--active]="activeFolder === 'starred'"
           (click)="setFolder('starred')">
-          <i class="feather icon-star" aria-hidden="true"></i>
+          <lucide-icon name="star" [size]="14" aria-hidden="true"></lucide-icon>
           <span>Starred</span>
         </button>
         <button type="button" class="mail-folder"
           [class.mail-folder--active]="activeFolder === 'sent'"
           (click)="setFolder('sent')">
-          <i class="feather icon-send" aria-hidden="true"></i>
+          <lucide-icon name="send" [size]="14" aria-hidden="true"></lucide-icon>
           <span>Sent</span>
         </button>
       </nav>
@@ -95,7 +95,7 @@
       <!-- Search bar -->
       <div class="mail-list__search">
         <div class="mail-list__search-wrap">
-          <i class="feather icon-search" aria-hidden="true"></i>
+          <lucide-icon name="search" [size]="14" aria-hidden="true"></lucide-icon>
           <input
             type="search"
             class="mail-list__search-input"
@@ -134,7 +134,7 @@
               (click)="toggleStar(convo, $event)"
               [attr.aria-label]="convo.starred ? 'Unstar thread' : 'Star thread'"
             >
-              <i class="feather" [class.icon-star]="!convo.starred" [class.icon-star]="convo.starred" aria-hidden="true"></i>
+              <lucide-icon name="star" [size]="13" [class.mail-item__star--filled]="convo.starred" aria-hidden="true"></lucide-icon>
             </button>
 
             <!-- Main click area -->
@@ -178,7 +178,7 @@
 
         @if (filteredConversations.length === 0) {
           <li class="mail-list__empty" aria-live="polite">
-            <i class="feather icon-inbox" aria-hidden="true"></i>
+            <lucide-icon name="inbox" [size]="28" aria-hidden="true"></lucide-icon>
             <p>No threads found.</p>
           </li>
         }
@@ -203,7 +203,7 @@
             (click)="backToChatList()"
             aria-label="Back to thread list"
           >
-            <i class="feather icon-arrow-left" aria-hidden="true"></i>
+            <lucide-icon name="arrow-left" [size]="16" aria-hidden="true"></lucide-icon>
           </button>
           <div class="mail-thread__subject-group">
             <h2 class="mail-thread__subject">{{ getConversationSubject(selectedConversation) }}</h2>
@@ -223,7 +223,7 @@
               [attr.aria-label]="selectedConversation.starred ? 'Unstar' : 'Star'"
               title="Star"
             >
-              <i class="feather icon-star" aria-hidden="true"></i>
+              <lucide-icon name="star" [size]="14" aria-hidden="true"></lucide-icon>
             </button>
             <button
               type="button"
@@ -232,7 +232,7 @@
               aria-label="Toggle read state"
               title="Mark read/unread"
             >
-              <i class="feather icon-mail" aria-hidden="true"></i>
+              <lucide-icon name="mail" [size]="14" aria-hidden="true"></lucide-icon>
             </button>
             <button
               type="button"
@@ -242,7 +242,7 @@
               aria-label="Contact info"
               title="Contact info"
             >
-              <i class="feather icon-info" aria-hidden="true"></i>
+              <lucide-icon name="info" [size]="14" aria-hidden="true"></lucide-icon>
             </button>
           </div>
         </header>
@@ -340,7 +340,7 @@
                           rel="noopener noreferrer"
                           aria-label="View attachment"
                         >
-                          <i class="feather icon-paperclip" aria-hidden="true"></i>
+                          <lucide-icon name="paperclip" [size]="13" aria-hidden="true"></lucide-icon>
                           <span>View attachment</span>
                         </a>
                       }
@@ -361,7 +361,7 @@
               </div>
             } @else if (!isLoadingMessages) {
               <div class="mail-thread__empty" aria-label="No messages">
-                <i class="feather icon-message-square" aria-hidden="true"></i>
+                <lucide-icon name="message-square" [size]="24" aria-hidden="true"></lucide-icon>
                 <p>No messages yet. Send the first one below.</p>
               </div>
             }
@@ -372,7 +372,7 @@
         <!-- Reply Composer -->
         <footer class="mail-reply">
           <div class="mail-reply__header">
-            <i class="feather icon-corner-up-left" aria-hidden="true"></i>
+            <lucide-icon name="corner-up-left" [size]="14" aria-hidden="true"></lucide-icon>
             <span class="mail-reply__label">Reply</span>
             <span class="mail-reply__to">to {{ getConversationName(selectedConversation) }}</span>
           </div>
@@ -386,7 +386,7 @@
                 (click)="clearAttachment()"
                 aria-label="Remove attachment"
               >
-                <i class="feather icon-x" aria-hidden="true"></i>
+                <lucide-icon name="x" [size]="10" aria-hidden="true"></lucide-icon>
               </button>
             </div>
           }
@@ -398,13 +398,13 @@
             <!-- Formatting toolbar -->
             <div class="mail-reply__toolbar">
               <button type="button" class="mail-format-btn" (click)="execFormat('bold')" aria-label="Bold" title="Bold">
-                <i class="feather icon-bold" aria-hidden="true"></i>
+                <lucide-icon name="bold" [size]="13" aria-hidden="true"></lucide-icon>
               </button>
               <button type="button" class="mail-format-btn" (click)="execFormat('italic')" aria-label="Italic" title="Italic">
-                <i class="feather icon-italic" aria-hidden="true"></i>
+                <lucide-icon name="italic" [size]="13" aria-hidden="true"></lucide-icon>
               </button>
               <button type="button" class="mail-format-btn" (click)="execFormat('underline')" aria-label="Underline" title="Underline">
-                <i class="feather icon-underline" aria-hidden="true"></i>
+                <lucide-icon name="underline" [size]="13" aria-hidden="true"></lucide-icon>
               </button>
               <span class="mail-reply__toolbar-sep" aria-hidden="true"></span>
               <label class="mail-format-btn" aria-label="Attach file" title="Attach file">
@@ -414,7 +414,7 @@
                   class="mail-reply__file-input"
                   (change)="onAttachmentSelected($event)"
                 />
-                <i class="feather icon-paperclip" aria-hidden="true"></i>
+                <lucide-icon name="paperclip" [size]="13" aria-hidden="true"></lucide-icon>
               </label>
             </div>
 
@@ -440,7 +440,7 @@
                 [disabled]="isSending || (!messageText.trim() && !attachmentFile)"
                 aria-label="Send reply"
               >
-                <i class="feather icon-send" aria-hidden="true"></i>
+                <lucide-icon name="send" [size]="13" aria-hidden="true"></lucide-icon>
                 {{ isSending ? 'Sending…' : 'Send' }}
               </button>
             </div>
@@ -451,12 +451,12 @@
         <!-- No thread selected -->
         <div class="mail-empty-state" aria-label="No thread selected">
           <div class="mail-empty-state__icon" aria-hidden="true">
-            <i class="feather icon-mail"></i>
+            <lucide-icon name="mail" [size]="24"></lucide-icon>
           </div>
           <h3 class="mail-empty-state__title">Select a conversation</h3>
           <p class="mail-empty-state__sub">Choose a thread from the list, or compose a new message.</p>
           <button type="button" class="mail-empty-state__cta" (click)="openCompose()">
-            <i class="feather icon-edit" aria-hidden="true"></i>
+            <lucide-icon name="pencil" [size]="14" aria-hidden="true"></lucide-icon>
             Compose
           </button>
         </div>
@@ -473,7 +473,7 @@
           (click)="toggleInfoPanel()"
           aria-label="Close info panel"
         >
-          <i class="feather icon-x" aria-hidden="true"></i>
+          <lucide-icon name="x" [size]="14" aria-hidden="true"></lucide-icon>
         </button>
         <div class="mail-info-panel__avatar" aria-hidden="true">
           @if (selectedConversation.avatarUrl) {
@@ -532,7 +532,7 @@
           (click)="closeCompose()"
           aria-label="Close compose"
         >
-          <i class="feather icon-x" aria-hidden="true"></i>
+          <lucide-icon name="x" [size]="14" aria-hidden="true"></lucide-icon>
         </button>
       </header>
 
@@ -571,13 +571,13 @@
       <!-- Compose toolbar -->
       <div class="mail-compose-panel__toolbar">
         <button type="button" class="mail-format-btn" (click)="execFormat('bold')" aria-label="Bold" title="Bold">
-          <i class="feather icon-bold" aria-hidden="true"></i>
+          <lucide-icon name="bold" [size]="13" aria-hidden="true"></lucide-icon>
         </button>
         <button type="button" class="mail-format-btn" (click)="execFormat('italic')" aria-label="Italic" title="Italic">
-          <i class="feather icon-italic" aria-hidden="true"></i>
+          <lucide-icon name="italic" [size]="13" aria-hidden="true"></lucide-icon>
         </button>
         <button type="button" class="mail-format-btn" (click)="execFormat('underline')" aria-label="Underline" title="Underline">
-          <i class="feather icon-underline" aria-hidden="true"></i>
+          <lucide-icon name="underline" [size]="13" aria-hidden="true"></lucide-icon>
         </button>
         <label class="mail-format-btn" aria-label="Attach file" title="Attach file">
           <input
@@ -586,7 +586,7 @@
             class="mail-reply__file-input"
             (change)="onAttachmentSelected($event)"
           />
-          <i class="feather icon-paperclip" aria-hidden="true"></i>
+          <lucide-icon name="paperclip" [size]="13" aria-hidden="true"></lucide-icon>
         </label>
       </div>
 
@@ -608,7 +608,7 @@
         <div class="mail-compose-panel__attachment-preview">
           <img [src]="attachmentPreviewUrl" alt="Attachment preview" class="mail-reply__attachment-img" />
           <button type="button" class="mail-reply__attachment-remove" (click)="clearAttachment()" aria-label="Remove attachment">
-            <i class="feather icon-x" aria-hidden="true"></i>
+            <lucide-icon name="x" [size]="10" aria-hidden="true"></lucide-icon>
           </button>
         </div>
       }
@@ -621,11 +621,11 @@
           [disabled]="isSending || !composeTo.trim()"
           aria-label="Send message"
         >
-          <i class="feather icon-send" aria-hidden="true"></i>
+          <lucide-icon name="send" [size]="13" aria-hidden="true"></lucide-icon>
           {{ isSending ? 'Sending…' : 'Send' }}
         </button>
         <button type="button" class="mail-compose-panel__discard" (click)="closeCompose()" aria-label="Discard message">
-          <i class="feather icon-trash-2" aria-hidden="true"></i>
+          <lucide-icon name="trash-2" [size]="13" aria-hidden="true"></lucide-icon>
           Discard
         </button>
       </footer>

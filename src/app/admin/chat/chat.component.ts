@@ -5,6 +5,7 @@ import { NgScrollbar, NgScrollbarModule } from 'ngx-scrollbar';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { LucideAngularModule } from 'lucide-angular';
 import { forkJoin } from 'rxjs';
 import { ChatService } from './services/chat.service';
 import { FileUploadService } from '../branding/services/file-upload.service';
@@ -90,7 +91,8 @@ interface SmsStatusEvent {
     FormsModule,
     NgbDropdownModule,
     NgbNavModule,
-    NgbTooltipModule
+    NgbTooltipModule,
+    LucideAngularModule
   ],
   styleUrl: './chat.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

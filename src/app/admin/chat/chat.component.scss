@@ -67,7 +67,6 @@
 
   &:hover { opacity: 0.88; }
   &:active { transform: scale(0.98); }
-  i { font-size: 0.875rem; }
 }
 
 .mail-folders {
@@ -91,8 +90,6 @@
   text-align: left;
   transition: background 0.15s, color 0.15s;
 
-  i { font-size: 0.875rem; flex-shrink: 0; }
-
   &__badge {
     margin-left: auto;
     background: var(--jf-primary);
@@ -114,7 +111,6 @@
     background: var(--jf-primary-soft);
     color: var(--jf-primary);
     font-weight: 600;
-    i { color: var(--jf-primary); }
   }
 }
 
@@ -293,7 +289,6 @@
   color: var(--jf-text-muted);
   text-align: center;
   gap: 0.5rem;
-  i { font-size: 1.75rem; }
   p { margin: 0; font-size: 0.875rem; }
 }
 
@@ -339,10 +334,15 @@
   transition: color 0.15s;
   padding: 0;
 
-  &--active { color: var(--jf-warning); }
+  &--active {
+    color: var(--jf-warning);
+    ::ng-deep svg { fill: var(--jf-warning); }
+  }
   &:hover { color: var(--jf-warning); }
-  i { font-size: 0.875rem; }
 }
+
+// Filled star on lucide-icon when .mail-item__star--filled class is applied
+.mail-item__star--filled ::ng-deep svg { fill: currentColor; }
 
 .mail-item__body {
   display: flex;
@@ -569,7 +569,6 @@
 
   &:hover { background: var(--jf-primary-soft); color: var(--jf-primary); }
   &--active { background: var(--jf-primary-soft); color: var(--jf-primary); }
-  i { font-size: 0.875rem; }
 }
 
 .mail-thread__body {
@@ -588,7 +587,6 @@
   gap: 0.5rem;
   color: var(--jf-text-muted);
   padding: 2rem;
-  i { font-size: 1.5rem; }
   p { margin: 0; font-size: 0.875rem; text-align: center; }
 }
 
@@ -751,7 +749,6 @@
     transition: background 0.15s;
 
     &:hover { background: var(--jf-primary-soft); }
-    i { font-size: 0.8rem; }
   }
 }
 
@@ -860,7 +857,6 @@
     padding: 0.5rem 1.25rem;
     border-bottom: 1px solid var(--jf-border);
     background: var(--jf-bg);
-    i { font-size: 0.875rem; color: var(--jf-text-muted); }
   }
 
   &__label {
@@ -901,7 +897,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    i { font-size: 0.6rem; }
   }
 
   &__error {
@@ -974,7 +969,6 @@
 
     &:hover:not([disabled]) { opacity: 0.88; }
     &[disabled] { opacity: 0.5; cursor: not-allowed; }
-    i { font-size: 0.8rem; }
   }
 }
 
@@ -994,7 +988,6 @@
   transition: background 0.15s, color 0.15s;
 
   &:hover { background: var(--jf-primary-soft); color: var(--jf-primary); }
-  i { font-size: 0.78rem; }
 }
 
 // ─── Empty state ──────────────────────────────────────────────────────────────
@@ -1017,7 +1010,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    i { font-size: 1.4rem; color: var(--jf-primary); }
+    color: var(--jf-primary);
   }
 
   &__title {
@@ -1049,7 +1042,6 @@
     margin-top: 0.25rem;
 
     &:hover { opacity: 0.88; }
-    i { font-size: 0.875rem; }
   }
 }
 
@@ -1087,7 +1079,6 @@
     transition: background 0.15s;
 
     &:hover { background: var(--jf-primary-soft); color: var(--jf-primary); }
-    i { font-size: 0.875rem; }
   }
 
   &__avatar {
@@ -1192,7 +1183,6 @@
     transition: background 0.15s;
 
     &:hover { background: rgba(255,255,255,0.28); }
-    i { font-size: 0.875rem; }
   }
 
   &__fields {
@@ -1289,7 +1279,6 @@
     font-family: inherit;
 
     &:hover { background: var(--jf-danger-soft); color: var(--jf-danger); }
-    i { font-size: 0.78rem; }
   }
 }
 
