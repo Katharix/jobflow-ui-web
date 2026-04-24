@@ -5,12 +5,13 @@ import {AdminSidebarComponent} from "./admin-sidebar/admin-sidebar.component";
 import {AdminNavbarComponent} from './admin-navbar/admin-navbar.component';
 import {AdminFooterComponent} from './admin-footer/admin-footer.component';
 import {filter} from 'rxjs';
+import { ChatWidgetComponent } from '../../common/chat-widget/chat-widget.component';
 
 
 @Component({
    selector: 'app-admin-layout',
    standalone: true,
-   imports: [RouterOutlet, AdminNavbarComponent, AdminFooterComponent, AdminSidebarComponent, RouterModule],
+   imports: [RouterOutlet, AdminNavbarComponent, AdminFooterComponent, AdminSidebarComponent, RouterModule, ChatWidgetComponent],
    templateUrl: './admin-layout.component.html',
    styleUrl: './admin-layout.component.scss',
    encapsulation: ViewEncapsulation.None

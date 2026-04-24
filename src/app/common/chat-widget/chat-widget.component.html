@@ -1,0 +1,336 @@
+@let state = (service.state$ | async)!;
+
+<!-- ── Floating Action Button (always visible) ─────────────────────────── -->
+<div class="jf-cw" [class.jf-cw--open]="state?.phase !== 'collapsed'">
+
+  <button
+    class="jf-cw__fab"
+    [class.jf-cw__fab--unread]="state?.hasUnread"
+    [class.jf-cw__fab--hidden]="state?.phase !== 'collapsed'"
+    (click)="onFabClick()"
+    aria-label="Open JobFlow support chat">
+    <i class="ti ti-message-circle-2"></i>
+    @if (state?.hasUnread) {
+      <span class="jf-cw__unread-dot" aria-hidden="true"></span>
+    }
+  </button>
+
+  <!-- ── Chat Panel ──────────────────────────────────────────────────────── -->
+  @if (state?.phase !== 'collapsed') {
+    <div class="jf-cw__panel" role="dialog" aria-label="JobFlow Support Chat">
+
+      <!-- Header -->
+      <div class="jf-cw__header">
+        <div class="jf-cw__header-identity">
+          <div class="jf-cw__header-avatar" aria-hidden="true">JF</div>
+          <div class="jf-cw__header-text">
+            <div class="jf-cw__header-title">
+              @if (state?.phase === 'live' && state?.repName) {
+                {{ state.repName }}
+              } @else {
+                JobFlow Support
+              }
+            </div>
+            <div class="jf-cw__header-status">
+              <span class="jf-cw__status-dot"
+                    [class.jf-cw__status-dot--live]="state?.phase === 'live'"
+                    [class.jf-cw__status-dot--waiting]="state?.phase === 'waiting'"
+                    aria-hidden="true"></span>
+              @switch (state?.phase) {
+                @case ('live') { Connected }
+                @case ('waiting') { Position {{ state.queuePosition }} in queue }
+                @case ('ended') { Chat ended }
+                @default { Online }
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="jf-cw__header-actions">
+          <button class="jf-cw__icon-btn" (click)="collapseWidget()" aria-label="Minimize chat">
+            <i class="ti ti-minus"></i>
+          </button>
+          <button class="jf-cw__icon-btn jf-cw__icon-btn--danger" (click)="closeChat()" aria-label="Close and end chat">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Error Banner -->
+      @if (state?.error) {
+        <div class="jf-cw__error-banner" role="alert">
+          <i class="ti ti-alert-circle"></i>
+          <span>{{ state.error }}</span>
+          <button class="jf-cw__error-dismiss" (click)="service.clearError()" aria-label="Dismiss error">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+      }
+
+      <!-- ── BOT PHASE ─────────────────────────────────────────────────── -->
+      @if (state?.phase === 'bot') {
+        <div class="jf-cw__messages" #messagesContainer role="log" aria-live="polite" aria-label="Chat messages">
+          @for (msg of state.messages; track msg.id) {
+            <div class="jf-cw__msg"
+                 [class.jf-cw__msg--outgoing]="msg.sender === 'user'"
+                 [class.jf-cw__msg--incoming]="msg.sender !== 'user'">
+              @if (msg.sender !== 'user') {
+                <div class="jf-cw__msg-avatar" aria-hidden="true">
+                  <i class="ti ti-robot"></i>
+                </div>
+              }
+              <div class="jf-cw__msg-body">
+                <div class="jf-cw__bubble" [innerHTML]="msg.content | jfMarkdownInline"></div>
+                <div class="jf-cw__timestamp">{{ msg.timestamp | date:'shortTime' }}</div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="jf-cw__input-bar">
+          <textarea
+            class="jf-cw__textarea"
+            [(ngModel)]="messageText"
+            (keydown)="onBotKeydown($event)"
+            placeholder="Type a message…"
+            rows="1"
+            aria-label="Chat message input"
+            maxlength="1000">
+          </textarea>
+          <button
+            class="jf-cw__send-btn"
+            (click)="sendBotMessage()"
+            [disabled]="!messageText.trim()"
+            aria-label="Send message">
+            <i class="ti ti-send-2"></i>
+          </button>
+        </div>
+      }
+
+      <!-- ── VALIDATE PHASE ────────────────────────────────────────────── -->
+      @if (state?.phase === 'validate') {
+        <div class="jf-cw__validate">
+          <div class="jf-cw__validate-icon" aria-hidden="true">
+            <i class="ti ti-shield-check"></i>
+          </div>
+          <h3 class="jf-cw__validate-title">Before we connect you</h3>
+          <p class="jf-cw__validate-subtitle">
+            Please verify your contact information so our rep can follow up if needed.
+          </p>
+
+          <form #vForm="ngForm" (ngSubmit)="submitValidation(vForm)" novalidate class="jf-cw__validate-form">
+            <div class="jf-cw__field">
+              <label class="jf-cw__label" for="cw-name">Full Name <span aria-hidden="true">*</span></label>
+              <input
+                id="cw-name"
+                type="text"
+                class="jf-cw__input"
+                [class.jf-cw__input--invalid]="cwName.invalid && cwName.touched"
+                name="name"
+                [(ngModel)]="validationForm.name"
+                #cwName="ngModel"
+                required
+                minlength="2"
+                maxlength="100"
+                placeholder="Jane Smith"
+                autocomplete="name" />
+              @if (cwName.invalid && cwName.touched) {
+                <span class="jf-cw__field-error" role="alert">Name is required.</span>
+              }
+            </div>
+
+            <div class="jf-cw__field">
+              <label class="jf-cw__label" for="cw-email">Email Address <span aria-hidden="true">*</span></label>
+              <input
+                id="cw-email"
+                type="email"
+                class="jf-cw__input"
+                [class.jf-cw__input--invalid]="cwEmail.invalid && cwEmail.touched"
+                name="email"
+                [(ngModel)]="validationForm.email"
+                #cwEmail="ngModel"
+                [required]="!validationForm.phone"
+                email
+                maxlength="254"
+                placeholder="jane@example.com"
+                autocomplete="email" />
+              @if (cwEmail.invalid && cwEmail.touched) {
+                <span class="jf-cw__field-error" role="alert">A valid email is required.</span>
+              }
+            </div>
+
+            <div class="jf-cw__field">
+              <label class="jf-cw__label" for="cw-phone">Phone Number <span class="jf-cw__label-optional">(optional)</span></label>
+              <input
+                id="cw-phone"
+                type="tel"
+                class="jf-cw__input"
+                name="phone"
+                [(ngModel)]="validationForm.phone"
+                maxlength="20"
+                placeholder="(555) 555-5555"
+                autocomplete="tel" />
+            </div>
+
+            <div class="jf-cw__validate-actions">
+              <button type="button" class="jf-cw__btn jf-cw__btn--ghost" (click)="cancelValidation()">
+                Back
+              </button>
+              <button type="submit" class="jf-cw__btn jf-cw__btn--primary" [disabled]="vForm.invalid">
+                <i class="ti ti-user-check"></i>
+                Connect Me
+              </button>
+            </div>
+          </form>
+        </div>
+      }
+
+      <!-- ── WAITING PHASE ─────────────────────────────────────────────── -->
+      @if (state?.phase === 'waiting') {
+        <div class="jf-cw__waiting">
+          <div class="jf-cw__waiting-anim" aria-hidden="true">
+            <div class="jf-cw__pulse-ring"></div>
+            <div class="jf-cw__pulse-ring jf-cw__pulse-ring--2"></div>
+            <i class="ti ti-headset jf-cw__waiting-icon"></i>
+          </div>
+
+          <h3 class="jf-cw__waiting-title">You're in the queue</h3>
+
+          @if (state.queuePosition !== null) {
+            <p class="jf-cw__waiting-position">
+              Position <strong>{{ state.queuePosition }}</strong>
+            </p>
+          }
+          @if (state.estimatedWait) {
+            <p class="jf-cw__waiting-eta">
+              Estimated wait: {{ formatWait(state.estimatedWait) }}
+            </p>
+          }
+
+          <p class="jf-cw__waiting-note">
+            You can minimize this window — we'll notify you when a rep is ready.
+          </p>
+
+          <button class="jf-cw__btn jf-cw__btn--ghost jf-cw__btn--sm" (click)="endSession()">
+            <i class="ti ti-x"></i>
+            Leave Queue
+          </button>
+        </div>
+      }
+
+      <!-- ── LIVE PHASE ────────────────────────────────────────────────── -->
+      @if (state?.phase === 'live') {
+        <div class="jf-cw__messages" #messagesContainer role="log" aria-live="polite" aria-label="Chat messages">
+          @for (msg of state.messages; track msg.id) {
+            <div class="jf-cw__msg"
+                 [class.jf-cw__msg--outgoing]="msg.sender === 'user'"
+                 [class.jf-cw__msg--incoming]="msg.sender !== 'user'">
+              @if (msg.sender !== 'user') {
+                <div class="jf-cw__msg-avatar jf-cw__msg-avatar--rep" aria-hidden="true">
+                  {{ msg.senderName.charAt(0).toUpperCase() }}
+                </div>
+              }
+              <div class="jf-cw__msg-body">
+                @if (msg.sender !== 'user') {
+                  <div class="jf-cw__msg-name">{{ msg.senderName }}</div>
+                }
+                @if (msg.content) {
+                  <div class="jf-cw__bubble">{{ msg.content }}</div>
+                }
+                @if (msg.fileUrl) {
+                  <div class="jf-cw__bubble jf-cw__bubble--file">
+                    <a [href]="msg.fileUrl" target="_blank" rel="noopener noreferrer" class="jf-cw__file-link">
+                      <i class="ti ti-paperclip"></i>
+                      <span class="jf-cw__file-name">{{ msg.fileName }}</span>
+                      @if (msg.fileSize) {
+                        <span class="jf-cw__file-size">{{ formatFileSize(msg.fileSize) }}</span>
+                      }
+                    </a>
+                  </div>
+                }
+                <div class="jf-cw__timestamp">{{ msg.timestamp | date:'shortTime' }}</div>
+              </div>
+            </div>
+          }
+
+          @if (state.isRepTyping) {
+            <div class="jf-cw__msg jf-cw__msg--incoming">
+              <div class="jf-cw__msg-avatar jf-cw__msg-avatar--rep" aria-hidden="true">
+                {{ state.repName?.charAt(0) ?? 'R' }}
+              </div>
+              <div class="jf-cw__bubble jf-cw__bubble--typing" aria-label="Rep is typing">
+                <span class="jf-cw__dot"></span>
+                <span class="jf-cw__dot"></span>
+                <span class="jf-cw__dot"></span>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- File upload indicator -->
+        @if (state.isUploading) {
+          <div class="jf-cw__upload-status" role="status" aria-live="polite">
+            <i class="ti ti-loader-2 jf-cw__spin"></i>
+            <span>Uploading file…</span>
+          </div>
+        }
+
+        <div class="jf-cw__input-bar">
+          <label class="jf-cw__attach-btn" aria-label="Attach file" title="Attach file">
+            <i class="ti ti-paperclip"></i>
+            <input type="file" class="jf-cw__file-input" (change)="onFileSelected($event)"
+                   accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.zip"
+                   aria-label="Select file to upload" />
+          </label>
+          <textarea
+            class="jf-cw__textarea"
+            [(ngModel)]="messageText"
+            (keydown)="onLiveKeydown($event)"
+            (ngModelChange)="onInputChange()"
+            placeholder="Type a message…"
+            rows="1"
+            aria-label="Chat message input"
+            maxlength="2000">
+          </textarea>
+          <button
+            class="jf-cw__send-btn"
+            (click)="sendLiveMessage()"
+            [disabled]="!messageText.trim() || state.isUploading"
+            aria-label="Send message">
+            <i class="ti ti-send-2"></i>
+          </button>
+        </div>
+
+        <div class="jf-cw__live-footer">
+          <button class="jf-cw__end-btn" (click)="endSession()">
+            <i class="ti ti-phone-off"></i>
+            End Chat
+          </button>
+        </div>
+      }
+
+      <!-- ── ENDED PHASE ───────────────────────────────────────────────── -->
+      @if (state?.phase === 'ended') {
+        <div class="jf-cw__ended">
+          <div class="jf-cw__ended-icon" aria-hidden="true">
+            <i class="ti ti-circle-check"></i>
+          </div>
+          <h3 class="jf-cw__ended-title">Chat Ended</h3>
+          <p class="jf-cw__ended-message">
+            Thank you for contacting JobFlow Support! We hope we were able to assist you.
+            If you have further questions, feel free to start a new chat.
+          </p>
+          <p class="jf-cw__ended-contact">
+            You can also reach us at<br />
+            <strong>1-877-JOB-FLOW</strong> Mon–Fri 8am–6pm EST
+          </p>
+          <button class="jf-cw__btn jf-cw__btn--primary jf-cw__btn--full" (click)="startNewChat()">
+            <i class="ti ti-message-plus"></i>
+            Start New Chat
+          </button>
+        </div>
+      }
+
+    </div>
+  }
+</div>

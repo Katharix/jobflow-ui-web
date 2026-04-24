@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Auth, signOut } from '@angular/fire/auth';
+import { RepChatPanelComponent } from '../components/rep-chat-panel/rep-chat-panel.component';
 
 interface SupportHubNavItem {
   label: string;
@@ -17,7 +18,7 @@ interface NavGroup {
 @Component({
   selector: 'app-support-hub-layout',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet, RepChatPanelComponent],
   templateUrl: './support-hub-layout.component.html',
   styleUrl: './support-hub-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

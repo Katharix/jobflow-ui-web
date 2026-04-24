@@ -2,6 +2,7 @@
 import { Component, ViewEncapsulation, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ClientHubAuthService } from '../services/client-hub-auth.service';
+import { ChatWidgetComponent } from '../../common/chat-widget/chat-widget.component';
 
 interface ClientHubNavItem {
   label: string;
@@ -11,7 +12,7 @@ interface ClientHubNavItem {
 @Component({
   selector: 'app-client-hub-layout',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, ChatWidgetComponent],
   templateUrl: './client-hub-layout.component.html',
   styleUrl: './client-hub-layout.component.scss',
   encapsulation: ViewEncapsulation.None,
