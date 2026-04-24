@@ -3,7 +3,7 @@
   ║  chat.component.html — Designer-authored template                ║
   ║  Engineer: bindings are already wired in chat.component.ts       ║
   ╠══════════════════════════════════════════════════════════════════╣
-  ║  Template bindings used:                                         ║
+  ║  Existing bindings:                                              ║
   ║    filteredConversations, selectedConversation                    ║
   ║    selectConversation(convo), backToChatList(), startNewChat()    ║
   ║    filteredContacts, employeeContacts, clientContacts             ║
@@ -12,12 +12,18 @@
   ║    messages, messageText (ngModel), sendMessage()                 ║
   ║    notifyTyping(), defaultNavActiveId (ngbNav)                    ║
   ║    hasMoreMessages, isLoadingMessages, loadMoreMessages()         ║
-  ║    isSending, attachmentPreviewUrl                                ║
+  ║    isSending, attachmentPreviewUrl, attachmentUploadError         ║
   ║    onAttachmentSelected($event), clearAttachment()                ║
   ║    isRemoteTyping, chatPanelVisible                               ║
   ║    getConversationName/Preview/Role(), getAvatarInitials()        ║
   ║    getContactBadge/Subtitle(), getMessageStatusLabel()            ║
   ║    trackByConversationId, trackByContactId, trackByMessage        ║
+  ║  NEW bindings (engineer must add to chat.component.ts):          ║
+  ║    showInfoPanel: boolean                                         ║
+  ║    toggleInfoPanel(): void                                        ║
+  ║    getConversationChannel(convo): string                          ║
+  ║    getLastSeenText(convo): string                                 ║
+  ║    scrollToBottom(): void  (make existing private method public)  ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
 
@@ -32,7 +38,7 @@
   </header>
 
   <!-- ── Chat Panel ─────────────────────────────────────────── -->
-  <div class="chat-panel">
+  <div class="chat-panel" [class.chat-panel--info-open]="showInfoPanel">
 
     <!-- ── Left Aside: Conversations / Contacts ─────────────── -->
     <aside
@@ -123,12 +129,19 @@
                             </div>
                             <div class="chat-thread__bottom">
                               <span class="chat-thread__preview">{{ getConversationPreview(convo) }}</span>
-                              @if (convo.unreadCount) {
-                                <span
-                                  class="chat-thread__badge"
-                                  [attr.aria-label]="convo.unreadCount + ' unread'"
-                                >{{ convo.unreadCount }}</span>
-                              }
+                              <div class="chat-thread__indicators">
+                                @if (getConversationChannel(convo)) {
+                                  <span class="chat-thread__channel chat-thread__channel--{{ getConversationChannel(convo) }}">
+                                    {{ getConversationChannel(convo) }}
+                                  </span>
+                                }
+                                @if (convo.unreadCount) {
+                                  <span
+                                    class="chat-thread__badge"
+                                    [attr.aria-label]="convo.unreadCount + ' unread'"
+                                  >{{ convo.unreadCount }}</span>
+                                }
+                              </div>
                             </div>
                           </div>
                         </button>
@@ -299,12 +312,24 @@
               <span class="chat-content__header-name">
                 {{ getConversationName(selectedConversation) }}
               </span>
-              <span class="chat-content__header-role">
-                {{ getConversationRole(selectedConversation) }}
+              <span class="chat-content__header-status">
+                <span class="chat-content__status-dot" aria-hidden="true"></span>
+                {{ getLastSeenText(selectedConversation) }}
               </span>
             </div>
           </div>
-          <div class="chat-content__header-actions" aria-label="Conversation actions"></div>
+          <div class="chat-content__header-actions" aria-label="Conversation actions">
+            <button
+              type="button"
+              class="chat-content__action-btn"
+              (click)="toggleInfoPanel()"
+              [class.chat-content__action-btn--active]="showInfoPanel"
+              aria-label="Toggle contact information panel"
+              title="Contact info"
+            >
+              <i class="feather icon-info" aria-hidden="true"></i>
+            </button>
+          </div>
         </header>
 
         <!-- Chat Body -->
@@ -321,6 +346,29 @@
                 >
                   {{ isLoadingMessages ? 'Loading…' : 'Load earlier messages' }}
                 </button>
+              </div>
+            }
+
+            @if (isLoadingMessages && !messages.length) {
+              <!-- Loading skeleton -->
+              <div class="chat-skeleton" aria-busy="true" aria-label="Loading messages">
+                <div class="chat-skeleton__row chat-skeleton__row--friend">
+                  <div class="chat-skeleton__avatar"></div>
+                  <div class="chat-skeleton__bubble chat-skeleton__bubble--sm"></div>
+                </div>
+                <div class="chat-skeleton__row chat-skeleton__row--me">
+                  <div class="chat-skeleton__bubble chat-skeleton__bubble--md"></div>
+                </div>
+                <div class="chat-skeleton__row chat-skeleton__row--friend">
+                  <div class="chat-skeleton__avatar"></div>
+                  <div class="chat-skeleton__bubble chat-skeleton__bubble--lg"></div>
+                </div>
+                <div class="chat-skeleton__row chat-skeleton__row--me">
+                  <div class="chat-skeleton__bubble chat-skeleton__bubble--sm"></div>
+                </div>
+                <div class="chat-skeleton__row chat-skeleton__row--me">
+                  <div class="chat-skeleton__bubble chat-skeleton__bubble--md"></div>
+                </div>
               </div>
             }
 
@@ -348,6 +396,9 @@
                       </div>
                     }
                     <div class="chat-message__content">
+                      @if (!msg.isMine && msg.senderName) {
+                        <span class="chat-message__sender-name">{{ msg.senderName }}</span>
+                      }
                       <div class="chat-message__bubble">
                         @if (msg.content) {
                           <p class="chat-message__text">{{ msg.content }}</p>
@@ -409,6 +460,19 @@
             }
 
           </ng-scrollbar>
+
+          <!-- Scroll-to-bottom FAB -->
+          @if (messages.length > 10) {
+            <button
+              type="button"
+              class="chat-scroll-to-bottom"
+              (click)="scrollToBottom()"
+              aria-label="Scroll to latest messages"
+              title="Jump to latest"
+            >
+              <i class="feather icon-chevron-down" aria-hidden="true"></i>
+            </button>
+          }
         </div><!-- /chat-content__body -->
 
         <!-- Chat Footer -->
@@ -420,6 +484,11 @@
                 class="chat-compose__attachment-thumb"
                 alt="Attachment preview"
               />
+              <div class="chat-compose__attachment-info">
+                @if (attachmentFile?.name) {
+                  <span class="chat-compose__attachment-name">{{ attachmentFile?.name }}</span>
+                }
+              </div>
               <button
                 type="button"
                 class="chat-compose__attachment-remove"
@@ -431,11 +500,11 @@
             </div>
           }
           <div class="chat-compose">
-            <label class="chat-compose__clip" aria-label="Attach a file">
+            <label class="chat-compose__clip" aria-label="Attach a file" title="Attach file">
               <input
                 type="file"
                 class="chat-compose__clip-input"
-                accept="image/*"
+                accept="image/*,application/pdf"
                 (change)="onAttachmentSelected($event)"
               />
               <i class="feather icon-paperclip" aria-hidden="true"></i>
@@ -458,9 +527,16 @@
               [disabled]="isSending || (!messageText.trim() && !attachmentPreviewUrl)"
               aria-label="Send message"
             >
-              <i class="feather icon-send" aria-hidden="true"></i>
+              @if (isSending) {
+                <i class="feather icon-loader" aria-hidden="true"></i>
+              } @else {
+                <i class="feather icon-send" aria-hidden="true"></i>
+              }
             </button>
           </div>
+          @if (attachmentUploadError) {
+            <p class="chat-compose__upload-error" role="alert">{{ attachmentUploadError }}</p>
+          }
         </footer>
 
       } @else {
@@ -477,6 +553,87 @@
       }
 
     </section><!-- /chat-panel__content -->
+
+    <!-- ── Info Panel (slide-in from right) ────────────────── -->
+    @if (selectedConversation) {
+      <aside
+        class="chat-panel__info"
+        [class.chat-panel__info--open]="showInfoPanel"
+        aria-label="Contact details"
+      >
+        <div class="chat-info">
+          <header class="chat-info__header">
+            <h3 class="chat-info__title">Contact Info</h3>
+            <button
+              type="button"
+              class="chat-info__close"
+              (click)="toggleInfoPanel()"
+              aria-label="Close contact info"
+            >
+              <i class="feather icon-x" aria-hidden="true"></i>
+            </button>
+          </header>
+
+          <!-- Avatar + Name -->
+          <div class="chat-info__hero">
+            <div class="chat-info__avatar">
+              @if (selectedConversation.avatarUrl) {
+                <img
+                  [src]="selectedConversation.avatarUrl"
+                  class="chat-info__avatar-img"
+                  [alt]="getConversationName(selectedConversation)"
+                />
+              } @else {
+                <span class="chat-info__avatar-initials">
+                  {{ getAvatarInitials(getConversationName(selectedConversation)) }}
+                </span>
+              }
+            </div>
+            <h4 class="chat-info__name">{{ getConversationName(selectedConversation) }}</h4>
+            <span class="chat-info__role-badge">{{ getConversationRole(selectedConversation) }}</span>
+          </div>
+
+          <!-- Details List -->
+          <ul class="chat-info__details" aria-label="Contact details">
+            <li class="chat-info__detail">
+              <span class="chat-info__detail-icon">
+                <i class="feather icon-layers" aria-hidden="true"></i>
+              </span>
+              <div class="chat-info__detail-body">
+                <span class="chat-info__detail-label">Channel</span>
+                <span class="chat-info__detail-value">{{ getConversationChannel(selectedConversation) }}</span>
+              </div>
+            </li>
+            @if (selectedConversation['phoneNumber']) {
+              <li class="chat-info__detail">
+                <span class="chat-info__detail-icon">
+                  <i class="feather icon-phone" aria-hidden="true"></i>
+                </span>
+                <div class="chat-info__detail-body">
+                  <span class="chat-info__detail-label">Phone</span>
+                  <a class="chat-info__detail-value" [href]="'tel:' + selectedConversation['phoneNumber']">
+                    {{ selectedConversation['phoneNumber'] }}
+                  </a>
+                </div>
+              </li>
+            }
+            @if (selectedConversation['email']) {
+              <li class="chat-info__detail">
+                <span class="chat-info__detail-icon">
+                  <i class="feather icon-mail" aria-hidden="true"></i>
+                </span>
+                <div class="chat-info__detail-body">
+                  <span class="chat-info__detail-label">Email</span>
+                  <a class="chat-info__detail-value" [href]="'mailto:' + selectedConversation['email']">
+                    {{ selectedConversation['email'] }}
+                  </a>
+                </div>
+              </li>
+            }
+          </ul>
+        </div>
+      </aside>
+    }
 
   </div><!-- /chat-panel -->
 

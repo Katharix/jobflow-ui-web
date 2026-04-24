@@ -293,7 +293,7 @@ export class ClientHubChatComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  private scrollToBottom(): void {
+  scrollToBottom(): void {
     if (!this.chatBody?.nativeElement) return;
     setTimeout(() => {
       const element = this.chatBody?.nativeElement;

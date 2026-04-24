@@ -113,6 +113,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   searchQuery = '';
   defaultNavActiveId = 1;
   chatPanelVisible = false;
+  showInfoPanel = false;
   currentUserId = '';
   readonly pageSize = 50;
   private messagesPage = 1;
@@ -334,6 +335,23 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   backToChatList(): void {
     this.chatPanelVisible = false;
+  }
+
+  toggleInfoPanel(): void {
+    this.showInfoPanel = !this.showInfoPanel;
+    this.cdr.markForCheck();
+  }
+
+  getConversationChannel(convo: ChatConversation | null | undefined): string {
+    const role = (convo?.role ?? '').toLowerCase();
+    if (role.includes('sms') || convo?.['phoneNumber']) return 'sms';
+    if (role.includes('hub') || role.includes('client')) return 'hub';
+    return 'internal';
+  }
+
+  getLastSeenText(convo: ChatConversation | null | undefined): string {
+    if (!convo) return '';
+    return (convo.status ?? 'online') === 'offline' ? 'Offline' : 'Online';
   }
 
   get filteredConversations(): ChatConversation[] {
@@ -724,7 +742,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.loadConversations();
   }
 
-  private scrollToBottom(): void {
+  scrollToBottom(): void {
     if (!this.chatBodyScrollbar) return;
     setTimeout(() => {
       this.chatBodyScrollbar?.scrollTo({ bottom: 0, duration: 0 });

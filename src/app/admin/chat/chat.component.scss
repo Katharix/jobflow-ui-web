@@ -823,7 +823,7 @@ $jf-text-section: var(--jf-text-section);
     word-break: break-word;
 
     .chat-message--me & {
-      background: $jf-primary-soft;
+      background: $jf-primary;
       border-bottom-right-radius: 4px;
     }
 
@@ -839,6 +839,8 @@ $jf-text-section: var(--jf-text-section);
     color: $jf-text;
     margin: 0;
     line-height: 1.5;
+
+    .chat-message--me & { color: #ffffff; }
   }
 
   &__attachment {
@@ -864,6 +866,8 @@ $jf-text-section: var(--jf-text-section);
     font-size: 0.6875rem;
     color: $jf-text-muted;
     white-space: nowrap;
+
+    .chat-message--me & { color: rgba(255, 255, 255, 0.7); }
   }
 
   &__status-chip {
@@ -875,10 +879,22 @@ $jf-text-section: var(--jf-text-section);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    background: $jf-primary-soft;
-    color: $jf-primary;
+    background: rgba(255, 255, 255, 0.22);
+    color: rgba(255, 255, 255, 0.9);
+
+    .chat-message--friend & {
+      background: $jf-primary-soft;
+      color: $jf-primary;
+    }
   }
-}
+
+  &__sender-name {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: $jf-text-muted;
+    margin-bottom: 0.2rem;
+    padding-left: 0.25rem;
+  }
 
 // ─── Typing indicator ────────────────────────────────────────────────────────
 .chat-typing {
@@ -1032,3 +1048,353 @@ $jf-text-section: var(--jf-text-section);
   }
 }
 
+// ─── Header action button (info toggle) ──────────────────────────────────────
+.chat-content {
+  &__action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid $jf-border;
+    background: transparent;
+    color: $jf-text-muted;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+    &:hover          { background: $jf-bg; color: $jf-primary; border-color: $jf-primary; }
+    &:focus-visible  { outline: 2px solid $jf-primary; outline-offset: 2px; }
+
+    &--active {
+      background: $jf-primary-soft;
+      color: $jf-primary;
+      border-color: $jf-primary;
+    }
+  }
+
+  &__header-status {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    color: $jf-text-muted;
+  }
+
+  &__status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--jf-success, #2D898B);
+    flex-shrink: 0;
+  }
+}
+
+// ─── Thread: channel badge + indicators wrapper ───────────────────────────────
+.chat-thread {
+  &__indicators {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-shrink: 0;
+  }
+
+  &__channel {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.1rem 0.4rem;
+    border-radius: 999px;
+    font-size: 0.5625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+
+    &--sms {
+      background: var(--jf-warning-soft, rgba(255, 166, 48, 0.14));
+      color: var(--jf-warning, #FFA630);
+    }
+
+    &--hub {
+      background: var(--jf-success-soft, rgba(45, 137, 139, 0.12));
+      color: var(--jf-success, #2D898B);
+    }
+
+    &--internal {
+      background: var(--jf-info-soft, rgba(133, 149, 209, 0.16));
+      color: var(--jf-info, #8595D1);
+    }
+  }
+}
+
+// ─── Compose enhancements ────────────────────────────────────────────────────
+.chat-compose {
+  &__attachment-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__attachment-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $jf-text;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+
+  &__upload-error {
+    font-size: 0.75rem;
+    color: var(--jf-danger, #E03616);
+    margin: 0.375rem 0 0;
+    padding: 0 0.25rem;
+  }
+}
+
+// ─── Scroll-to-bottom FAB ────────────────────────────────────────────────────
+.chat-scroll-to-bottom {
+  position: absolute;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid $jf-border;
+  background: $jf-surface;
+  color: $jf-text-muted;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: $jf-shadow;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s, transform 0.1s;
+  z-index: 5;
+
+  &:hover        { background: $jf-primary; color: #ffffff; box-shadow: $jf-shadow-hover; transform: scale(1.08); }
+  &:focus-visible { outline: 2px solid $jf-primary; outline-offset: 2px; }
+}
+
+.chat-content__body { position: relative; }
+
+// ─── Loading skeleton ────────────────────────────────────────────────────────
+.chat-skeleton {
+  padding: 1.25rem 1.25rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  &__row {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.625rem;
+
+    &--me { flex-direction: row-reverse; }
+  }
+
+  &__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, var(--jf-skeleton-from) 0%, var(--jf-skeleton-mid) 50%, var(--jf-skeleton-from) 100%);
+    background-size: 200% 100%;
+    animation: jf-skeleton-shimmer 1.4s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  &__bubble {
+    height: 38px;
+    border-radius: 18px;
+    background: linear-gradient(90deg, var(--jf-skeleton-from) 0%, var(--jf-skeleton-mid) 50%, var(--jf-skeleton-from) 100%);
+    background-size: 200% 100%;
+    animation: jf-skeleton-shimmer 1.4s ease-in-out infinite;
+
+    &--sm  { width: 140px; }
+    &--md  { width: 200px; }
+    &--lg  { width: 260px; }
+  }
+}
+
+@keyframes jf-skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ─── Info panel ──────────────────────────────────────────────────────────────
+.chat-panel {
+  &__info {
+    width: 0;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-left: 0 solid $jf-border;
+    background: $jf-surface;
+    transition: width 0.25s ease, border-width 0.25s ease;
+
+    &--open {
+      width: 280px;
+      border-left-width: 1px;
+
+      @media (max-width: 991.98px) {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        z-index: 20;
+        border-left: none;
+        box-shadow: $jf-shadow;
+      }
+    }
+  }
+}
+
+.chat-info {
+  width: 280px;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1.125rem;
+    border-bottom: 1px solid $jf-border;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: $jf-text;
+    margin: 0;
+  }
+
+  &__close {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: $jf-text-muted;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover        { background: $jf-bg; color: $jf-text; }
+    &:focus-visible { outline: 2px solid $jf-primary; outline-offset: 2px; }
+  }
+
+  &__hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    gap: 0.5rem;
+    text-align: center;
+    border-bottom: 1px solid $jf-border;
+  }
+
+  &__avatar {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 0.25rem;
+  }
+
+  &__avatar-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  &__avatar-initials {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: $jf-primary-soft;
+    color: $jf-primary;
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+  }
+
+  &__name {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: $jf-text;
+    margin: 0;
+  }
+
+  &__role-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: $jf-primary-soft;
+    color: $jf-primary;
+  }
+
+  &__details {
+    list-style: none;
+    margin: 0;
+    padding: 0.75rem 0;
+  }
+
+  &__detail {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.625rem 1.125rem;
+  }
+
+  &__detail-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: $jf-bg;
+    color: $jf-text-muted;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+  }
+
+  &__detail-body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__detail-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $jf-text-section;
+    margin-bottom: 0.1rem;
+  }
+
+  &__detail-value {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: $jf-text;
+    text-decoration: none;
+    word-break: break-all;
+
+    &:hover { color: $jf-primary; text-decoration: underline; }
+  }
+}
+}
