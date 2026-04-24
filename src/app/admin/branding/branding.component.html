@@ -1,21 +1,22 @@
 <div class="page-container">
   <header class="page-header">
     <div class="page-header__title-group">
-      <h1 class="page-title">{{ 'admin.branding.title' | translate }}</h1>
+      <h1 class="page-header__title">{{ 'admin.branding.title' | translate }}</h1>
       <p>{{ 'admin.branding.subtitle' | translate }}</p>
     </div>
     <div class="page-header__actions">
-      <button pButton type="button" [label]="'admin.branding.actions.save' | translate" icon="pi pi-save" (click)="onSave()" [loading]="isSaving" [disabled]="isSaving">
-        <span class="visually-hidden">{{ 'admin.branding.actions.save' | translate }}</span>
+      <button type="button" class="btn btn-primary d-inline-flex align-items-center gap-2" (click)="onSave()" [disabled]="isSaving">
+        <lucide-icon name="save" [size]="15"></lucide-icon>
+        {{ 'admin.branding.actions.save' | translate }}
       </button>
     </div>
   </header>
 
   @if (saveStatus === 'success') {
-    <p-message severity="success" [text]="saveMessage" styleClass="w-100 mb-3"></p-message>
+    <div class="alert alert-success py-2 px-3">{{ saveMessage }}</div>
   }
   @if (saveStatus === 'error') {
-    <p-message severity="error" [text]="saveMessage" styleClass="w-100 mb-3"></p-message>
+    <div class="alert alert-danger py-2 px-3">{{ saveMessage }}</div>
   }
 
   <div class="row g-4 align-items-start">
@@ -31,7 +32,7 @@
           </div>
           
           <div class="logo-upload-zone" role="button" tabindex="0" (click)="fileInput.click()" (keydown.enter)="fileInput.click()" (keydown.space)="fileInput.click()">
-            <i class="pi pi-cloud-upload logo-upload-icon"></i>
+            <lucide-icon name="upload-cloud" [size]="32" class="logo-upload-icon"></lucide-icon>
             <p class="fw-semibold mb-1">{{ 'admin.branding.sections.logo.cta' | translate }}</p>
             <span class="text-muted small">{{ 'admin.branding.sections.logo.note' | translate }}</span>
             <input #fileInput type="file" id="logoUpload" hidden (change)="onLogoSelected($event)" accept="image/png,image/jpeg,image/webp" />
@@ -40,7 +41,9 @@
           @if (logoPreview) {
             <div class="logo-preview mt-3">
               <img [src]="logoPreview" [alt]="'admin.branding.sections.logo.previewAlt' | translate" />
-              <button pButton type="button" icon="pi pi-trash" class="p-button-danger p-button-text p-button-sm ms-3" aria-label="Remove logo" (click)="removeLogo()"></button>
+              <button type="button" class="btn btn-link text-danger btn-sm p-0 ms-3" aria-label="Remove logo" (click)="removeLogo()">
+                <lucide-icon name="trash-2" [size]="16"></lucide-icon>
+              </button>
             </div>
           }
         </div>
@@ -58,7 +61,11 @@
               <span class="form-label fw-semibold">{{ 'admin.branding.sections.colors.primary' | translate }}</span>
               <div class="color-swatch-box">
                 <div class="swatch-display" [style.backgroundColor]="primaryColor">
-                  <color-twitter class="color-picker-overlay" formControlName="primaryColor" [color]="brandingForm.value.primaryColor" (onChangeComplete)="onPrimaryColorChange($event)"></color-twitter>
+                  <input type="color"
+                         class="swatch-color-input"
+                         [value]="primaryColor"
+                         (input)="onPrimaryColorChange($event)"
+                         aria-label="Choose primary color" />
                 </div>
                 <div class="swatch-info">
                   <span class="fw-semibold">Primary</span>
@@ -70,7 +77,11 @@
               <span class="form-label fw-semibold">{{ 'admin.branding.sections.colors.secondary' | translate }}</span>
               <div class="color-swatch-box">
                 <div class="swatch-display" [style.backgroundColor]="secondaryColor">
-                  <color-twitter class="color-picker-overlay" formControlName="secondaryColor" [color]="brandingForm.value.secondaryColor" (onChangeComplete)="onSecondaryColorChange($event)"></color-twitter>
+                  <input type="color"
+                         class="swatch-color-input"
+                         [value]="secondaryColor"
+                         (input)="onSecondaryColorChange($event)"
+                         aria-label="Choose secondary color" />
                 </div>
                 <div class="swatch-info">
                   <span class="fw-semibold">Secondary</span>
@@ -93,17 +104,17 @@
           <div class="row g-4">
             <div class="col-12">
               <label for="businessName" class="form-label fw-semibold">{{ 'admin.branding.sections.text.businessName' | translate }}</label>
-              <input pInputText id="businessName" type="text" formControlName="businessName" class="w-100" />
+              <input id="businessName" type="text" class="form-control form-control-sm" formControlName="businessName" />
             </div>
 
             <div class="col-12">
               <label for="taglineInput" class="form-label fw-semibold">{{ 'admin.branding.sections.text.tagline' | translate }}</label>
-              <input pInputText id="taglineInput" type="text" formControlName="tagline" class="w-100" />
+              <input id="taglineInput" type="text" class="form-control form-control-sm" formControlName="tagline" />
             </div>
 
             <div class="col-12">
               <label for="footerNote" class="form-label fw-semibold">{{ 'admin.branding.sections.text.footerNote' | translate }}</label>
-              <textarea pTextarea id="footerNote" rows="3" formControlName="footerNote" class="w-100"></textarea>
+              <textarea id="footerNote" rows="3" class="form-control form-control-sm" formControlName="footerNote"></textarea>
             </div>
           </div>
 
@@ -127,9 +138,9 @@
         </div>
 
         <div class="text-end">
-          <button pButton type="button" [label]="'admin.branding.actions.save' | translate" icon="pi pi-save" (click)="onSave()" [loading]="isSaving"
-          [disabled]="isSaving">
-            <span class="visually-hidden">{{ 'admin.branding.actions.save' | translate }}</span>
+          <button type="button" class="btn btn-primary d-inline-flex align-items-center gap-2" (click)="onSave()" [disabled]="isSaving">
+            <lucide-icon name="save" [size]="15"></lucide-icon>
+            {{ 'admin.branding.actions.save' | translate }}
           </button>
         </div>
       </form>

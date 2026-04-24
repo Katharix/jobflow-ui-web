@@ -89,9 +89,9 @@ $jf-on-primary: var(--jf-on-primary, #ffffff);
   }
 
   .logo-upload-icon {
-    font-size: 2rem;
     color: $jf-primary;
     margin-bottom: 1rem;
+    display: block;
   }
 
   p {
@@ -150,18 +150,13 @@ $jf-on-primary: var(--jf-on-primary, #ffffff);
     overflow: hidden;
 
     &::after {
-      content: '\e906'; /* pi-pencil */
-      font-family: 'primeicons';
+      content: '';
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       background: $jf-overlay-dark;
-      color: $jf-on-primary;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       opacity: 0;
       transition: opacity 0.2s ease;
     }
@@ -183,13 +178,15 @@ $jf-on-primary: var(--jf-on-primary, #ffffff);
   }
 }
 
-.color-picker-overlay {
+.swatch-color-input {
   opacity: 0;
   position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  top: 0;
-  left: 0;
+  cursor: pointer;
+  border: none;
+  padding: 0;
 }
 
 .address-preline {
