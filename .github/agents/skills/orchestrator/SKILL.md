@@ -90,6 +90,7 @@ Execute in proper order respecting dependencies.
    - Commits must follow the `jobflow-git-workflow` skill format: `type(scope): [AB#<mobile-child-task-id>] short 5 word description`
 
 5. **code-review** (two-phase)
+   - **BLOCKING — read `jobflow-git-workflow` SKILL.md FIRST** before doing any commit, push, or PR step. The skill defines the required commit title format (`type(scope): [AB#<id>] description`), the multi-line body format (Changes + References), the branch naming convention (`feature/<child-task-id>-short`), and the `gh pr create` PR title/body template. These rules must be applied — not skipped.
    - **Phase 1 (autonomous)**: Review, fix issues, then run its full validation workflow without skipping any step:
      - Frontend: `ng.cmd build --configuration production` → `npm.cmd run lint` → tests
      - Backend: `dotnet build` → `dotnet format --verify-no-changes` → tests

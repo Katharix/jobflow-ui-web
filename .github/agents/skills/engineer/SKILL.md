@@ -53,6 +53,8 @@ For every feature:
 
 6. **Auto-fix** - If build/tests/lint fail, analyze errors, fix them, and retry automatically until green
 
+7. **BLOCKING — Read `jobflow-git-workflow` SKILL.md before any commit/push/PR step.** The skill defines the required commit title format (`type(scope): [AB#<id>] short description`), the multi-line body format (Changes + References with file permalinks), the branch naming convention (`feature/<child-task-id>-short`), and the `gh pr create` PR title/body template. A commit without `[AB#<id>]` in the title, without a branch named with the task ID, or without a PR created via `gh pr create` is a violation. Never skip this step.
+
 ## Tool Usage
 
 - **Edit freely** - Make changes directly without asking permission
