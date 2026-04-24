@@ -1,9 +1,20 @@
 ---
 name: jobflow-git-workflow
-description: Verified Git and Azure DevOps commands for JobFlow branch setup, commits, and pushes. Use when creating feature branches, staging changes, committing, or creating Azure DevOps work items.
+description: Verified Git and Azure DevOps commands for JobFlow branch setup, commits, pushes, PR creation, code review, and merge gate. Use when creating feature branches, staging changes, committing, creating Azure DevOps work items, reviewing PRs, or merging.
 ---
 
 # JobFlow Git Workflow
+
+## Critical Rules (Non-Negotiable)
+
+1. **No direct push to main** — always open a PR.
+2. **No merge before the merge gate passes** — run the pre-merge checklist before every merge.
+3. **No squash unless the user explicitly asks** — atomic commits are preserved; squash destroys history and AB# traceability.
+4. **No "tested/verified/working" without pasted command output** — if you cannot run the check, say so.
+5. **Force-push only with `--force-with-lease`** — never plain `--force`.
+6. **Every resolving PR review reply must cite a commit SHA** — "Fixed", "Done", and "Addressed" with no SHA are banned.
+
+---
 
 ## When to use this skill
 
@@ -11,6 +22,11 @@ Use when:
 - Creating a new feature branch for a JobFlow task
 - Creating an Azure DevOps work item alongside a branch
 - Staging, committing, or pushing changes on any JobFlow repo
+- Creating or reviewing a PR
+- Resolving PR review threads
+- Running the merge gate before merging
+
+---
 
 ## Branch setup (verified working)
 
@@ -28,6 +44,8 @@ git pull
 git checkout -b feature/<child-task-id>-short-description
 git push -u origin feature/<child-task-id>-short-description
 ```
+
+---
 
 ## Azure DevOps work item hierarchy
 
@@ -58,6 +76,8 @@ az boards work-item relation add --id <child-id> --relation-type "Parent" --targ
 
 Always report back: **parent ID + child ID per repo + each branch name + upstream tracking status**.
 
+---
+
 ## Staging + commit + push
 
 ```powershell
@@ -70,6 +90,8 @@ git commit -m "feat(ui): [AB#<ui-child-id>] short 5 word description"
 # Push to tracked upstream
 git push
 ```
+
+---
 
 ## Commit message format
 
@@ -166,9 +188,23 @@ References:
 [4] [src/styles/admin/_sidebar.scss:142](https://github.com/Katharix/jobflow-ui-web/blob/feature/20-mobile-sidebar/src/styles/admin/_sidebar.scss#L142)"
 ```
 
+---
+
 ## Pull Request Creation (required after every push)
 
 After pushing, always create a PR using `gh pr create`. Never skip this step.
+
+### PR size guidelines
+
+| Size | Lines Changed | Risk |
+|------|--------------|------|
+| XS | 0–10 | Very Low |
+| S | 11–100 | Low |
+| M | 101–400 | Medium |
+| L | 401–1000 | High |
+| XL | 1000+ | Very High |
+
+Target: keep PRs under 400 lines when possible. Flag XL PRs to the user before committing.
 
 ### PR Title Format
 `<type>(<scope>): <Short human-readable summary> [AB#<child-task-id>]`
@@ -183,20 +219,174 @@ After pushing, always create a PR using `gh pr create`. Never skip this step.
 ## Summary
 One or two sentences describing what this PR does and why.
 
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Breaking change
+- [ ] Refactoring
+- [ ] Documentation / chore
+
 ## Changes
 Bullet list of the key changes made, grouped by area (e.g., ### API, ### UI, ### Mobile).
 
+## Testing
+- [ ] Unit tests added/updated
+- [ ] Manual testing performed
+- [ ] Screenshots attached (for UI changes)
+
 ## Work Item
 Closes AB#<child-task-id> — child of User Story #<parent-id>
+
+## Checklist
+- [ ] Self-review performed
+- [ ] No new lint warnings introduced
+- [ ] Tests pass locally
 ```
 
 ### Command
-```
-gh pr create \
-  --base main \
-  --head <branch-name> \
-  --title "<title>" \
+```powershell
+gh pr create `
+  --base main `
+  --head <branch-name> `
+  --title "<title>" `
   --body "<body>"
+```
+
+---
+
+## Code Review
+
+### Review comment levels
+
+Use these prefixes so reviewers understand the weight of feedback:
+
+```
+🔴 Blocking — must be addressed before merge
+🟡 Suggestion — should consider, strong preference
+🟢 Nit — minor, take it or leave it
+💡 Question — seeking understanding, not a change request
+👍 Praise — call out good work
+```
+
+Example:
+```
+🔴 Blocking: This passes raw user input into a query — sanitize before use.
+🟡 Suggestion: Extract this into a shared service — it's duplicated in JobController too.
+🟢 Nit: `data` → `jobListData` would be clearer here.
+💡 Question: Why a Map instead of a plain object here?
+```
+
+### Responding to review threads
+
+**Every resolving reply must include the commit SHA.** These are banned:
+- `Addressed`
+- `Fixed`
+- `Done`
+- `Good point, updated`
+
+**Required format:**
+```
+Fixed in <sha7> — <one sentence: what changed and why>.
+```
+
+Example:
+```
+Fixed in a3f82c1 — moved sanitization into the JobService before the query executes.
+```
+
+After pushing the fix, reply to the thread then resolve it:
+```powershell
+# Get the SHA of your fix commit
+$SHA = git rev-parse HEAD
+
+# Reply to the thread (replace PRRT_xxx with the thread node_id)
+gh api graphql -f query='
+  mutation($body: String!, $id: ID!) {
+    addPullRequestReviewThreadReply(input: {body: $body, pullRequestReviewThreadId: $id}) {
+      comment { id }
+    }
+  }' `
+  -f body="Fixed in $($SHA.Substring(0,7)) — <explanation>." `
+  -f id="PRRT_xxx"
+
+# Resolve the thread
+gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "PRRT_xxx"}) { thread { isResolved } } }'
+```
+
+---
+
+## Merge Gate (run before every merge)
+
+Before merging any PR, verify all of the following. If any check fails, stop and fix — do not override.
+
+```powershell
+# Single command that returns every PR-level gate input
+gh pr view <NUMBER> --json reviewDecision,mergeStateStatus,mergeable,statusCheckRollup,reviewThreads
+```
+
+**Merge-ready requires ALL of:**
+- `reviewDecision` == `"APPROVED"`
+- `mergeStateStatus` == `"CLEAN"`
+- `mergeable` == `"MERGEABLE"`
+- Every `statusCheckRollup[].conclusion` == `"SUCCESS"`
+- Every `reviewThreads[].isResolved` == `true`
+
+**Also check for CI annotations** (warnings that don't fail the check but still need fixing):
+```powershell
+gh api "repos/{owner}/{repo}/commits/<SHA>/check-runs" `
+  --jq '.check_runs[] | select(.output.annotations_count > 0) | {name, annotations: .output.annotations_count}'
+```
+
+### Pre-merge checklist
+- [ ] All review threads resolved (verified via API, not by memory)
+- [ ] All CI checks passing — no failing jobs
+- [ ] No CI annotations outstanding
+- [ ] Branch rebased on `main` — no stray merge commits in the PR branch
+- [ ] AB# work item reference is correct in the PR title
+
+### Common merge blockers
+
+| Blocker | Diagnosis | Fix |
+|---------|-----------|-----|
+| `REVIEW_REQUIRED` but no pending reviewers | Auto-approve raced with Copilot review | Re-run PR Quality Gates workflow |
+| `BLOCKED` with all checks green | Unresolved review threads (even from old commits) | Resolve all threads via GraphQL |
+| Auto-merge dropped after push | New commits nullify `autoMergeRequest` | Re-queue with `gh pr merge --auto` |
+| CI annotations but status green | Reviewdog warnings don't block by default | Fix annotations before merging |
+
+---
+
+## Conflict resolution
+
+```powershell
+# Preferred: rebase onto main (keeps linear history)
+git checkout feature/<id>-description
+git fetch origin
+git rebase origin/main
+# Resolve any conflicts, then:
+git add <resolved-file>
+git rebase --continue
+git push --force-with-lease   # ← always --force-with-lease, never --force
+```
+
+If a conflict is complex:
+```powershell
+git mergetool --tool=vscode
+```
+
+---
+
+## Post-merge cleanup
+
+```powershell
+# Switch to main and pull
+git checkout main
+git pull
+
+# Delete the local feature branch
+git branch -d feature/<id>-description
+
+# Remote branch is auto-deleted if the repo setting is enabled; otherwise:
+git push origin --delete feature/<id>-description
 ```
 
 ### Rules
