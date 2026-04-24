@@ -62,7 +62,7 @@ az boards work-item update `
 
 If the project uses Scrum templates, the state may be `Done` instead of `Closed` — check with:
 ```powershell
-az boards work-item show --id <child-id> --query "fields.'System.State'"
+az boards work-item show --id <child-id> -o json 2>&1 | Select-String "System.State"
 ```
 
 ### 3. Transition parent User Story

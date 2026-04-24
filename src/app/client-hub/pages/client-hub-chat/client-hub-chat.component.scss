@@ -1,472 +1,489 @@
-// ─── Client Hub Chat — Component Styles ──────────────────────────────────────
-// Uses --jf-* design tokens · BEM naming · WCAG 2.1 AA
-// ─────────────────────────────────────────────────────────────────────────────
+﻿// ─── Client Hub Mail Page ─────────────────────────────────────────────────────
 
-// ─── Typing animation ────────────────────────────────────────────────────────
-@keyframes jf-ch-typing-bounce {
-  0%, 60%, 100% { transform: translateY(0);    opacity: 0.45; }
-  30%            { transform: translateY(-5px); opacity: 1;    }
-}
-
-@keyframes jf-ch-skeleton-shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-:host { display: block; }
-
-// ─── Shell ───────────────────────────────────────────────────────────────────
-.chat-shell {
-  display: flex;
-  flex-direction: column;
-  min-height: 520px;
-  overflow: hidden;
-  position: relative;
-}
-
-// ─── Header ──────────────────────────────────────────────────────────────────
-.chat-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.125rem 1.5rem;
-  border-bottom: 1px solid var(--jf-border);
-  background: var(--jf-surface);
-  gap: 1rem;
-  flex-shrink: 0;
-
-  &__identity {
-    display: flex;
-    align-items: center;
-    gap: 0.875rem;
-    min-width: 0;
-  }
-
-  &__avatar {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background: var(--jf-primary-soft, rgba(63, 103, 218, 0.10));
-    color: var(--jf-primary, #3F67DA);
-    font-size: 0.875rem;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-transform: uppercase;
-    flex-shrink: 0;
-    font-family: 'Manrope', sans-serif;
-  }
-
-  &__info {
+.client-mail {
+  &__container {
     display: flex;
     flex-direction: column;
-    min-width: 0;
-  }
-
-  &__name {
-    margin: 0;
-    font-size: 0.9375rem;
-    font-weight: 700;
-    color: var(--jf-text, #1E1E24);
-    white-space: nowrap;
+    min-height: 560px;
+    max-height: calc(100vh - 220px);
     overflow: hidden;
-    text-overflow: ellipsis;
-    font-family: 'Manrope', sans-serif;
-  }
-
-  &__desc {
-    margin: 0.1rem 0 0;
-    color: var(--jf-text-muted, #6B7280);
-    font-size: 0.8rem;
-    font-family: 'Manrope', sans-serif;
-  }
-
-  &__status {
-    display: flex;
-    align-items: center;
-    gap: 0.375rem;
-    flex-shrink: 0;
-  }
-
-  &__status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--jf-success, #2D898B);
-    display: inline-block;
-  }
-
-  &__status-text {
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: var(--jf-success, #2D898B);
-    font-family: 'Manrope', sans-serif;
   }
 }
 
-// ─── Body ────────────────────────────────────────────────────────────────────
-.chat-body {
-  padding: 1.25rem 1.5rem;
-  flex: 1;
+// ─── Thread Header ────────────────────────────────────────────────────────────
+
+.client-mail__thread-header {
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  background: var(--jf-bg, #FAFBFF);
-  overflow-y: auto;
-  min-height: 0;
-
-  @media (max-width: 768px) { padding: 1rem; }
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid var(--jf-border);
+  background: var(--jf-surface);
+  flex-shrink: 0;
 }
 
-// ─── Load more ───────────────────────────────────────────────────────────────
-.chat-load-more {
-  display: flex;
-  justify-content: center;
-  padding-bottom: 0.25rem;
-}
-
-// ─── Messages list ───────────────────────────────────────────────────────────
-.chat-messages {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-  flex: 1;
-}
-
-// ─── Message item ────────────────────────────────────────────────────────────
-.chat-message {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-
-  &.is-mine {
-    align-items: flex-end;
-  }
-}
-
-.chat-sender-name {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: var(--jf-text-muted, #6B7280);
-  margin-bottom: 0.2rem;
-  padding-left: 0.25rem;
-  font-family: 'Manrope', sans-serif;
-}
-
-// ─── Bubble ──────────────────────────────────────────────────────────────────
-.chat-bubble {
-  max-width: 72%;
-  background: var(--jf-surface, #ffffff);
-  border: 1px solid var(--jf-border, #E8ECF8);
-  border-radius: 18px;
-  border-bottom-left-radius: 4px;
-  padding: 0.625rem 0.875rem;
-  box-shadow: var(--jf-shadow);
-
-  .chat-message.is-mine & {
-    background: var(--jf-primary, #3F67DA);
-    border-color: var(--jf-primary, #3F67DA);
-    border-radius: 18px;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 18px;
-  }
-
-  @media (max-width: 768px) { max-width: 85%; }
-}
-
-.message-text {
-  margin: 0 0 0.25rem;
-  line-height: 1.5;
+.client-mail__thread-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--jf-primary-soft);
+  color: var(--jf-primary);
   font-size: 0.875rem;
-  color: var(--jf-text, #1E1E24);
-  font-family: 'Manrope', sans-serif;
-
-  .chat-message.is-mine & { color: #ffffff; }
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-// ─── Attachment ──────────────────────────────────────────────────────────────
-.message-attachment {
-  display: block;
-  margin-top: 0.375rem;
+.client-mail__thread-info { flex: 1; min-width: 0; }
 
-  &__img {
-    max-width: 220px;
-    border-radius: 10px;
-    display: block;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
+.client-mail__thread-name {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--jf-text);
+  margin: 0;
 }
 
-// ─── Meta (time + status chip) ───────────────────────────────────────────────
-.message-meta {
+.client-mail__thread-desc {
+  font-size: 0.78rem;
+  color: var(--jf-text-muted);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  i { font-size: 0.75rem; }
+}
+
+.client-mail__thread-status {
   display: flex;
   align-items: center;
   gap: 0.375rem;
-  margin-top: 0.25rem;
+  flex-shrink: 0;
 }
 
-.message-time {
-  font-size: 0.6875rem;
-  color: var(--jf-text-muted, #6B7280);
-  font-family: 'Manrope', sans-serif;
-
-  .chat-message.is-mine & { color: rgba(255, 255, 255, 0.7); }
+.client-mail__status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--jf-success);
 }
 
-.message-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.1rem 0.45rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.22);
-  font-size: 0.625rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.9);
-  font-family: 'Manrope', sans-serif;
-
-  .chat-message:not(.is-mine) & {
-    background: var(--jf-primary-soft, rgba(63, 103, 218, 0.10));
-    color: var(--jf-primary, #3F67DA);
-  }
-
-  &--read {
-    background: rgba(255, 255, 255, 0.3);
-  }
-
-  &--failed {
-    background: var(--jf-danger-soft, rgba(224, 54, 22, 0.10));
-    color: var(--jf-danger, #E03616);
-  }
+.client-mail__status-label {
+  font-size: 0.78rem;
+  color: var(--jf-text-muted);
 }
 
-// ─── Empty state ─────────────────────────────────────────────────────────────
-.chat-empty {
+// ─── Body ─────────────────────────────────────────────────────────────────────
+
+.client-mail__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.client-mail__load-more {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 0.75rem;
+}
+
+.client-mail__emails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.client-mail__empty {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  padding: 3rem 1rem;
   gap: 0.5rem;
-  flex: 1;
+  color: var(--jf-text-muted);
+  padding: 2.5rem 1rem;
+  text-align: center;
+  i { font-size: 1.75rem; }
+  p { margin: 0; font-size: 0.875rem; }
+}
 
-  &__icon {
-    width: 60px;
-    height: 60px;
+// ─── Email Cards ──────────────────────────────────────────────────────────────
+
+.client-mail-email {
+  background: var(--jf-surface);
+  border: 1px solid var(--jf-border);
+  border-radius: var(--jf-radius);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+
+  &:hover { box-shadow: var(--jf-shadow); }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--jf-border);
+    background: var(--jf-bg);
+  }
+
+  &__avatar {
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    background: var(--jf-primary-soft, rgba(63, 103, 218, 0.10));
-    color: var(--jf-primary, #3F67DA);
+    background: var(--jf-primary-soft);
+    color: var(--jf-primary);
+    font-size: 0.68rem;
+    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 0.25rem;
+    flex-shrink: 0;
+    overflow: hidden;
   }
 
-  &__title {
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: var(--jf-text, #1E1E24);
-    margin: 0;
-    font-family: 'Manrope', sans-serif;
-  }
-
-  &__sub {
-    font-size: 0.8125rem;
-    color: var(--jf-text-muted, #6B7280);
-    margin: 0;
-    font-family: 'Manrope', sans-serif;
-  }
-}
-
-// ─── Typing indicator ────────────────────────────────────────────────────────
-.chat-typing {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  padding: 0.25rem 0;
-
-  &__bubble {
+  &__avatar-me {
+    background: var(--jf-primary);
+    color: #fff;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
-    gap: 0.3rem;
-    padding: 0.5rem 0.75rem;
-    background: var(--jf-surface, #ffffff);
-    border: 1px solid var(--jf-border, #E8ECF8);
-    border-radius: 18px;
-    border-bottom-left-radius: 4px;
-    box-shadow: var(--jf-shadow);
+    justify-content: center;
+    font-size: 0.62rem;
+    font-weight: 700;
   }
 
-  &__dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--jf-text-muted, #6B7280);
-    animation: jf-ch-typing-bounce 1.2s ease-in-out infinite;
+  &__meta { flex: 1; min-width: 0; }
 
-    &:nth-child(1) { animation-delay: 0s; }
-    &:nth-child(2) { animation-delay: 0.2s; }
-    &:nth-child(3) { animation-delay: 0.4s; }
+  &__from-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
   }
 
-  &__label {
-    font-size: 0.75rem;
-    color: var(--jf-text-muted, #6B7280);
-    font-style: italic;
-    font-family: 'Manrope', sans-serif;
+  &__from {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--jf-text);
+  }
+
+  &__date {
+    font-size: 0.72rem;
+    color: var(--jf-text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  &__to-row {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.1rem;
+  }
+
+  &__to-label { font-size: 0.72rem; color: var(--jf-text-muted); }
+  &__to-name  { font-size: 0.72rem; color: var(--jf-text-muted); }
+
+  &__status {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    align-self: center;
+    flex-shrink: 0;
+    background: var(--jf-success-soft);
+    color: var(--jf-success);
+
+    &--sending { background: var(--jf-warning-soft); color: var(--jf-warning); }
+    &--failed  { background: var(--jf-danger-soft);  color: var(--jf-danger);  }
+    &--read    { background: var(--jf-success-soft); color: var(--jf-success); }
+  }
+
+  &__body { padding: 0.875rem 1rem; }
+
+  &__text {
+    font-size: 0.9rem;
+    color: var(--jf-text);
+    line-height: 1.65;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  &__attachment {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--jf-border);
+    border-radius: var(--jf-radius-sm);
+    color: var(--jf-primary);
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: background 0.15s;
+
+    &:hover { background: var(--jf-primary-soft); }
+    i { font-size: 0.8rem; }
   }
 }
 
-// ─── Scroll-to-bottom FAB ────────────────────────────────────────────────────
-.chat-scroll-fab {
-  position: absolute;
-  bottom: 5rem;
-  right: 1.25rem;
-  width: 34px;
-  height: 34px;
+// ─── Typing indicator ─────────────────────────────────────────────────────────
+
+.client-mail__typing {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.375rem 0;
+  margin-top: 0.375rem;
+}
+
+.client-mail__typing-dot {
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  border: 1px solid var(--jf-border, #E8ECF8);
-  background: var(--jf-surface, #ffffff);
-  color: var(--jf-text-muted, #6B7280);
+  background: var(--jf-text-muted);
+  animation: jf-ch-mail-bounce 1s infinite ease-in-out;
+
+  &:nth-child(2) { animation-delay: 0.15s; }
+  &:nth-child(3) { animation-delay: 0.3s;  }
+}
+
+.client-mail__typing-label {
+  font-size: 0.75rem;
+  color: var(--jf-text-muted);
+  margin-left: 0.25rem;
+}
+
+@keyframes jf-ch-mail-bounce {
+  0%, 100% { transform: translateY(0);   }
+  50%       { transform: translateY(-5px); }
+}
+
+// ─── Reply Composer ───────────────────────────────────────────────────────────
+
+.client-mail__reply {
+  background: var(--jf-surface);
+  border-top: 2px solid var(--jf-border);
+  flex-shrink: 0;
+}
+
+.client-mail__reply-header {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1.25rem;
+  border-bottom: 1px solid var(--jf-border);
+  background: var(--jf-bg);
+  i { font-size: 0.875rem; color: var(--jf-text-muted); }
+}
+
+.client-mail__reply-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--jf-text);
+}
+
+.client-mail__reply-to {
+  font-size: 0.8rem;
+  color: var(--jf-text-muted);
+}
+
+.client-mail__attachment-preview {
+  position: relative;
+  margin: 0.5rem 1.25rem 0;
+  display: inline-block;
+}
+
+.client-mail__attachment-img {
+  max-height: 76px;
+  border-radius: var(--jf-radius-sm);
+  border: 1px solid var(--jf-border);
+  display: block;
+}
+
+.client-mail__attachment-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--jf-danger);
+  color: #fff;
+  border: none;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  font-size: 0.9375rem;
-  box-shadow: var(--jf-shadow);
-  transition: background 0.15s, color 0.15s, box-shadow 0.15s, transform 0.1s;
-  z-index: 5;
-
-  &:hover        { background: var(--jf-primary, #3F67DA); color: #ffffff; box-shadow: var(--jf-shadow-hover); transform: scale(1.08); }
-  &:focus-visible { outline: 2px solid var(--jf-primary, #3F67DA); outline-offset: 2px; }
+  i { font-size: 0.6rem; }
 }
 
-// ─── Input area ──────────────────────────────────────────────────────────────
-.chat-input {
+.client-mail__reply-compose { display: flex; flex-direction: column; }
+
+.client-mail__reply-toolbar {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  padding: 0.875rem 1.5rem;
-  border-top: 1px solid var(--jf-border, #E8ECF8);
-  background: var(--jf-surface, #ffffff);
-  flex-shrink: 0;
+  gap: 2px;
+  padding: 0.325rem 1rem;
+  border-bottom: 1px solid var(--jf-border);
+  background: var(--jf-bg);
+}
 
-  @media (max-width: 768px) { padding: 0.75rem 1rem; }
+.client-mail__toolbar-sep {
+  width: 1px;
+  height: 16px;
+  background: var(--jf-border);
+  margin: 0 0.25rem;
+}
 
-  &__field {
-    flex: 1;
-    border-radius: 999px;
-    border: 1px solid var(--jf-border, #E8ECF8);
-    background: var(--jf-bg, #FAFBFF);
-    color: var(--jf-text, #1E1E24);
-    padding: 0.6rem 1rem;
-    font-size: 0.875rem;
-    font-family: 'Manrope', sans-serif;
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
+.client-mail__format-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--jf-text-muted);
+  transition: background 0.15s, color 0.15s;
 
-    &::placeholder { color: var(--jf-text-muted, #6B7280); }
+  &:hover { background: var(--jf-primary-soft); color: var(--jf-primary); }
+  i { font-size: 0.78rem; }
+}
 
-    &:focus {
-      border-color: var(--jf-primary, #3F67DA);
-      box-shadow: 0 0 0 3px var(--jf-primary-soft, rgba(63, 103, 218, 0.10));
-    }
-  }
+.client-mail__file-input { display: none; }
 
-  &__send {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: none;
-    background: var(--jf-primary, #3F67DA);
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 1rem;
-    flex-shrink: 0;
-    transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
+.client-mail__reply-editor {
+  min-height: 90px;
+  max-height: 160px;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  color: var(--jf-text);
+  line-height: 1.6;
+  outline: none;
+  overflow-y: auto;
+  font-family: inherit;
 
-    &:hover:not(:disabled) {
-      opacity: 0.88;
-      box-shadow: var(--jf-shadow-hover);
-      transform: scale(1.05);
-    }
-
-    &:disabled      { opacity: 0.4; cursor: not-allowed; }
-    &:focus-visible  { outline: 2px solid var(--jf-primary, #3F67DA); outline-offset: 3px; }
+  &:empty::before {
+    content: attr(data-placeholder);
+    color: var(--jf-text-muted);
+    pointer-events: none;
   }
 }
 
-// ─── Skeleton loading ────────────────────────────────────────────────────────
-.client-chat__skeleton-shell {
-  overflow: hidden;
+.client-mail__reply-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.5rem 1.25rem;
+  border-top: 1px solid var(--jf-border);
+  background: var(--jf-bg);
 }
 
-.client-chat-skeleton {
+.client-mail__send-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1.125rem;
+  background: var(--jf-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--jf-radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.18s;
+  font-family: inherit;
+
+  &:hover:not([disabled]) { opacity: 0.88; }
+  &[disabled] { opacity: 0.5; cursor: not-allowed; }
+  i { font-size: 0.8rem; }
+}
+
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+
+.client-mail__skeleton-shell {
+  animation: jf-ch-mail-shimmer 1.6s infinite;
+}
+
+.client-mail-skeleton {
   &__header {
     display: flex;
     align-items: center;
     gap: 0.875rem;
-    padding: 1.125rem 1.5rem;
-    border-bottom: 1px solid var(--jf-border, #E8ECF8);
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid var(--jf-border);
   }
 
   &__avatar {
-    width: 46px;
-    height: 46px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
+    background: var(--jf-border);
     flex-shrink: 0;
-    background: linear-gradient(90deg, var(--jf-skeleton-from, #e8ecf8) 0%, var(--jf-skeleton-mid, #f4f6fd) 50%, var(--jf-skeleton-from, #e8ecf8) 100%);
-    background-size: 200% 100%;
-    animation: jf-ch-skeleton-shimmer 1.4s ease-in-out infinite;
   }
 
-  &__title-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-    flex: 1;
-  }
-
-  &__line {
-    height: 12px;
-    border-radius: 6px;
-    background: linear-gradient(90deg, var(--jf-skeleton-from, #e8ecf8) 0%, var(--jf-skeleton-mid, #f4f6fd) 50%, var(--jf-skeleton-from, #e8ecf8) 100%);
-    background-size: 200% 100%;
-    animation: jf-ch-skeleton-shimmer 1.4s ease-in-out infinite;
-
-    &--title { width: 160px; }
-    &--sub   { width: 220px; height: 10px; }
-  }
+  &__title-group { flex: 1; display: flex; flex-direction: column; gap: 0.4rem; }
 
   &__body {
-    padding: 1.25rem 1.5rem;
+    padding: 1rem 1.25rem;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    background: var(--jf-bg, #FAFBFF);
-    min-height: 280px;
   }
 
-  &__bubble {
-    height: 36px;
-    border-radius: 18px;
-    background: linear-gradient(90deg, var(--jf-skeleton-from, #e8ecf8) 0%, var(--jf-skeleton-mid, #f4f6fd) 50%, var(--jf-skeleton-from, #e8ecf8) 100%);
-    background-size: 200% 100%;
-    animation: jf-ch-skeleton-shimmer 1.4s ease-in-out infinite;
-    align-self: flex-start;
-
-    &--friend { align-self: flex-start; }
-    &--me     { align-self: flex-end;   }
-    &--sm     { width: 140px; }
-    &--md     { width: 200px; }
-    &--lg     { width: 260px; }
+  &__card {
+    background: var(--jf-surface);
+    border: 1px solid var(--jf-border);
+    border-radius: var(--jf-radius);
+    overflow: hidden;
   }
+
+  &__card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--jf-bg);
+    border-bottom: 1px solid var(--jf-border);
+  }
+
+  &__dot {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--jf-border);
+    flex-shrink: 0;
+  }
+
+  &__lines { flex: 1; display: flex; flex-direction: column; gap: 0.4rem; }
+
+  &__line {
+    height: 9px;
+    border-radius: 4px;
+    background: var(--jf-border);
+    &--title { width: 40%; }
+    &--sub   { width: 25%; }
+  }
+
+  &__card-body {
+    height: 48px;
+    margin: 0.75rem 1rem;
+    border-radius: 4px;
+    background: var(--jf-border);
+  }
+}
+
+@keyframes jf-ch-mail-shimmer {
+  0%, 100% { opacity: 1;    }
+  50%       { opacity: 0.5; }
 }

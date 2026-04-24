@@ -1,330 +1,245 @@
-<!--
+﻿<!--
   ╔══════════════════════════════════════════════════════════════════╗
-  ║  chat.component.html — Designer-authored template                ║
-  ║  Engineer: bindings are already wired in chat.component.ts       ║
+  ║  chat.component.html — Email-style Messaging redesign            ║
   ╠══════════════════════════════════════════════════════════════════╣
-  ║  Existing bindings:                                              ║
-  ║    filteredConversations, selectedConversation                    ║
-  ║    selectConversation(convo), backToChatList(), startNewChat()    ║
-  ║    filteredContacts, employeeContacts, clientContacts             ║
-  ║    isLoadingContacts, canStartClientChat(contact)                 ║
-  ║    openContactChat(contact), searchQuery (ngModel)                ║
-  ║    messages, messageText (ngModel), sendMessage()                 ║
-  ║    notifyTyping(), defaultNavActiveId (ngbNav)                    ║
-  ║    hasMoreMessages, isLoadingMessages, loadMoreMessages()         ║
-  ║    isSending, attachmentPreviewUrl, attachmentUploadError         ║
-  ║    onAttachmentSelected($event), clearAttachment()                ║
-  ║    isRemoteTyping, chatPanelVisible                               ║
-  ║    getConversationName/Preview/Role(), getAvatarInitials()        ║
-  ║    getContactBadge/Subtitle(), getMessageStatusLabel()            ║
-  ║    trackByConversationId, trackByContactId, trackByMessage        ║
-  ║  NEW bindings (engineer must add to chat.component.ts):          ║
-  ║    showInfoPanel: boolean                                         ║
-  ║    toggleInfoPanel(): void                                        ║
-  ║    getConversationChannel(convo): string                          ║
-  ║    getLastSeenText(convo): string                                 ║
-  ║    scrollToBottom(): void  (make existing private method public)  ║
+  ║  All bindings wired in chat.component.ts                         ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
 
-<div class="chat-page">
+<div class="mail-page">
 
-  <!-- ── Page Header ─────────────────────────────────────────── -->
-  <header class="page-header chat-page__header">
+  <!-- ── Page Header ────────────────────────────────────────── -->
+  <header class="page-header mail-page__header">
     <div class="page-header__title-group">
       <h1 class="page-header__title">Messaging</h1>
-      <p class="page-header__subtitle">Manage conversations with employees and customers</p>
+      <p class="page-header__subtitle">Manage conversations with your team and clients</p>
     </div>
+    <button type="button" class="mail-page__compose-btn" (click)="openCompose()">
+      <i class="feather icon-edit" aria-hidden="true"></i>
+      Compose
+    </button>
   </header>
 
-  <!-- ── Chat Panel ─────────────────────────────────────────── -->
-  <div class="chat-panel" [class.chat-panel--info-open]="showInfoPanel">
+  <!-- ── Mail Layout ────────────────────────────────────────── -->
+  <div class="mail-layout" [class.mail-layout--info-open]="showInfoPanel">
 
-    <!-- ── Left Aside: Conversations / Contacts ─────────────── -->
-    <aside
-      class="chat-panel__aside"
-      [class.chat-panel__aside--hidden]="chatPanelVisible"
-      aria-label="Conversations and contacts"
-    >
+    <!-- ── Sidebar ──────────────────────────────────────────── -->
+    <aside class="mail-sidebar" aria-label="Mail navigation">
 
-      <!-- Search + New Chat -->
-      <div class="chat-aside__search">
-        <div class="chat-aside__search-wrap">
-          <i class="feather icon-search chat-aside__search-icon" aria-hidden="true"></i>
+      <!-- Compose button (sidebar version, desktop) -->
+      <button type="button" class="mail-compose-btn" (click)="openCompose()">
+        <i class="feather icon-edit" aria-hidden="true"></i>
+        <span>Compose</span>
+      </button>
+
+      <!-- Folder navigation -->
+      <nav class="mail-folders" aria-label="Mail folders">
+        <button type="button" class="mail-folder"
+          [class.mail-folder--active]="activeFolder === 'all'"
+          (click)="setFolder('all')">
+          <i class="feather icon-inbox" aria-hidden="true"></i>
+          <span>All Messages</span>
+          @if (totalUnreadCount > 0) {
+            <span class="mail-folder__badge" aria-label="{{ totalUnreadCount }} unread">{{ totalUnreadCount }}</span>
+          }
+        </button>
+        <button type="button" class="mail-folder"
+          [class.mail-folder--active]="activeFolder === 'unread'"
+          (click)="setFolder('unread')">
+          <i class="feather icon-mail" aria-hidden="true"></i>
+          <span>Unread</span>
+        </button>
+        <button type="button" class="mail-folder"
+          [class.mail-folder--active]="activeFolder === 'starred'"
+          (click)="setFolder('starred')">
+          <i class="feather icon-star" aria-hidden="true"></i>
+          <span>Starred</span>
+        </button>
+        <button type="button" class="mail-folder"
+          [class.mail-folder--active]="activeFolder === 'sent'"
+          (click)="setFolder('sent')">
+          <i class="feather icon-send" aria-hidden="true"></i>
+          <span>Sent</span>
+        </button>
+      </nav>
+
+      <div class="mail-sidebar__divider" role="separator"></div>
+
+      <!-- Quick contacts -->
+      <p class="mail-sidebar__section-label">Contacts</p>
+      <nav class="mail-contacts-nav" aria-label="Quick-access contacts">
+        @if (isLoadingContacts) {
+          <p class="mail-sidebar__loading">Loading…</p>
+        }
+        @for (contact of employeeContacts.slice(0,6); track trackByContactId($index, contact)) {
+          <button type="button" class="mail-contact-btn" (click)="openContactChat(contact)">
+            <span class="mail-contact-btn__avatar">{{ getAvatarInitials(contact.name) }}</span>
+            <span class="mail-contact-btn__name">{{ contact.name }}</span>
+          </button>
+        }
+        @for (contact of clientContacts.slice(0,4); track trackByContactId($index, contact)) {
+          <button type="button" class="mail-contact-btn mail-contact-btn--client"
+            [disabled]="!canStartClientChat(contact)"
+            (click)="openContactChat(contact)">
+            <span class="mail-contact-btn__avatar mail-contact-btn__avatar--client">{{ getAvatarInitials(contact.name) }}</span>
+            <span class="mail-contact-btn__name">{{ contact.name }}</span>
+          </button>
+        }
+      </nav>
+
+    </aside>
+
+    <!-- ── Thread List ───────────────────────────────────────── -->
+    <section class="mail-list" [class.mail-list--hidden]="chatPanelVisible" aria-label="Message threads">
+
+      <!-- Search bar -->
+      <div class="mail-list__search">
+        <div class="mail-list__search-wrap">
+          <i class="feather icon-search" aria-hidden="true"></i>
           <input
             type="search"
-            class="chat-aside__search-field"
-            placeholder="Search…"
+            class="mail-list__search-input"
+            placeholder="Search messages…"
             [(ngModel)]="searchQuery"
             name="searchQuery"
-            aria-label="Search conversations and contacts"
+            aria-label="Search messages"
           />
         </div>
-        <button
-          type="button"
-          class="chat-aside__new-btn"
-          (click)="startNewChat()"
-          aria-label="Start new chat"
-        >
-          <i class="feather icon-edit-2" aria-hidden="true"></i>
+      </div>
+
+      <!-- List toolbar -->
+      <div class="mail-list__toolbar">
+        <span class="mail-list__count">{{ filteredConversations.length }}
+          {{ filteredConversations.length === 1 ? 'thread' : 'threads' }}</span>
+        <button type="button" class="mail-list__action" (click)="markAllRead()">
+          Mark all read
         </button>
       </div>
 
-      <!-- Tabs: Chats / Contacts -->
-      <div class="chat-aside__tabs">
-        <ul
-          ngbNav
-          #defaultNav="ngbNav"
-          [(activeId)]="defaultNavActiveId"
-          class="chat-aside__nav"
-          role="tablist"
-        >
-
-          <!-- ─ Chats Tab ─ -->
-          <li [ngbNavItem]="1" class="chat-aside__nav-item">
-            <button ngbNavLink type="button" class="chat-aside__nav-link">
-              <i class="feather icon-message-square" aria-hidden="true"></i>
-              <span>Chats</span>
+      <!-- Thread items -->
+      <ul class="mail-items" role="listbox" aria-label="Email threads">
+        @for (convo of filteredConversations; track trackByConversationId($index, convo)) {
+          <li
+            class="mail-item"
+            [class.mail-item--active]="selectedConversation?.id === convo.id"
+            [class.mail-item--unread]="convo.unreadCount && convo.unreadCount > 0"
+            role="option"
+            [attr.aria-selected]="selectedConversation?.id === convo.id"
+          >
+            <!-- Star toggle -->
+            <button
+              type="button"
+              class="mail-item__star"
+              [class.mail-item__star--active]="convo.starred"
+              (click)="toggleStar(convo, $event)"
+              [attr.aria-label]="convo.starred ? 'Unstar thread' : 'Star thread'"
+            >
+              <i class="feather" [class.icon-star]="!convo.starred" [class.icon-star]="convo.starred" aria-hidden="true"></i>
             </button>
-            <ng-template ngbNavContent>
-              <div class="chat-aside__scroll-wrap">
-                <ng-scrollbar>
-                  <ul class="chat-aside__list" role="listbox" aria-label="Conversations">
-                    @for (convo of filteredConversations; track trackByConversationId($index, convo)) {
-                      <li
-                        class="chat-thread"
-                        [class.chat-thread--active]="selectedConversation?.id === convo.id"
-                        role="option"
-                        [attr.aria-selected]="selectedConversation?.id === convo.id"
-                      >
-                        <button
-                          type="button"
-                          class="chat-thread__btn"
-                          (click)="selectConversation(convo)"
-                        >
-                          <div class="chat-thread__avatar">
-                            @if (convo.avatarUrl) {
-                              <img
-                                [src]="convo.avatarUrl"
-                                class="chat-thread__avatar-img"
-                                [alt]="getConversationName(convo) + ' avatar'"
-                              />
-                            } @else {
-                              <span class="chat-thread__avatar-initials" aria-hidden="true">
-                                {{ getAvatarInitials(getConversationName(convo)) }}
-                              </span>
-                            }
-                            <span
-                              class="chat-thread__status"
-                              [class.chat-thread__status--online]="convo.status !== 'offline'"
-                              aria-hidden="true"
-                            ></span>
-                          </div>
-                          <div class="chat-thread__body">
-                            <div class="chat-thread__top">
-                              <span class="chat-thread__name">{{ getConversationName(convo) }}</span>
-                              <span class="chat-thread__time">
-                                {{ convo.lastMessage?.timestamp ? (convo.lastMessage?.timestamp | date:'shortTime') : '' }}
-                              </span>
-                            </div>
-                            <div class="chat-thread__bottom">
-                              <span class="chat-thread__preview">{{ getConversationPreview(convo) }}</span>
-                              <div class="chat-thread__indicators">
-                                @if (getConversationChannel(convo)) {
-                                  <span class="chat-thread__channel chat-thread__channel--{{ getConversationChannel(convo) }}">
-                                    {{ getConversationChannel(convo) }}
-                                  </span>
-                                }
-                                @if (convo.unreadCount) {
-                                  <span
-                                    class="chat-thread__badge"
-                                    [attr.aria-label]="convo.unreadCount + ' unread'"
-                                  >{{ convo.unreadCount }}</span>
-                                }
-                              </div>
-                            </div>
-                          </div>
-                        </button>
-                      </li>
-                    }
-                    @if (filteredConversations.length === 0) {
-                      <li class="chat-aside__empty" aria-live="polite">
-                        <i class="feather icon-inbox" aria-hidden="true"></i>
-                        <p>No conversations match your search.</p>
-                      </li>
-                    }
-                  </ul>
-                </ng-scrollbar>
-              </div>
-            </ng-template>
-          </li>
 
-          <!-- ─ Contacts Tab ─ -->
-          <li [ngbNavItem]="2" class="chat-aside__nav-item">
-            <button ngbNavLink type="button" class="chat-aside__nav-link">
-              <i class="feather icon-users" aria-hidden="true"></i>
-              <span>Contacts</span>
+            <!-- Main click area -->
+            <button type="button" class="mail-item__body" (click)="selectConversation(convo)">
+              <div class="mail-item__avatar">
+                @if (convo.avatarUrl) {
+                  <img
+                    [src]="convo.avatarUrl"
+                    class="mail-item__avatar-img"
+                    [alt]="getConversationName(convo)"
+                  />
+                } @else {
+                  <span class="mail-item__avatar-initials" aria-hidden="true">
+                    {{ getAvatarInitials(getConversationName(convo)) }}
+                  </span>
+                }
+              </div>
+              <div class="mail-item__text">
+                <div class="mail-item__top">
+                  <span class="mail-item__from">{{ getConversationName(convo) }}</span>
+                  <span class="mail-item__date">{{ convo.lastMessage?.timestamp | date:'MMM d' }}</span>
+                </div>
+                <div class="mail-item__subject">{{ getConversationSubject(convo) }}</div>
+                <div class="mail-item__preview">{{ getConversationPreview(convo) }}</div>
+              </div>
+              <div class="mail-item__meta">
+                @if (convo.unreadCount && convo.unreadCount > 0) {
+                  <span class="mail-item__badge" [attr.aria-label]="convo.unreadCount + ' unread'">
+                    {{ convo.unreadCount }}
+                  </span>
+                }
+                @if (getConversationChannel(convo)) {
+                  <span class="mail-item__channel mail-item__channel--{{ getConversationChannel(convo) }}">
+                    {{ getConversationChannel(convo) }}
+                  </span>
+                }
+              </div>
             </button>
-            <ng-template ngbNavContent>
-              <div class="chat-aside__scroll-wrap">
-                <ng-scrollbar>
-                  @if (isLoadingContacts) {
-                    <div class="chat-aside__empty" aria-live="polite">
-                      <p>Loading contacts…</p>
-                    </div>
-                  }
-                  @if (!isLoadingContacts) {
-                    <!-- Employees -->
-                    <p class="chat-aside__section-label">Employees</p>
-                    @if (employeeContacts.length === 0) {
-                      <p class="chat-aside__empty-inline">No employees found.</p>
-                    }
-                    <ul class="chat-aside__list" [class.chat-aside__list--hidden]="employeeContacts.length === 0">
-                      @for (contact of employeeContacts; track trackByContactId($index, contact)) {
-                        <li class="chat-contact">
-                          <button
-                            type="button"
-                            class="chat-contact__btn"
-                            (click)="openContactChat(contact)"
-                          >
-                            <div class="chat-contact__avatar">
-                              @if (contact.avatarUrl) {
-                                <img
-                                  [src]="contact.avatarUrl"
-                                  class="chat-contact__avatar-img"
-                                  [alt]="contact.name + ' avatar'"
-                                />
-                              } @else {
-                                <span class="chat-contact__avatar-initials" aria-hidden="true">
-                                  {{ getAvatarInitials(contact.name) }}
-                                </span>
-                              }
-                              <span
-                                class="chat-contact__status"
-                                [class.chat-contact__status--online]="contact.status !== 'offline'"
-                                aria-hidden="true"
-                              ></span>
-                            </div>
-                            <div class="chat-contact__body">
-                              <div class="chat-contact__top">
-                                <span class="chat-contact__name">{{ contact.name }}</span>
-                                <span class="chat-contact__badge chat-contact__badge--role">{{ getContactBadge(contact) }}</span>
-                              </div>
-                              <span class="chat-contact__sub">{{ getContactSubtitle(contact) }}</span>
-                            </div>
-                            <i class="feather icon-message-square chat-contact__action-icon" aria-hidden="true"></i>
-                          </button>
-                        </li>
-                      }
-                    </ul>
-                    <!-- Clients -->
-                    <p class="chat-aside__section-label">Clients</p>
-                    @if (clientContacts.length === 0) {
-                      <p class="chat-aside__empty-inline">No clients found.</p>
-                    }
-                    <ul class="chat-aside__list" [class.chat-aside__list--hidden]="clientContacts.length === 0">
-                      @for (contact of clientContacts; track trackByContactId($index, contact)) {
-                        <li class="chat-contact">
-                          <button
-                            type="button"
-                            class="chat-contact__btn"
-                            (click)="openContactChat(contact)"
-                            [disabled]="!canStartClientChat(contact)"
-                            [attr.aria-label]="contact.phoneNumber
-                              ? 'Start SMS chat with ' + contact.name
-                              : contact.name + ' — phone number required'"
-                          >
-                            <div class="chat-contact__avatar">
-                              <span class="chat-contact__avatar-initials" aria-hidden="true">
-                                {{ getAvatarInitials(contact.name) }}
-                              </span>
-                              <span
-                                class="chat-contact__status"
-                                [class.chat-contact__status--online]="contact.status !== 'offline'"
-                                aria-hidden="true"
-                              ></span>
-                            </div>
-                            <div class="chat-contact__body">
-                              <div class="chat-contact__top">
-                                <span class="chat-contact__name">{{ contact.name }}</span>
-                                <span class="chat-contact__badge chat-contact__badge--client">{{ getContactBadge(contact) }}</span>
-                                @if (contact.hasClientHub) {
-                                  <span class="chat-contact__badge chat-contact__badge--hub" aria-label="Client Hub linked">Hub</span>
-                                }
-                              </div>
-                              <span class="chat-contact__sub">{{ getContactSubtitle(contact) }}</span>
-                            </div>
-                            <i class="feather icon-message-square chat-contact__action-icon" aria-hidden="true"></i>
-                          </button>
-                        </li>
-                      }
-                    </ul>
-                  }
-                </ng-scrollbar>
-              </div>
-            </ng-template>
           </li>
+        }
 
-        </ul>
+        @if (filteredConversations.length === 0) {
+          <li class="mail-list__empty" aria-live="polite">
+            <i class="feather icon-inbox" aria-hidden="true"></i>
+            <p>No threads found.</p>
+          </li>
+        }
+      </ul>
 
-        <!-- Tab Outlet -->
-        <div [ngbNavOutlet]="defaultNav" class="chat-aside__tab-outlet"></div>
-      </div>
+    </section>
 
-    </aside><!-- /chat-panel__aside -->
-
-
-    <!-- ── Right Content: Chat Area ─────────────────────────── -->
-    <section
-      class="chat-panel__content"
-      [class.show]="chatPanelVisible"
-      aria-label="Chat conversation"
+    <!-- ── Thread View ───────────────────────────────────────── -->
+    <main
+      class="mail-thread"
+      [class.mail-thread--visible]="chatPanelVisible"
+      aria-label="Email thread view"
     >
 
       @if (selectedConversation) {
 
-        <!-- Chat Header -->
-        <header class="chat-content__header">
-          <div class="chat-content__header-left">
-            <button
-              type="button"
-              class="chat-content__back-btn"
-              (click)="backToChatList()"
-              aria-label="Back to conversation list"
-            >
-              <i class="feather icon-arrow-left" aria-hidden="true"></i>
-            </button>
-            <div class="chat-content__avatar">
-              @if (selectedConversation.avatarUrl) {
-                <img
-                  [src]="selectedConversation.avatarUrl"
-                  class="chat-content__avatar-img"
-                  [alt]="getConversationName(selectedConversation) + ' avatar'"
-                />
-              } @else {
-                <span class="chat-content__avatar-initials" aria-hidden="true">
-                  {{ getAvatarInitials(getConversationName(selectedConversation)) }}
-                </span>
-              }
-              <span class="chat-content__online-dot" aria-hidden="true"></span>
-            </div>
-            <div class="chat-content__header-info">
-              <span class="chat-content__header-name">
-                {{ getConversationName(selectedConversation) }}
-              </span>
-              <span class="chat-content__header-status">
-                <span class="chat-content__status-dot" aria-hidden="true"></span>
-                {{ getLastSeenText(selectedConversation) }}
+        <!-- Thread header -->
+        <header class="mail-thread__header">
+          <button
+            type="button"
+            class="mail-thread__back"
+            (click)="backToChatList()"
+            aria-label="Back to thread list"
+          >
+            <i class="feather icon-arrow-left" aria-hidden="true"></i>
+          </button>
+          <div class="mail-thread__subject-group">
+            <h2 class="mail-thread__subject">{{ getConversationSubject(selectedConversation) }}</h2>
+            <div class="mail-thread__meta">
+              <span class="mail-thread__from">{{ getConversationName(selectedConversation) }}</span>
+              <span class="mail-thread__channel-badge mail-thread__channel-badge--{{ getConversationChannel(selectedConversation) }}">
+                {{ getConversationChannel(selectedConversation) }}
               </span>
             </div>
           </div>
-          <div class="chat-content__header-actions" aria-label="Conversation actions">
+          <div class="mail-thread__actions" aria-label="Thread actions">
             <button
               type="button"
-              class="chat-content__action-btn"
+              class="mail-thread__action-btn"
+              [class.mail-thread__action-btn--active]="selectedConversation.starred"
+              (click)="toggleStar(selectedConversation)"
+              [attr.aria-label]="selectedConversation.starred ? 'Unstar' : 'Star'"
+              title="Star"
+            >
+              <i class="feather icon-star" aria-hidden="true"></i>
+            </button>
+            <button
+              type="button"
+              class="mail-thread__action-btn"
+              (click)="toggleReadState(selectedConversation)"
+              aria-label="Toggle read state"
+              title="Mark read/unread"
+            >
+              <i class="feather icon-mail" aria-hidden="true"></i>
+            </button>
+            <button
+              type="button"
+              class="mail-thread__action-btn"
+              [class.mail-thread__action-btn--active]="showInfoPanel"
               (click)="toggleInfoPanel()"
-              [class.chat-content__action-btn--active]="showInfoPanel"
-              aria-label="Toggle contact information panel"
+              aria-label="Contact info"
               title="Contact info"
             >
               <i class="feather icon-info" aria-hidden="true"></i>
@@ -332,15 +247,15 @@
           </div>
         </header>
 
-        <!-- Chat Body -->
-        <div class="chat-content__body">
+        <!-- Email messages -->
+        <div class="mail-thread__body">
           <ng-scrollbar #chatBodyScrollbar>
 
-            @if (selectedConversation && hasMoreMessages) {
-              <div class="chat-messages__load-more">
+            @if (hasMoreMessages) {
+              <div class="mail-load-more">
                 <button
                   type="button"
-                  class="chat-messages__load-more-btn"
+                  class="mail-load-more__btn"
                   (click)="loadMoreMessages()"
                   [disabled]="isLoadingMessages"
                 >
@@ -350,148 +265,124 @@
             }
 
             @if (isLoadingMessages && !messages.length) {
-              <!-- Loading skeleton -->
-              <div class="chat-skeleton" aria-busy="true" aria-label="Loading messages">
-                <div class="chat-skeleton__row chat-skeleton__row--friend">
-                  <div class="chat-skeleton__avatar"></div>
-                  <div class="chat-skeleton__bubble chat-skeleton__bubble--sm"></div>
-                </div>
-                <div class="chat-skeleton__row chat-skeleton__row--me">
-                  <div class="chat-skeleton__bubble chat-skeleton__bubble--md"></div>
-                </div>
-                <div class="chat-skeleton__row chat-skeleton__row--friend">
-                  <div class="chat-skeleton__avatar"></div>
-                  <div class="chat-skeleton__bubble chat-skeleton__bubble--lg"></div>
-                </div>
-                <div class="chat-skeleton__row chat-skeleton__row--me">
-                  <div class="chat-skeleton__bubble chat-skeleton__bubble--sm"></div>
-                </div>
-                <div class="chat-skeleton__row chat-skeleton__row--me">
-                  <div class="chat-skeleton__bubble chat-skeleton__bubble--md"></div>
-                </div>
+              <!-- Skeleton -->
+              <div class="mail-skeleton" aria-busy="true" aria-label="Loading messages">
+                @for (_ of [1,2,3]; track $index) {
+                  <div class="mail-skeleton__card">
+                    <div class="mail-skeleton__card-header">
+                      <div class="mail-skeleton__avatar"></div>
+                      <div class="mail-skeleton__lines">
+                        <div class="mail-skeleton__line mail-skeleton__line--title"></div>
+                        <div class="mail-skeleton__line mail-skeleton__line--sub"></div>
+                      </div>
+                    </div>
+                    <div class="mail-skeleton__body"></div>
+                  </div>
+                }
               </div>
             }
 
             @if (messages.length) {
-              <ul class="chat-messages" role="log" aria-live="polite" aria-label="Messages">
+              <div class="mail-emails" role="log" aria-live="polite" aria-label="Messages">
                 @for (msg of messages; track trackByMessage($index, msg)) {
-                  <li
-                    class="chat-message"
-                    [class.chat-message--me]="msg.isMine"
-                    [class.chat-message--friend]="!msg.isMine"
+                  <article
+                    class="mail-email"
+                    [class.mail-email--me]="msg.isMine"
+                    [class.mail-email--them]="!msg.isMine"
                   >
-                    @if (!msg.isMine) {
-                      <div class="chat-message__avatar">
-                        @if (selectedConversation.avatarUrl) {
+                    <!-- Email card header -->
+                    <header class="mail-email__header">
+                      <div class="mail-email__sender-avatar" aria-hidden="true">
+                        @if (msg.isMine) {
+                          <span class="mail-email__avatar-initials mail-email__avatar-initials--me">Me</span>
+                        } @else if (selectedConversation.avatarUrl) {
                           <img
                             [src]="selectedConversation.avatarUrl"
-                            class="chat-message__avatar-img"
+                            class="mail-email__avatar-img"
                             [alt]="getConversationName(selectedConversation)"
                           />
                         } @else {
-                          <span class="chat-message__avatar-initials" aria-hidden="true">
-                            {{ getAvatarInitials(getConversationName(selectedConversation)) }}
+                          <span class="mail-email__avatar-initials">
+                            {{ getAvatarInitials(msg.senderName || getConversationName(selectedConversation)) }}
                           </span>
                         }
                       </div>
-                    }
-                    <div class="chat-message__content">
-                      @if (!msg.isMine && msg.senderName) {
-                        <span class="chat-message__sender-name">{{ msg.senderName }}</span>
+                      <div class="mail-email__meta">
+                        <div class="mail-email__from-line">
+                          <span class="mail-email__from-name">
+                            {{ msg.isMine ? 'You' : (msg.senderName || getConversationName(selectedConversation)) }}
+                          </span>
+                          <span class="mail-email__timestamp">{{ msg.timestamp | date:'MMM d, y, h:mm a' }}</span>
+                        </div>
+                        <div class="mail-email__to-line">
+                          <span class="mail-email__to-label">to</span>
+                          <span class="mail-email__to-name">
+                            {{ msg.isMine ? getConversationName(selectedConversation) : 'You' }}
+                          </span>
+                        </div>
+                      </div>
+                      @if (getMessageStatusLabel(msg)) {
+                        <span class="mail-email__status-chip mail-email__status-chip--{{ msg.smsStatus || (msg.isRead ? 'read' : '') }}">
+                          {{ getMessageStatusLabel(msg) }}
+                        </span>
                       }
-                      <div class="chat-message__bubble">
-                        @if (msg.content) {
-                          <p class="chat-message__text">{{ msg.content }}</p>
-                        }
-                        @if (msg.attachmentUrl) {
-                          <a
-                            class="chat-message__attachment"
-                            [href]="msg.attachmentUrl"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label="View attachment"
-                          >
-                            <img
-                              [src]="msg.attachmentUrl"
-                              class="chat-message__attachment-img"
-                              alt="Attachment"
-                            />
-                          </a>
-                        }
-                      </div>
-                      <div class="chat-message__meta">
-                        <span class="chat-message__time">{{ msg.timestamp | date:'shortTime' }}</span>
-                        @if (getMessageStatusLabel(msg)) {
-                          <span class="chat-message__status-chip">{{ getMessageStatusLabel(msg) }}</span>
-                        }
-                      </div>
+                    </header>
+                    <!-- Email body -->
+                    <div class="mail-email__body">
+                      @if (msg.content) {
+                        <p class="mail-email__text">{{ msg.content }}</p>
+                      }
+                      @if (msg.attachmentUrl) {
+                        <a
+                          class="mail-email__attachment"
+                          [href]="msg.attachmentUrl"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label="View attachment"
+                        >
+                          <i class="feather icon-paperclip" aria-hidden="true"></i>
+                          <span>View attachment</span>
+                        </a>
+                      }
                     </div>
-                  </li>
+                  </article>
                 }
-              </ul>
-            } @else {
-              <div class="chat-messages__empty">
-                <div class="chat-messages__empty-icon" aria-hidden="true">
-                  <i class="feather icon-message-square"></i>
-                </div>
-                <p class="chat-messages__empty-title">No messages yet</p>
-                <p class="chat-messages__empty-sub">Send the first message to start this conversation.</p>
-              </div>
-            }
 
-            <!-- Typing Indicator -->
-            @if (isRemoteTyping) {
-              <div class="chat-typing" aria-live="polite" aria-label="Contact is typing">
-                <div class="chat-message__avatar">
-                  @if (selectedConversation.avatarUrl) {
-                    <img [src]="selectedConversation.avatarUrl" class="chat-message__avatar-img" alt="" />
-                  } @else {
-                    <span class="chat-message__avatar-initials" aria-hidden="true">
-                      {{ getAvatarInitials(getConversationName(selectedConversation)) }}
-                    </span>
-                  }
-                </div>
-                <div class="chat-typing__bubble" aria-hidden="true">
-                  <span class="chat-typing__dot"></span>
-                  <span class="chat-typing__dot"></span>
-                  <span class="chat-typing__dot"></span>
-                </div>
+                <!-- Typing indicator -->
+                @if (isRemoteTyping) {
+                  <div class="mail-typing" aria-live="polite" aria-label="{{ getConversationName(selectedConversation) }} is typing">
+                    <span class="mail-typing__dot" aria-hidden="true"></span>
+                    <span class="mail-typing__dot" aria-hidden="true"></span>
+                    <span class="mail-typing__dot" aria-hidden="true"></span>
+                    <span class="mail-typing__label">{{ getConversationName(selectedConversation) }} is typing…</span>
+                  </div>
+                }
+
+              </div>
+            } @else if (!isLoadingMessages) {
+              <div class="mail-thread__empty" aria-label="No messages">
+                <i class="feather icon-message-square" aria-hidden="true"></i>
+                <p>No messages yet. Send the first one below.</p>
               </div>
             }
 
           </ng-scrollbar>
+        </div>
 
-          <!-- Scroll-to-bottom FAB -->
-          @if (messages.length > 10) {
-            <button
-              type="button"
-              class="chat-scroll-to-bottom"
-              (click)="scrollToBottom()"
-              aria-label="Scroll to latest messages"
-              title="Jump to latest"
-            >
-              <i class="feather icon-chevron-down" aria-hidden="true"></i>
-            </button>
-          }
-        </div><!-- /chat-content__body -->
+        <!-- Reply Composer -->
+        <footer class="mail-reply">
+          <div class="mail-reply__header">
+            <i class="feather icon-corner-up-left" aria-hidden="true"></i>
+            <span class="mail-reply__label">Reply</span>
+            <span class="mail-reply__to">to {{ getConversationName(selectedConversation) }}</span>
+          </div>
 
-        <!-- Chat Footer -->
-        <footer class="chat-content__footer">
           @if (attachmentPreviewUrl) {
-            <div class="chat-compose__attachment-preview">
-              <img
-                [src]="attachmentPreviewUrl"
-                class="chat-compose__attachment-thumb"
-                alt="Attachment preview"
-              />
-              <div class="chat-compose__attachment-info">
-                @if (attachmentFile?.name) {
-                  <span class="chat-compose__attachment-name">{{ attachmentFile?.name }}</span>
-                }
-              </div>
+            <div class="mail-reply__attachment-preview">
+              <img [src]="attachmentPreviewUrl" class="mail-reply__attachment-img" alt="Attachment preview" />
               <button
                 type="button"
-                class="chat-compose__attachment-remove"
+                class="mail-reply__attachment-remove"
                 (click)="clearAttachment()"
                 aria-label="Remove attachment"
               >
@@ -499,142 +390,248 @@
               </button>
             </div>
           }
-          <div class="chat-compose">
-            <label class="chat-compose__clip" aria-label="Attach a file" title="Attach file">
-              <input
-                type="file"
-                class="chat-compose__clip-input"
-                accept="image/*,application/pdf"
-                (change)="onAttachmentSelected($event)"
-              />
-              <i class="feather icon-paperclip" aria-hidden="true"></i>
-            </label>
-            <form class="chat-compose__form" (ngSubmit)="sendMessage()">
-              <textarea
-                class="chat-compose__input"
-                name="messageText"
-                [(ngModel)]="messageText"
-                (ngModelChange)="notifyTyping()"
-                placeholder="Type a message…"
-                rows="1"
-                aria-label="Message input"
-              ></textarea>
-            </form>
-            <button
-              type="button"
-              class="chat-compose__send"
-              (click)="sendMessage()"
-              [disabled]="isSending || (!messageText.trim() && !attachmentPreviewUrl)"
-              aria-label="Send message"
-            >
-              @if (isSending) {
-                <i class="feather icon-loader" aria-hidden="true"></i>
-              } @else {
-                <i class="feather icon-send" aria-hidden="true"></i>
-              }
-            </button>
-          </div>
           @if (attachmentUploadError) {
-            <p class="chat-compose__upload-error" role="alert">{{ attachmentUploadError }}</p>
+            <p class="mail-reply__error" role="alert">{{ attachmentUploadError }}</p>
           }
+
+          <div class="mail-reply__compose">
+            <!-- Formatting toolbar -->
+            <div class="mail-reply__toolbar">
+              <button type="button" class="mail-format-btn" (click)="execFormat('bold')" aria-label="Bold" title="Bold">
+                <i class="feather icon-bold" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="mail-format-btn" (click)="execFormat('italic')" aria-label="Italic" title="Italic">
+                <i class="feather icon-italic" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="mail-format-btn" (click)="execFormat('underline')" aria-label="Underline" title="Underline">
+                <i class="feather icon-underline" aria-hidden="true"></i>
+              </button>
+              <span class="mail-reply__toolbar-sep" aria-hidden="true"></span>
+              <label class="mail-format-btn" aria-label="Attach file" title="Attach file">
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  class="mail-reply__file-input"
+                  (change)="onAttachmentSelected($event)"
+                />
+                <i class="feather icon-paperclip" aria-hidden="true"></i>
+              </label>
+            </div>
+
+            <!-- Contenteditable editor -->
+            <div
+              class="mail-reply__editor"
+              contenteditable="true"
+              role="textbox"
+              aria-multiline="true"
+              aria-label="Write your reply"
+              data-placeholder="Write a reply… (Ctrl+Enter to send)"
+              #replyEditor
+              (input)="onReplyInput($event)"
+              (keydown.control.enter)="sendMessage()"
+              (keydown.meta.enter)="sendMessage()"
+            ></div>
+
+            <div class="mail-reply__footer">
+              <button
+                type="button"
+                class="mail-reply__send-btn"
+                (click)="sendMessage()"
+                [disabled]="isSending || (!messageText.trim() && !attachmentFile)"
+                aria-label="Send reply"
+              >
+                <i class="feather icon-send" aria-hidden="true"></i>
+                {{ isSending ? 'Sending…' : 'Send' }}
+              </button>
+            </div>
+          </div>
         </footer>
 
       } @else {
-
-        <!-- ── Empty State: No Conversation Selected ─────────── -->
-        <div class="chat-panel__empty">
-          <div class="chat-panel__empty-icon" aria-hidden="true">
-            <i class="feather icon-message-square"></i>
+        <!-- No thread selected -->
+        <div class="mail-empty-state" aria-label="No thread selected">
+          <div class="mail-empty-state__icon" aria-hidden="true">
+            <i class="feather icon-mail"></i>
           </div>
-          <h2 class="chat-panel__empty-title">Select a conversation</h2>
-          <p class="chat-panel__empty-sub">Choose a chat from the left to view messages and reply.</p>
+          <h3 class="mail-empty-state__title">Select a conversation</h3>
+          <p class="mail-empty-state__sub">Choose a thread from the list, or compose a new message.</p>
+          <button type="button" class="mail-empty-state__cta" (click)="openCompose()">
+            <i class="feather icon-edit" aria-hidden="true"></i>
+            Compose
+          </button>
         </div>
-
       }
 
-    </section><!-- /chat-panel__content -->
+    </main>
 
-    <!-- ── Info Panel (slide-in from right) ────────────────── -->
-    @if (selectedConversation) {
-      <aside
-        class="chat-panel__info"
-        [class.chat-panel__info--open]="showInfoPanel"
-        aria-label="Contact details"
-      >
-        <div class="chat-info">
-          <header class="chat-info__header">
-            <h3 class="chat-info__title">Contact Info</h3>
-            <button
-              type="button"
-              class="chat-info__close"
-              (click)="toggleInfoPanel()"
-              aria-label="Close contact info"
-            >
-              <i class="feather icon-x" aria-hidden="true"></i>
-            </button>
-          </header>
-
-          <!-- Avatar + Name -->
-          <div class="chat-info__hero">
-            <div class="chat-info__avatar">
-              @if (selectedConversation.avatarUrl) {
-                <img
-                  [src]="selectedConversation.avatarUrl"
-                  class="chat-info__avatar-img"
-                  [alt]="getConversationName(selectedConversation)"
-                />
-              } @else {
-                <span class="chat-info__avatar-initials">
-                  {{ getAvatarInitials(getConversationName(selectedConversation)) }}
-                </span>
-              }
-            </div>
-            <h4 class="chat-info__name">{{ getConversationName(selectedConversation) }}</h4>
-            <span class="chat-info__role-badge">{{ getConversationRole(selectedConversation) }}</span>
-          </div>
-
-          <!-- Details List -->
-          <ul class="chat-info__details" aria-label="Contact details">
-            <li class="chat-info__detail">
-              <span class="chat-info__detail-icon">
-                <i class="feather icon-layers" aria-hidden="true"></i>
-              </span>
-              <div class="chat-info__detail-body">
-                <span class="chat-info__detail-label">Channel</span>
-                <span class="chat-info__detail-value">{{ getConversationChannel(selectedConversation) }}</span>
-              </div>
-            </li>
-            @if (selectedConversation['phoneNumber']) {
-              <li class="chat-info__detail">
-                <span class="chat-info__detail-icon">
-                  <i class="feather icon-phone" aria-hidden="true"></i>
-                </span>
-                <div class="chat-info__detail-body">
-                  <span class="chat-info__detail-label">Phone</span>
-                  <a class="chat-info__detail-value" [href]="'tel:' + selectedConversation['phoneNumber']">
-                    {{ selectedConversation['phoneNumber'] }}
-                  </a>
-                </div>
-              </li>
-            }
-            @if (selectedConversation['email']) {
-              <li class="chat-info__detail">
-                <span class="chat-info__detail-icon">
-                  <i class="feather icon-mail" aria-hidden="true"></i>
-                </span>
-                <div class="chat-info__detail-body">
-                  <span class="chat-info__detail-label">Email</span>
-                  <a class="chat-info__detail-value" [href]="'mailto:' + selectedConversation['email']">
-                    {{ selectedConversation['email'] }}
-                  </a>
-                </div>
-              </li>
-            }
-          </ul>
+    <!-- ── Info Panel ────────────────────────────────────────── -->
+    @if (selectedConversation && showInfoPanel) {
+      <aside class="mail-info-panel" aria-label="Contact information">
+        <button
+          type="button"
+          class="mail-info-panel__close"
+          (click)="toggleInfoPanel()"
+          aria-label="Close info panel"
+        >
+          <i class="feather icon-x" aria-hidden="true"></i>
+        </button>
+        <div class="mail-info-panel__avatar" aria-hidden="true">
+          @if (selectedConversation.avatarUrl) {
+            <img
+              [src]="selectedConversation.avatarUrl"
+              [alt]="getConversationName(selectedConversation)"
+            />
+          } @else {
+            <span class="mail-info-panel__initials">
+              {{ getAvatarInitials(getConversationName(selectedConversation)) }}
+            </span>
+          }
         </div>
+        <h3 class="mail-info-panel__name">{{ getConversationName(selectedConversation) }}</h3>
+        <p class="mail-info-panel__role">{{ getConversationRole(selectedConversation) }}</p>
+        <dl class="mail-info-panel__details">
+          <dt>Channel</dt>
+          <dd>{{ getConversationChannel(selectedConversation) }}</dd>
+          @if (selectedConversation['phoneNumber']) {
+            <dt>Phone</dt>
+            <dd>
+              <a [href]="'tel:' + selectedConversation['phoneNumber']">
+                {{ selectedConversation['phoneNumber'] }}
+              </a>
+            </dd>
+          }
+          @if (selectedConversation['email']) {
+            <dt>Email</dt>
+            <dd>
+              <a [href]="'mailto:' + selectedConversation['email']">
+                {{ selectedConversation['email'] }}
+              </a>
+            </dd>
+          }
+          <dt>Status</dt>
+          <dd>{{ getLastSeenText(selectedConversation) }}</dd>
+        </dl>
       </aside>
     }
 
-  </div><!-- /chat-panel -->
+  </div><!-- /mail-layout -->
 
-</div><!-- /chat-page -->
+  <!-- ── Compose New Message Panel (floating) ───────────────── -->
+  @if (composePanelOpen) {
+    <div
+      class="mail-compose-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Compose new message"
+    >
+      <header class="mail-compose-panel__header">
+        <span class="mail-compose-panel__title">New Message</span>
+        <button
+          type="button"
+          class="mail-compose-panel__close"
+          (click)="closeCompose()"
+          aria-label="Close compose"
+        >
+          <i class="feather icon-x" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      <div class="mail-compose-panel__fields">
+        <div class="mail-compose-panel__field">
+          <label class="mail-compose-panel__label" for="composeTo">To</label>
+          <input
+            id="composeTo"
+            type="text"
+            class="mail-compose-panel__input"
+            [(ngModel)]="composeTo"
+            name="composeTo"
+            placeholder="Name or search contacts…"
+            [attr.list]="'compose-contacts-list'"
+            autocomplete="off"
+          />
+          <datalist id="compose-contacts-list">
+            @for (contact of filteredContacts; track trackByContactId($index, contact)) {
+              <option [value]="contact.name">{{ contact.name }}</option>
+            }
+          </datalist>
+        </div>
+        <div class="mail-compose-panel__field">
+          <label class="mail-compose-panel__label" for="composeSubject">Subject</label>
+          <input
+            id="composeSubject"
+            type="text"
+            class="mail-compose-panel__input"
+            [(ngModel)]="composeSubject"
+            name="composeSubject"
+            placeholder="Add a subject…"
+          />
+        </div>
+      </div>
+
+      <!-- Compose toolbar -->
+      <div class="mail-compose-panel__toolbar">
+        <button type="button" class="mail-format-btn" (click)="execFormat('bold')" aria-label="Bold" title="Bold">
+          <i class="feather icon-bold" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="mail-format-btn" (click)="execFormat('italic')" aria-label="Italic" title="Italic">
+          <i class="feather icon-italic" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="mail-format-btn" (click)="execFormat('underline')" aria-label="Underline" title="Underline">
+          <i class="feather icon-underline" aria-hidden="true"></i>
+        </button>
+        <label class="mail-format-btn" aria-label="Attach file" title="Attach file">
+          <input
+            type="file"
+            accept="image/*,application/pdf"
+            class="mail-reply__file-input"
+            (change)="onAttachmentSelected($event)"
+          />
+          <i class="feather icon-paperclip" aria-hidden="true"></i>
+        </label>
+      </div>
+
+      <!-- Editor -->
+      <div
+        class="mail-compose-panel__editor"
+        contenteditable="true"
+        role="textbox"
+        aria-multiline="true"
+        aria-label="Message body"
+        data-placeholder="Write your message…"
+        #composeEditor
+        (input)="onComposeInput($event)"
+        (keydown.control.enter)="sendComposedMessage()"
+        (keydown.meta.enter)="sendComposedMessage()"
+      ></div>
+
+      @if (attachmentPreviewUrl) {
+        <div class="mail-compose-panel__attachment-preview">
+          <img [src]="attachmentPreviewUrl" alt="Attachment preview" class="mail-reply__attachment-img" />
+          <button type="button" class="mail-reply__attachment-remove" (click)="clearAttachment()" aria-label="Remove attachment">
+            <i class="feather icon-x" aria-hidden="true"></i>
+          </button>
+        </div>
+      }
+
+      <footer class="mail-compose-panel__footer">
+        <button
+          type="button"
+          class="mail-reply__send-btn"
+          (click)="sendComposedMessage()"
+          [disabled]="isSending || !composeTo.trim()"
+          aria-label="Send message"
+        >
+          <i class="feather icon-send" aria-hidden="true"></i>
+          {{ isSending ? 'Sending…' : 'Send' }}
+        </button>
+        <button type="button" class="mail-compose-panel__discard" (click)="closeCompose()" aria-label="Discard message">
+          <i class="feather icon-trash-2" aria-hidden="true"></i>
+          Discard
+        </button>
+      </footer>
+    </div>
+    <!-- Backdrop -->
+    <div class="mail-compose-backdrop" (click)="closeCompose()" aria-hidden="true"></div>
+  }
+
+</div><!-- /mail-page -->

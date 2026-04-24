@@ -1,23 +1,17 @@
-<!--
+﻿<!--
   ╔══════════════════════════════════════════════════════════════════╗
-  ║  client-hub-chat.component.html — Designer-authored template     ║
+  ║  client-hub-chat.component.html — Email-style Messaging          ║
   ╠══════════════════════════════════════════════════════════════════╣
-  ║  Existing bindings:                                              ║
-  ║    conversationName (getter), isReady (getter)                   ║
-  ║    isLoading, isLoadingMessages, error, hasMore                  ║
-  ║    messages, messageText (ngModel), sendMessage()                ║
-  ║    loadMoreMessages(), refreshMessages(), notifyTyping()         ║
-  ║    isRemoteTyping, trackByMessageId, getAvatarInitials()         ║
-  ║  NEW bindings (engineer must add):                               ║
-  ║    scrollToBottom(): void  (public method via chatBody ref)      ║
+  ║  Bindings: all wired in client-hub-chat.component.ts             ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
-<section class="client-page client-chat">
+<section class="client-page client-mail">
+
   <header class="client-page-head">
     <div>
       <h1>Messages</h1>
       <p class="client-page-subtitle">
-        Stay in touch with {{ conversationName }} — messages sync across SMS and Client Hub.
+        Conversation with {{ conversationName }} — syncs across SMS and Client Hub.
       </p>
     </div>
     <button
@@ -37,49 +31,58 @@
   }
 
   @if (isLoading) {
-    <!-- Loading skeleton -->
-    <div class="client-surface client-chat__skeleton-shell" aria-busy="true" aria-label="Loading conversation">
-      <div class="client-chat-skeleton__header">
-        <div class="client-chat-skeleton__avatar"></div>
-        <div class="client-chat-skeleton__title-group">
-          <div class="client-chat-skeleton__line client-chat-skeleton__line--title"></div>
-          <div class="client-chat-skeleton__line client-chat-skeleton__line--sub"></div>
+    <!-- Skeleton -->
+    <div class="client-surface client-mail__skeleton-shell" aria-busy="true" aria-label="Loading conversation">
+      <div class="client-mail-skeleton__header">
+        <div class="client-mail-skeleton__avatar"></div>
+        <div class="client-mail-skeleton__title-group">
+          <div class="client-mail-skeleton__line client-mail-skeleton__line--title"></div>
+          <div class="client-mail-skeleton__line client-mail-skeleton__line--sub"></div>
         </div>
       </div>
-      <div class="client-chat-skeleton__body">
-        <div class="client-chat-skeleton__bubble client-chat-skeleton__bubble--friend client-chat-skeleton__bubble--sm"></div>
-        <div class="client-chat-skeleton__bubble client-chat-skeleton__bubble--me client-chat-skeleton__bubble--md"></div>
-        <div class="client-chat-skeleton__bubble client-chat-skeleton__bubble--friend client-chat-skeleton__bubble--lg"></div>
-        <div class="client-chat-skeleton__bubble client-chat-skeleton__bubble--me client-chat-skeleton__bubble--sm"></div>
+      <div class="client-mail-skeleton__body">
+        @for (_ of [1,2,3]; track $index) {
+          <div class="client-mail-skeleton__card">
+            <div class="client-mail-skeleton__card-head">
+              <div class="client-mail-skeleton__dot"></div>
+              <div class="client-mail-skeleton__lines">
+                <div class="client-mail-skeleton__line client-mail-skeleton__line--title"></div>
+                <div class="client-mail-skeleton__line client-mail-skeleton__line--sub"></div>
+              </div>
+            </div>
+            <div class="client-mail-skeleton__card-body"></div>
+          </div>
+        }
       </div>
     </div>
   }
 
   @if (isReady) {
-    <div class="client-surface chat-shell">
+    <div class="client-surface client-mail__container">
 
-      <!-- ── Header ──────────────────────────────────────────── -->
-      <header class="chat-header">
-        <div class="chat-header__identity">
-          <div class="chat-header__avatar" aria-hidden="true">
-            {{ getAvatarInitials(conversationName) }}
-          </div>
-          <div class="chat-header__info">
-            <h2 class="chat-header__name">{{ conversationName }}</h2>
-            <p class="chat-header__desc">Replies via SMS and Client Hub</p>
-          </div>
+      <!-- ── Thread Header ──────────────────────────────── -->
+      <header class="client-mail__thread-header">
+        <div class="client-mail__thread-avatar" aria-hidden="true">
+          {{ getAvatarInitials(conversationName) }}
         </div>
-        <div class="chat-header__status">
-          <span class="chat-header__status-dot" aria-hidden="true"></span>
-          <span class="chat-header__status-text">Online</span>
+        <div class="client-mail__thread-info">
+          <h2 class="client-mail__thread-name">{{ conversationName }}</h2>
+          <p class="client-mail__thread-desc">
+            <i class="feather icon-mail" aria-hidden="true"></i>
+            Replies via SMS and Client Hub
+          </p>
+        </div>
+        <div class="client-mail__thread-status" aria-label="Status: Online">
+          <span class="client-mail__status-dot" aria-hidden="true"></span>
+          <span class="client-mail__status-label">Online</span>
         </div>
       </header>
 
-      <!-- ── Body ────────────────────────────────────────────── -->
-      <div class="chat-body" #chatBody>
+      <!-- ── Email Thread Body ──────────────────────────── -->
+      <div class="client-mail__body" #chatBody>
 
         @if (hasMore) {
-          <div class="chat-load-more">
+          <div class="client-mail__load-more">
             <button
               class="btn btn-sm btn-outline-secondary"
               type="button"
@@ -92,107 +95,170 @@
         }
 
         @if (messages.length) {
-          <ul class="chat-messages" role="log" aria-live="polite" aria-label="Messages">
+          <div class="client-mail__emails" role="log" aria-live="polite" aria-label="Messages">
             @for (message of messages; track trackByMessageId($index, message)) {
-              <li class="chat-message" [class.is-mine]="message.isMine">
-                @if (!message.isMine && message.senderName) {
-                  <span class="chat-sender-name">{{ message.senderName }}</span>
-                }
-                <div class="chat-bubble">
+              <article
+                class="client-mail-email"
+                [class.client-mail-email--mine]="message.isMine"
+                [class.client-mail-email--theirs]="!message.isMine"
+              >
+                <!-- Email card header -->
+                <header class="client-mail-email__header">
+                  <div class="client-mail-email__avatar" aria-hidden="true">
+                    @if (message.isMine) {
+                      <span class="client-mail-email__avatar-me">Me</span>
+                    } @else {
+                      {{ getAvatarInitials(conversationName) }}
+                    }
+                  </div>
+                  <div class="client-mail-email__meta">
+                    <div class="client-mail-email__from-row">
+                      <span class="client-mail-email__from">
+                        {{ message.isMine ? 'You' : (message.senderName || conversationName) }}
+                      </span>
+                      <span class="client-mail-email__date">{{ message.sentAt | date:'MMM d, y, h:mm a' }}</span>
+                    </div>
+                    <div class="client-mail-email__to-row">
+                      <span class="client-mail-email__to-label">to</span>
+                      <span class="client-mail-email__to-name">
+                        {{ message.isMine ? conversationName : 'You' }}
+                      </span>
+                    </div>
+                  </div>
+                  <!-- Delivery status -->
+                  @if (message.isMine && message.deliveryStatus) {
+                    <span
+                      class="client-mail-email__status"
+                      [class.client-mail-email__status--sent]="message.deliveryStatus === 'sent'"
+                      [class.client-mail-email__status--sending]="message.deliveryStatus === 'sending'"
+                      [class.client-mail-email__status--failed]="message.deliveryStatus === 'failed'"
+                      [class.client-mail-email__status--read]="message.isRead"
+                    >
+                      @if (message.isRead) { Read }
+                      @else if (message.deliveryStatus === 'sending') { Sending… }
+                      @else if (message.deliveryStatus === 'sent') { Sent }
+                      @else if (message.deliveryStatus === 'failed') { Failed }
+                    </span>
+                  }
+                </header>
+
+                <!-- Email body -->
+                <div class="client-mail-email__body">
                   @if (message.content) {
-                    <p class="message-text">{{ message.content }}</p>
+                    <p class="client-mail-email__text">{{ message.content }}</p>
                   }
                   @if (message.attachmentUrl) {
                     <a
-                      class="message-attachment"
+                      class="client-mail-email__attachment"
                       [href]="message.attachmentUrl"
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="View attachment"
                     >
-                      <img
-                        [src]="message.attachmentUrl"
-                        class="message-attachment__img"
-                        alt="Attachment"
-                      />
+                      <i class="feather icon-paperclip" aria-hidden="true"></i>
+                      <span>View attachment</span>
                     </a>
                   }
-                  <div class="message-meta">
-                    <span class="message-time">{{ message.sentAt | date: 'shortTime' }}</span>
-                    @if (message.isMine && message.isRead) {
-                      <span class="message-chip message-chip--read">Read</span>
-                    } @else if (message.deliveryStatus) {
-                      <span
-                        class="message-chip"
-                        [class.message-chip--failed]="message.deliveryStatus === 'failed'"
-                      >
-                        {{ message.deliveryStatus === 'sending' ? 'Sending…' : message.deliveryStatus === 'sent' ? 'Sent' : 'Failed' }}
-                      </span>
-                    }
-                  </div>
                 </div>
-              </li>
+              </article>
             }
-          </ul>
+          </div>
+
+          <!-- Typing indicator -->
+          @if (isRemoteTyping) {
+            <div class="client-mail__typing" aria-live="polite" aria-label="{{ conversationName }} is typing">
+              <span class="client-mail__typing-dot" aria-hidden="true"></span>
+              <span class="client-mail__typing-dot" aria-hidden="true"></span>
+              <span class="client-mail__typing-dot" aria-hidden="true"></span>
+              <span class="client-mail__typing-label">{{ conversationName }} is typing…</span>
+            </div>
+          }
+
         } @else {
-          <div class="chat-empty">
-            <div class="chat-empty__icon" aria-hidden="true">
-              <i class="feather icon-message-square"></i>
-            </div>
-            <p class="chat-empty__title">No messages yet</p>
-            <p class="chat-empty__sub">Say hello to start the conversation.</p>
+          <div class="client-mail__empty" aria-label="No messages">
+            <i class="feather icon-mail" aria-hidden="true"></i>
+            <p>No messages yet — send the first one below.</p>
           </div>
         }
 
-        <!-- Typing indicator -->
-        @if (isRemoteTyping) {
-          <div class="chat-typing" aria-live="polite" aria-label="Your team is typing">
-            <div class="chat-typing__bubble" aria-hidden="true">
-              <span class="chat-typing__dot"></span>
-              <span class="chat-typing__dot"></span>
-              <span class="chat-typing__dot"></span>
-            </div>
-            <span class="chat-typing__label">{{ conversationName }} is typing</span>
+      </div><!-- /client-mail__body -->
+
+      <!-- ── Reply Composer ─────────────────────────────── -->
+      <footer class="client-mail__reply">
+        <div class="client-mail__reply-header">
+          <i class="feather icon-corner-up-left" aria-hidden="true"></i>
+          <span class="client-mail__reply-label">Reply</span>
+          <span class="client-mail__reply-to">to {{ conversationName }}</span>
+        </div>
+
+        @if (attachmentPreviewUrl) {
+          <div class="client-mail__attachment-preview">
+            <img [src]="attachmentPreviewUrl" alt="Attachment preview" class="client-mail__attachment-img" />
+            <button
+              type="button"
+              class="client-mail__attachment-remove"
+              (click)="clearAttachment()"
+              aria-label="Remove attachment"
+            >
+              <i class="feather icon-x" aria-hidden="true"></i>
+            </button>
           </div>
         }
 
-      </div><!-- /chat-body -->
+        <div class="client-mail__reply-compose">
+          <!-- Toolbar -->
+          <div class="client-mail__reply-toolbar">
+            <button type="button" class="client-mail__format-btn" (click)="execFormat('bold')" aria-label="Bold" title="Bold">
+              <i class="feather icon-bold" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="client-mail__format-btn" (click)="execFormat('italic')" aria-label="Italic" title="Italic">
+              <i class="feather icon-italic" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="client-mail__format-btn" (click)="execFormat('underline')" aria-label="Underline" title="Underline">
+              <i class="feather icon-underline" aria-hidden="true"></i>
+            </button>
+            <span class="client-mail__toolbar-sep" aria-hidden="true"></span>
+            <label class="client-mail__format-btn" aria-label="Attach file" title="Attach file">
+              <input
+                type="file"
+                accept="image/*,application/pdf"
+                class="client-mail__file-input"
+                (change)="onAttachmentSelected($event)"
+              />
+              <i class="feather icon-paperclip" aria-hidden="true"></i>
+            </label>
+          </div>
 
-      <!-- Scroll-to-bottom FAB -->
-      @if (messages.length > 10) {
-        <button
-          type="button"
-          class="chat-scroll-fab"
-          (click)="scrollToBottom()"
-          aria-label="Scroll to latest messages"
-          title="Jump to latest"
-        >
-          <i class="feather icon-chevron-down" aria-hidden="true"></i>
-        </button>
-      }
+          <!-- Contenteditable editor -->
+          <div
+            class="client-mail__reply-editor"
+            contenteditable="true"
+            role="textbox"
+            aria-multiline="true"
+            aria-label="Write your reply"
+            data-placeholder="Write a reply… (Ctrl+Enter to send)"
+            #replyEditor
+            (input)="onReplyInput($event)"
+            (keydown.control.enter)="sendMessage()"
+            (keydown.meta.enter)="sendMessage()"
+          ></div>
 
-      <!-- ── Input ────────────────────────────────────────────── -->
-      <form class="chat-input" (ngSubmit)="sendMessage()">
-        <input
-          type="text"
-          name="messageText"
-          class="chat-input__field"
-          placeholder="Type a message…"
-          [(ngModel)]="messageText"
-          (ngModelChange)="notifyTyping()"
-          autocomplete="off"
-          aria-label="Message input"
-        />
-        <button
-          class="chat-input__send"
-          type="submit"
-          [disabled]="!messageText.trim()"
-          aria-label="Send message"
-        >
-          <i class="feather icon-send" aria-hidden="true"></i>
-        </button>
-      </form>
+          <div class="client-mail__reply-footer">
+            <button
+              type="button"
+              class="client-mail__send-btn"
+              (click)="sendMessage()"
+              [disabled]="!messageText.trim() && !attachmentFile"
+              aria-label="Send reply"
+            >
+              <i class="feather icon-send" aria-hidden="true"></i>
+              Send
+            </button>
+          </div>
+        </div>
+      </footer>
 
-    </div><!-- /chat-shell -->
+    </div><!-- /client-mail__container -->
   }
+
 </section>
