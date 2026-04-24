@@ -20,38 +20,29 @@
       @if (!isEditing && (templates$ | async)?.length) {
         <div class="jobflow-create__section">
           <label class="form-label" for="jobCreateTemplate">Start from a template</label>
-          <p-select
-            id="jobCreateTemplate"
-            [(ngModel)]="selectedTemplateId"
-            [options]="(templates$ | async) ?? []"
-            optionLabel="displayLabel"
-            optionValue="id"
-            size="small"
-            [fluid]="true"
-            [showClear]="true"
-            placeholder="Choose a template to pre-fill"
-            (onChange)="onTemplateSelected($event.value)" />
+          <select id="jobCreateTemplate" class="form-select form-select-sm" [(ngModel)]="selectedTemplateId" (ngModelChange)="onTemplateSelected($event)">
+            <option [ngValue]="null">Choose a template to pre-fill</option>
+            @for (tmpl of (templates$ | async) ?? []; track tmpl.id) {
+              <option [ngValue]="tmpl.id">{{ tmpl.displayLabel }}</option>
+            }
+          </select>
           <small class="text-muted">Pre-fills details so you can start faster.</small>
         </div>
       }
 
       <div class="jobflow-create__section">
         <label class="form-label" for="jobCreateCustomer">Customer <span class="text-danger">*</span></label>
-        <p-select
-          id="jobCreateCustomer"
-          [(ngModel)]="selectedCustomerId"
-          [options]="(customers$ | async) ?? []"
-          optionLabel="displayName"
-          optionValue="id"
-          [filter]="true"
-          size="small"
-          [fluid]="true"
-          placeholder="Select a customer" />
-        </div>
+        <select id="jobCreateCustomer" class="form-select form-select-sm" [(ngModel)]="selectedCustomerId">
+          <option [ngValue]="null">Select a customer</option>
+          @for (customer of (customers$ | async) ?? []; track customer.id) {
+            <option [ngValue]="customer.id">{{ customer.displayName }}</option>
+          }
+        </select>
+      </div>
 
         <div class="jobflow-create__section">
           <label class="form-label" for="jobCreateTitle">Job Title <span class="text-danger">*</span></label>
-          <input id="jobCreateTitle" pInputText [fluid]="true" pSize="small" [(ngModel)]="title" placeholder="Exterior repaint, spring service, etc." />
+          <input id="jobCreateTitle" type="text" class="form-control form-control-sm" [(ngModel)]="title" placeholder="Exterior repaint, spring service, etc." />
         </div>
 
         <div class="jobflow-create__section">
@@ -67,17 +58,13 @@
 
         <div class="jobflow-create__section">
           <label class="form-label" for="jobCreateWorkflow">Invoicing workflow</label>
-          <p-select
-            id="jobCreateWorkflow"
-            [(ngModel)]="invoicingWorkflow"
-            [options]="invoicingOptions"
-            optionLabel="label"
-            optionValue="value"
-            size="small"
-            [fluid]="true"
-            placeholder="Choose a workflow" />
-            <small class="text-muted">Overrides the org default for this job only.</small>
-          </div>
+          <select id="jobCreateWorkflow" class="form-select form-select-sm" [(ngModel)]="invoicingWorkflow">
+            @for (opt of invoicingOptions; track opt.label) {
+              <option [ngValue]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+          <small class="text-muted">Overrides the org default for this job only.</small>
+        </div>
 
           <div class="jobflow-create__next-step">
             <span>Next step</span>

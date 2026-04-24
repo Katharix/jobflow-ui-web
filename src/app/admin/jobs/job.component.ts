@@ -21,7 +21,7 @@ import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {JobsService} from "./services/jobs.service";
 import {getClickHandler} from "../../common/utils/page-action-dispatcher";
 import {CreateJobComponent} from "./job-create/job-create.component";
-import {formatDateTime, formatPhone} from "../../common/utils/app-formaters";
+import {formatDateTime} from "../../common/utils/app-formaters";
 import {Job, JobLifecycleStatus, JobLifecycleStatusLabels} from "./models/job";
 import { WorkflowSettingsService } from "../settings/services/workflow-settings.service";
 import { WorkflowStatusDto } from "../settings/models/workflow-status";
@@ -30,10 +30,11 @@ import {Employee} from "../employees/models/employee";
 import {AssignmentsService} from "./services/assignments.service";
 import {AssignmentDto} from "./models/assignment";
 import { TranslateModule, TranslateService } from "@ngx-translate/core";
-import { BehaviorSubject, Subject, Subscription, catchError, debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription, catchError, debounceTime, distinctUntilChanged, of, switchMap, take } from 'rxjs';
 import { Auth } from '@angular/fire/auth';
 import { useNotifierHub, NotifierHubHandle } from '../services/useNotifierHub';
 import { LucideAngularModule } from 'lucide-angular';
+import { NgbOffcanvas, NgbOffcanvasRef } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -60,6 +61,7 @@ export class JobComponent implements OnInit, OnDestroy {
    private assignmentsService = inject(AssignmentsService);
    private workflowSettings = inject(WorkflowSettingsService);
    private orgContext = inject(OrganizationContextService);
+   private offcanvasService = inject(NgbOffcanvas);
    private router = inject(Router);
    private route = inject(ActivatedRoute);
    private translate = inject(TranslateService);
@@ -77,9 +79,14 @@ export class JobComponent implements OnInit, OnDestroy {
    @ViewChild('statusTemplate', {static: true})
    statusTemplate!: TemplateRef<unknown>;
 
+   @ViewChild('addJobOffcanvas', {static: true})
+   addJobOffcanvasTpl!: TemplateRef<unknown>;
+
    organizationId: string | null = null;
    isDrawerOpen = false;
    editingJob: Job | null = null;
+   private activeOffcanvasRef: NgbOffcanvasRef | null = null;
+   canAccessDispatch = false;
    private onboardingActionHandled = false;
    private returnToCommandCenter = false;
    private suppressNextDrawerClosedHandler = false;
@@ -225,6 +232,13 @@ export class JobComponent implements OnInit, OnDestroy {
             });
          }, 0);
          setTimeout(() => {
+            if (!this.destroyed) {
+               this.orgContext.hasMinPlan$('Max').pipe(take(1)).subscribe(hasAccess => {
+                  this.canAccessDispatch = hasAccess;
+               });
+            }
+         }, 0);
+         setTimeout(() => {
             if (!this.destroyed && this.organizationId) {
                this.load();
             }
@@ -335,12 +349,12 @@ export class JobComponent implements OnInit, OnDestroy {
             template: this.statusTemplate
          },
          {
-            field: 'organizationClient.phoneNumber',
-            headerText: this.translate.instant('admin.jobs.table.columns.phone'),
+            field: 'scheduledStart',
+            headerText: this.translate.instant('admin.jobs.table.columns.scheduled'),
             width: 160,
             valueAccessor: (_field: string, data: unknown) => {
                const job = data as Job;
-               return formatPhone(job?.organizationClient?.phoneNumber);
+               return this.getNextScheduledLabel(job);
             }
          },
          {
@@ -453,7 +467,7 @@ export class JobComponent implements OnInit, OnDestroy {
       switch (args.commandColumn?.type) {
          case 'Edit':
             this.editingJob = row ?? null;
-            this.isDrawerOpen = true;
+            this.activeOffcanvasRef = this.offcanvasService.open(this.addJobOffcanvasTpl, { position: 'end', panelClass: 'job-create-offcanvas' });
             break;
 
          case 'Delete':
@@ -464,10 +478,12 @@ export class JobComponent implements OnInit, OnDestroy {
 
    openAddJob(): void {
       this.editingJob = null;
-      this.isDrawerOpen = true;
+      this.activeOffcanvasRef = this.offcanvasService.open(this.addJobOffcanvasTpl, { position: 'end', panelClass: 'job-create-offcanvas' });
    }
 
    closeDrawer(): void {
+      this.activeOffcanvasRef?.close();
+      this.activeOffcanvasRef = null;
       this.isDrawerOpen = false;
       this.editingJob = null;
    }
@@ -753,7 +769,7 @@ export class JobComponent implements OnInit, OnDestroy {
 
    editJob(job: Job): void {
       this.editingJob = job;
-      this.isDrawerOpen = true;
+      this.activeOffcanvasRef = this.offcanvasService.open(this.addJobOffcanvasTpl, { position: 'end', panelClass: 'job-create-offcanvas' });
    }
 
    protected readonly Date = Date;
