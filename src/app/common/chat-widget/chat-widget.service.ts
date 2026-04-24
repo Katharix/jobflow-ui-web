@@ -5,7 +5,6 @@ import { SupportHubSignalRService } from '../../support-hub/services/support-hub
 import { SupportHubChatApiService } from '../../support-hub/services/support-hub-chat-api.service';
 import {
   ChatWidgetMessage,
-  ChatWidgetPhase,
   ChatWidgetState,
   ChatWidgetUserInfo,
 } from './chat-widget.models';
