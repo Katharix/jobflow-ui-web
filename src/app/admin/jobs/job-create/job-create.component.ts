@@ -8,8 +8,6 @@ import {CustomersService} from "../../customer/services/customer.service";
 import {JobUpsertRequest, JobsService} from "../services/jobs.service";
 import {InvoicingWorkflow, InvoicingWorkflowLabels, Job} from "../models/job";
 import {Client} from "../../customer/models/customer";
-import {InputTextModule} from 'primeng/inputtext';
-import {SelectModule} from 'primeng/select';
 import {RouterLink} from '@angular/router';
 import {JobTemplateService} from '../services/job-template.service';
 import {JobTemplate} from '../models/job-template';
@@ -20,8 +18,6 @@ import {JobTemplate} from '../models/job-template';
    imports: [
       CommonModule,
     FormsModule,
-    InputTextModule,
-    SelectModule,
     RouterLink
 ],
    templateUrl: './job-create.component.html'

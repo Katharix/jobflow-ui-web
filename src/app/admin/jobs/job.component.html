@@ -17,15 +17,15 @@
   </div>
 }
 
-@if (isDrawerOpen) {
-  <div class="content-card">
-    <div class="inline-card-header">
-      <h3>{{ editingJob ? ('admin.jobs.drawer.updateTitle' | translate) : ('admin.jobs.drawer.addTitle' | translate) }}</h3>
-      <button class="close-btn" (click)="onCreateCancelled()">×</button>
-    </div>
+<ng-template #addJobOffcanvas>
+  <div class="offcanvas-header border-bottom">
+    <h5 class="offcanvas-title">{{ editingJob ? ('admin.jobs.drawer.updateTitle' | translate) : ('admin.jobs.drawer.addTitle' | translate) }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeDrawer()"></button>
+  </div>
+  <div class="offcanvas-body p-0">
     <app-job-create [job]="editingJob" (saved)="onCreateSaved()" (cancelled)="onCreateCancelled()"/>
   </div>
-}
+</ng-template>
 
 <!-- KPI Metrics -->
 <div class="kpi-grid kpi-grid--4" role="list" aria-label="Job metrics">
@@ -34,7 +34,7 @@
     <div class="kpi-tile__body">
       <span class="kpi-tile__value">{{ totalJobs$ | async }}</span>
       <span class="kpi-tile__label">{{ 'admin.jobs.metrics.total' | translate }}</span>
-      <span class="kpi-tile__note">{{ 'admin.jobs.hero.eyebrow' | translate }}</span>
+      <span class="kpi-tile__note">All time</span>
     </div>
   </div>
   <div class="kpi-tile" role="listitem">
@@ -63,19 +63,6 @@
   </div>
 </div>
 
-<!-- CTA Card -->
-<div class="cta-card">
-  <div>
-    <p class="cta-card__eyebrow">{{ 'admin.jobs.cta.eyebrow' | translate }}</p>
-    <h3 class="cta-card__title">{{ 'admin.jobs.cta.title' | translate }}</h3>
-    <p class="cta-card__body">{{ 'admin.jobs.cta.subtitle' | translate }}</p>
-  </div>
-  <div class="cta-card__actions">
-    <button type="button" class="btn btn-primary" (click)="openAddJob()">
-      {{ 'admin.jobs.cta.button' | translate }}
-    </button>
-  </div>
-</div>
 
 <!-- Filters -->
 <div class="content-card jobs-filter-card">
@@ -112,10 +99,6 @@
     <button class="btn btn-link btn-sm jobs-filters__clear" type="button" (click)="clearFilters()">
       {{ 'admin.jobs.filters.clear' | translate }}
     </button>
-  </div>
-  <div class="page-pagination">
-    <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBack || jobsLoading" (click)="onPrevPage()">Previous</button>
-    <button type="button" class="btn btn-sm btn-outline-primary" [disabled]="!nextCursor || jobsLoading" (click)="onNextPage()">Next</button>
   </div>
 </div>
 
@@ -163,71 +146,6 @@
       }
     </div>
 
-    <div class="jobflow-lane">
-      <div class="jobflow-lane__header">
-        <div>
-          <h5>{{ 'admin.jobs.lanes.scheduled.title' | translate }}</h5>
-          <p>{{ 'admin.jobs.lanes.scheduled.subtitle' | translate }}</p>
-          <small class="text-muted">{{ 'admin.jobs.lanes.scheduled.hint' | translate }}</small>
-        </div>
-        <span class="jobflow-lane__count">{{ upcomingScheduledJobs.length }} {{ 'admin.jobs.lanes.scheduled.count' | translate }}</span>
-      </div>
-      @if (hasUpcomingScheduledJobs) {
-        <div class="jobflow-lane__body">
-          @for (job of upcomingScheduledJobs; track job.id) {
-            <article
-              class="jobflow-card jobflow-card--scheduled"
-              [class.is-active]="selectedJob?.id === job.id"
-              (click)="selectJob(job)"
-              (keydown.enter)="selectJob(job)"
-              (keydown.space)="selectJob(job); $event.preventDefault()"
-              tabindex="0"
-              role="button"
-              >
-              <div>
-                <h6>{{ job.title || ('admin.jobs.labels.untitled' | translate) }}</h6>
-                <p>{{ getClientName(job) }}</p>
-                @if (getTimelineMarkers(job).length) {
-                  <div class="jobflow-timeline">
-                    <span class="jobflow-timeline__rail"></span>
-                    @for (marker of getTimelineMarkers(job); track marker.date.getTime()) {
-                      <span class="jobflow-timeline__dot" [attr.title]="getTimelineTooltip(marker.date)">
-                        <span>{{ marker.label }}</span>
-                      </span>
-                    }
-                  </div>
-                }
-              </div>
-              <div class="jobflow-card__meta">
-                @if (getAssigneeStack(job).length) {
-                  <div class="jobflow-assignee-stack">
-                    @for (initials of getAssigneeStack(job); track initials) {
-                      <span class="jobflow-assignee-dot">
-                        {{ initials }}
-                      </span>
-                    }
-                    @if (getAssigneeOverflow(job) > 0) {
-                      <span class="jobflow-assignee-dot jobflow-assignee-dot--more">
-                        +{{ getAssigneeOverflow(job) }}
-                      </span>
-                    }
-                  </div>
-                }
-                <span class="jobflow-card__time">{{ getNextScheduledLabel(job) }}</span>
-                <span class="job-status-chip" [ngClass]="getStatusChipClass(job)">
-                  {{ getStatusChipLabel(job) }}
-                </span>
-              </div>
-            </article>
-          }
-        </div>
-      } @else {
-        <div class="jobflow-empty">
-          <p>{{ 'admin.jobs.empty.scheduled.title' | translate }}</p>
-          <span>{{ 'admin.jobs.empty.scheduled.subtitle' | translate }}</span>
-        </div>
-      }
-    </div>
   </div>
 
   <aside class="jobflow-preview">
@@ -302,7 +220,9 @@
                 {{ 'admin.jobs.actions.copyUpdates' | translate }}
               </button>
             }
-            <a class="btn btn-outline-secondary" routerLink="/admin/dispatch">{{ 'admin.jobs.actions.openDispatch' | translate }}</a>
+            @if (canAccessDispatch) {
+              <a class="btn btn-outline-secondary" routerLink="/admin/dispatch">{{ 'admin.jobs.actions.openDispatch' | translate }}</a>
+            }
           </div>
         </div>
       }
@@ -314,6 +234,10 @@
       <div>
         <h3 class="content-card__title">{{ 'admin.jobs.table.title' | translate }}</h3>
         <p class="content-card__subtitle">{{ 'admin.jobs.table.subtitle' | translate }}</p>
+      </div>
+      <div class="page-pagination">
+        <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="!canGoBack || jobsLoading" (click)="onPrevPage()">Previous</button>
+        <button type="button" class="btn btn-sm btn-outline-primary" [disabled]="!nextCursor || jobsLoading" (click)="onNextPage()">Next</button>
       </div>
     </div>
 
