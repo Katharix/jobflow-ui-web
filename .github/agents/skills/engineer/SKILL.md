@@ -95,7 +95,9 @@ dotnet ef database update `
 ### Frontend (Angular)
 - Standalone components only
 - Service-based state management
-- PrimeNG for UI components
+- **ng-bootstrap** for UI components (dropdowns, tooltips, navs, modals) — NOT PrimeNG
+- **ngx-scrollbar** (`NgScrollbarModule`) for custom scrollbars
+- Feather icons via `class="feather icon-*"`
 - Reactive Forms with validation
 
 ### Angular BaseApiService Patterns
