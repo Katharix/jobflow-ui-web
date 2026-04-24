@@ -37,7 +37,7 @@
     <div class="kpi-tile" role="listitem">
       <div class="kpi-tile__accent kpi-tile__accent--neutral"></div>
       <div class="kpi-tile__body">
-        <span class="kpi-tile__value" style="font-size:0.95rem; word-break:break-all;">{{ currentSubscription?.providerSubscriptionId || '—' }}</span>
+        <span class="kpi-tile__value kpi-tile__value--id">{{ currentSubscription?.providerSubscriptionId || '—' }}</span>
         <span class="kpi-tile__label">Provider Subscription ID</span>
         <span class="kpi-tile__note">{{ currentSubscription ? 'Active subscription' : 'No active subscription' }}</span>
       </div>
@@ -95,11 +95,11 @@
             </div>
 
             <p class="plan-price">
-              {{ selectedCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice | currency }}
+              {{ (selectedCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice) | currency }}
               <small>/{{ selectedCycle === 'monthly' ? 'mo' : 'yr' }}</small>
             </p>
 
-            <ul>
+            <ul class="plan-card__features">
               @for (item of plan.highlights; track item) {
                 <li>{{ item }}</li>
               }

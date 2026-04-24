@@ -194,6 +194,17 @@
     color: var(--jf-text);
     line-height: 1;
     margin-bottom: 0.2rem;
+
+    &--text {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    &--id {
+      font-size: 0.95rem;
+      font-weight: 700;
+      word-break: break-all;
+    }
   }
 
   &__label {

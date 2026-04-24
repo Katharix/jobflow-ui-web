@@ -89,6 +89,31 @@
   }
 }
 
+.plan-card__features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.62rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--jf-text-muted);
+
+    &::before {
+      content: '✓';
+      color: var(--jf-success);
+      font-weight: 700;
+      font-size: 0.78rem;
+      flex-shrink: 0;
+    }
+  }
+}
+
 .plan-pill-wrap {
   display: inline-flex;
   gap: 0.3rem;
