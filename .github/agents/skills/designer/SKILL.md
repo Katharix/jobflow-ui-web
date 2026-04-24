@@ -62,6 +62,14 @@ For every design task:
    - **Never create `.ts` files** — TypeScript is the Engineer's responsibility
    - Use `[placeholder]` input bindings and `(placeholder)` output events in HTML so the Engineer knows exactly what to wire up
    - Add a comment block at the top of each `.html` file listing all `@Input()` and `@Output()` the Engineer must declare
+
+   **Angular property binding gotcha**: For native HTML attributes that Angular does not recognise as component inputs (e.g. `list`, `form`, `for`, `tabindex`), use `[attr.X]` not `[X]`. Using `[X]` on these attributes causes an `NG8002: Can't bind to 'X'` build error.
+   ```html
+   <!-- ✅ Correct -->
+   <input [attr.list]="'my-datalist'">
+   <!-- ❌ Wrong — build error -->
+   <input [list]="'my-datalist'">
+   ```
 4. **Document wiring points** - At the end of your work, provide a clear handoff note:
    ```
    ## Engineer Handoff
