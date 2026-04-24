@@ -18,13 +18,19 @@
 }
 
 <ng-template #addJobOffcanvas>
-  <div class="offcanvas-header border-bottom">
-    <h5 class="offcanvas-title">{{ editingJob ? ('admin.jobs.drawer.updateTitle' | translate) : ('admin.jobs.drawer.addTitle' | translate) }}</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="closeDrawer()"></button>
+  <div class="jf-drawer__header">
+    <div class="jf-drawer__header-content">
+      <span class="jf-drawer__eyebrow">{{ 'admin.jobs.hero.eyebrow' | translate }}</span>
+      <h5 class="jf-drawer__title">
+        {{ editingJob ? ('admin.jobs.drawer.updateTitle' | translate) : ('admin.jobs.drawer.addTitle' | translate) }}
+      </h5>
+      <p class="jf-drawer__subtitle">
+        {{ editingJob ? ('admin.jobs.drawer.updateSubtitle' | translate) : ('admin.jobs.drawer.addSubtitle' | translate) }}
+      </p>
+    </div>
+    <button class="btn-close" aria-label="Close" (click)="closeDrawer()"></button>
   </div>
-  <div class="offcanvas-body p-0">
-    <app-job-create [job]="editingJob" (saved)="onCreateSaved()" (cancelled)="onCreateCancelled()"/>
-  </div>
+  <app-job-create [job]="editingJob" (saved)="onCreateSaved()" (cancelled)="onCreateCancelled()"/>
 </ng-template>
 
 <!-- KPI Metrics -->

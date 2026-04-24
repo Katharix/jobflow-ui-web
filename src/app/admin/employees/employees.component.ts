@@ -3,6 +3,7 @@ import {CommonModule, NgClass} from '@angular/common';
 
 import {ActivatedRoute, Router} from '@angular/router';
 import {LucideAngularModule} from 'lucide-angular';
+import {NgbOffcanvas, NgbOffcanvasRef} from '@ng-bootstrap/ng-bootstrap';
 
 import {getClickHandler} from '../../common/utils/page-action-dispatcher';
 import {ToastService} from '../../common/toast/toast.service';
@@ -51,13 +52,18 @@ export class EmployeesComponent implements OnInit, OnDestroy {
    @ViewChild('inviteStatusTemplate', {static: true}) inviteStatusTemplate!: TemplateRef<unknown>;
    @ViewChild('inviteForm') inviteForm!: EmployeeInviteFormComponent;
    @ViewChild(EmployeeFormComponent) employeeFormComponent!: EmployeeFormComponent;
+   @ViewChild('addEmployeeOffcanvas') addEmployeeOffcanvasTemplate!: TemplateRef<unknown>;
+   @ViewChild('inviteOffcanvas') inviteOffcanvasTemplate!: TemplateRef<unknown>;
+   @ViewChild('deleteOffcanvas') deleteOffcanvasTemplate!: TemplateRef<unknown>;
+
+   private offcanvasService = inject(NgbOffcanvas);
+   private activeEmployeeRef: NgbOffcanvasRef | null = null;
+   private activeInviteRef: NgbOffcanvasRef | null = null;
+   private activeDeleteRef: NgbOffcanvasRef | null = null;
 
    organizationId: string | null = null;
    organization!: OrganizationDto;
 
-   showInviteDrawer = false;
-   showAddEmployeeDrawer = false;
-   showDeleteDrawer = false;
    isEditing = false;
 
    selectedEmployee?: Employee;
@@ -252,7 +258,14 @@ export class EmployeesComponent implements OnInit, OnDestroy {
    }
 
    onInviteClick(): void {
-      this.showInviteDrawer = true;
+      if (this.activeInviteRef) { return; }
+      this.activeInviteRef = this.offcanvasService.open(this.inviteOffcanvasTemplate, {
+         position: 'end', panelClass: 'jf-drawer-panel', backdrop: true, keyboard: true
+      });
+      this.activeInviteRef.result.then(
+         () => { this.activeInviteRef = null; },
+         () => { this.activeInviteRef = null; }
+      );
    }
 
    onAddEmployeeClick(): void {
@@ -263,23 +276,45 @@ export class EmployeesComponent implements OnInit, OnDestroy {
 
       this.isEditing = false;
       this.selectedEmployee = undefined;
-      this.showAddEmployeeDrawer = true;
+      if (this.activeEmployeeRef) { return; }
+      this.activeEmployeeRef = this.offcanvasService.open(this.addEmployeeOffcanvasTemplate, {
+         position: 'end', panelClass: 'jf-drawer-panel', backdrop: true, keyboard: true
+      });
+      this.activeEmployeeRef.result.then(
+         () => { this.activeEmployeeRef = null; this.isEditing = false; this.selectedEmployee = undefined; },
+         () => { this.activeEmployeeRef = null; this.isEditing = false; this.selectedEmployee = undefined; }
+      );
    }
 
    onEditEmployee(rowData: Employee): void {
       this.isEditing = true;
       this.selectedEmployee = {...rowData};
-      this.showAddEmployeeDrawer = true;
+      if (this.activeEmployeeRef) { return; }
+      this.activeEmployeeRef = this.offcanvasService.open(this.addEmployeeOffcanvasTemplate, {
+         position: 'end', panelClass: 'jf-drawer-panel', backdrop: true, keyboard: true
+      });
+      this.activeEmployeeRef.result.then(
+         () => { this.activeEmployeeRef = null; this.isEditing = false; this.selectedEmployee = undefined; },
+         () => { this.activeEmployeeRef = null; this.isEditing = false; this.selectedEmployee = undefined; }
+      );
    }
 
    onDeleteEmployee(rowData: Employee): void {
       this.selectedEmployee = rowData;
       this.selectedEmployeeName = `${rowData.firstName ?? ''} ${rowData.lastName ?? ''}`.trim();
-      this.showDeleteDrawer = true;
+      if (this.activeDeleteRef) { return; }
+      this.activeDeleteRef = this.offcanvasService.open(this.deleteOffcanvasTemplate, {
+         position: 'end', panelClass: 'jf-drawer-panel', backdrop: true, keyboard: true
+      });
+      this.activeDeleteRef.result.then(
+         () => { this.activeDeleteRef = null; this.selectedEmployee = undefined; },
+         () => { this.activeDeleteRef = null; this.selectedEmployee = undefined; }
+      );
    }
 
    onModalCancel(): void {
-      this.showAddEmployeeDrawer = false;
+      this.activeEmployeeRef?.close();
+      this.activeEmployeeRef = null;
       this.isEditing = false;
       this.selectedEmployee = undefined;
    }
@@ -289,8 +324,7 @@ export class EmployeesComponent implements OnInit, OnDestroy {
          this.employeeService.update(employeeData.id, employeeData).subscribe({
             next: () => {
                this.loadEmployees();
-               this.showAddEmployeeDrawer = false;
-               this.isEditing = false;
+               this.onModalCancel();
                this.toast.success(this.translate.instant('admin.employees.toast.updated'), this.translate.instant('admin.employees.toast.successTitle'));
             },
             error: () => this.toast.error(this.translate.instant('admin.employees.toast.updateFailed'), this.translate.instant('admin.employees.toast.failedTitle'))
@@ -311,7 +345,7 @@ export class EmployeesComponent implements OnInit, OnDestroy {
             this.employeeService.create(employeeData).subscribe({
                next: () => {
                   this.loadEmployees();
-                     this.showAddEmployeeDrawer = false;
+                     this.onModalCancel();
                   this.toast.success(this.translate.instant('admin.employees.toast.added'), this.translate.instant('admin.employees.toast.successTitle'));
                },
                error: () => this.toast.error(this.translate.instant('admin.employees.toast.addFailed'), this.translate.instant('admin.employees.toast.failedTitle'))
@@ -336,11 +370,13 @@ export class EmployeesComponent implements OnInit, OnDestroy {
    }
 
    closeInviteModal(): void {
-      this.showInviteDrawer = false;
+      this.activeInviteRef?.close();
+      this.activeInviteRef = null;
    }
 
    closeDeleteModal(): void {
-      this.showDeleteDrawer = false;
+      this.activeDeleteRef?.close();
+      this.activeDeleteRef = null;
       this.selectedEmployee = undefined;
    }
 
