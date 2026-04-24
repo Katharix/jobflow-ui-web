@@ -4,15 +4,13 @@ import {CustomersService} from "../services/customer.service";
 import {ToastService} from "../../../common/toast/toast.service";
 import {OrganizationContextService} from "../../../services/shared/organization-context.service";
 import {FormsModule} from "@angular/forms";
-import {InputTextModule} from 'primeng/inputtext';
 import {Client} from "../models/customer";
 
 @Component({
    selector: 'app-customer-create',
    standalone: true,
    imports: [
-        FormsModule,
-        InputTextModule
+        FormsModule
    ],
    templateUrl: './customer-create.component.html',
    styleUrl: './customer-create.component.scss'

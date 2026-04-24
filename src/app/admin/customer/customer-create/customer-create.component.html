@@ -1,56 +1,75 @@
-<div class="row g-3">
-   <div class="col-12 col-md-6">
-      <label class="form-label" for="customerFirstName">First Name <span class="text-danger">*</span></label>
-      <input id="customerFirstName" pInputText pSize="small" class="w-100" [(ngModel)]="firstName" />
-   </div>
+<div class="jf-drawer__body">
+   <div class="row g-3">
+      <div class="col-12 col-md-6">
+         <div class="jf-drawer__field">
+            <label class="form-label" for="customerFirstName">First Name <span class="text-danger">*</span></label>
+            <input id="customerFirstName" type="text" class="form-control form-control-sm" [(ngModel)]="firstName" />
+         </div>
+      </div>
 
-   <div class="col-12 col-md-6">
-      <label class="form-label" for="customerLastName">Last Name</label>
-      <input id="customerLastName" pInputText pSize="small" class="w-100" [(ngModel)]="lastName" />
-   </div>
+      <div class="col-12 col-md-6">
+         <div class="jf-drawer__field">
+            <label class="form-label" for="customerLastName">Last Name</label>
+            <input id="customerLastName" type="text" class="form-control form-control-sm" [(ngModel)]="lastName" />
+         </div>
+      </div>
 
-   <div class="col-12 col-md-6">
-      <label class="form-label" for="customerEmail">Email</label>
-      <input id="customerEmail" pInputText pSize="small" type="email" class="w-100" [(ngModel)]="email" />
-   </div>
+      <div class="col-12 col-md-6">
+         <div class="jf-drawer__field">
+            <label class="form-label" for="customerEmail">Email</label>
+            <input id="customerEmail" type="email" class="form-control form-control-sm" [(ngModel)]="email" />
+         </div>
+      </div>
 
-   <div class="col-12 col-md-6">
-      <label class="form-label" for="customerPhone">Phone</label>
-      <input id="customerPhone" pInputText pSize="small" type="tel" class="w-100" [(ngModel)]="phone" />
-   </div>
+      <div class="col-12 col-md-6">
+         <div class="jf-drawer__field">
+            <label class="form-label" for="customerPhone">Phone</label>
+            <input id="customerPhone" type="tel" class="form-control form-control-sm" [(ngModel)]="phone" />
+         </div>
+      </div>
 
-   <div class="col-12">
-      <label class="form-label" for="customerAddress1">Address</label>
-      <input id="customerAddress1" pInputText pSize="small" class="w-100" [(ngModel)]="address1" />
-   </div>
+      <div class="col-12">
+         <div class="jf-drawer__field">
+            <label class="form-label" for="customerAddress1">Address</label>
+            <input id="customerAddress1" type="text" class="form-control form-control-sm" [(ngModel)]="address1" />
+         </div>
+      </div>
 
-   <div class="col-12">
-      <label class="form-label" for="customerAddress2">Address Line 2</label>
-      <input id="customerAddress2" pInputText pSize="small" class="w-100" [(ngModel)]="address2" />
-   </div>
+      <div class="col-12">
+         <div class="jf-drawer__field">
+            <label class="form-label" for="customerAddress2">Address Line 2</label>
+            <input id="customerAddress2" type="text" class="form-control form-control-sm" [(ngModel)]="address2" />
+         </div>
+      </div>
 
-   <div class="col-12 col-md-4">
-      <label class="form-label" for="customerCity">City</label>
-      <input id="customerCity" pInputText pSize="small" class="w-100" [(ngModel)]="city" />
-   </div>
+      <div class="col-12 col-md-4">
+         <div class="jf-drawer__field">
+            <label class="form-label" for="customerCity">City</label>
+            <input id="customerCity" type="text" class="form-control form-control-sm" [(ngModel)]="city" />
+         </div>
+      </div>
 
-   <div class="col-12 col-md-4">
-      <label class="form-label" for="customerState">State</label>
-      <input id="customerState" pInputText pSize="small" class="w-100" [(ngModel)]="state" />
-   </div>
+      <div class="col-12 col-md-4">
+         <div class="jf-drawer__field">
+            <label class="form-label" for="customerState">State</label>
+            <input id="customerState" type="text" class="form-control form-control-sm" [(ngModel)]="state" />
+         </div>
+      </div>
 
-   <div class="col-12 col-md-4">
-      <label class="form-label" for="customerZip">Zip</label>
-      <input id="customerZip" pInputText pSize="small" class="w-100" [(ngModel)]="zipCode" />
+      <div class="col-12 col-md-4">
+         <div class="jf-drawer__field">
+            <label class="form-label" for="customerZip">Zip</label>
+            <input id="customerZip" type="text" class="form-control form-control-sm" [(ngModel)]="zipCode" />
+         </div>
+      </div>
    </div>
+</div>
 
-   <div class="col-12 d-flex justify-content-end gap-2 pt-2">
-      <button type="button" class="btn btn-light" (click)="cancel()" [disabled]="saving">
-         Cancel
-      </button>
-
-      <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saving">
-         {{ saving ? 'Saving…' : 'Save' }}
-      </button>
-   </div>
+<div class="jf-drawer__footer">
+   <button type="button" class="btn btn-outline-secondary btn-sm" (click)="cancel()" [disabled]="saving">
+      Cancel
+   </button>
+   <button type="button" class="btn btn-primary btn-sm" (click)="save()" [disabled]="saving">
+      {{ saving ? 'Saving…' : 'Save Client' }}
+   </button>
 </div>

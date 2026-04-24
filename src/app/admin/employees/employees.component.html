@@ -129,46 +129,35 @@
     </div>
   </div>
 
-  @if (showAddEmployeeDrawer) {
-    <div class="content-card">
-      <div class="inline-card-header">
-        <h3>{{ isEditing ? ('admin.employees.drawer.editTitle' | translate) : ('admin.employees.drawer.addTitle' | translate) }}</h3>
-        <button class="close-btn" type="button" (click)="onModalCancel()">&#x2715;</button>
+  <!-- Add/Edit Employee offcanvas template -->
+  <ng-template #addEmployeeOffcanvas>
+    <div class="jf-drawer__header">
+      <div class="jf-drawer__header-content">
+        <span class="jf-drawer__eyebrow">
+          {{ isEditing ? ('admin.employees.drawer.updateEyebrow' | translate) : ('admin.employees.drawer.newEyebrow' | translate) }}
+        </span>
+        <h5 class="jf-drawer__title">
+          {{ isEditing ? ('admin.employees.drawer.editTitle' | translate) : ('admin.employees.drawer.addTitle' | translate) }}
+        </h5>
+        <p class="jf-drawer__subtitle">{{ 'admin.employees.drawer.subtitle' | translate }}</p>
       </div>
+      <button class="btn-close" type="button" aria-label="Close" (click)="onModalCancel()"></button>
+    </div>
+    <div class="jf-drawer__body">
       <app-employee-form
         [employee]="selectedEmployee"
         (submitted)="onFormSubmit($event)">
       </app-employee-form>
-      <div class="drawer-content__actions">
-        <button type="button" class="btn btn-outline-secondary" (click)="onModalCancel()">
-          {{ 'admin.employees.actions.cancel' | translate }}
-        </button>
-        <button type="button" class="btn btn-primary" (click)="employeeFormComponent.onSubmit()">
-          {{ 'admin.employees.actions.save' | translate }}
-        </button>
-      </div>
     </div>
-  }
-
-  @if (showInviteDrawer) {
-    <div class="content-card">
-      <div class="inline-card-header">
-        <h3>{{ 'admin.employees.inviteDrawer.title' | translate }}</h3>
-        <button class="close-btn" type="button" (click)="closeInviteModal()">&#x2715;</button>
-      </div>
-      <app-employee-invite-form #inviteForm
-        (submitted)="onInviteSuccess($event)">
-      </app-employee-invite-form>
-      <div class="drawer-content__actions">
-        <button type="button" class="btn btn-outline-secondary" (click)="closeInviteModal()">
-          {{ 'admin.employees.actions.cancel' | translate }}
-        </button>
-        <button type="button" class="btn btn-primary" (click)="onInviteSubmit()">
-          {{ 'admin.employees.invites.send' | translate }}
-        </button>
-      </div>
+    <div class="jf-drawer__footer">
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="onModalCancel()">
+        {{ 'admin.employees.actions.cancel' | translate }}
+      </button>
+      <button type="button" class="btn btn-primary btn-sm" (click)="employeeFormComponent.onSubmit()">
+        {{ 'admin.employees.actions.save' | translate }}
+      </button>
     </div>
-  }
+  </ng-template>
 
   <!-- Employee Grid -->
   <div class="content-card content-card--no-pad">
@@ -184,26 +173,58 @@
     ></app-jobflow-grid>
   </div>
 
-  @if (showDeleteDrawer) {
-    <div class="content-card content-card--danger-outline">
-      <div class="inline-card-header">
-        <h3>{{ 'admin.employees.delete.title' | translate }}</h3>
-        <button class="close-btn" type="button" (click)="closeDeleteModal()">&#x2715;</button>
+  <!-- Delete Employee offcanvas template -->
+  <ng-template #deleteOffcanvas>
+    <div class="jf-drawer__header jf-drawer__header--danger">
+      <div class="jf-drawer__header-content">
+        <span class="jf-drawer__eyebrow">{{ 'admin.employees.delete.eyebrow' | translate }}</span>
+        <h5 class="jf-drawer__title">{{ 'admin.employees.delete.title' | translate }}</h5>
+        <p class="jf-drawer__subtitle">{{ 'admin.employees.delete.subtitle' | translate }}</p>
       </div>
-      <app-delete-confirm
-        [title]="'admin.employees.delete.title' | translate"
-        [message]="('admin.employees.delete.confirm' | translate:{ name: selectedEmployeeName })">
-      </app-delete-confirm>
-      <div class="drawer-content__actions">
-        <button type="button" class="btn btn-outline-secondary" (click)="closeDeleteModal()">
-          {{ 'admin.employees.actions.cancel' | translate }}
-        </button>
-        <button type="button" class="btn btn-danger" (click)="confirmDelete()">
-          {{ 'admin.employees.delete.confirmButton' | translate }}
-        </button>
+      <button class="btn-close" type="button" aria-label="Close" (click)="closeDeleteModal()"></button>
+    </div>
+    <div class="jf-drawer__body">
+      <div class="jf-drawer__danger-zone">
+        <app-delete-confirm
+          [title]="'admin.employees.delete.title' | translate"
+          [message]="('admin.employees.delete.confirm' | translate:{ name: selectedEmployeeName })">
+        </app-delete-confirm>
       </div>
     </div>
-  }
+    <div class="jf-drawer__footer">
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="closeDeleteModal()">
+        {{ 'admin.employees.actions.cancel' | translate }}
+      </button>
+      <button type="button" class="btn btn-danger btn-sm" (click)="confirmDelete()">
+        {{ 'admin.employees.delete.confirmButton' | translate }}
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- Invite Employee offcanvas template -->
+  <ng-template #inviteOffcanvas>
+    <div class="jf-drawer__header">
+      <div class="jf-drawer__header-content">
+        <span class="jf-drawer__eyebrow">{{ 'admin.employees.drawer.eyebrow' | translate }}</span>
+        <h5 class="jf-drawer__title">{{ 'admin.employees.inviteDrawer.title' | translate }}</h5>
+        <p class="jf-drawer__subtitle">{{ 'admin.employees.inviteDrawer.subtitle' | translate }}</p>
+      </div>
+      <button class="btn-close" type="button" aria-label="Close" (click)="closeInviteModal()"></button>
+    </div>
+    <div class="jf-drawer__body">
+      <app-employee-invite-form #inviteForm
+        (submitted)="onInviteSuccess($event)">
+      </app-employee-invite-form>
+    </div>
+    <div class="jf-drawer__footer">
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="closeInviteModal()">
+        {{ 'admin.employees.actions.cancel' | translate }}
+      </button>
+      <button type="button" class="btn btn-primary btn-sm" (click)="onInviteSubmit()">
+        {{ 'admin.employees.invites.send' | translate }}
+      </button>
+    </div>
+  </ng-template>
 
   <!-- Pending Invites -->
   <section class="content-card" aria-label="Employee invites">

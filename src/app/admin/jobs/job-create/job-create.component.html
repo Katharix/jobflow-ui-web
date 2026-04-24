@@ -1,85 +1,76 @@
-<div class="jobflow-create">
-  <div class="jobflow-create__header">
-    <div>
-      <span class="jobflow-create__eyebrow">New job intake</span>
-      <h5>{{ isEditing ? 'Edit job details.' : 'Start a job with clear context.' }}</h5>
-      <p>{{ isEditing ? 'Update the essentials so dispatch stays aligned.' : 'Capture the essentials so dispatch has everything it needs.' }}</p>
-    </div>
-    <a class="btn btn-link jobflow-create__link" routerLink="/admin/clients/create">Create client</a>
-  </div>
+<div class="jf-drawer__body">
 
   @if (error) {
-    <div class="alert alert-danger">
+    <div class="alert alert-danger py-2 px-3 mb-0">
       {{ error }}
     </div>
   }
 
-  <div class="jobflow-create__grid">
-    <div class="jobflow-create__form">
-
-      @if (!isEditing && (templates$ | async)?.length) {
-        <div class="jobflow-create__section">
-          <label class="form-label" for="jobCreateTemplate">Start from a template</label>
-          <select id="jobCreateTemplate" class="form-select form-select-sm" [(ngModel)]="selectedTemplateId" (ngModelChange)="onTemplateSelected($event)">
-            <option [ngValue]="null">Choose a template to pre-fill</option>
-            @for (tmpl of (templates$ | async) ?? []; track tmpl.id) {
-              <option [ngValue]="tmpl.id">{{ tmpl.displayLabel }}</option>
-            }
-          </select>
-          <small class="text-muted">Pre-fills details so you can start faster.</small>
-        </div>
-      }
-
-      <div class="jobflow-create__section">
-        <label class="form-label" for="jobCreateCustomer">Customer <span class="text-danger">*</span></label>
-        <select id="jobCreateCustomer" class="form-select form-select-sm" [(ngModel)]="selectedCustomerId">
-          <option [ngValue]="null">Select a customer</option>
-          @for (customer of (customers$ | async) ?? []; track customer.id) {
-            <option [ngValue]="customer.id">{{ customer.displayName }}</option>
-          }
-        </select>
-      </div>
-
-        <div class="jobflow-create__section">
-          <label class="form-label" for="jobCreateTitle">Job Title <span class="text-danger">*</span></label>
-          <input id="jobCreateTitle" type="text" class="form-control form-control-sm" [(ngModel)]="title" placeholder="Exterior repaint, spring service, etc." />
-        </div>
-
-        <div class="jobflow-create__section">
-          <label class="form-label" for="jobCreateSummary">Job Summary</label>
-          <textarea
-            class="form-control"
-            rows="4"
-            [(ngModel)]="comments"
-            placeholder="Add key notes, access instructions, or goals for the crew."
-            id="jobCreateSummary"
-          ></textarea>
-        </div>
-
-        <div class="jobflow-create__section">
-          <label class="form-label" for="jobCreateWorkflow">Invoicing workflow</label>
-          <select id="jobCreateWorkflow" class="form-select form-select-sm" [(ngModel)]="invoicingWorkflow">
-            @for (opt of invoicingOptions; track opt.label) {
-              <option [ngValue]="opt.value">{{ opt.label }}</option>
-            }
-          </select>
-          <small class="text-muted">Overrides the org default for this job only.</small>
-        </div>
-
-          <div class="jobflow-create__next-step">
-            <span>Next step</span>
-            <p>Schedule in Dispatch to assign a crew.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="jobflow-create__actions">
-        <button type="button" class="btn btn-light" (click)="cancel()" [disabled]="saving">
-          Cancel
-        </button>
-
-        <button type="button" class="btn btn-primary jobflow-create__primary" style="margin-left: 1rem;" (click)="save()" [disabled]="saving">
-          {{ saving ? 'Saving…' : (isEditing ? 'Save Changes' : 'Create Job') }}
-        </button>
-      </div>
+  @if (!isEditing && (templates$ | async)?.length) {
+    <div class="jf-drawer__field">
+      <label class="form-label" for="jobCreateTemplate">Start from a template</label>
+      <select class="form-select form-select-sm" id="jobCreateTemplate" [(ngModel)]="selectedTemplateId" (ngModelChange)="onTemplateSelected($event)">
+        <option [ngValue]="null">Choose a template to pre-fill</option>
+        @for (t of (templates$ | async) ?? []; track t.id) {
+          <option [ngValue]="t.id">{{ t.displayLabel }}</option>
+        }
+      </select>
+      <small class="jf-drawer__hint">Pre-fills details so you can start faster.</small>
     </div>
+  }
+
+  <div class="jf-drawer__field">
+    <label class="form-label" for="jobCreateCustomer">Customer <span class="text-danger">*</span></label>
+    <select class="form-select form-select-sm" id="jobCreateCustomer" [(ngModel)]="selectedCustomerId">
+      <option [ngValue]="null">Select a customer</option>
+      @for (c of (customers$ | async) ?? []; track c.id) {
+        <option [ngValue]="c.id">{{ c.displayName }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="jf-drawer__field">
+    <label class="form-label" for="jobCreateTitle">Job Title <span class="text-danger">*</span></label>
+    <input class="form-control form-control-sm" id="jobCreateTitle" type="text" [(ngModel)]="title" placeholder="Exterior repaint, spring service, etc." />
+  </div>
+
+  <div class="jf-drawer__field">
+    <label class="form-label" for="jobCreateSummary">Job Summary</label>
+    <textarea
+      class="form-control form-control-sm"
+      rows="4"
+      [(ngModel)]="comments"
+      placeholder="Add key notes, access instructions, or goals for the crew."
+      id="jobCreateSummary"
+    ></textarea>
+  </div>
+
+  <div class="jf-drawer__field">
+    <label class="form-label" for="jobCreateWorkflow">Invoicing workflow</label>
+    <select class="form-select form-select-sm" id="jobCreateWorkflow" [(ngModel)]="invoicingWorkflow">
+      <option [ngValue]="null">Choose a workflow</option>
+      @for (opt of invoicingOptions; track opt.value) {
+        <option [ngValue]="opt.value">{{ opt.label }}</option>
+      }
+    </select>
+    <small class="jf-drawer__hint">Overrides the org default for this job only.</small>
+  </div>
+
+  @if (!isEditing) {
+    <div class="jf-drawer__next-step">
+      <span>Next step</span>
+      <p>Schedule in Dispatch to assign a crew.</p>
+    </div>
+  }
+
+</div>
+
+<div class="jf-drawer__footer">
+  <a class="jf-drawer__footer-link" routerLink="/admin/clients/create">+ Create client</a>
+  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="cancel()" [disabled]="saving">
+    Cancel
+  </button>
+  <button type="button" class="btn btn-primary btn-sm" (click)="save()" [disabled]="saving">
+    {{ saving ? 'Saving…' : (isEditing ? 'Save Changes' : 'Create Job') }}
+  </button>
+</div>

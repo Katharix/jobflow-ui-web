@@ -23,6 +23,7 @@ import {
    CustomersService
 } from "./services/customer.service";
 import {BehaviorSubject, Subscription, Subject, catchError, debounceTime, distinctUntilChanged, EMPTY, interval, of, startWith, switchMap} from 'rxjs';
+import { NgbOffcanvas, NgbOffcanvasRef } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -38,8 +39,11 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
    private router = inject(Router);
    private route = inject(ActivatedRoute);
    private cdr = inject(ChangeDetectorRef);
+   private offcanvasService = inject(NgbOffcanvas);
    @ViewChild('clientNameTemplate')
    clientNameTemplate!: TemplateRef<Client>;
+   @ViewChild('addClientOffcanvas')
+   addClientOffcanvasTemplate!: TemplateRef<unknown>;
 
    organizationId: string | null = null;
    items: Client[] = [];
@@ -61,7 +65,7 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
    metrics$ = new BehaviorSubject(this.initialMetrics);
 
    error: string | null = null;
-   isDrawerOpen = false;
+   private activeOffcanvasRef: NgbOffcanvasRef | null = null;
    editingClient: Client | null = null;
    sendingLink = false;
    sendLinkError: string | null = null;
@@ -290,7 +294,7 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
       switch (args.commandColumn?.type) {
          case 'Edit':
             this.editingClient = client;
-            this.isDrawerOpen = true;
+            this.openClientDrawer();
             break;
          case 'SendLink':
             this.sendClientHubLink(client);
@@ -426,11 +430,26 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
 
    openAddClient(): void {
       this.editingClient = null;
-      this.isDrawerOpen = true;
+      this.openClientDrawer();
+   }
+
+   private openClientDrawer(): void {
+      if (this.activeOffcanvasRef) { return; }
+      this.activeOffcanvasRef = this.offcanvasService.open(this.addClientOffcanvasTemplate, {
+         position: 'end',
+         panelClass: 'jf-drawer-panel',
+         backdrop: true,
+         keyboard: true
+      });
+      this.activeOffcanvasRef.result.then(
+         () => { this.activeOffcanvasRef = null; this.onDrawerClosed(); },
+         () => { this.activeOffcanvasRef = null; this.onDrawerClosed(); }
+      );
    }
 
    closeDrawer(): void {
-      this.isDrawerOpen = false;
+      this.activeOffcanvasRef?.close();
+      this.activeOffcanvasRef = null;
       this.editingClient = null;
    }
 

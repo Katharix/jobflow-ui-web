@@ -837,7 +837,10 @@
       "title": "Jobs",
       "subtitle": "Keep every job flowing with zero drag",
       "drawer": {
-        "addTitle": "Add Job"
+        "addTitle": "Add Job",
+        "updateTitle": "Edit Job",
+        "addSubtitle": "Capture the essentials so dispatch has everything it needs.",
+        "updateSubtitle": "Update the essentials so dispatch stays aligned."
       },
       "hero": {
         "eyebrow": "Flow pulse",

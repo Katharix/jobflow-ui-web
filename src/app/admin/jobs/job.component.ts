@@ -79,13 +79,12 @@ export class JobComponent implements OnInit, OnDestroy {
    @ViewChild('statusTemplate', {static: true})
    statusTemplate!: TemplateRef<unknown>;
 
-   @ViewChild('addJobOffcanvas', {static: true})
-   addJobOffcanvasTpl!: TemplateRef<unknown>;
+   @ViewChild('addJobOffcanvas')
+   addJobOffcanvasTemplate!: TemplateRef<unknown>;
 
    organizationId: string | null = null;
-   isDrawerOpen = false;
-   editingJob: Job | null = null;
    private activeOffcanvasRef: NgbOffcanvasRef | null = null;
+   editingJob: Job | null = null;
    canAccessDispatch = false;
    private onboardingActionHandled = false;
    private returnToCommandCenter = false;
@@ -467,7 +466,7 @@ export class JobComponent implements OnInit, OnDestroy {
       switch (args.commandColumn?.type) {
          case 'Edit':
             this.editingJob = row ?? null;
-            this.activeOffcanvasRef = this.offcanvasService.open(this.addJobOffcanvasTpl, { position: 'end', panelClass: 'job-create-offcanvas' });
+            this.openJobDrawer();
             break;
 
          case 'Delete':
@@ -478,13 +477,26 @@ export class JobComponent implements OnInit, OnDestroy {
 
    openAddJob(): void {
       this.editingJob = null;
-      this.activeOffcanvasRef = this.offcanvasService.open(this.addJobOffcanvasTpl, { position: 'end', panelClass: 'job-create-offcanvas' });
+      this.openJobDrawer();
+   }
+
+   private openJobDrawer(): void {
+      if (this.activeOffcanvasRef) { return; }
+      this.activeOffcanvasRef = this.offcanvasService.open(this.addJobOffcanvasTemplate, {
+         position: 'end',
+         panelClass: 'jf-drawer-panel',
+         backdrop: true,
+         keyboard: true
+      });
+      this.activeOffcanvasRef.result.then(
+         () => { this.activeOffcanvasRef = null; this.onDrawerClosed(); },
+         () => { this.activeOffcanvasRef = null; this.onDrawerClosed(); }
+      );
    }
 
    closeDrawer(): void {
       this.activeOffcanvasRef?.close();
       this.activeOffcanvasRef = null;
-      this.isDrawerOpen = false;
       this.editingJob = null;
    }
 
@@ -769,7 +781,7 @@ export class JobComponent implements OnInit, OnDestroy {
 
    editJob(job: Job): void {
       this.editingJob = job;
-      this.activeOffcanvasRef = this.offcanvasService.open(this.addJobOffcanvasTpl, { position: 'end', panelClass: 'job-create-offcanvas' });
+      this.openJobDrawer();
    }
 
    protected readonly Date = Date;

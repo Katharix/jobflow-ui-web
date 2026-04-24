@@ -108,18 +108,20 @@
 
 }
 
-@if (isDrawerOpen) {
-  <div class="content-card">
-    <div class="drawer-content__intro">
-      <p class="drawer-content__eyebrow">{{ editingClient ? 'Update client' : 'New client' }}</p>
-      <h3 class="drawer-content__heading">{{ editingClient ? 'Edit Client' : 'Add Client' }}</h3>
+<ng-template #addClientOffcanvas>
+  <div class="jf-drawer__header">
+    <div class="jf-drawer__header-content">
+      <span class="jf-drawer__eyebrow">{{ editingClient ? 'Update client' : 'New client' }}</span>
+      <h5 class="jf-drawer__title">{{ editingClient ? 'Edit Client' : 'Add Client' }}</h5>
+      <p class="jf-drawer__subtitle">{{ editingClient ? 'Update the details below.' : 'Fill in the details to add a new client.' }}</p>
     </div>
-    <app-customer-create
-      [client]="editingClient"
-      (saved)="onCreateSaved()"
-      (cancelled)="onCreateCancelled()"/>
+    <button class="btn-close" aria-label="Close" (click)="closeDrawer()"></button>
   </div>
-}
+  <app-customer-create
+    [client]="editingClient"
+    (saved)="onCreateSaved()"
+    (cancelled)="onCreateCancelled()"/>
+</ng-template>
 
   @if (showDeleteModal) {
     <app-jobflow-modal
