@@ -54,14 +54,14 @@ describe('SetupCompanionComponent', () => {
       expect(component.visible()).toBeFalse();
     });
 
-    it('is hidden when onboardingComplete is false', () => {
-      orgSubject.next(orgOnboardingIncomplete);
+    it('is hidden when org has no id', () => {
+      orgSubject.next({ onboardingComplete: true } as OrganizationDto);
       expect(component.visible()).toBeFalse();
     });
 
-    it('is hidden when org has no id', () => {
-      orgSubject.next({ onboardingComplete: true });
-      expect(component.visible()).toBeFalse();
+    it('is visible when org has id and onboardingComplete is false', () => {
+      orgSubject.next(orgOnboardingIncomplete);
+      expect(component.visible()).toBeTrue();
     });
 
     it('is visible when org has id and onboardingComplete is true', () => {

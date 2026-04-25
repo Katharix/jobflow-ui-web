@@ -49,4 +49,8 @@ export class EstimateService {
   createFirstWin(): Observable<import('../models/estimate').Estimate> {
     return this.api.post<import('../models/estimate').Estimate>(`${this.baseUrl}/first-win`, {});
   }
+
+  draftNotes(lineItemNames: string[]): Observable<{ notes: string }> {
+    return this.api.post<{ notes: string }>('ai/estimate-draft', { lineItemNames });
+  }
 }
