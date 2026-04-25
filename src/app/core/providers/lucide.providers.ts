@@ -44,7 +44,10 @@ import {
    Headset,
    Info,
    CornerUpLeft,
-   UploadCloud
+   UploadCloud,
+   HelpCircle,
+   Sparkles,
+   X
 } from 'lucide-angular';
 
 export const lucideProviders = importProvidersFrom(
@@ -99,6 +102,9 @@ export const lucideProviders = importProvidersFrom(
       Tag,
       Info,
       CornerUpLeft,
-      UploadCloud
+      UploadCloud,
+      HelpCircle,
+      Sparkles,
+      X
    })
 );
