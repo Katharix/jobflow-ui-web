@@ -1,0 +1,16 @@
+.celebration-modal {
+  &__hero {
+    padding: 1rem 0 0.5rem;
+  }
+
+  &__emoji {
+    font-size: 3.5rem;
+    line-height: 1;
+  }
+
+  &__referral {
+    background: linear-gradient(135deg, #f5f3ff 0%, #fdf2f8 100%);
+    border: 1px solid #e9d5ff;
+    border-radius: 12px;
+  }
+}

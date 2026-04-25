@@ -1,0 +1,46 @@
+@if (visible()) {
+  <app-jobflow-modal
+    title="You sent your first estimate! 🎉"
+    [showFooter]="false"
+    size="lg"
+    (cancelled)="dismiss()">
+
+    <div class="celebration-modal text-center">
+
+      <div class="celebration-modal__hero mb-4">
+        <div class="celebration-modal__emoji animate__animated animate__bounceIn">🚀</div>
+        <h4 class="fw-bold mt-3 mb-1">You're officially in business!</h4>
+        <p class="text-muted">
+          Your first estimate is on its way to your inbox. That's a huge step — now let's make it rain.
+        </p>
+      </div>
+
+      <div class="celebration-modal__referral card mb-4">
+        <div class="card-body">
+          <h6 class="fw-semibold mb-1">Know a contractor or service pro?</h6>
+          <p class="text-muted small mb-3">
+            Refer them to JobFlow and you'll both get a reward when they sign up.
+          </p>
+          <div class="d-flex gap-2 justify-content-center flex-wrap">
+            <button type="button" class="btn btn-primary btn-sm" (click)="copyReferralLink()">
+              @if (referralLinkCopied()) {
+                ✓ Link copied!
+              } @else {
+                Copy referral link
+              }
+            </button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="shareReferral()">
+              Share via...
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-outline-secondary" (click)="dismiss()">
+        Close
+      </button>
+
+    </div>
+
+  </app-jobflow-modal>
+}

@@ -45,4 +45,8 @@ export class EstimateService {
   getPublicPdf(token: string): Observable<Blob> {
     return this.api.getBlob(`${this.baseUrl}/public/${token}/pdf`);
   }
+
+  createFirstWin(): Observable<import('../models/estimate').Estimate> {
+    return this.api.post<import('../models/estimate').Estimate>(`${this.baseUrl}/first-win`, {});
+  }
 }
