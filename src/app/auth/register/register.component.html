@@ -213,6 +213,28 @@
                       <span>{{ 'auth.register.orCreateWithEmail' | translate }}</span>
                     </div>
 
+                    <div class="mb-3">
+                      <label class="form-label">{{ 'auth.register.teamSize.label' | translate }}</label>
+                      <div class="d-flex gap-2">
+                        <button
+                          type="button"
+                          class="btn flex-fill"
+                          [class.btn-primary]="orgSize === 'solo'"
+                          [class.btn-outline-secondary]="orgSize !== 'solo'"
+                          (click)="orgSize = 'solo'">
+                          {{ 'auth.register.teamSize.solo' | translate }}
+                        </button>
+                        <button
+                          type="button"
+                          class="btn flex-fill"
+                          [class.btn-primary]="orgSize === 'small_team'"
+                          [class.btn-outline-secondary]="orgSize !== 'small_team'"
+                          (click)="orgSize = 'small_team'">
+                          {{ 'auth.register.teamSize.team' | translate }}
+                        </button>
+                      </div>
+                    </div>
+
                     <div class="d-grid gap-2">
                       <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isSubmitting">
                         @if (!isSubmitting) {

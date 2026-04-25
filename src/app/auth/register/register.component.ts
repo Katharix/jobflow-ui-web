@@ -55,6 +55,7 @@ export class RegisterComponent implements OnInit {
    isSubmitting = false;
    isOrgDataLoading = false;
    orgDataLoadFailed = false;
+   orgSize: 'solo' | 'small_team' = 'solo';
 
    ngOnInit(): void {
       this.loadOrganizationTypes();
@@ -273,7 +274,8 @@ export class RegisterComponent implements OnInit {
          userRole: role,
          firstName: this.firstName,
          lastName: this.lastName,
-         emailAddress: email
+         emailAddress: email,
+         orgSize: this.orgSize
       };
 
       const data = await firstValueFrom(this.orgService.registerOrganization(orgDto));
