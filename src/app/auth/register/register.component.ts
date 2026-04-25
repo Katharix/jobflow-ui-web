@@ -8,7 +8,8 @@ import {OrganizationType} from '../../models/organization-type';
 import {OrganizationTypeService} from '../../services/shared/organization-type.service';
 import {OrganizationService} from '../../services/shared/organization.service';
 import {OrganizationContextService} from '../../services/shared/organization-context.service';
-import { firstValueFrom } from 'rxjs';
+import { EMPTY, firstValueFrom } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { PaymentService } from '../../services/shared/payment.service';
 import { PaymentProvider } from '../../models/customer-payment-profile';
 import { ToastService } from '../../common/toast/toast.service';
@@ -16,6 +17,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../services/auth.service';
 import { map } from 'rxjs/operators';
 import { UserCredential } from 'firebase/auth';
+import { OnboardingService } from '../../views/general/onboarding-checklist/services/onboarding.service';
 
 @Component({
    selector: 'app-register',
@@ -36,6 +38,7 @@ export class RegisterComponent implements OnInit {
    private authService = inject(AuthService);
    private cdr = inject(ChangeDetectorRef);
    private destroyRef = inject(DestroyRef);
+   private onboardingService = inject(OnboardingService);
 
    @ViewChild('form') form?: NgForm;
 
@@ -279,6 +282,8 @@ export class RegisterComponent implements OnInit {
       const data = await firstValueFrom(this.orgService.registerOrganization(orgDto));
       await this.authService.getCurrentUserIdToken(true);
       this.orgContext.setOrganization(data);
+      // Fire-and-forget: seed industry-specific pricebook defaults
+      this.onboardingService.seedIndustryDefaults().pipe(catchError(() => EMPTY)).subscribe();
       this.toast.success(
          this.translate.instant('auth.register.toastCreated'),
          this.translate.instant('auth.register.toastWelcome')
