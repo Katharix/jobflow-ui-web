@@ -49,7 +49,7 @@
         [class.kpi-tile__accent--neutral]="!hasPaymentProvider"
       ></div>
       <div class="kpi-tile__body">
-        <span class="kpi-tile__value">{{ activeProvider || 'None' }}</span>
+        <span class="kpi-tile__value kpi-tile__value--text">{{ activeProvider || 'None' }}</span>
         <span class="kpi-tile__label">Payment Provider</span>
       </div>
     </div>
@@ -453,7 +453,7 @@
                 aria-label="Previous page"
               >Previous</button>
               <button
-                class="btn btn-sm btn-outline-primary"
+                class="btn btn-sm btn-outline-secondary"
                 [disabled]="!historyNextCursor || historyLoading"
                 (click)="onNextHistoryPage()"
                 aria-label="Next page"
@@ -480,8 +480,8 @@
                   @for (event of history; track event.id) {
                     <tr>
                       <td>{{ event.paidAt | date:'medium' }}</td>
-                      <td>{{ event.eventType }}</td>
-                      <td>{{ event.status }}</td>
+                      <td>{{ formatEventType(event.eventType) }}</td>
+                      <td><span [class]="getEventStatusClass(event.status)">{{ event.status }}</span></td>
                       <td class="bp-mono">{{ event.stripePaymentIntentId || '—' }}</td>
                       <td class="text-end">{{ toDollarFromMinor(event.amountPaid) | currency:event.currency }}</td>
                     </tr>
@@ -507,7 +507,7 @@
                 aria-label="Previous disputes page"
               >Previous</button>
               <button
-                class="btn btn-sm btn-outline-primary"
+                class="btn btn-sm btn-outline-secondary"
                 [disabled]="!disputeNextCursor || disputesLoading"
                 (click)="onNextDisputesPage()"
                 aria-label="Next disputes page"
@@ -534,8 +534,8 @@
                   @for (dispute of disputes; track dispute.id) {
                     <tr>
                       <td>{{ dispute.paidAt | date:'medium' }}</td>
-                      <td>{{ dispute.eventType }}</td>
-                      <td>{{ dispute.status }}</td>
+                      <td>{{ formatEventType(dispute.eventType) }}</td>
+                      <td><span [class]="getEventStatusClass(dispute.status)">{{ dispute.status }}</span></td>
                       <td>{{ dispute.customerId || '—' }}</td>
                       <td class="text-end">{{ toDollarFromMinor(dispute.amountPaid) | currency:dispute.currency }}</td>
                     </tr>

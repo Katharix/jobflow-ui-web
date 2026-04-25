@@ -139,19 +139,34 @@ export class BillingPaymentsComponent implements OnInit {
   getStatusClass(status: InvoiceStatus): string {
     switch (this.resolveStatus(status)) {
       case InvoiceStatus.Paid:
-        return 'badge bg-success';
+        return 'status-chip status-chip--success';
       case InvoiceStatus.Overdue:
-        return 'badge bg-danger';
+        return 'status-chip status-chip--danger';
       case InvoiceStatus.Sent:
-        return 'badge bg-warning text-dark';
+        return 'status-chip status-chip--info';
       case InvoiceStatus.Unpaid:
-        return 'badge bg-warning text-dark';
+        return 'status-chip status-chip--warning';
       case InvoiceStatus.Refunded:
-        return 'badge bg-info';
+        return 'status-chip status-chip--neutral';
       case InvoiceStatus.Draft:
       default:
-        return 'badge bg-secondary';
+        return 'status-chip status-chip--neutral';
     }
+  }
+
+  formatEventType(eventType: string): string {
+    return (eventType ?? '')
+      .replace(/[._]/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  getEventStatusClass(status: string): string {
+    const s = (status ?? '').toLowerCase();
+    if (s === 'succeeded' || s === 'paid' || s === 'completed') return 'status-chip status-chip--success';
+    if (s === 'failed' || s === 'disputed' || s === 'lost') return 'status-chip status-chip--danger';
+    if (s === 'refunded' || s === 'partial_refund') return 'status-chip status-chip--neutral';
+    if (s === 'pending' || s === 'processing') return 'status-chip status-chip--warning';
+    return 'status-chip status-chip--neutral';
   }
 
   openInvoice(invoice: Invoice): void {
