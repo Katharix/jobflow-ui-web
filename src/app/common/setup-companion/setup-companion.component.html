@@ -19,51 +19,49 @@
     @if (isOpen()) {
       <div class="setup-companion__panel">
         <div class="setup-companion__header">
-          <span class="fw-semibold">Setup Guide</span>
+          <div class="d-flex align-items-center gap-2">
+            <i-lucide name="sparkles" [size]="16" aria-hidden="true"></i-lucide>
+            <span class="fw-semibold">Setup Guide</span>
+          </div>
           <button type="button" class="btn-close btn-close-white btn-sm" aria-label="Close" (click)="close()">
             <span class="visually-hidden">Close</span>
           </button>
         </div>
 
-        <div class="setup-companion__body">
-
-          <!-- History -->
-          @for (entry of history(); track $index) {
-            <div class="setup-companion__history-item">
-              <div class="setup-companion__bubble setup-companion__bubble--q">{{ entry.question }}</div>
-              <div class="setup-companion__bubble setup-companion__bubble--a">{{ entry.answer }}</div>
+        <div class="setup-companion__body" #bodyRef>
+          @for (msg of messages(); track $index) {
+            <div class="setup-companion__bubble"
+                 [class.setup-companion__bubble--user]="msg.role === 'user'"
+                 [class.setup-companion__bubble--assistant]="msg.role === 'assistant'">
+              {{ msg.text }}
             </div>
           }
 
-          <!-- Current node -->
-          @if (currentNode(); as node) {
-            @if (node.question) {
-              <div class="setup-companion__bubble setup-companion__bubble--q">{{ node.question }}</div>
-              <div class="setup-companion__answers">
-                @for (answer of node.answers ?? []; track answer.key) {
-                  <button type="button" class="setup-companion__chip" (click)="selectAnswer(answer)">
-                    {{ answer.label }}
-                  </button>
-                }
-              </div>
-            }
-
-            @if (node.terminal && node.answer) {
-              <div class="setup-companion__bubble setup-companion__bubble--ans">
-                {{ node.answer }}
-              </div>
-              <div class="setup-companion__actions">
-                <button type="button" class="btn btn-sm btn-outline-secondary" (click)="restart()">
-                  Ask another question
-                </button>
-              </div>
-            }
-          } @else {
-            <div class="setup-companion__empty text-muted small text-center py-3">
-              No content loaded.
+          @if (isLoading()) {
+            <div class="setup-companion__bubble setup-companion__bubble--assistant setup-companion__bubble--loading">
+              <span></span><span></span><span></span>
             </div>
           }
+        </div>
 
+        <div class="setup-companion__input-row">
+          <textarea
+            class="setup-companion__input"
+            rows="1"
+            placeholder="Ask a setup question…"
+            [(ngModel)]="inputText"
+            (keydown)="handleKeydown($event)"
+            [disabled]="isLoading()"
+            aria-label="Type your question"></textarea>
+          <button
+            class="setup-companion__send"
+            type="button"
+            (click)="send()"
+            [disabled]="!inputText.trim() || isLoading()"
+            aria-label="Send">
+            <span class="visually-hidden">Send</span>
+            <i-lucide name="send" [size]="16" aria-hidden="true"></i-lucide>
+          </button>
         </div>
       </div>
     }

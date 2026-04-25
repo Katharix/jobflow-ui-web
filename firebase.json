@@ -7,8 +7,24 @@
       "**/node_modules/**"
     ],
     "headers": [
+      {        "source": "/index.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      },
       {
-        "source": "/__/**",
+        "source": "**/*.@(js|css|mjs)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
+          }
+        ]
+      },
+      {        "source": "/__/**",
         "headers": [
           {
             "key": "X-Robots-Tag",

@@ -1,5 +1,5 @@
 import {APP_INITIALIZER, ApplicationConfig, importProvidersFrom} from '@angular/core';
-import {provideRouter} from '@angular/router';
+import {provideRouter, withNavigationErrorHandler} from '@angular/router';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {MessageService} from 'primeng/api';
 import {providePrimeNG} from 'primeng/config';
@@ -128,7 +128,13 @@ const JobFlowTheme = definePreset(Aura, {
 
 export const appConfig: ApplicationConfig = {
    providers: [
-      provideRouter(routes),
+      provideRouter(routes, withNavigationErrorHandler(e => {
+         // Stale deployment: old chunk hash no longer on CDN → force a full reload
+         // so the browser fetches fresh index.html with new chunk hashes.
+         if (/chunk|Failed to fetch|dynamically imported module/i.test(String(e))) {
+            window.location.reload();
+         }
+      })),
       provideAnimationsAsync(),
       providePrimeNG({
          theme: {
