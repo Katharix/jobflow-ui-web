@@ -43,12 +43,6 @@ export class HelpComponent implements OnInit {
    loading = true;
    error = '';
 
-   // Contact support form
-   contactSubject = '';
-   contactMessage = '';
-   contactSuccess = '';
-   contactError = '';
-
    ngOnInit(): void {
       this.helpService.getPublishedArticles().subscribe({
          next: (data) => {
@@ -134,6 +128,31 @@ export class HelpComponent implements OnInit {
 
    // ── Contact support ──────────────────────────────────
 
+   /** 'prescreen' shows article suggestions; 'form' shows the contact form. */
+   contactStep: 'prescreen' | 'form' = 'prescreen';
+   prescreenSearch = '';
+   contactSubject = '';
+   contactMessage = '';
+   contactSuccess = '';
+   contactError = '';
+
+   get prescreenArticles(): HelpArticle[] {
+      const q = this.prescreenSearch.trim().toLowerCase();
+      const pool = [...this.guides, ...this.faqs].filter(a => a.isFeatured || this.matchesSearch(a, q));
+      return pool.slice(0, 3);
+   }
+
+   showSupportForm(): void {
+      this.contactStep = 'form';
+      this.helpService.trackEvent('prescreen_dismissed');
+   }
+
+   backToPrescreen(): void {
+      this.contactStep = 'prescreen';
+      this.contactSuccess = '';
+      this.contactError = '';
+   }
+
    submitContact(): void {
       this.contactSuccess = '';
       this.contactError = '';
@@ -143,10 +162,12 @@ export class HelpComponent implements OnInit {
          return;
       }
 
-      // For now, show confirmation — full ticket creation can be wired later
+      this.helpService.trackEvent('contact_submitted');
+      // Full ticket creation can be wired to the API later
       this.contactSuccess = 'Your message has been submitted. Our team will follow up shortly.';
       this.contactSubject = '';
       this.contactMessage = '';
+      this.contactStep = 'prescreen';
    }
 
    // ── Search ────────────────────────────────────────────

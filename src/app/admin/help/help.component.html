@@ -189,31 +189,84 @@
       <ng-template ngbNavContent>
         <div class="help-tab-body">
           <div class="help-contact">
-            <div class="help-contact__form">
-              <h6 class="mb-1">Send us a message</h6>
-              <p class="text-muted small mb-4">Our support team will get back to you as soon as possible.</p>
-              @if (contactSuccess) {
-                <div class="page-alert page-alert--success mb-3">
-                  <i class="ti ti-circle-check me-2"></i>{{ contactSuccess }}
+
+            <!-- Step 1: Prescreen -->
+            @if (contactStep === 'prescreen') {
+              <div class="help-contact__prescreen">
+                <h6 class="mb-1">Before you reach out…</h6>
+                <p class="text-muted small mb-3">We may already have an answer for you.</p>
+
+                <div class="mb-3">
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text"><i class="ti ti-search"></i></span>
+                    <input
+                      type="search"
+                      class="form-control"
+                      placeholder="Describe your question..."
+                      [(ngModel)]="prescreenSearch"
+                      autocomplete="off"
+                    />
+                  </div>
                 </div>
-              }
-              @if (contactError) {
-                <div class="page-alert page-alert--danger mb-3">
-                  <i class="ti ti-alert-circle me-2"></i>{{ contactError }}
+
+                @if (prescreenArticles.length > 0) {
+                  <ul class="help-prescreen-list">
+                    @for (article of prescreenArticles; track article.id) {
+                      <li class="help-prescreen-item">
+                        <i class="ti ti-file-text help-prescreen-item__icon"></i>
+                        <div>
+                          <p class="help-prescreen-item__title mb-0">{{ article.title }}</p>
+                          @if (article.summary) {
+                            <p class="text-muted small mb-0">{{ article.summary }}</p>
+                          }
+                        </div>
+                      </li>
+                    }
+                  </ul>
+                }
+
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm mt-3"
+                  (click)="showSupportForm()"
+                >
+                  None of these helped — contact support
+                </button>
+              </div>
+            }
+
+            <!-- Step 2: Contact form -->
+            @if (contactStep === 'form') {
+              <div class="help-contact__form">
+                <button type="button" class="btn btn-link p-0 mb-3 small" (click)="backToPrescreen()">
+                  <i class="ti ti-arrow-left me-1"></i>Back to articles
+                </button>
+                <h6 class="mb-1">Send us a message</h6>
+                <p class="text-muted small mb-4">Our support team will get back to you as soon as possible.</p>
+                @if (contactSuccess) {
+                  <div class="page-alert page-alert--success mb-3">
+                    <i class="ti ti-circle-check me-2"></i>{{ contactSuccess }}
+                  </div>
+                }
+                @if (contactError) {
+                  <div class="page-alert page-alert--danger mb-3">
+                    <i class="ti ti-alert-circle me-2"></i>{{ contactError }}
+                  </div>
+                }
+                <div class="mb-3">
+                  <label class="form-label fw-semibold" for="contactSubject">Subject</label>
+                  <input id="contactSubject" type="text" class="form-control" placeholder="Brief description of your question" [(ngModel)]="contactSubject" />
                 </div>
-              }
-              <div class="mb-3">
-                <label class="form-label fw-semibold" for="contactSubject">Subject</label>
-                <input id="contactSubject" type="text" class="form-control" placeholder="Brief description of your question" [(ngModel)]="contactSubject" />
+                <div class="mb-4">
+                  <label class="form-label fw-semibold" for="contactMessage">Message</label>
+                  <textarea id="contactMessage" class="form-control" rows="6" placeholder="Describe your question or issue in detail..." [(ngModel)]="contactMessage"></textarea>
+                </div>
+                <button type="button" class="btn btn-primary" (click)="submitContact()">
+                  <i class="ti ti-send me-1"></i>Submit
+                </button>
               </div>
-              <div class="mb-4">
-                <label class="form-label fw-semibold" for="contactMessage">Message</label>
-                <textarea id="contactMessage" class="form-control" rows="6" placeholder="Describe your question or issue in detail..." [(ngModel)]="contactMessage"></textarea>
-              </div>
-              <button type="button" class="btn btn-primary" (click)="submitContact()">
-                <i class="ti ti-send me-1"></i>Submit
-              </button>
-            </div>
+            }
+
             <div class="help-contact__tips">
               <h6 class="mb-3">Tips for faster support</h6>
               <ul class="help-tips-list">

@@ -9,6 +9,7 @@ import {NavItem} from '../../../models/nav-item';
 import {filter} from 'rxjs/operators';
 import {NavService} from "../services/nav.service";
 import {LucideAngularModule} from 'lucide-angular';
+import { HelpPanelService } from '../../../services/shared/help-panel.service';
 
 
 @Component({
@@ -28,6 +29,7 @@ export class AdminNavbarComponent implements OnInit {
    private orgContext = inject(OrganizationContextService);
    private navService = inject(NavService);
    private document = inject(DOCUMENT);
+   readonly helpPanel = inject(HelpPanelService);
 
    // currentTheme: string;
    navItems: NavItem[] = [];

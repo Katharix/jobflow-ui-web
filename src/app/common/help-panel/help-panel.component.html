@@ -1,0 +1,101 @@
+<app-jobflow-drawer
+  [open]="isOpen()"
+  [title]="panelTitle()"
+  [width]="380"
+  (closed)="close()"
+>
+  <!-- Search -->
+  <div class="help-panel__search">
+    <div class="help-panel__search-wrap">
+      <i class="ti ti-search help-panel__search-icon"></i>
+      <input
+        type="search"
+        class="form-control help-panel__search-input"
+        placeholder="Search help articles..."
+        autocomplete="off"
+        [value]="searchTerm()"
+        (input)="searchTerm.set($any($event.target).value)"
+      />
+      @if (searchTerm()) {
+        <button
+          type="button"
+          class="btn btn-link help-panel__search-clear"
+          (click)="clearSearch()"
+          aria-label="Clear search"
+        ><i class="ti ti-x"></i></button>
+      }
+    </div>
+  </div>
+
+  <!-- Context toggle -->
+  <div class="help-panel__context-bar">
+    <span class="help-panel__context-label">
+      <i [class]="contextIcon() + ' me-1'"></i>
+      {{ showAllCategories() ? 'All topics' : panelTitle() }}
+    </span>
+    <button
+      type="button"
+      class="btn btn-link p-0 help-panel__context-toggle"
+      (click)="showAllCategories.set(!showAllCategories())"
+    >
+      {{ showAllCategories() ? 'Show relevant' : 'Browse all' }}
+    </button>
+  </div>
+
+  <!-- Loading skeleton -->
+  @if (loading()) {
+    <div class="help-panel__skeleton">
+      @for (_ of [1, 2, 3]; track $index) {
+        <div class="help-panel__skeleton-row">
+          <div class="help-panel__skeleton-bar help-panel__skeleton-bar--title"></div>
+          <div class="help-panel__skeleton-bar help-panel__skeleton-bar--sub"></div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Articles -->
+  @if (!loading()) {
+    @if (filteredArticles().length === 0) {
+      <div class="help-panel__empty">
+        <i class="ti ti-book-off help-panel__empty-icon"></i>
+        <p class="help-panel__empty-text">
+          @if (searchTerm()) {
+            No results for "{{ searchTerm() }}".
+            <button class="btn btn-link p-0 align-baseline" type="button" (click)="clearSearch()">Clear</button>
+          } @else {
+            No articles for this section yet.
+            <button class="btn btn-link p-0 align-baseline" type="button" (click)="showAllCategories.set(true)">Browse all</button>
+          }
+        </p>
+      </div>
+    } @else {
+      <div class="help-panel__articles">
+        @for (article of filteredArticles(); track article.id) {
+          <div class="help-panel__article" [class.help-panel__article--expanded]="isExpanded(article.id)">
+            <button
+              class="help-panel__article-header"
+              type="button"
+              (click)="toggleExpanded(article.id)"
+              [attr.aria-expanded]="isExpanded(article.id)"
+            >
+              <span class="help-panel__article-title">{{ article.title }}</span>
+              <i [class]="'ti ' + (isExpanded(article.id) ? 'ti-chevron-up' : 'ti-chevron-down') + ' help-panel__article-chevron'"></i>
+            </button>
+            @if (isExpanded(article.id)) {
+              <div class="help-panel__article-body">
+                @if (article.summary) {
+                  <p class="help-panel__article-summary">{{ article.summary }}</p>
+                }
+                <p class="help-panel__article-content">{{ article.content }}</p>
+                <span class="status-chip status-chip--neutral help-panel__article-cat">
+                  {{ getCategoryLabel(article) }}
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</app-jobflow-drawer>
