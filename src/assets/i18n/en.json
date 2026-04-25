@@ -255,6 +255,11 @@
       "orCreateWithEmail": "Or create with email",
       "submit": "Create Account",
       "submitting": "Creating account...",
+      "teamSize": {
+        "label": "How do you work?",
+        "solo": "Just me",
+        "team": "I have a team"
+      },
       "footer": {
         "prefix": "By continuing, you agree to our",
         "terms": "Terms",
