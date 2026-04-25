@@ -244,12 +244,27 @@ Closes AB#<child-task-id> — child of User Story #<parent-id>
 ```
 
 ### Command
+
+> **PowerShell gotcha**: Never pass the PR body inline with `--body` in PowerShell. Markdown tables contain `|` which PowerShell treats as pipe operators, causing the command to fail with "unknown arguments". Always write the body to a temp file and use `--body-file`.
+
 ```powershell
+$body = @'
+<full PR body markdown here>
+'@
+$body | Out-File -FilePath _pr_body.md -Encoding utf8
 gh pr create `
   --base main `
   --head <branch-name> `
   --title "<title>" `
-  --body "<body>"
+  --body-file _pr_body.md
+Remove-Item _pr_body.md
+```
+
+The same applies to `gh pr edit`:
+```powershell
+$body | Out-File -FilePath _pr_body.md -Encoding utf8
+gh pr edit <number> --body-file _pr_body.md
+Remove-Item _pr_body.md
 ```
 
 ---

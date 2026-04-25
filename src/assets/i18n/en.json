@@ -102,8 +102,10 @@
     "empty": "Your setup steps will appear here once they are available.",
     "showMore": "View {{count}} more",
     "showLess": "Show less",
+    "locked": "Locked",
     "action": {
-      "completed": "Task Completed",
+      "completed": "Done",
+      "open": "Start",
       "complete": "Complete step"
     },
     "stepCompletedTitle": "Step already completed",
