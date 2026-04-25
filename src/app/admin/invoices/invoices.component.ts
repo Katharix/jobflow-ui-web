@@ -24,6 +24,7 @@ import { BehaviorSubject, Subject, Subscription, asyncScheduler, catchError, deb
 import { InvoiceJobPickerComponent, InvoiceJobPickerRow } from './invoice-job-picker/invoice-job-picker.component';
 import { PriceBookItemDto, PriceBookItemService } from '../pricebook/services/price-book-item.service';
 import { OrganizationContextService } from '../../services/shared/organization-context.service';
+import { EmptyStateComponent } from '../../common/empty-state/empty-state.component';
 
 @Component({
    selector: 'app-invoices',
@@ -38,7 +39,8 @@ import { OrganizationContextService } from '../../services/shared/organization-c
       InputNumberModule,
       AutoCompleteModule,
       InvoiceJobPickerComponent,
-      JobflowGridComponent
+      JobflowGridComponent,
+      EmptyStateComponent
    ],
    templateUrl: './invoices.component.html',
    styleUrl: './invoices.component.scss'

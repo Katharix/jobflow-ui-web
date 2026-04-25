@@ -23,8 +23,7 @@ import {getClickHandler} from "../../common/utils/page-action-dispatcher";
 import {CreateJobComponent} from "./job-create/job-create.component";
 import {formatDateTime} from "../../common/utils/app-formaters";
 import {Job, JobLifecycleStatus, JobLifecycleStatusLabels} from "./models/job";
-import { WorkflowSettingsService } from "../settings/services/workflow-settings.service";
-import { WorkflowStatusDto } from "../settings/models/workflow-status";
+import { WorkflowSettingsService } from "../settings/services/workflow-settings.service";import { EmptyStateComponent } from '../../common/empty-state/empty-state.component';import { WorkflowStatusDto } from "../settings/models/workflow-status";
 import {EmployeeService} from "../employees/services/employee.service";
 import {Employee} from "../employees/models/employee";
 import {AssignmentsService} from "./services/assignments.service";
@@ -48,7 +47,8 @@ import { NgbOffcanvas, NgbOffcanvasRef } from '@ng-bootstrap/ng-bootstrap';
       CreateJobComponent,
       RouterLink,
       TranslateModule,
-      LucideAngularModule
+      LucideAngularModule,
+      EmptyStateComponent
    ],
    styleUrls: ['./job.component.scss'],
    templateUrl: './job.component.html'

@@ -1,0 +1,23 @@
+<div class="empty-state">
+  @if (icon) {
+    <div class="empty-state__icon">
+      <lucide-icon [name]="icon" [size]="40" [strokeWidth]="1.4"></lucide-icon>
+    </div>
+  }
+
+  @if (headline) {
+    <h3 class="empty-state__headline">{{ headline }}</h3>
+  }
+
+  @if (body) {
+    <p class="empty-state__body">{{ body }}</p>
+  }
+
+  @if (ctaLabel) {
+    @if (ctaRoute) {
+      <a class="empty-state__cta" [routerLink]="ctaRoute">{{ ctaLabel }}</a>
+    } @else if (ctaAction) {
+      <button type="button" class="empty-state__cta" (click)="onCtaClick()">{{ ctaLabel }}</button>
+    }
+  }
+</div>
