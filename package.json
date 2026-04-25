@@ -47,7 +47,7 @@
     "@ngx-translate/http-loader": "^17.0.0",
     "@popperjs/core": "^2.11.8",
     "@primeuix/themes": "^2.0.3",
-    "@siemens/ngx-datatable": "^22.4.1",
+    "@siemens/ngx-datatable": "^26.0.0",
     "@stripe/stripe-js": "^6.1.0",
     "@tabler/icons-webfont": "^3.41.1",
     "animate.css": "^4.1.1",
