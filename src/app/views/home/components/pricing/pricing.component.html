@@ -3,11 +3,12 @@
     <div class="row align-items-end mb-5">
       <div class="col-lg-6">
         <p class="jf-eyebrow">Pricing</p>
-        <h2 class="jf-section-title">Plans that scale with your team and workload.</h2>
+        <h2 class="jf-section-title">Plans that scale with your crew.</h2>
+        <p class="jf-pricing__anchor">Starts at $29/mo — less than Jobber’s entry plan. No contracts.</p>
       </div>
       <div class="col-lg-6">
         <p class="jf-section-lead">
-          Start with the essentials, then add automation and branding as you grow.
+          Start with the essentials, then add automation, branding, and full dispatch as you grow.
         </p>
         <div class="jf-billing-toggle">
           <span [class.text-primary]="!isAnnual" [class.text-muted]="isAnnual">Monthly</span>
@@ -22,7 +23,7 @@
 
     <div class="row g-4">
       @for (plan of plans; track plan) {
-        <div class="col-lg-4">
+        <div class="col-lg-4" data-reveal>
           <div class="jf-price-card" [ngClass]="{ 'is-featured': plan.name === 'Flow' }">
             <div class="jf-price-card__header">
               <h5>{{ plan.name }}</h5>

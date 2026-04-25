@@ -3,20 +3,20 @@ import { Component } from '@angular/core';
 
 const STEP_COPY = [
   {
-    title: 'Capture the request',
-    description: 'Collect job details, photos, and scope in minutes from any device.'
+    title: 'Get the request',
+    description: 'Client calls or submits a request. Create a job in seconds and add scope, photos, and crew details from any device.'
   },
   {
-    title: 'Schedule & dispatch',
-    description: 'Assign the right crew, optimize routes, and keep everyone notified.'
+    title: 'Send a professional estimate',
+    description: 'Share a public link. Clients accept or request changes with one click — no account, no friction, no phone tag.'
   },
   {
-    title: 'Deliver & update',
-    description: 'Track progress, update customers, and close out work on site.'
+    title: 'Dispatch and execute',
+    description: 'Crew sees the job on mobile the moment it\'s assigned. Track progress, log updates, and close out work on site.'
   },
   {
-    title: 'Invoice & collect',
-    description: 'Send branded invoices and get paid faster with easy links.'
+    title: 'Invoice and get paid',
+    description: 'Convert to invoice in one click. Send a payment link by text or email. Stripe and Square accepted.'
   }
 ];
 

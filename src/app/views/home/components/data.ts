@@ -1,47 +1,47 @@
-import type { PricingPlan, Service, TeamMember, Testimonial } from "./types";
+﻿import type { PricingPlan, Service, TeamMember, Testimonial } from "./types";
 
 export const services: Service[] = [
   {
-    title: 'Custom Software Development',
-    description: 'We understand that every business has unique needs. Our team can create custom software solutions tailored specifically.',
-    icon: 'ti-device-desktop-analytics',
-    link: '#!',
+    title: 'Job Management',
+    description: 'Create, assign, and close jobs from any device. Every status change logged automatically.',
+    icon: 'ti-briefcase',
+    link: '#features',
     textClass: 'text-muted'
   },
   {
-    title: 'Integration Services',
-    description: 'Our software seamlessly integrates with a variety of platforms and tools. We provide integration services to ensure.',
-    icon: 'ti-webhook',
-    link: '#!',
+    title: 'Client Hub',
+    description: 'Your clients view jobs, accept estimates, and pay invoices from a secure link — no account needed.',
+    icon: 'ti-users',
+    link: '#features',
     bgClass: 'bg-primary bg-shape',
     textClass: 'text-white'
   },
   {
-    title: 'Training and Onboarding',
-    description: 'We offer thorough training programs and onboarding sessions to help your team get up to speed with our software quickly.',
-    icon: 'ti-heart-handshake',
-    link: '#!',
+    title: 'Estimates & Invoices',
+    description: 'Send estimates in minutes, convert to invoices in one click, and collect payment the same day.',
+    icon: 'ti-file-invoice',
+    link: '#features',
     textClass: 'text-muted'
   },
   {
-    title: 'Consulting Services',
-    description: 'Our experts provide strategic consulting to help you leverage our software for maximum benefit. We offer insights.',
-    icon: 'ti-message-user',
-    link: '#!',
-    textClass: 'text-muted'
-  },
-  {
-    title: 'Updates and Maintenance',
-    description: 'We continually update our software to incorporate the latest advancements and features. Our maintenance services.',
+    title: 'Follow-Up Automation',
+    description: 'Multi-step email and SMS sequences run automatically — so no lead or invoice falls through the cracks.',
     icon: 'ti-refresh-dot',
-    link: '#!',
+    link: '#features',
     textClass: 'text-muted'
   },
   {
-    title: 'Technical Support',
-    description: 'Our dedicated support team is available 24/7 to assist you with any technical issues you may encounter.',
-    icon: 'ti-headset',
-    link: '#!',
+    title: 'Dispatch & Scheduling',
+    description: 'Visual dispatch board with drag-drop assignments, conflict detection, and travel buffers.',
+    icon: 'ti-map-pin',
+    link: '#features',
+    textClass: 'text-muted'
+  },
+  {
+    title: 'Payments Anywhere',
+    description: 'Accept payments via Stripe or Square — in person, by invoice link, or through the Client Hub.',
+    icon: 'ti-credit-card',
+    link: '#features',
     textClass: 'text-muted'
   }
 ];
@@ -56,47 +56,30 @@ export const teamMembers: TeamMember[] = [
     name: 'James Peck',
     role: 'Founder',
     imageUrl: '/images/team/user-3.jpg'
-  },
-  {
-    name: 'Tina F. Yates',
-    role: 'Web Developer',
-    imageUrl: '/images/team/user-2.jpg'
-  },
-  {
-    name: 'Sidney J. Long',
-    role: 'Web Designer',
-    imageUrl: '/images/team/user-4.jpg'
   }
 ];
 
 export const testimonials: Testimonial[] = [
   {
-    rating: 4.7,
-    text: `"Skywave has completely transformed the way we operate. The user-friendly interface and seamless integration with our existing tools have saved us countless hours of work. The support team is incredibly responsive and always goes above and beyond to help us. We've tried other solutions, but nothing compares to the efficiency and reliability of this software. It’s truly the best investment we've made for our business!"`,
-    name: 'Danilo Tanic',
-    position: 'Head of Design at Paypal',
+    rating: 5,
+    text: '"Before JobFlow I was using three separate apps and still missing follow-ups. Now everything is in one place and clients can pay from a link I text them. Game changer."',
+    name: 'Marcus R.',
+    position: 'Owner, Riverside Landscaping',
     avatar: '/images/team/avatar-8.jpg'
   },
   {
-    rating: 4.4,
-    text: `"Company is a game-changer for our team. The intuitive design and powerful features have streamlined our processes and boosted our productivity. The onboarding process was smooth, thanks to the excellent training and support provided by the team. We’ve seen significant improvements in our workflow since implementing this software. I highly recommend it to anyone looking to enhance their operations."`,
-    name: 'Samuel Kane',
-    position: 'Project Manager at Shopify',
+    rating: 5,
+    text: '"My crew gets notified the moment a job is assigned. No more morning chaos trying to figure out who goes where. Scheduling used to take me an hour — now it takes five minutes."',
+    name: 'Sandra K.',
+    position: 'Owner, CleanPro Services',
     avatar: '/images/team/avatar-5.jpg'
   },
   {
-    rating: 4.6,
-    text: `"Team has exceeded our expectations in every way. From the moment we started using it, our productivity soared, and tasks that used to take hours are now completed in minutes. The customer support is outstanding—always quick to respond and incredibly helpful. This software has become an indispensable part of our daily operations, and we can't imagine working without it."`,
-    name: 'James Arthur',
-    position: 'Senior Manager at Amazon',
+    rating: 4.8,
+    text: '"Clients love the estimate portal. They can approve or ask for changes without calling me. I closed a $3,400 job on a Saturday at 10pm — client approved from their phone."',
+    name: 'Darnell T.',
+    position: 'Owner, D&T HVAC',
     avatar: '/images/team/avatar-3.jpg'
-  },
-  {
-    rating: 4.9,
-    text: `"Skywave has been a total game-changer for our business. The ease of use and the flexibility it offers have allowed us to customize our workflow like never before. The regular updates and new features keep us ahead of the curve, and the support team is always there when we need them. We've seen a remarkable improvement in our team's efficiency, and I can't recommend this software enough."`,
-    name: 'Olga D. Ward',
-    position: 'Sales Manager',
-    avatar: '/images/team/avatar-4.jpg'
   }
 ];
 
@@ -107,15 +90,16 @@ export const plans: PricingPlan[] = [
     annualPrice: 278,
     duration: 'Month',
     savings: 'Save $70',
-    description: 'Best for solo operators who need a reliable daily workflow.',
+    description: 'Core workflow for solo operators and small crews.',
     badge: 'bg-success-subtle text-success',
-    buttonClass: 'btn-primary',
+    buttonClass: 'btn-outline-primary',
     features: [
-      'Job scheduling and calendar view',
-      'Estimates, invoices, and payments',
-      'Customer records and job history',
-      'Email notifications',
-      'Client Hub access for customers',
+      'Jobs, invoices, and estimates',
+      'Client Hub — no client login required',
+      'Follow-Up Automation',
+      'Messaging (internal + client)',
+      'Stripe & Square payments',
+      'Mobile app (iOS + Android)'
     ]
   },
   {
@@ -124,15 +108,16 @@ export const plans: PricingPlan[] = [
     annualPrice: 564,
     duration: 'Month',
     savings: 'Save $144',
-    description: 'Best for growing teams managing multiple jobs per day.',
-    badge: 'bg-success-subtle text-success',
-    buttonClass: 'btn-info',
+    description: 'For growing teams that need scheduling and control.',
+    badge: 'bg-primary-subtle text-primary',
+    buttonClass: 'btn-primary',
     features: [
       'Everything in Go',
-      'Team and crew assignments',
-      'Advanced scheduling workflow',
-      'Text message reminders',
-      'Estimate follow-up tools'
+      'Employee management + roles',
+      'Dispatch board',
+      'Pricebook & service catalog',
+      'Custom branding (logo + colors)',
+      'Workflow settings'
     ]
   },
   {
@@ -141,15 +126,15 @@ export const plans: PricingPlan[] = [
     annualPrice: 864,
     duration: 'Month',
     savings: 'Save $204',
-    description: 'Best for scaling operations that need automation and control.',
-    badge: 'bg-success-subtle text-success',
-    buttonClass: 'btn-primary',
+    description: 'Full operations visibility for scaling businesses.',
+    badge: 'bg-warning-subtle text-warning',
+    buttonClass: 'btn-outline-primary',
     features: [
       'Everything in Flow',
-      'Custom branding (logo, colors)',
-      'Automated job follow-ups',
-      'Priority support',
-      'Expanded admin controls'
+      'Advanced dispatch & reporting',
+      'Revenue and job analytics',
+      'Custom integrations',
+      'Priority support'
     ]
   }
 ];
