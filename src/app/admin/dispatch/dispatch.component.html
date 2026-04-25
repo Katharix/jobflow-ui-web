@@ -195,12 +195,12 @@
   >
     <div class="date-context-menu__header">Add to {{ contextMenu.dateLabel }}</div>
     <button type="button" class="date-context-menu__item" (click)="contextMenuScheduleOnDate()">
-      <lucide-icon name="calendar-plus" size="16"></lucide-icon>
+      <lucide-icon name="calendar-plus" [size]="16"></lucide-icon>
       <span>Schedule Assignment</span>
     </button>
     <hr class="date-context-menu__divider">
     <button type="button" class="date-context-menu__item" (click)="contextMenuShowDayView()">
-      <lucide-icon name="layout-list" size="16"></lucide-icon>
+      <lucide-icon name="layout-list" [size]="16"></lucide-icon>
       <span>Show on Day View</span>
     </button>
   </div>
