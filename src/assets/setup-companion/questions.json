@@ -1,0 +1,126 @@
+{
+  "root": {
+    "key": "root",
+    "question": "What do you need help with?",
+    "answers": [
+      { "key": "estimates", "label": "Estimates & quotes", "next": "estimates_root" },
+      { "key": "invoices", "label": "Invoices & payments", "next": "invoices_root" },
+      { "key": "clients", "label": "Managing clients", "next": "clients_root" },
+      { "key": "scheduling", "label": "Scheduling & jobs", "next": "scheduling_root" },
+      { "key": "account", "label": "Account & settings", "next": "account_root" }
+    ]
+  },
+
+  "estimates_root": {
+    "key": "estimates_root",
+    "question": "What's the problem with estimates?",
+    "answers": [
+      { "key": "estimates_create", "label": "How do I create an estimate?", "next": "estimates_create_ans" },
+      { "key": "estimates_send", "label": "How do I send it to a client?", "next": "estimates_send_ans" },
+      { "key": "estimates_accepted", "label": "Client accepted — what happens next?", "next": "estimates_accepted_ans" },
+      { "key": "estimates_pdf", "label": "Can clients download a PDF?", "next": "estimates_pdf_ans" }
+    ]
+  },
+  "estimates_create_ans": {
+    "key": "estimates_create_ans",
+    "answer": "Go to Estimates → Create Estimate. Add line items with descriptions, quantities, and unit prices. JobFlow will auto-calculate subtotals and tax if enabled.",
+    "terminal": true
+  },
+  "estimates_send_ans": {
+    "key": "estimates_send_ans",
+    "answer": "Open the estimate and click 'Send'. Your client will receive a link to a branded estimate page where they can review and accept or decline.",
+    "terminal": true
+  },
+  "estimates_accepted_ans": {
+    "key": "estimates_accepted_ans",
+    "answer": "When a client accepts an estimate, a job is automatically created and linked to it. You can then schedule the job and convert it to an invoice.",
+    "terminal": true
+  },
+  "estimates_pdf_ans": {
+    "key": "estimates_pdf_ans",
+    "answer": "Yes — clients can download a PDF from their estimate view link. You can also download it from the estimate detail page.",
+    "terminal": true
+  },
+
+  "invoices_root": {
+    "key": "invoices_root",
+    "question": "What's the problem with invoices?",
+    "answers": [
+      { "key": "invoices_create", "label": "How do I create an invoice?", "next": "invoices_create_ans" },
+      { "key": "invoices_payment", "label": "How do clients pay online?", "next": "invoices_payment_ans" },
+      { "key": "invoices_remind", "label": "How do I send a reminder?", "next": "invoices_remind_ans" }
+    ]
+  },
+  "invoices_create_ans": {
+    "key": "invoices_create_ans",
+    "answer": "Go to Invoices → Create Invoice. You can create one from scratch or convert an accepted estimate directly into an invoice.",
+    "terminal": true
+  },
+  "invoices_payment_ans": {
+    "key": "invoices_payment_ans",
+    "answer": "Connect Stripe or Square in Settings → Payments. Once connected, clients can pay directly from the invoice link using a card.",
+    "terminal": true
+  },
+  "invoices_remind_ans": {
+    "key": "invoices_remind_ans",
+    "answer": "Open the invoice and click 'Send Reminder'. You can also set up automatic follow-up sequences in Settings → Follow-Ups.",
+    "terminal": true
+  },
+
+  "clients_root": {
+    "key": "clients_root",
+    "question": "What do you need to know about clients?",
+    "answers": [
+      { "key": "clients_add", "label": "How do I add a client?", "next": "clients_add_ans" },
+      { "key": "clients_import", "label": "Can I import clients from a spreadsheet?", "next": "clients_import_ans" }
+    ]
+  },
+  "clients_add_ans": {
+    "key": "clients_add_ans",
+    "answer": "Go to Clients → Add Client. Fill in the name, email, and contact details. Clients are linked to all their jobs, invoices, and estimates.",
+    "terminal": true
+  },
+  "clients_import_ans": {
+    "key": "clients_import_ans",
+    "answer": "Yes — go to Clients → Import. Upload a CSV with the required columns and JobFlow will walk you through matching the fields.",
+    "terminal": true
+  },
+
+  "scheduling_root": {
+    "key": "scheduling_root",
+    "question": "What do you need help with scheduling?",
+    "answers": [
+      { "key": "scheduling_job", "label": "How do I schedule a job?", "next": "scheduling_job_ans" },
+      { "key": "scheduling_assign", "label": "How do I assign jobs to employees?", "next": "scheduling_assign_ans" }
+    ]
+  },
+  "scheduling_job_ans": {
+    "key": "scheduling_job_ans",
+    "answer": "Go to Jobs → open a job → click 'Schedule'. Set the start and end time. The job will appear on the Schedule view for all team members.",
+    "terminal": true
+  },
+  "scheduling_assign_ans": {
+    "key": "scheduling_assign_ans",
+    "answer": "Open the job and go to the Assignments tab. Search for an employee and add them. They'll receive a notification about the assigned job.",
+    "terminal": true
+  },
+
+  "account_root": {
+    "key": "account_root",
+    "question": "What account setting do you need help with?",
+    "answers": [
+      { "key": "account_branding", "label": "How do I set up my branding?", "next": "account_branding_ans" },
+      { "key": "account_billing", "label": "How do I manage my subscription?", "next": "account_billing_ans" }
+    ]
+  },
+  "account_branding_ans": {
+    "key": "account_branding_ans",
+    "answer": "Go to Settings → Company. Upload your logo, set your brand colors, and add a tagline. These will appear on all client-facing documents.",
+    "terminal": true
+  },
+  "account_billing_ans": {
+    "key": "account_billing_ans",
+    "answer": "Go to Settings → Billing to view your plan, upgrade, or cancel. Billing is handled securely through Stripe.",
+    "terminal": true
+  }
+}

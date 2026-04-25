@@ -8,12 +8,15 @@ import {filter} from 'rxjs';
 import { ChatWidgetComponent } from '../../common/chat-widget/chat-widget.component';
 import { OnboardingWidgetComponent } from '../../common/onboarding-widget/onboarding-widget.component';
 import { HelpPanelComponent } from '../../common/help-panel/help-panel.component';
+import { FirstWinModalComponent } from '../../common/first-win-modal/first-win-modal.component';
+import { CelebrationModalComponent } from '../../common/celebration-modal/celebration-modal.component';
+import { SetupCompanionComponent } from '../../common/setup-companion/setup-companion.component';
 
 
 @Component({
    selector: 'app-admin-layout',
    standalone: true,
-   imports: [RouterOutlet, AdminNavbarComponent, AdminFooterComponent, AdminSidebarComponent, RouterModule, ChatWidgetComponent, OnboardingWidgetComponent, HelpPanelComponent],
+   imports: [RouterOutlet, AdminNavbarComponent, AdminFooterComponent, AdminSidebarComponent, RouterModule, ChatWidgetComponent, OnboardingWidgetComponent, HelpPanelComponent, FirstWinModalComponent, CelebrationModalComponent, SetupCompanionComponent],
    templateUrl: './admin-layout.component.html',
    styleUrl: './admin-layout.component.scss',
    encapsulation: ViewEncapsulation.None
