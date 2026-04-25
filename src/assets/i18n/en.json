@@ -103,6 +103,7 @@
     "showMore": "View {{count}} more",
     "showLess": "Show less",
     "locked": "Locked",
+    "optional": "Optional",
     "action": {
       "completed": "Done",
       "open": "Start",
@@ -114,8 +115,8 @@
     "stepNoRouteTitle": "No route configured for this step yet",
     "description": {
       "track": "Pick the onboarding track that matches your immediate priorities.",
-      "quickStart": "Select an industry preset to load suggested services and workflow labels.",
-      "payment": "Connect your payment provider so you can collect payments.",
+      "quickStart": "Select an industry preset to load suggested services and workflow labels — or skip and set up manually.",
+      "payment": "Get connected once — start collecting payments directly from invoices.",
       "branding": "Upload your logo and set your brand details.",
       "company": "Add your company profile and business information.",
       "roles": "Set up roles to control permissions for your team.",

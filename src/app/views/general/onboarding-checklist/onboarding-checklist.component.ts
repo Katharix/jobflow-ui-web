@@ -207,6 +207,28 @@ export class OnboardingChecklistComponent implements OnChanges {
          : 'onboarding.action.complete';
    }
 
+   private readonly STEP_TIME_ESTIMATES: Record<string, string> = {
+      choose_track: '1 min',
+      choose_industry_preset: '2 min',
+      create_customer: '2 min',
+      create_job: '3 min',
+      schedule_job: '2 min',
+      create_invoice: '3 min',
+      connect_stripe: '5 min',
+      send_invoice: '1 min',
+      receive_payment: '1 min'
+   };
+
+   private readonly OPTIONAL_STEPS = new Set(['choose_industry_preset']);
+
+   getStepTimeEstimate(step: OnboardingStepDto): string | null {
+      return this.STEP_TIME_ESTIMATES[step.key] ?? null;
+   }
+
+   isStepOptional(step: OnboardingStepDto): boolean {
+      return this.OPTIONAL_STEPS.has(step.key);
+   }
+
    onStepClick(step: OnboardingStepDto): void {
       if (!this.canOpenStep(step)) return;
       const route = this.getStepRoute(step);
