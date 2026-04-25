@@ -3,31 +3,31 @@
     <div class="row align-items-end mb-5">
       <div class="col-lg-6">
         <p class="jf-eyebrow">Core capabilities</p>
-        <h2 class="jf-section-title">Everything your team needs to run a job start to finish.</h2>
+        <h2 class="jf-section-title">One platform. Every step of the job.</h2>
       </div>
       <div class="col-lg-6">
         <p class="jf-section-lead">
-          Keep dispatch, field work, and billing aligned with a platform built for busy service teams.
+          JobFlow replaces spreadsheets, phone calls, and disconnected apps with one clean system built for field service.
         </p>
       </div>
     </div>
 
     <div class="row g-4">
-      @for (feature of featuresRow1; track feature) {
-        <div class="col-12 col-md-6 col-lg-3">
+      @for (feature of featuresRow1; track feature.title) {
+        <div class="col-12 col-md-6 col-lg-3" data-reveal>
           <div class="jf-feature-card">
-            <div class="jf-feature-card__icon">{{ feature.title | slice:0:1 }}</div>
+            <div class="jf-feature-card__icon"><i [class]="feature.icon"></i></div>
             <h5>{{ feature.title }}</h5>
-            <p>Track work, communicate with crews, and keep every job visible.</p>
+            <p>{{ feature.description }}</p>
           </div>
         </div>
       }
-      @for (feature of featuresRow2; track feature) {
-        <div class="col-12 col-md-6 col-lg-3">
+      @for (feature of featuresRow2; track feature.title) {
+        <div class="col-12 col-md-6 col-lg-3" data-reveal>
           <div class="jf-feature-card">
-            <div class="jf-feature-card__icon">{{ feature.title | slice:0:1 }}</div>
+            <div class="jf-feature-card__icon"><i [class]="feature.icon"></i></div>
             <h5>{{ feature.title }}</h5>
-            <p>Standardize the workflow so nothing slips between teams.</p>
+            <p>{{ feature.description }}</p>
           </div>
         </div>
       }

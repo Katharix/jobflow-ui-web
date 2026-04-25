@@ -1,6 +1,8 @@
 export interface Feature {
     title: string;
     imgSrc: string;
+    icon: string;
+    description: string;
   }
   
   export interface Service {

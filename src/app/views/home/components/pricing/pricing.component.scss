@@ -10,6 +10,13 @@
 	background: var(--jf-surface);
 }
 
+.jf-pricing__anchor {
+	font-size: 0.95rem;
+	color: var(--jf-muted);
+	margin-top: 0.4rem;
+	margin-bottom: 0;
+}
+
 .jf-billing-toggle {
 	display: inline-flex;
 	align-items: center;
