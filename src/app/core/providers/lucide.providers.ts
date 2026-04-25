@@ -41,7 +41,10 @@ import {
    UserPlus,
    Users,
    Handshake,
-   Headset
+   Headset,
+   Info,
+   CornerUpLeft,
+   UploadCloud
 } from 'lucide-angular';
 
 export const lucideProviders = importProvidersFrom(
@@ -93,6 +96,9 @@ export const lucideProviders = importProvidersFrom(
       Palette,
       Rocket,
       Shield,
-      Tag
+      Tag,
+      Info,
+      CornerUpLeft,
+      UploadCloud
    })
 );
