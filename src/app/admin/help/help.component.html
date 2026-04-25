@@ -1,248 +1,271 @@
-<app-page-header
-  title="Help"
+﻿<app-page-header
+  title="Help Center"
   subtitle="Guides, FAQs, and support for your organization"
 ></app-page-header>
 
-<section class="help-layout">
-  <!-- Hero + Search -->
-  <div class="card">
-    <div class="card-body help-hero">
-      <div>
-        <h5 class="mb-2">How can we help?</h5>
-        <p class="text-muted mb-0">
-          Browse feature guides, search FAQs, or reach out to our support team.
-        </p>
-      </div>
-      <div class="search-bar-wrapper">
-        <div class="search-bar">
-          <i class="ti ti-search search-icon"></i>
-          <input
-            id="helpSearch"
-            pInputText
-            class="search-input"
-            placeholder="Search guides and FAQs..."
-            [(ngModel)]="searchTerm"
-          />
-          @if (searchTerm.trim()) {
-            <button pButton type="button" icon="ti ti-x" severity="secondary" [text]="true" (click)="clearSearch()" aria-label="Clear search"></button>
-          }
-        </div>
-        @if (searchTerm.trim()) {
-          <span class="search-results-badge">{{ totalResults }} result{{ totalResults === 1 ? '' : 's' }}</span>
-        }
-      </div>
-    </div>
+<!-- Hero + Search -->
+<div class="help-hero content-card">
+  <div class="help-hero__copy">
+    <h4 class="help-hero__title">How can we help?</h4>
+    <p class="help-hero__sub">Browse guides, search FAQs, or reach out to our support team.</p>
   </div>
+  <div class="help-hero__search">
+    <div class="help-search">
+      <i class="ti ti-search help-search__icon"></i>
+      <input
+        id="helpSearch"
+        type="search"
+        class="form-control help-search__input"
+        placeholder="Search guides and FAQs..."
+        autocomplete="off"
+        [(ngModel)]="searchTerm"
+      />
+      @if (searchTerm.trim()) {
+        <button
+          type="button"
+          class="btn btn-link help-search__clear"
+          (click)="clearSearch()"
+          aria-label="Clear search"
+        ><i class="ti ti-x"></i></button>
+      }
+    </div>
+    @if (searchTerm.trim()) {
+      <span class="help-search-badge">{{ totalResults }} result{{ totalResults === 1 ? '' : 's' }}</span>
+    }
+  </div>
+</div>
 
-  @if (loading) {
-    <p class="text-muted px-2">Loading help content...</p>
-  } @else if (error) {
-    <p-message severity="error" [text]="error"></p-message>
-  } @else {
-    <p-tabs [(value)]="activeTab">
-      <p-tablist>
-        <p-tab value="0">
-          <i class="ti ti-book me-1"></i>Feature Guides
-        </p-tab>
-        <p-tab value="1">
-          <i class="ti ti-help me-1"></i>FAQs
-        </p-tab>
-        <p-tab value="2">
-          <i class="ti ti-headset me-1"></i>Contact Support
-        </p-tab>
-        <p-tab value="3">
-          <i class="ti ti-sparkles me-1"></i>What's New
-        </p-tab>
-      </p-tablist>
+<!-- Tabs -->
+<div class="content-card content-card--no-pad">
+  <ul ngbNav #helpNav="ngbNav" [(activeId)]="activeTab" class="nav nav-tabs help-nav px-3 pt-1">
 
-      <p-tabpanels>
-        <!-- ── Feature Guides ────────────────────────── -->
-        <p-tabpanel value="0">
-          <!-- Featured guides -->
-          @if (!searchTerm.trim() && featuredGuides.length > 0) {
-            <div class="featured-section mb-4">
-              <h6 class="section-label mb-3">
-                <i class="ti ti-star me-1"></i>Featured
-              </h6>
-              <div class="featured-grid">
-                @for (guide of featuredGuides; track guide.id) {
-                  <div class="featured-card">
-                    <div class="featured-card-icon">
-                      <i [class]="HELP_CATEGORY_ICONS[guide.category]"></i>
-                    </div>
-                    <div class="featured-card-body">
-                      <div class="fw-semibold">{{ guide.title }}</div>
-                      @if (guide.summary) {
-                        <p class="text-muted mb-0 small">{{ guide.summary }}</p>
-                      }
-                    </div>
-                  </div>
-                }
-              </div>
+    <li [ngbNavItem]="'guides'">
+      <button ngbNavLink><i class="ti ti-book me-1"></i>Feature Guides</button>
+      <ng-template ngbNavContent>
+        <div class="help-tab-body">
+          @if (loading) {
+            <div class="help-skeleton">
+              @for (_ of [1,2,3,4,5]; track $index) {
+                <div class="help-skeleton__row">
+                  <div class="help-skeleton__bar help-skeleton__bar--title"></div>
+                  <div class="help-skeleton__bar help-skeleton__bar--sub"></div>
+                </div>
+              }
             </div>
-          }
-
-          <!-- Guides grouped by category -->
-          @if (categoryGroups.length === 0) {
-            <div class="empty-state">
-              <h6 class="mb-2">No guides found</h6>
-              <p class="text-muted mb-0">
-                @if (searchTerm.trim()) {
-                  Try a different search term or clear the search.
-                } @else {
-                  Guides will appear here once published by our support team.
-                }
-              </p>
+          } @else if (error) {
+            <div class="page-alert page-alert--danger">
+              <i class="ti ti-alert-circle me-2"></i>{{ error }}
             </div>
           } @else {
-            @for (group of categoryGroups; track group.category) {
-              <div class="category-section">
-                <h6 class="section-label mb-2">
-                  <i [class]="group.icon + ' me-1'"></i>{{ group.label }}
-                </h6>
-                <div class="guide-list">
-                  <p-accordion [multiple]="true" [value]="[]">
+            @if (!searchTerm.trim() && featuredGuides.length > 0) {
+              <div class="mb-4">
+                <p class="section-label"><i class="ti ti-star me-1"></i>Featured</p>
+                <div class="help-featured-grid">
+                  @for (guide of featuredGuides; track guide.id) {
+                    <div class="help-featured-card">
+                      <span class="help-featured-card__icon">
+                        <i [class]="HELP_CATEGORY_ICONS[guide.category]"></i>
+                      </span>
+                      <div>
+                        <div class="fw-semibold">{{ guide.title }}</div>
+                        @if (guide.summary) {
+                          <p class="text-muted mb-0 small">{{ guide.summary }}</p>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+            @if (categoryGroups.length === 0) {
+              <div class="help-empty">
+                <i class="ti ti-book-off help-empty__icon"></i>
+                <h6 class="help-empty__title">No guides found</h6>
+                <p class="help-empty__sub">
+                  @if (searchTerm.trim()) {
+                    Try a different search term or <button class="btn btn-link p-0 align-baseline" type="button" (click)="clearSearch()">clear the search</button>.
+                  } @else {
+                    Guides will appear here once published by our support team.
+                  }
+                </p>
+              </div>
+            } @else {
+              @for (group of categoryGroups; track group.category) {
+                <div class="mb-4">
+                  <p class="section-label"><i [class]="group.icon + ' me-1'"></i>{{ group.label }}</p>
+                  <div class="accordion accordion-flush help-accordion">
                     @for (guide of group.articles; track guide.id) {
-                      <p-accordion-panel [value]="guide.id">
-                        <p-accordion-header>{{ guide.title }}</p-accordion-header>
-                        <p-accordion-content>
-                          <div class="guide-content">
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button
+                            class="accordion-button collapsed"
+                            type="button"
+                            [attr.data-bs-toggle]="'collapse'"
+                            [attr.data-bs-target]="'#guide-' + guide.id"
+                            [attr.aria-expanded]="'false'"
+                            [attr.aria-controls]="'guide-' + guide.id"
+                          >{{ guide.title }}</button>
+                        </h2>
+                        <div [id]="'guide-' + guide.id" class="accordion-collapse collapse">
+                          <div class="accordion-body">
                             @if (guide.summary) {
                               <p class="text-muted fw-semibold mb-2">{{ guide.summary }}</p>
                             }
-                            <div class="guide-body">{{ guide.content }}</div>
+                            <div class="help-guide-body">{{ guide.content }}</div>
                             @if (guide.tags) {
-                              <div class="guide-tags mt-2">
+                              <div class="help-tags mt-3">
                                 @for (tag of guide.tags.split(','); track tag) {
-                                  <p-tag [value]="tag.trim()" severity="secondary" [rounded]="true"></p-tag>
+                                  <span class="help-tag">{{ tag.trim() }}</span>
                                 }
                               </div>
                             }
                           </div>
-                        </p-accordion-content>
-                      </p-accordion-panel>
+                        </div>
+                      </div>
                     }
-                  </p-accordion>
+                  </div>
                 </div>
-              </div>
+              }
             }
           }
-        </p-tabpanel>
+        </div>
+      </ng-template>
+    </li>
 
-        <!-- ── FAQs ──────────────────────────────────── -->
-        <p-tabpanel value="1">
-          @if (filteredFaqs.length === 0) {
-            <div class="empty-state">
-              <h6 class="mb-2">No FAQs found</h6>
-              <p class="text-muted mb-0">
+    <li [ngbNavItem]="'faqs'">
+      <button ngbNavLink><i class="ti ti-help me-1"></i>FAQs</button>
+      <ng-template ngbNavContent>
+        <div class="help-tab-body">
+          @if (loading) {
+            <div class="help-skeleton">
+              @for (_ of [1,2,3,4,5]; track $index) {
+                <div class="help-skeleton__row">
+                  <div class="help-skeleton__bar help-skeleton__bar--title"></div>
+                </div>
+              }
+            </div>
+          } @else if (filteredFaqs.length === 0) {
+            <div class="help-empty">
+              <i class="ti ti-help-off help-empty__icon"></i>
+              <h6 class="help-empty__title">No FAQs found</h6>
+              <p class="help-empty__sub">
                 @if (searchTerm.trim()) {
-                  No matching questions. Try a broader search term.
+                  No matching questions. <button class="btn btn-link p-0 align-baseline" type="button" (click)="clearSearch()">Clear the search</button>.
                 } @else {
                   FAQs will appear here once published.
                 }
               </p>
             </div>
           } @else {
-            <p-accordion [multiple]="true" [value]="[]">
+            <div class="accordion accordion-flush help-accordion">
               @for (faq of filteredFaqs; track faq.id) {
-                <p-accordion-panel [value]="faq.id">
-                  <p-accordion-header>{{ faq.title }}</p-accordion-header>
-                  <p-accordion-content>
-                    <div class="faq-content">
-                      <p-tag [value]="getCategoryLabel(faq.category)" severity="secondary" [rounded]="true"></p-tag>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button
+                      class="accordion-button collapsed"
+                      type="button"
+                      [attr.data-bs-toggle]="'collapse'"
+                      [attr.data-bs-target]="'#faq-' + faq.id"
+                      [attr.aria-expanded]="'false'"
+                      [attr.aria-controls]="'faq-' + faq.id"
+                    >{{ faq.title }}</button>
+                  </h2>
+                  <div [id]="'faq-' + faq.id" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                      <span class="status-chip status-chip--neutral mb-2 d-inline-block">{{ getCategoryLabel(faq.category) }}</span>
                       <p class="mb-0 text-muted">{{ faq.content }}</p>
                     </div>
-                  </p-accordion-content>
-                </p-accordion-panel>
-              }
-            </p-accordion>
-          }
-        </p-tabpanel>
-
-        <!-- ── Contact Support ───────────────────────── -->
-        <p-tabpanel value="2">
-          <div class="contact-section">
-            <div class="contact-info card">
-              <div class="card-body">
-                <h6 class="mb-2">
-                  <i class="ti ti-mail me-1"></i>Get in Touch
-                </h6>
-                <p class="text-muted mb-3">
-                  Have a question or need help with something specific? Send us a message and our
-                  support team will get back to you as soon as possible.
-                </p>
-
-                @if (contactSuccess) {
-                  <p-message severity="success" [text]="contactSuccess" class="mb-3 d-block"></p-message>
-                }
-                @if (contactError) {
-                  <p-message severity="error" [text]="contactError" class="mb-3 d-block"></p-message>
-                }
-
-                <div class="contact-form">
-                  <div class="field">
-                    <label class="form-label fw-semibold" for="contactSubject">Subject</label>
-                    <input id="contactSubject" pInputText class="w-100" [(ngModel)]="contactSubject" placeholder="Brief description of your question" />
-                  </div>
-                  <div class="field mt-3">
-                    <label class="form-label fw-semibold" for="contactMessage">Message</label>
-                    <textarea id="contactMessage" pTextarea class="w-100" rows="5" [(ngModel)]="contactMessage" placeholder="Describe your question or issue in detail. Include screenshots or steps to reproduce if applicable."></textarea>
-                  </div>
-                  <div class="mt-3">
-                    <button pButton label="Submit" icon="ti ti-send" (click)="submitContact()" aria-label="Submit support message"></button>
                   </div>
                 </div>
-              </div>
+              }
             </div>
+          }
+        </div>
+      </ng-template>
+    </li>
 
-            <div class="contact-tips card">
-              <div class="card-body">
-                <h6 class="mb-3">Tips for faster support</h6>
-                <ul class="tips-list">
-                  <li>Include your organization name</li>
-                  <li>Describe the steps that led to the issue</li>
-                  <li>Attach screenshots when possible</li>
-                  <li>Mention the browser and device you're using</li>
-                </ul>
+    <li [ngbNavItem]="'contact'">
+      <button ngbNavLink><i class="ti ti-headset me-1"></i>Contact Support</button>
+      <ng-template ngbNavContent>
+        <div class="help-tab-body">
+          <div class="help-contact">
+            <div class="help-contact__form">
+              <h6 class="mb-1">Send us a message</h6>
+              <p class="text-muted small mb-4">Our support team will get back to you as soon as possible.</p>
+              @if (contactSuccess) {
+                <div class="page-alert page-alert--success mb-3">
+                  <i class="ti ti-circle-check me-2"></i>{{ contactSuccess }}
+                </div>
+              }
+              @if (contactError) {
+                <div class="page-alert page-alert--danger mb-3">
+                  <i class="ti ti-alert-circle me-2"></i>{{ contactError }}
+                </div>
+              }
+              <div class="mb-3">
+                <label class="form-label fw-semibold" for="contactSubject">Subject</label>
+                <input id="contactSubject" type="text" class="form-control" placeholder="Brief description of your question" [(ngModel)]="contactSubject" />
               </div>
+              <div class="mb-4">
+                <label class="form-label fw-semibold" for="contactMessage">Message</label>
+                <textarea id="contactMessage" class="form-control" rows="6" placeholder="Describe your question or issue in detail..." [(ngModel)]="contactMessage"></textarea>
+              </div>
+              <button type="button" class="btn btn-primary" (click)="submitContact()">
+                <i class="ti ti-send me-1"></i>Submit
+              </button>
+            </div>
+            <div class="help-contact__tips">
+              <h6 class="mb-3">Tips for faster support</h6>
+              <ul class="help-tips-list">
+                <li><i class="ti ti-building me-2"></i>Include your organization name</li>
+                <li><i class="ti ti-list-search me-2"></i>Describe the steps that led to the issue</li>
+                <li><i class="ti ti-screenshot me-2"></i>Attach screenshots when possible</li>
+                <li><i class="ti ti-device-laptop me-2"></i>Mention your browser and device</li>
+              </ul>
             </div>
           </div>
-        </p-tabpanel>
+        </div>
+      </ng-template>
+    </li>
 
-        <!-- ── What's New ────────────────────────────── -->
-        <p-tabpanel value="3">
+    <li [ngbNavItem]="'whats-new'">
+      <button ngbNavLink><i class="ti ti-sparkles me-1"></i>What's New</button>
+      <ng-template ngbNavContent>
+        <div class="help-tab-body">
           @if (changelog.length === 0) {
-            <div class="empty-state">
-              <h6 class="mb-2">No updates yet</h6>
-              <p class="text-muted mb-0">New features and improvements will be listed here.</p>
+            <div class="help-empty">
+              <i class="ti ti-clock help-empty__icon"></i>
+              <h6 class="help-empty__title">No updates yet</h6>
+              <p class="help-empty__sub">New features and improvements will be listed here.</p>
             </div>
           } @else {
-            <div class="changelog-timeline">
+            <div class="help-timeline">
               @for (entry of changelog; track entry.id) {
-                <div class="changelog-entry">
-                  <div class="changelog-dot"></div>
-                  <div class="changelog-card card">
-                    <div class="card-body">
-                      <div class="changelog-header">
-                        <span class="fw-semibold">{{ entry.title }}</span>
-                        <div class="changelog-meta">
-                          @if (entry.version) {
-                            <span class="changelog-version">v{{ entry.version }}</span>
-                          }
-                          <p-tag [value]="entry.category" [severity]="getChangelogSeverity(entry.category)" [rounded]="true"></p-tag>
-                        </div>
+                <div class="help-timeline__entry">
+                  <div class="help-timeline__dot"></div>
+                  <div class="help-timeline__card">
+                    <div class="help-timeline__header">
+                      <span class="fw-semibold">{{ entry.title }}</span>
+                      <div class="help-timeline__meta">
+                        @if (entry.version) {
+                          <span class="help-version-badge">v{{ entry.version }}</span>
+                        }
+                        <span [class]="'status-chip status-chip--' + getChangelogChipVariant(entry.category)">{{ entry.category }}</span>
                       </div>
-                      @if (entry.description) {
-                        <p class="text-muted mb-0 mt-2">{{ entry.description }}</p>
-                      }
                     </div>
+                    @if (entry.description) {
+                      <p class="text-muted mb-0 mt-2 small">{{ entry.description }}</p>
+                    }
                   </div>
                 </div>
               }
             </div>
           }
-        </p-tabpanel>
-      </p-tabpanels>
-    </p-tabs>
-  }
-</section>
+        </div>
+      </ng-template>
+    </li>
+
+  </ul>
+  <div [ngbNavOutlet]="helpNav"></div>
+</div>
+

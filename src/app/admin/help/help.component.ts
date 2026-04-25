@@ -1,12 +1,6 @@
 import {Component, OnInit, inject} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {AccordionModule} from 'primeng/accordion';
-import {InputTextModule} from 'primeng/inputtext';
-import {ButtonModule} from 'primeng/button';
-import {TagModule} from 'primeng/tag';
-import {TabsModule} from 'primeng/tabs';
-import {MessageModule} from 'primeng/message';
-import {TextareaModule} from 'primeng/textarea';
+import {NgbNavModule} from '@ng-bootstrap/ng-bootstrap';
 import {PageHeaderComponent} from '../dashboard/page-header/page-header.component';
 import {HelpContentService} from '../../services/shared/help-content.service';
 import {
@@ -30,13 +24,7 @@ interface CategoryGroup {
    standalone: true,
    imports: [
       FormsModule,
-      AccordionModule,
-      InputTextModule,
-      ButtonModule,
-      TagModule,
-      TabsModule,
-      MessageModule,
-      TextareaModule,
+      NgbNavModule,
       PageHeaderComponent
    ],
    templateUrl: './help.component.html',
@@ -48,7 +36,7 @@ export class HelpComponent implements OnInit {
    readonly HELP_CATEGORY_ICONS = HELP_CATEGORY_ICONS;
 
    searchTerm = '';
-   activeTab = '0';
+   activeTab = 'guides';
 
    articles: HelpArticle[] = [];
    changelog: ChangelogEntry[] = [];
@@ -133,6 +121,14 @@ export class HelpComponent implements OnInit {
          case 'Feature': return 'success';
          case 'Improvement': return 'info';
          case 'Fix': return 'warn';
+      }
+   }
+
+   getChangelogChipVariant(category: ChangelogCategory): string {
+      switch (category) {
+         case 'Feature': return 'success';
+         case 'Improvement': return 'info';
+         case 'Fix': return 'warning';
       }
    }
 
