@@ -1,0 +1,82 @@
+@if (visible()) {
+  <app-jobflow-modal
+    title="Send Your First Estimate"
+    [showFooter]="false"
+    size="lg"
+    (cancelled)="dismiss()">
+
+    @if (!sent$()) {
+      <div class="first-win-modal">
+        <div class="first-win-modal__intro">
+          <p class="text-muted mb-3">
+            Here's a sample estimate to show you what your clients will see. Click below to send a preview to your own email.
+          </p>
+        </div>
+
+        <div class="first-win-modal__preview card mb-3">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">Sample Estimate — First Win</span>
+            <span class="badge bg-warning text-dark">Draft Preview</span>
+          </div>
+          <div class="card-body p-0">
+            <table class="table table-sm mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Item</th>
+                  <th class="text-end">Qty</th>
+                  <th class="text-end">Unit Price</th>
+                  <th class="text-end">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of demoLineItems; track item.name) {
+                  <tr>
+                    <td>
+                      <div class="fw-medium">{{ item.name }}</div>
+                      <div class="text-muted small">{{ item.description }}</div>
+                    </td>
+                    <td class="text-end">{{ item.qty }}</td>
+                    <td class="text-end">${{ item.unitPrice.toFixed(2) }}</td>
+                    <td class="text-end">${{ item.total.toFixed(2) }}</td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot>
+                <tr class="table-active">
+                  <td colspan="3" class="text-end fw-bold">Subtotal</td>
+                  <td class="text-end fw-bold">${{ subtotal.toFixed(2) }}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="alert alert-danger py-2 mb-3">{{ errorMessage() }}</div>
+        }
+
+        <div class="d-flex gap-2 justify-content-end">
+          <button type="button" class="btn btn-outline-secondary" (click)="dismiss()" [disabled]="sending()">
+            Maybe later
+          </button>
+          <button type="button" class="btn btn-primary" (click)="sendToMyEmail()" [disabled]="sending()">
+            @if (sending()) {
+              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+              Sending...
+            } @else {
+              Send to My Email
+            }
+          </button>
+        </div>
+      </div>
+    } @else {
+      <div class="first-win-modal first-win-modal--success text-center py-3">
+        <div class="mb-3" style="font-size: 2.5rem;">🎉</div>
+        <h5 class="fw-bold mb-2">Estimate sent to your inbox!</h5>
+        <p class="text-muted mb-4">Check your email to see exactly what your clients experience.</p>
+        <button type="button" class="btn btn-primary" (click)="dismiss()">Done</button>
+      </div>
+    }
+
+  </app-jobflow-modal>
+}

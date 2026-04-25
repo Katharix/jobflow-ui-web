@@ -33,6 +33,8 @@ export interface OrganizationDto {
     canAcceptPayments?: boolean;
     paymentSetupDeferred?: boolean;
     orgSize?: string;
+    firstRealEstimateSentAt?: string;
+    referralCtaShownAt?: string;
 }
 
 export interface Organization {
