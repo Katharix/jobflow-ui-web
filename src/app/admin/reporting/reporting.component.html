@@ -6,12 +6,24 @@
       <p class="subtitle">Business performance overview</p>
     </div>
     <div class="header-right">
-      <select class="range-select" [(ngModel)]="selectedRange" (ngModelChange)="onRangeChange()">
-        <option value="30d">Last 30 Days</option>
-        <option value="90d">Last 90 Days</option>
-        <option value="6m">Last 6 Months</option>
-        <option value="1y">Last Year</option>
-      </select>
+      <div class="btn-group range-tabs" role="group" aria-label="Date range">
+        <button type="button" class="btn btn-sm"
+          [class.btn-primary]="selectedRange === '30d'"
+          [class.btn-outline-secondary]="selectedRange !== '30d'"
+          (click)="selectedRange = '30d'; onRangeChange()">30D</button>
+        <button type="button" class="btn btn-sm"
+          [class.btn-primary]="selectedRange === '90d'"
+          [class.btn-outline-secondary]="selectedRange !== '90d'"
+          (click)="selectedRange = '90d'; onRangeChange()">90D</button>
+        <button type="button" class="btn btn-sm"
+          [class.btn-primary]="selectedRange === '6m'"
+          [class.btn-outline-secondary]="selectedRange !== '6m'"
+          (click)="selectedRange = '6m'; onRangeChange()">6M</button>
+        <button type="button" class="btn btn-sm"
+          [class.btn-primary]="selectedRange === '1y'"
+          [class.btn-outline-secondary]="selectedRange !== '1y'"
+          (click)="selectedRange = '1y'; onRangeChange()">1Y</button>
+      </div>
     </div>
   </div>
 
@@ -53,10 +65,10 @@
         <span class="kpi-value">{{ formatCurrency(dashboard.revenue.totalOutstanding) }}</span>
         <span class="kpi-detail">{{ dashboard.revenue.overdueCount }} overdue</span>
       </div>
-      <div class="kpi-card accent-blue">
-        <span class="kpi-label">Completion Rate</span>
-        <span class="kpi-value">{{ formatPercent(dashboard.jobPerformance.completionRate) }}</span>
-        <span class="kpi-detail">{{ dashboard.jobPerformance.completedCount }}/{{ dashboard.jobPerformance.totalJobs }} jobs</span>
+      <div class="kpi-card accent-indigo">
+        <span class="kpi-label">Avg Job Value</span>
+        <span class="kpi-value">{{ formatCurrency(avgJobValue) }}</span>
+        <span class="kpi-detail">{{ dashboard.jobPerformance.totalJobs }} jobs total</span>
       </div>
     </section>
 

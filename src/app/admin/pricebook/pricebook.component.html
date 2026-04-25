@@ -1,62 +1,47 @@
-<div class="page-container">
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">Price Book</h1>
-      <p>Organize materials and services into categories and keep pricing tidy.</p>
-    </div>
-    <div class="page-actions">
-      <button type="button" class="btn btn-primary" (click)="openAddMaterialDialog()">
-        New Category
-      </button>
-    </div>
-  </div>
+<app-page-header
+  title="Price Book"
+  subtitle="Organize materials and services into categories. Pull items directly into estimates and invoices."
+></app-page-header>
 
 @if (error) {
   <div class="alert alert-danger mb-3">{{ error }}</div>
 }
 
-<section class="pricebook-overview">
-  <div class="pricebook-overview__intro">
-    <span class="pricebook-overview__eyebrow">Materials & Services</span>
-    <h2>Everything priced. Nothing missed.</h2>
-    <p>Group materials and services into categories, set costs and prices, then pull them into estimates and invoices.</p>
-  </div>
-  <div class="pricebook-overview__metrics">
-    <div class="pricebook-metric">
-      <span class="pricebook-metric__label">Categories</span>
-      <span class="pricebook-metric__value">{{ materialCategories.length }}</span>
-    </div>
-  </div>
-  <div class="pricebook-cta">
-    <div>
-      <p class="pricebook-cta__eyebrow">Quick action</p>
-      <h3>Create a new category</h3>
-      <p>Organize your materials and services into categories to keep pricing tidy.</p>
-    </div>
-    <button type="button" class="btn btn-primary" (click)="openAddMaterialDialog()">
-      New Category
-    </button>
-  </div>
-</section>
-
+<div class="pb-toolbar">
+  @if (materialCategories.length > 0) {
+    <span class="pb-toolbar__stat">
+      <strong>{{ materialCategories.length }}</strong>&nbsp;{{ materialCategories.length === 1 ? 'category' : 'categories' }}
+    </span>
+  }
+  <button type="button" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-2" (click)="openAddMaterialDialog()">
+    <lucide-icon name="plus-circle" [size]="14"></lucide-icon>
+    New Category
+  </button>
 </div>
-<section class="pricebook-categories">
+
+<ul class="pb-category-list">
   @for (category of materialCategories; track category.id) {
-    <div class="pricebook-card">
-      <div class="pricebook-card__header">
-        <div class="pricebook-card__icon">
-          <lucide-icon name="layers" size="20"></lucide-icon>
-        </div>
-        <div class="pricebook-card__info">
-          <h5>{{ category.name }}</h5>
-          <small>
-            {{ category?.itemCount || 0 }}
-            {{ (category?.itemCount || 0) === 1 ? 'item' : 'items' }}
-          </small>
-        </div>
+    <li class="pb-category-item">
+      <div class="pb-category-item__icon">
+        <lucide-icon name="layers" [size]="16"></lucide-icon>
+      </div>
+      <div class="pb-category-item__body">
+        <span class="pb-category-item__name">{{ category.name }}</span>
+        <span class="pb-category-item__count">
+          {{ category?.itemCount || 0 }}&nbsp;{{ (category?.itemCount || 0) === 1 ? 'item' : 'items' }}
+        </span>
+      </div>
+      <div class="pb-category-item__actions">
+        <button class="btn btn-sm btn-outline-primary pb-category-item__view"
+          [routerLink]="['/admin/pricebook/items/category', category.id]">
+          View Items
+          <lucide-icon name="chevron-right" [size]="13"></lucide-icon>
+        </button>
         <div class="dropdown">
-          <button class="btn btn-icon p-1" data-bs-toggle="dropdown" aria-label="Category Actions">
-            <lucide-icon name="more-vertical" size="18"></lucide-icon>
+          <button class="btn btn-sm btn-outline-secondary pb-category-item__more"
+            data-bs-toggle="dropdown"
+            [attr.aria-label]="'Actions for ' + category.name">
+            <lucide-icon name="more-vertical" [size]="15"></lucide-icon>
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><button type="button" class="dropdown-item" (click)="editCategory(category)">Edit</button></li>
@@ -64,10 +49,16 @@
           </ul>
         </div>
       </div>
-      <button class="btn btn-sm btn-outline-primary w-100"
-        [routerLink]="['/admin/pricebook/items/category', category.id]">
-        View Items
-      </button>
-    </div>
+    </li>
   }
-</section>
+  @empty {
+    <li class="pb-empty-state">
+      <lucide-icon name="tag" [size]="28"></lucide-icon>
+      <p class="pb-empty-state__title">No categories yet</p>
+      <p class="pb-empty-state__desc">Create your first category to start organizing materials and services.</p>
+      <button type="button" class="btn btn-primary btn-sm" (click)="openAddMaterialDialog()">
+        Create Category
+      </button>
+    </li>
+  }
+</ul>
