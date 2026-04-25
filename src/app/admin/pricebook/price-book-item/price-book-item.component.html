@@ -1,35 +1,25 @@
 <app-page-header
-  [title]="'Price Book Items'"
-  [subtitle]="'Manage materials for ' + categoryName"
+  [title]="categoryName ?? ''"
+  [subtitle]="'Materials in this category — manage cost, price, and markup.'"
 ></app-page-header>
 
-<section class="pb-item-overview">
-  <div class="pb-item-overview__intro">
-    <button type="button" class="pb-item-overview__back" (click)="goBackToCategories()">
-      <lucide-icon name="chevron-left" size="16"></lucide-icon>
-      Back to Categories
-    </button>
-    <span class="pb-item-overview__eyebrow">{{ categoryName }}</span>
-    <h2>Items in this category</h2>
-    <p>Add, edit, or remove materials and set cost and pricing for each.</p>
-  </div>
-  <div class="pb-item-overview__metrics">
-    <div class="pb-item-metric">
-      <span class="pb-item-metric__label">Total items</span>
-      <span class="pb-item-metric__value">{{ items.length }}</span>
-    </div>
-  </div>
-  <div class="pb-item-cta">
-    <div>
-      <p class="pb-item-cta__eyebrow">Quick action</p>
-      <h3>Add a new item</h3>
-      <p>Create a material with cost, price, and inventory details.</p>
-    </div>
-    <button type="button" class="btn btn-primary" (click)="add()">
+<div class="pb-toolbar">
+  <button type="button" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1" (click)="goBackToCategories()">
+    <lucide-icon name="chevron-left" [size]="14"></lucide-icon>
+    Categories
+  </button>
+  <div class="d-flex align-items-center gap-3">
+    @if (items.length > 0) {
+      <span class="pb-toolbar__stat">
+        <strong>{{ items.length }}</strong>&nbsp;{{ items.length === 1 ? 'item' : 'items' }}
+      </span>
+    }
+    <button type="button" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-2" (click)="add()">
+      <lucide-icon name="plus-circle" [size]="14"></lucide-icon>
       New Item
     </button>
   </div>
-</section>
+</div>
 
 <app-jobflow-grid
   [data]="items"

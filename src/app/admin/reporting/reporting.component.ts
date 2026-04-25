@@ -34,6 +34,10 @@ export class ReportingComponent implements OnInit, OnDestroy {
   selectedRange: DateRange = '6m';
   dashboard: ReportDashboard | null = null;
 
+  get avgJobValue(): number {
+    if (!this.dashboard || this.dashboard.jobPerformance.totalJobs === 0) return 0;
+    return this.dashboard.revenue.totalBilled / this.dashboard.jobPerformance.totalJobs;
+  }
   // Revenue chart
   revenueChartData: ChartData<'bar'> = { labels: [], datasets: [] };
   revenueChartOptions: ChartConfiguration<'bar'>['options'] = {

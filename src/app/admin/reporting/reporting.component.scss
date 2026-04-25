@@ -16,32 +16,20 @@
   h1 {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--text-primary, #1e293b);
+    color: var(--bs-body-color);
     margin: 0;
   }
 
   .subtitle {
     font-size: 0.875rem;
-    color: var(--text-secondary, #64748b);
+    color: var(--bs-secondary-color);
     margin: 0.25rem 0 0;
   }
 }
 
-.range-select {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--border-color, #e2e8f0);
-  border-radius: 0.5rem;
-  background: var(--surface, #fff);
-  font-family: 'Manrope', sans-serif;
-  font-size: 0.875rem;
-  color: var(--text-primary, #1e293b);
-  cursor: pointer;
-  outline: none;
-
-  &:focus {
-    border-color: var(--primary, #3b82f6);
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
-  }
+// Range tab button group
+.range-tabs {
+  font-size: 0.8125rem;
 }
 
 // KPI Cards
@@ -53,36 +41,36 @@
 }
 
 .kpi-card {
-  background: var(--surface, #fff);
-  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
   border-radius: 0.75rem;
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  border-left: 3px solid var(--primary, #3b82f6);
+  border-left: 3px solid var(--bs-primary);
 
-  &.accent-green { border-left-color: #10b981; }
-  &.accent-orange { border-left-color: #f59e0b; }
-  &.accent-blue { border-left-color: #6366f1; }
+  &.accent-green { border-left-color: var(--bs-success); }
+  &.accent-orange { border-left-color: var(--bs-warning); }
+  &.accent-indigo { border-left-color: var(--bs-info); }
 
   .kpi-label {
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: var(--text-secondary, #64748b);
+    color: var(--bs-secondary-color);
   }
 
   .kpi-value {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--text-primary, #1e293b);
+    color: var(--bs-body-color);
   }
 
   .kpi-detail {
     font-size: 0.8rem;
-    color: var(--text-secondary, #64748b);
+    color: var(--bs-secondary-color);
   }
 }
 
@@ -99,21 +87,21 @@
 }
 
 .chart-card {
-  background: var(--surface, #fff);
-  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
   border-radius: 0.75rem;
   padding: 1.25rem;
 
   h3 {
     font-size: 1rem;
     font-weight: 600;
-    color: var(--text-primary, #1e293b);
+    color: var(--bs-body-color);
     margin: 0 0 0.25rem;
   }
 
   .chart-subtitle {
     font-size: 0.8rem;
-    color: var(--text-secondary, #64748b);
+    color: var(--bs-secondary-color);
     margin: 0 0 0.75rem;
   }
 
@@ -148,11 +136,11 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8rem;
-  color: var(--text-secondary, #64748b);
+  color: var(--bs-secondary-color);
 
   strong {
     margin-left: auto;
-    color: var(--text-primary, #1e293b);
+    color: var(--bs-body-color);
   }
 }
 
@@ -194,12 +182,12 @@ table {
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: var(--text-secondary, #64748b);
-    background: var(--surface-secondary, #f8fafc);
+    color: var(--bs-secondary-color);
+    background: var(--bs-tertiary-bg);
   }
 
   td {
-    color: var(--text-primary, #1e293b);
+    color: var(--bs-body-color);
   }
 
   .right {
@@ -207,12 +195,12 @@ table {
   }
 
   .overdue {
-    color: #ef4444;
+    color: var(--bs-danger);
     font-weight: 600;
   }
 
   tbody tr:hover {
-    background: var(--surface-secondary, #f8fafc);
+    background: var(--bs-tertiary-bg);
   }
 }
 
@@ -225,7 +213,7 @@ table {
   min-height: 120px;
 
   p {
-    color: var(--text-secondary, #64748b);
+    color: var(--bs-secondary-color);
     font-size: 0.875rem;
   }
 }
@@ -238,15 +226,15 @@ table {
 }
 
 .skeleton-card {
-  background: var(--surface, #fff);
-  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
   border-radius: 0.75rem;
   padding: 1.25rem;
 }
 
 .skeleton-chart-card {
-  background: var(--surface, #fff);
-  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
   border-radius: 0.75rem;
   padding: 1.25rem;
 
