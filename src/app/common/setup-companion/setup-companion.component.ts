@@ -1,103 +1,114 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LucideAngularModule } from 'lucide-angular';
 import { SetupCompanionApiService } from '../../services/shared/setup-companion-api.service';
 import { OrganizationContextService } from '../../services/shared/organization-context.service';
 
-export interface CompanionAnswer {
-  key: string;
-  label: string;
-  next?: string;
-}
-
-export interface CompanionNode {
-  key: string;
-  question?: string;
-  answer?: string;
-  terminal?: boolean;
-  answers?: CompanionAnswer[];
-}
-
-export interface HistoryEntry {
-  question: string;
-  answer: string;
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  text: string;
 }
 
 @Component({
   selector: 'app-setup-companion',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './setup-companion.component.html',
   styleUrl: './setup-companion.component.scss',
 })
 export class SetupCompanionComponent implements OnInit {
-  private http = inject(HttpClient);
   private apiService = inject(SetupCompanionApiService);
   private orgContext = inject(OrganizationContextService);
+  private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
-  isOpen = signal(false);
-  currentNode = signal<CompanionNode | null>(null);
-  history = signal<HistoryEntry[]>([]);
-  visible = signal(false);
+  @ViewChild('bodyRef') bodyRef?: ElementRef<HTMLElement>;
 
-  private tree: Record<string, CompanionNode> = {};
+  isOpen = signal(false);
+  visible = signal(false);
+  messages = signal<ChatMessage[]>([]);
+  inputText = '';
+  isLoading = signal(false);
+  rateLimited = signal(false);
+
   private sessionId = crypto.randomUUID();
-  private orgId: string | null = null;
 
   ngOnInit(): void {
     this.orgContext.org$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(org => {
-        this.orgId = org?.id ?? null;
-        this.visible.set(!!this.orgId && org?.onboardingComplete === true);
-      });
-
-    this.http.get<Record<string, CompanionNode>>('/assets/setup-companion/questions.json')
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(tree => {
-        this.tree = tree;
-        this.currentNode.set(tree['root'] ?? null);
+        this.visible.set(!!org?.id && org?.onboardingComplete === true);
       });
   }
 
   toggle(): void {
     this.isOpen.set(!this.isOpen());
-    if (this.isOpen() && this.history().length === 0) {
-      this.currentNode.set(this.tree['root'] ?? null);
+    if (this.isOpen() && this.messages().length === 0) {
+      this.messages.set([{
+        role: 'assistant',
+        text: 'Hi! I\'m your Setup Guide. Ask me anything about setting up JobFlow — like how to add a service, send your first invoice, or connect a payment provider.'
+      }]);
     }
-  }
-
-  selectAnswer(answer: CompanionAnswer): void {
-    const node = this.currentNode();
-    if (!node || !node.question) return;
-
-    // Track event
-    if (this.orgId) {
-      this.apiService.trackEvent({
-        sessionId: this.sessionId,
-        questionKey: node.key,
-        answerKey: answer.key,
-      }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
-    }
-
-    // Append to history
-    this.history.update(h => [...h, { question: node.question!, answer: answer.label }]);
-
-    // Navigate to next node
-    const next = answer.next ? this.tree[answer.next] : null;
-    this.currentNode.set(next ?? null);
-  }
-
-  restart(): void {
-    this.history.set([]);
-    this.currentNode.set(this.tree['root'] ?? null);
-    this.sessionId = crypto.randomUUID();
   }
 
   close(): void {
     this.isOpen.set(false);
+  }
+
+  send(): void {
+    const text = this.inputText.trim();
+    if (!text || this.isLoading()) return;
+
+    this.inputText = '';
+    this.messages.update(m => [...m, { role: 'user', text }]);
+    this.isLoading.set(true);
+    this.rateLimited.set(false);
+    this.scrollToBottom();
+
+    this.apiService.ask({
+      sessionId: this.sessionId,
+      question: text,
+      currentRoute: this.router.url,
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: res => {
+        this.messages.update(m => [...m, { role: 'assistant', text: res.answer }]);
+        this.isLoading.set(false);
+        this.scrollToBottom();
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        if (err?.status === 429) {
+          this.rateLimited.set(true);
+          this.messages.update(m => [...m, {
+            role: 'assistant',
+            text: 'You\'ve reached the hourly question limit. Please try again in a little while.'
+          }]);
+        } else {
+          this.messages.update(m => [...m, {
+            role: 'assistant',
+            text: 'Something went wrong. Please try again.'
+          }]);
+        }
+        this.scrollToBottom();
+      }
+    });
+  }
+
+  handleKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.send();
+    }
+  }
+
+  private scrollToBottom(): void {
+    setTimeout(() => {
+      if (this.bodyRef?.nativeElement) {
+        this.bodyRef.nativeElement.scrollTop = this.bodyRef.nativeElement.scrollHeight;
+      }
+    }, 50);
   }
 }
