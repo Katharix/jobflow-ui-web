@@ -46,6 +46,7 @@ import {
    CornerUpLeft,
    UploadCloud,
    HelpCircle,
+   CircleHelp,
    Sparkles,
    X
 } from 'lucide-angular';
@@ -104,6 +105,7 @@ export const lucideProviders = importProvidersFrom(
       CornerUpLeft,
       UploadCloud,
       HelpCircle,
+      CircleHelp,
       Sparkles,
       X
    })
