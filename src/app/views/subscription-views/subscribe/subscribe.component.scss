@@ -101,10 +101,94 @@
    border-color: rgba(239, 68, 68, 0.6) !important;
 }
 
+.invalid-feedback {
+   display: block;
+   font-size: 0.82rem;
+}
+
 .form-hint {
    font-size: 0.85rem;
    color: var(--jf-muted);
    margin-bottom: 0;
+}
+
+// ─── Plan summary card ────────────────────────────────────────────────────
+.subscribe-plan-card {
+   margin-top: 1.8rem;
+   background: var(--jf-surface);
+   border: 1px solid rgba(226, 232, 240, 0.9);
+   border-left: 3px solid var(--jf-accent);
+   border-radius: 16px;
+   padding: 1.1rem 1.3rem;
+
+   &__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+   }
+
+   &__name {
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--jf-accent);
+   }
+
+   &__price {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--jf-ink);
+   }
+
+   &__list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 0.8rem;
+      display: grid;
+      gap: 0.3rem;
+      font-size: 0.88rem;
+      color: var(--jf-muted);
+   }
+
+   &__change {
+      font-size: 0.82rem;
+      color: var(--jf-muted);
+      text-decoration: none;
+
+      &:hover {
+         color: var(--jf-accent);
+      }
+   }
+}
+
+// ─── Form section dividers ────────────────────────────────────────────────
+.subscribe-form-section {
+   font-size: 0.72rem;
+   font-weight: 700;
+   letter-spacing: 0.12em;
+   text-transform: uppercase;
+   color: var(--jf-muted);
+   margin: 1.2rem 0 0.85rem;
+   padding-bottom: 0.5rem;
+   border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+
+   &:first-of-type {
+      margin-top: 0;
+   }
+}
+
+// ─── Trust bar ────────────────────────────────────────────────────────────
+.subscribe-trust-bar {
+   display: flex;
+   justify-content: center;
+   flex-wrap: wrap;
+   gap: 0.4rem 1.2rem;
+   font-size: 0.78rem;
+   color: var(--jf-muted);
+   margin-top: 0.6rem;
+   margin-bottom: 0.2rem;
 }
 
 @media (max-width: 991px) {

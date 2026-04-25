@@ -13,6 +13,7 @@ import { US_STATES } from '../../../common/constants';
 import { LoadingService } from '../../../services/shared/loading-service.service';
 import { Observable } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { environment } from '../../../../environments/environment';
 
 interface GoogleAddressComponent {
    long_name: string;
@@ -33,6 +34,39 @@ type GoogleAutocompleteConstructor = new (
    input: HTMLInputElement,
    options: { types: string[]; componentRestrictions: { country: string } }
 ) => GoogleAutocomplete;
+
+interface PlanMeta {
+   name: string;
+   price: string;
+   features: string[];
+}
+
+const PLAN_META: Record<string, PlanMeta> = {
+   [environment.stripeSettings.goMonthlyPrice]: {
+      name: 'Go', price: '$29/mo',
+      features: ['Jobs, invoices & estimates', 'Client Hub — no client login required', 'Stripe & Square payments']
+   },
+   [environment.stripeSettings.goYearlyPrice]: {
+      name: 'Go', price: '$278/yr',
+      features: ['Jobs, invoices & estimates', 'Client Hub — no client login required', 'Stripe & Square payments']
+   },
+   [environment.stripeSettings.flowMonthlyPrice]: {
+      name: 'Flow', price: '$59/mo',
+      features: ['Everything in Go', 'Employee management + dispatch board', 'Pricebook & custom branding']
+   },
+   [environment.stripeSettings.flowYearlyPrice]: {
+      name: 'Flow', price: '$564/yr',
+      features: ['Everything in Go', 'Employee management + dispatch board', 'Pricebook & custom branding']
+   },
+   [environment.stripeSettings.maxMonthlyPrice]: {
+      name: 'Max', price: '$89/mo',
+      features: ['Everything in Flow', 'Advanced dispatch & reporting', 'Priority support']
+   },
+   [environment.stripeSettings.maxYearlyPrice]: {
+      name: 'Max', price: '$864/yr',
+      features: ['Everything in Flow', 'Advanced dispatch & reporting', 'Priority support']
+   },
+};
 
 
 declare const google: {
@@ -85,6 +119,10 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
    submitted = false;
 
    isLoading$!: Observable<boolean>;
+
+   get planDetails(): PlanMeta | null {
+      return PLAN_META[this.planId] ?? null;
+   }
 
    ngOnInit(): void {
        this.isLoading$ = this.loadingService.isLoading$;
@@ -189,6 +227,10 @@ export class SubscribeComponent implements AfterViewInit, OnInit {
   this.submitted = true;
   if (this.form?.invalid) {
      this.form.control.markAllAsTouched();
+     setTimeout(() => {
+        const firstInvalid = this.document.querySelector('.is-invalid');
+        firstInvalid?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+     }, 50);
      return;
   }
 

@@ -1,6 +1,8 @@
-<section class="subscribe-shell">
+﻿<section class="subscribe-shell">
   <div class="container">
     <div class="row align-items-start g-5">
+
+      <!-- ── Left panel ──────────────────────────────────────────────── -->
       <div class="col-lg-5">
         <div class="subscribe-hero">
           <a routerLink="/" class="subscribe-hero__logo">
@@ -8,17 +10,33 @@
           </a>
           <p class="subscribe-hero__eyebrow">{{ 'subscribe.eyebrow' | translate }}</p>
           <h1>{{ 'subscribe.headline' | translate }}</h1>
-          <p class="subscribe-hero__lead">
-            {{ 'subscribe.lead' | translate }}
-          </p>
+          <p class="subscribe-hero__lead">{{ 'subscribe.lead' | translate }}</p>
           <div class="subscribe-hero__checks">
             <span><i class="ti ti-circle-check text-success me-2"></i>{{ 'subscribe.checks.access' | translate }}</span>
             <span><i class="ti ti-circle-check text-success me-2"></i>{{ 'subscribe.checks.secure' | translate }}</span>
             <span><i class="ti ti-circle-check text-success me-2"></i>{{ 'subscribe.checks.cancel' | translate }}</span>
           </div>
+
+          @if (planDetails) {
+            <div class="subscribe-plan-card">
+              <div class="subscribe-plan-card__header">
+                <span class="subscribe-plan-card__name">{{ planDetails.name }} Plan</span>
+                <span class="subscribe-plan-card__price">{{ planDetails.price }}</span>
+              </div>
+              <ul class="subscribe-plan-card__list">
+                @for (f of planDetails.features; track f) {
+                  <li><i class="ti ti-circle-check text-success me-2"></i>{{ f }}</li>
+                }
+              </ul>
+              <a routerLink="/" class="subscribe-plan-card__change">
+                <i class="ti ti-arrow-left me-1"></i>{{ 'subscribe.planCard.changePlan' | translate }}
+              </a>
+            </div>
+          }
         </div>
       </div>
 
+      <!-- ── Right panel — form card ────────────────────────────────── -->
       <div class="col-lg-7">
         <div class="subscribe-card">
           <div class="subscribe-card__header">
@@ -31,8 +49,10 @@
           </div>
 
           <form #form="ngForm" (ngSubmit)="onSubscribe($event)" novalidate>
+
             @if (submitted && form.invalid) {
-              <div class="alert alert-danger">
+              <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+                <i class="ti ti-alert-circle flex-shrink-0"></i>
                 {{ 'subscribe.validation.formInvalid' | translate }}
               </div>
             }
@@ -46,6 +66,8 @@
               </div>
             }
 
+            <!-- ─ Your info ───────────────────────────── -->
+            <p class="subscribe-form-section">{{ 'subscribe.sectionInfo' | translate }}</p>
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label" for="firstName">{{ 'subscribe.firstName' | translate }}</label>
@@ -60,36 +82,78 @@
                   minlength="1"
                   #firstNameCtrl="ngModel"
                   [ngClass]="{ 'is-invalid': firstNameCtrl.invalid && (firstNameCtrl.touched || submitted) }"
-                  />
-                  @if (firstNameCtrl.invalid && (firstNameCtrl.touched || submitted)) {
-                    <div class="text-danger small">
-                      <div>{{ 'subscribe.validation.firstNameRequired' | translate }}</div>
-                    </div>
-                  }
-                </div>
+                />
+                @if (firstNameCtrl.invalid && (firstNameCtrl.touched || submitted)) {
+                  <div class="invalid-feedback">{{ 'subscribe.validation.firstNameRequired' | translate }}</div>
+                }
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="lastName">{{ 'subscribe.lastName' | translate }}</label>
+                <input
+                  id="lastName"
+                  type="text"
+                  class="form-control"
+                  [placeholder]="'subscribe.placeholders.lastName' | translate"
+                  [(ngModel)]="lastName"
+                  name="lastName"
+                  required
+                  minlength="1"
+                  #lastNameCtrl="ngModel"
+                  [ngClass]="{ 'is-invalid': lastNameCtrl.invalid && (lastNameCtrl.touched || submitted) }"
+                />
+                @if (lastNameCtrl.invalid && (lastNameCtrl.touched || submitted)) {
+                  <div class="invalid-feedback">{{ 'subscribe.validation.lastNameRequired' | translate }}</div>
+                }
+              </div>
+            </div>
 
-                <div class="col-md-6 mb-3">
-                  <label class="form-label" for="lastName">{{ 'subscribe.lastName' | translate }}</label>
-                  <input
-                    id="lastName"
-                    type="text"
-                    class="form-control"
-                    [placeholder]="'subscribe.placeholders.lastName' | translate"
-                    [(ngModel)]="lastName"
-                    name="lastName"
-                    required
-                    minlength="1"
-                    #lastNameCtrl="ngModel"
-                    [ngClass]="{ 'is-invalid': lastNameCtrl.invalid && (lastNameCtrl.touched || submitted) }"
-                    />
-                    @if (lastNameCtrl.invalid && (lastNameCtrl.touched || submitted)) {
-                      <div class="text-danger small">
-                        <div>{{ 'subscribe.validation.lastNameRequired' | translate }}</div>
-                      </div>
-                    }
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="workEmail">{{ 'subscribe.workEmail' | translate }}</label>
+                <input
+                  id="workEmail"
+                  type="email"
+                  class="form-control"
+                  [placeholder]="'subscribe.placeholders.email' | translate"
+                  [(ngModel)]="email"
+                  name="email"
+                  required
+                  email
+                  #emailCtrl="ngModel"
+                  [ngClass]="{ 'is-invalid': emailCtrl.invalid && (emailCtrl.touched || submitted) }"
+                />
+                @if (emailCtrl.invalid && (emailCtrl.touched || submitted)) {
+                  <div class="invalid-feedback">
+                    @if (emailCtrl.errors?.['required']) { <span>{{ 'subscribe.validation.emailRequired' | translate }}</span> }
+                    @if (emailCtrl.errors?.['email']) { <span>{{ 'subscribe.validation.emailInvalid' | translate }}</span> }
                   </div>
-                </div>
+                }
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="workPhone">{{ 'subscribe.phone' | translate }}</label>
+                <input
+                  id="workPhone"
+                  type="text"
+                  class="form-control"
+                  [placeholder]="'subscribe.placeholders.phone' | translate"
+                  [(ngModel)]="phoneNumber"
+                  name="phoneNumber"
+                  required
+                  pattern="^[0-9+() -]{7,}$"
+                  #phoneCtrl="ngModel"
+                  [ngClass]="{ 'is-invalid': phoneCtrl.invalid && (phoneCtrl.touched || submitted) }"
+                />
+                @if (phoneCtrl.invalid && (phoneCtrl.touched || submitted)) {
+                  <div class="invalid-feedback">
+                    @if (phoneCtrl.errors?.['required']) { <span>{{ 'subscribe.validation.phoneRequired' | translate }}</span> }
+                    @if (phoneCtrl.errors?.['pattern']) { <span>{{ 'subscribe.validation.phoneInvalid' | translate }}</span> }
+                  </div>
+                }
+              </div>
+            </div>
 
+            <!-- ─ Your business ───────────────────────── -->
+            <p class="subscribe-form-section">{{ 'subscribe.sectionBusiness' | translate }}</p>
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label" for="companyName">{{ 'subscribe.companyName' | translate }}</label>
@@ -104,248 +168,182 @@
                   minlength="2"
                   #companyNameCtrl="ngModel"
                   [ngClass]="{ 'is-invalid': companyNameCtrl.invalid && (companyNameCtrl.touched || submitted) }"
-                  />
-                  @if (companyNameCtrl.invalid && (companyNameCtrl.touched || submitted)) {
-                    <div class="text-danger small">
-                      @if (companyNameCtrl.errors?.['required']) {
-                        <div>{{ 'subscribe.validation.companyRequired' | translate }}</div>
-                      }
-                      @if (companyNameCtrl.errors?.['minlength']) {
-                        <div>{{ 'subscribe.validation.companyMin' | translate }}</div>
-                      }
-                    </div>
-                  }
-                </div>
-
-                <div class="col-md-6 mb-3">
-                  <label class="form-label" for="companyType">{{ 'subscribe.companyType' | translate }}</label>
-                  <select
-                    id="companyType"
-                    class="form-select"
-                    [(ngModel)]="selectedOrganizationTypeId"
-                    name="organizationType"
-                    required
-                    #orgTypeCtrl="ngModel"
-                    [ngClass]="{ 'is-invalid': orgTypeCtrl.invalid && (orgTypeCtrl.touched || submitted) }"
-                    >
-                    <option [ngValue]="''" disabled>{{ 'subscribe.placeholders.companyType' | translate }}</option>
-                    @for (type of organizationTypes; track type) {
-                      <option [ngValue]="type.id">
-                        {{ type.typeName }}
-                      </option>
-                    }
-                  </select>
-                  @if (orgTypeCtrl.invalid && (orgTypeCtrl.touched || submitted)) {
-                    <div class="text-danger small">
-                      {{ 'subscribe.validation.companyTypeRequired' | translate }}
-                    </div>
-                  }
-                </div>
+                />
+                @if (companyNameCtrl.invalid && (companyNameCtrl.touched || submitted)) {
+                  <div class="invalid-feedback">
+                    @if (companyNameCtrl.errors?.['required']) { <span>{{ 'subscribe.validation.companyRequired' | translate }}</span> }
+                    @if (companyNameCtrl.errors?.['minlength']) { <span>{{ 'subscribe.validation.companyMin' | translate }}</span> }
+                  </div>
+                }
               </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="companyType">{{ 'subscribe.companyType' | translate }}</label>
+                <select
+                  id="companyType"
+                  class="form-select"
+                  [(ngModel)]="selectedOrganizationTypeId"
+                  name="organizationType"
+                  required
+                  #orgTypeCtrl="ngModel"
+                  [ngClass]="{ 'is-invalid': orgTypeCtrl.invalid && (orgTypeCtrl.touched || submitted) }"
+                >
+                  <option [ngValue]="''" disabled>{{ 'subscribe.placeholders.companyType' | translate }}</option>
+                  @for (type of organizationTypes; track type) {
+                    <option [ngValue]="type.id">{{ type.typeName }}</option>
+                  }
+                </select>
+                @if (orgTypeCtrl.invalid && (orgTypeCtrl.touched || submitted)) {
+                  <div class="invalid-feedback">{{ 'subscribe.validation.companyTypeRequired' | translate }}</div>
+                }
+              </div>
+            </div>
 
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label class="form-label" for="workEmail">{{ 'subscribe.workEmail' | translate }}</label>
-                  <input
-                    id="workEmail"
-                    type="email"
-                    class="form-control"
-                    [placeholder]="'subscribe.placeholders.email' | translate"
-                    [(ngModel)]="email"
-                    name="email"
-                    required
-                    email
-                    #emailCtrl="ngModel"
-                    [ngClass]="{ 'is-invalid': emailCtrl.invalid && (emailCtrl.touched || submitted) }"
-                    />
-                    @if (emailCtrl.invalid && (emailCtrl.touched || submitted)) {
-                      <div class="text-danger small">
-                        @if (emailCtrl.errors?.['required']) {
-                          <div>{{ 'subscribe.validation.emailRequired' | translate }}</div>
-                        }
-                        @if (emailCtrl.errors?.['email']) {
-                          <div>{{ 'subscribe.validation.emailInvalid' | translate }}</div>
-                        }
-                      </div>
-                    }
+            <!-- ─ Location ────────────────────────────── -->
+            <p class="subscribe-form-section">{{ 'subscribe.sectionLocation' | translate }}</p>
+            <div class="mb-3">
+              <label class="form-label" for="businessAddress">{{ 'subscribe.address' | translate }}</label>
+              <input
+                id="businessAddress"
+                type="text"
+                class="form-control"
+                [placeholder]="'subscribe.placeholders.address' | translate"
+                [(ngModel)]="companyAddress"
+                name="companyAddress"
+                required
+                #addressCtrl="ngModel"
+                #addressInput
+                [ngClass]="{ 'is-invalid': addressCtrl.invalid && (addressCtrl.touched || submitted) }"
+              />
+              @if (addressCtrl.invalid && (addressCtrl.touched || submitted)) {
+                <div class="invalid-feedback">{{ 'subscribe.validation.addressRequired' | translate }}</div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="businessAddress2">{{ 'subscribe.address2' | translate }}</label>
+              <input
+                id="businessAddress2"
+                type="text"
+                class="form-control"
+                [placeholder]="'subscribe.placeholders.address2' | translate"
+                [(ngModel)]="companyAddress2"
+                name="companyAddress2"
+              />
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label" for="businessCity">{{ 'subscribe.city' | translate }}</label>
+                <input
+                  id="businessCity"
+                  type="text"
+                  class="form-control"
+                  [placeholder]="'subscribe.placeholders.city' | translate"
+                  [(ngModel)]="city"
+                  name="city"
+                  required
+                  #cityCtrl="ngModel"
+                  [ngClass]="{ 'is-invalid': cityCtrl.invalid && (cityCtrl.touched || submitted) }"
+                />
+                @if (cityCtrl.invalid && (cityCtrl.touched || submitted)) {
+                  <div class="invalid-feedback">{{ 'subscribe.validation.cityRequired' | translate }}</div>
+                }
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label" for="businessState">{{ 'subscribe.state' | translate }}</label>
+                <select
+                  id="businessState"
+                  class="form-select"
+                  [(ngModel)]="state"
+                  name="state"
+                  required
+                  #stateCtrl="ngModel"
+                  [ngClass]="{ 'is-invalid': stateCtrl.invalid && (stateCtrl.touched || submitted) }"
+                >
+                  <option [ngValue]="''" disabled>{{ 'subscribe.placeholders.state' | translate }}</option>
+                  @for (s of usStates; track s) {
+                    <option [value]="s.code">{{ s.name }}</option>
+                  }
+                </select>
+                @if (stateCtrl.invalid && (stateCtrl.touched || submitted)) {
+                  <div class="invalid-feedback">{{ 'subscribe.validation.stateRequired' | translate }}</div>
+                }
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label" for="businessZip">{{ 'subscribe.zip' | translate }}</label>
+                <input
+                  id="businessZip"
+                  type="text"
+                  class="form-control"
+                  [placeholder]="'subscribe.placeholders.zip' | translate"
+                  [(ngModel)]="zipCode"
+                  name="zipCode"
+                  required
+                  pattern="^[0-9]{5}$"
+                  #zipCtrl="ngModel"
+                  [ngClass]="{ 'is-invalid': zipCtrl.invalid && (zipCtrl.touched || submitted) }"
+                />
+                @if (zipCtrl.invalid && (zipCtrl.touched || submitted)) {
+                  <div class="invalid-feedback">
+                    @if (zipCtrl.errors?.['required']) { <span>{{ 'subscribe.validation.zipRequired' | translate }}</span> }
+                    @if (zipCtrl.errors?.['pattern']) { <span>{{ 'subscribe.validation.zipPattern' | translate }}</span> }
                   </div>
+                }
+              </div>
+            </div>
 
-                  <div class="col-md-6 mb-3">
-                    <label class="form-label" for="workPhone">{{ 'subscribe.phone' | translate }}</label>
-                    <input
-                      id="workPhone"
-                      type="text"
-                      class="form-control"
-                      [placeholder]="'subscribe.placeholders.phone' | translate"
-                      [(ngModel)]="phoneNumber"
-                      name="phoneNumber"
-                      required
-                      pattern="^[0-9+() -]{7,}$"
-                      #phoneCtrl="ngModel"
-                      [ngClass]="{ 'is-invalid': phoneCtrl.invalid && (phoneCtrl.touched || submitted) }"
-                      />
-                      @if (phoneCtrl.invalid && (phoneCtrl.touched || submitted)) {
-                        <div class="text-danger small">
-                          @if (phoneCtrl.errors?.['required']) {
-                            <div>{{ 'subscribe.validation.phoneRequired' | translate }}</div>
-                          }
-                          @if (phoneCtrl.errors?.['pattern']) {
-                            <div>{{ 'subscribe.validation.phoneInvalid' | translate }}</div>
-                          }
-                        </div>
-                      }
-                    </div>
-                  </div>
+            <!-- ─ SMS consent ─────────────────────────── -->
+            <div class="form-check mb-4">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="twilioConsent"
+                name="twilioConsent"
+                [(ngModel)]="twilioConsent"
+                required
+                #twilioConsentCtrl="ngModel"
+                [ngClass]="{ 'is-invalid': twilioConsentCtrl.invalid && (twilioConsentCtrl.touched || submitted) }"
+              />
+              <label class="form-check-label" for="twilioConsent">
+                {{ 'subscribe.twilioConsent' | translate }}
+              </label>
+              @if (twilioConsentCtrl.invalid && (twilioConsentCtrl.touched || submitted)) {
+                <div class="invalid-feedback">{{ 'subscribe.validation.twilioConsent' | translate }}</div>
+              }
+              <small class="form-text text-muted d-block mt-1">{{ 'subscribe.twilioNote' | translate }}</small>
+            </div>
 
-                  <div class="mb-3">
-                    <label class="form-label" for="businessAddress">{{ 'subscribe.address' | translate }}</label>
-                    <input
-                      id="businessAddress"
-                      type="text"
-                      class="form-control"
-                      [placeholder]="'subscribe.placeholders.address' | translate"
-                      [(ngModel)]="companyAddress"
-                      name="companyAddress"
-                      required
-                      #addressCtrl="ngModel"
-                      #addressInput
-                      [ngClass]="{ 'is-invalid': addressCtrl.invalid && (addressCtrl.touched || submitted) }"
-                      />
-                      @if (addressCtrl.invalid && (addressCtrl.touched || submitted)) {
-                        <div class="text-danger small">
-                          {{ 'subscribe.validation.addressRequired' | translate }}
-                        </div>
-                      }
-                    </div>
+            <div class="d-grid mb-2">
+              <button type="submit" class="btn btn-primary btn-lg" [disabled]="(isLoading$ | async)">
+                @if ((isLoading$ | async) === false) {
+                  <span>{{ 'subscribe.submit' | translate }}</span>
+                }
+                @if ((isLoading$ | async) === true) {
+                  <span class="d-flex align-items-center justify-content-center gap-2">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    {{ 'subscribe.submitting' | translate }}
+                  </span>
+                }
+              </button>
+            </div>
 
-                    <div class="mb-3">
-                      <label class="form-label" for="businessAddress2">{{ 'subscribe.address2' | translate }}</label>
-                      <input
-                        id="businessAddress2"
-                        type="text"
-                        class="form-control"
-                        [placeholder]="'subscribe.placeholders.address2' | translate"
-                        [(ngModel)]="companyAddress2"
-                        name="companyAddress2"
-                        />
-                      </div>
+            <div class="subscribe-trust-bar">
+              <span><i class="ti ti-lock me-1"></i>{{ 'subscribe.trust.ssl' | translate }}</span>
+              <span><i class="ti ti-brand-stripe me-1"></i>{{ 'subscribe.trust.stripe' | translate }}</span>
+              <span><i class="ti ti-shield-check me-1"></i>{{ 'subscribe.trust.noCard' | translate }}</span>
+            </div>
 
-                      <div class="mb-3">
-                        <label class="form-label" for="businessCity">{{ 'subscribe.city' | translate }}</label>
-                        <input
-                          id="businessCity"
-                          type="text"
-                          class="form-control"
-                          [placeholder]="'subscribe.placeholders.city' | translate"
-                          [(ngModel)]="city"
-                          name="city"
-                          required
-                          #cityCtrl="ngModel"
-                          [ngClass]="{ 'is-invalid': cityCtrl.invalid && (cityCtrl.touched || submitted) }"
-                          />
-                          @if (cityCtrl.invalid && (cityCtrl.touched || submitted)) {
-                            <div class="text-danger small">
-                              {{ 'subscribe.validation.cityRequired' | translate }}
-                            </div>
-                          }
-                        </div>
+            <p class="form-hint text-center mt-2">
+              {{ 'subscribe.nextStep' | translate }}
+            </p>
+            @if ((isLoading$ | async) === true) {
+              <p class="form-hint text-center">{{ 'subscribe.redirecting' | translate }}</p>
+            }
 
-                        <div class="row">
-                          <div class="col-md-6 mb-3">
-                            <label class="form-label" for="businessState">{{ 'subscribe.state' | translate }}</label>
-                            <select
-                              id="businessState"
-                              class="form-select"
-                              [(ngModel)]="state"
-                              name="state"
-                              required
-                              #stateCtrl="ngModel"
-                              [ngClass]="{ 'is-invalid': stateCtrl.invalid && (stateCtrl.touched || submitted) }"
-                              >
-                              <option [ngValue]="''" disabled>{{ 'subscribe.placeholders.state' | translate }}</option>
-                              @for (s of usStates; track s) {
-                                <option [value]="s.code">{{ s.name }}</option>
-                              }
-                            </select>
-                            @if (stateCtrl.invalid && (stateCtrl.touched || submitted)) {
-                              <div class="text-danger small">
-                                  {{ 'subscribe.validation.stateRequired' | translate }}
-                              </div>
-                            }
-                          </div>
+          </form>
+        </div>
+      </div>
 
-                          <div class="col-md-6 mb-3">
-                            <label class="form-label" for="businessZip">{{ 'subscribe.zip' | translate }}</label>
-                            <input
-                              id="businessZip"
-                              type="text"
-                              class="form-control"
-                              [placeholder]="'subscribe.placeholders.zip' | translate"
-                              [(ngModel)]="zipCode"
-                              name="zipCode"
-                              required
-                              pattern="^[0-9]{5}$"
-                              #zipCtrl="ngModel"
-                              [ngClass]="{ 'is-invalid': zipCtrl.invalid && (zipCtrl.touched || submitted) }"
-                              />
-                              @if (zipCtrl.invalid && (zipCtrl.touched || submitted)) {
-                                <div class="text-danger small">
-                                  @if (zipCtrl.errors?.['required']) {
-                                    <div>{{ 'subscribe.validation.zipRequired' | translate }}</div>
-                                  }
-                                  @if (zipCtrl.errors?.['pattern']) {
-                                    <div>{{ 'subscribe.validation.zipPattern' | translate }}</div>
-                                  }
-                                </div>
-                              }
-                            </div>
-                          </div>
-
-                          <div class="form-check mb-4">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              id="twilioConsent"
-                              name="twilioConsent"
-                              [(ngModel)]="twilioConsent"
-                              required
-                              #twilioConsentCtrl="ngModel"
-                              [ngClass]="{ 'is-invalid': twilioConsentCtrl.invalid && (twilioConsentCtrl.touched || submitted) }"
-                              />
-                              <label class="form-check-label" for="twilioConsent">
-                                {{ 'subscribe.twilioConsent' | translate }}
-                              </label>
-                              @if (twilioConsentCtrl.invalid && (twilioConsentCtrl.touched || submitted)) {
-                                <div class="text-danger small">
-                                  {{ 'subscribe.validation.twilioConsent' | translate }}
-                                </div>
-                              }
-                              <small class="form-text text-muted">
-                                {{ 'subscribe.twilioNote' | translate }}
-                              </small>
-                            </div>
-
-                            <div class="d-grid">
-                              <button type="submit" class="btn btn-primary" [disabled]="form.invalid || (isLoading$ | async)">
-                                @if ((isLoading$ | async) === false) {
-                                  <span>{{ 'subscribe.submit' | translate }}</span>
-                                }
-                                @if ((isLoading$ | async) === true) {
-                                  <span>{{ 'subscribe.submitting' | translate }}</span>
-                                }
-                              </button>
-                            </div>
-                            <p class="form-hint mt-2">
-                              {{ 'subscribe.nextStep' | translate }}
-                            </p>
-                            @if ((isLoading$ | async) === true) {
-                              <p class="form-hint">
-                                {{ 'subscribe.redirecting' | translate }}
-                              </p>
-                            }
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </section>
+    </div>
+  </div>
+</section>
