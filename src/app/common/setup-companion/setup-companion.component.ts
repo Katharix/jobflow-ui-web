@@ -40,7 +40,7 @@ export class SetupCompanionComponent implements OnInit {
     this.orgContext.org$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(org => {
-        this.visible.set(!!org?.id && org?.onboardingComplete === true);
+        this.visible.set(!!org?.id);
       });
   }
 
@@ -49,7 +49,7 @@ export class SetupCompanionComponent implements OnInit {
     if (this.isOpen() && this.messages().length === 0) {
       this.messages.set([{
         role: 'assistant',
-        text: 'Hi! I\'m your Setup Guide. Ask me anything about setting up JobFlow — like how to add a service, send your first invoice, or connect a payment provider.'
+        text: 'Hi, I\'m Flow — your JobFlow setup guide. What can I help you with today?'
       }]);
     }
   }

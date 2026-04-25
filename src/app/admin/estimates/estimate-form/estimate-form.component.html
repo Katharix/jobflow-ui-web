@@ -113,7 +113,17 @@
 
   <!-- Notes -->
   <div class="jf-drawer__field">
-    <label class="form-label" for="estimateNotes">Notes / Terms</label>
+    <div class="d-flex align-items-center justify-content-between mb-1">
+      <label class="form-label mb-0" for="estimateNotes">Notes / Terms</label>
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
+        (click)="draftNotes()"
+        [disabled]="draftingNotes()">
+        <i-lucide name="sparkles" [size]="13" aria-hidden="true"></i-lucide>
+        {{ draftingNotes() ? 'Drafting…' : 'AI Draft' }}
+      </button>
+    </div>
     <textarea
       id="estimateNotes"
       class="form-control form-control-sm"

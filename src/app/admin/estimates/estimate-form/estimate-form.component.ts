@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
@@ -47,6 +47,7 @@ export class EstimateFormComponent implements OnInit {
   filteredPriceBookItems: PriceBookItemDto[] = [];
   hasPriceBookAccess = false;
   priceBookSearch = '';
+  draftingNotes = signal(false);
 
   ngOnInit(): void {
     this.buildForm();
@@ -148,6 +149,23 @@ export class EstimateFormComponent implements OnInit {
 
   cancel(): void {
     this.cancelled.emit();
+  }
+
+  draftNotes(): void {
+    const names: string[] = this.lineItems.controls
+      .map(ctrl => (ctrl.get('name')?.value as string)?.trim())
+      .filter((n): n is string => !!n);
+
+    if (!names.length) return;
+
+    this.draftingNotes.set(true);
+    this.estimateService.draftNotes(names).subscribe({
+      next: ({ notes }) => {
+        this.form.get('notes')?.setValue(notes);
+        this.draftingNotes.set(false);
+      },
+      error: () => this.draftingNotes.set(false),
+    });
   }
 
   formatCurrency(value: number): string {

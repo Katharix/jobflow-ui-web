@@ -5,7 +5,7 @@
     <button
       class="setup-companion__fab"
       type="button"
-      aria-label="Setup help"
+      aria-label="Open Flow, your setup companion"
       (click)="toggle()">
       <span class="visually-hidden">Setup help</span>
       @if (isOpen()) {
@@ -21,7 +21,7 @@
         <div class="setup-companion__header">
           <div class="d-flex align-items-center gap-2">
             <i-lucide name="sparkles" [size]="16" aria-hidden="true"></i-lucide>
-            <span class="fw-semibold">Setup Guide</span>
+            <span class="fw-semibold">Flow <span class="fw-normal opacity-75">· Setup Guide</span></span>
           </div>
           <button type="button" class="btn-close btn-close-white btn-sm" aria-label="Close" (click)="close()">
             <span class="visually-hidden">Close</span>
