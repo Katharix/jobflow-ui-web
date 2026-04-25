@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, EMPTY } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
 import {
   HelpArticle,
@@ -61,5 +62,12 @@ export class HelpContentService {
 
   deleteChangelogEntry(id: string): Observable<void> {
     return this.api.delete<void>(`${this.apiUrl}/changelog/${id}`);
+  }
+
+  /** Fire-and-forget analytics event. Errors are silently swallowed. */
+  trackEvent(eventType: string): void {
+    this.api.post<void>(`${this.apiUrl}/events`, { eventType })
+      .pipe(catchError(() => EMPTY))
+      .subscribe();
   }
 }

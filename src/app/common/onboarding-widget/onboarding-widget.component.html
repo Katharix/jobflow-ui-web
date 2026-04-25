@@ -1,0 +1,81 @@
+@if (visible()) {
+  <div class="onboarding-widget" [class.onboarding-widget--collapsed]="collapsed()">
+
+    <!-- Collapsed pill -->
+    @if (collapsed()) {
+      <button
+        class="onboarding-widget__pill"
+        type="button"
+        (click)="toggleCollapsed()"
+        aria-label="Open setup guide"
+      >
+        <lucide-icon name="rocket" [size]="16"></lucide-icon>
+        <span class="onboarding-widget__pill-label">Setup Guide</span>
+        <span class="onboarding-widget__pill-badge">{{ completedCount() }}/{{ totalCount() }}</span>
+      </button>
+    }
+
+    <!-- Expanded card -->
+    @if (!collapsed()) {
+      <div class="onboarding-widget__card">
+        <div class="onboarding-widget__header">
+          <div class="onboarding-widget__header-left">
+            <lucide-icon name="rocket" [size]="16"></lucide-icon>
+            <span class="onboarding-widget__title">Setup Guide</span>
+          </div>
+          <button
+            class="btn btn-link p-0 onboarding-widget__close"
+            type="button"
+            (click)="toggleCollapsed()"
+            aria-label="Minimise setup guide"
+          >
+            <lucide-icon name="minus" [size]="16"></lucide-icon>
+          </button>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="onboarding-widget__progress-wrap">
+          <div class="onboarding-widget__progress-bar">
+            <div
+              class="onboarding-widget__progress-fill"
+              [style.width.%]="progress()"
+            ></div>
+          </div>
+          <span class="onboarding-widget__progress-label">
+            {{ completedCount() }} of {{ totalCount() }} complete
+          </span>
+        </div>
+
+        <!-- Next step -->
+        @if (nextStep(); as step) {
+          <div class="onboarding-widget__step">
+            <p class="onboarding-widget__step-label">Next step</p>
+            <p class="onboarding-widget__step-name">{{ step.title }}</p>
+            <div class="onboarding-widget__actions">
+              <button
+                class="btn btn-primary btn-sm"
+                type="button"
+                (click)="navigateToStep()"
+              >Go there</button>
+              @if (hasTour()) {
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  type="button"
+                  (click)="startTour()"
+                >
+                  <lucide-icon name="play" [size]="12" class="me-1"></lucide-icon>
+                  Start tour
+                </button>
+              }
+            </div>
+          </div>
+        } @else {
+          <p class="onboarding-widget__complete-msg">
+            <lucide-icon name="check-circle" [size]="16" class="me-1 text-success"></lucide-icon>
+            All steps complete!
+          </p>
+        }
+      </div>
+    }
+  </div>
+}

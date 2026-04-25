@@ -95,6 +95,16 @@
     "confirmLogoutMessage": "Are you sure you want to log out?",
     "cancel": "Cancel"
   },
+  "helpPanel": {
+    "title": "Help",
+    "searchPlaceholder": "Search help articles...",
+    "noResults": "No results for this search.",
+    "noResultsCategory": "No articles for this section yet.",
+    "browseAll": "Browse all",
+    "showRelevant": "Show relevant",
+    "allTopics": "All topics",
+    "loading": "Loading articles..."
+  },
   "onboarding": {
     "title": "Explore features built for you",
     "subtitle": "Let's pick up from where you left off — we've laid out the next steps of your custom plan.",
@@ -127,6 +137,15 @@
       "job": "Create and schedule your first job to begin operations.",
       "invoice": "Generate your first invoice and prepare to get paid.",
       "default": "Complete this setup step to continue onboarding."
+    },
+    "widget": {
+      "setupGuide": "Setup Guide",
+      "complete": "All steps complete!",
+      "nextStep": "Next step",
+      "goThere": "Go there",
+      "startTour": "Start tour",
+      "of": "of",
+      "completeLabel": "complete"
     }
   },
   "dashboard": {
@@ -1077,6 +1096,15 @@
         "deleted": "Employee deleted",
         "deleteFailed": "Failed to delete employee"
       }
+    }
+  },
+  "help": {
+    "prescreen": {
+      "title": "Before you reach out…",
+      "subtitle": "We may already have an answer for you.",
+      "searchPlaceholder": "Describe your question...",
+      "noneHelped": "None of these helped — contact support",
+      "backToArticles": "Back to articles"
     }
   }
 }

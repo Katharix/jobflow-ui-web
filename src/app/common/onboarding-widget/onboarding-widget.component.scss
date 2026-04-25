@@ -1,0 +1,134 @@
+:host {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 1040;
+  display: block;
+}
+
+/* ── Collapsed pill ─────────────────────────────────── */
+.onboarding-widget__pill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  background: var(--bs-primary);
+  color: #fff;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  transition: transform 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+  }
+}
+
+.onboarding-widget__pill-badge {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 1rem;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.72rem;
+}
+
+/* ── Expanded card ──────────────────────────────────── */
+.onboarding-widget__card {
+  width: 280px;
+  background: var(--bs-body-bg, #fff);
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
+}
+
+.onboarding-widget__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.onboarding-widget__header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--bs-primary);
+}
+
+.onboarding-widget__title {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.onboarding-widget__close {
+  color: var(--bs-secondary-color, #6c757d);
+  line-height: 1;
+}
+
+/* Progress */
+.onboarding-widget__progress-wrap {
+  margin-bottom: 0.85rem;
+}
+
+.onboarding-widget__progress-bar {
+  height: 6px;
+  background: var(--bs-border-color, #dee2e6);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.3rem;
+}
+
+.onboarding-widget__progress-fill {
+  height: 100%;
+  background: var(--bs-primary);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.onboarding-widget__progress-label {
+  font-size: 0.72rem;
+  color: var(--bs-secondary-color, #6c757d);
+}
+
+/* Next step */
+.onboarding-widget__step {
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--bs-border-color, #dee2e6);
+}
+
+.onboarding-widget__step-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--bs-secondary-color, #6c757d);
+  margin-bottom: 0.2rem;
+}
+
+.onboarding-widget__step-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.65rem;
+  line-height: 1.3;
+}
+
+.onboarding-widget__actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.onboarding-widget__complete-msg {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--bs-border-color, #dee2e6);
+  margin: 0;
+}
