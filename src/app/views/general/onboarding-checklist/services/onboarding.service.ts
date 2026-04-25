@@ -75,4 +75,8 @@ export class OnboardingService {
   trackEvent(stepName: string, eventType: 'onboarding_step_started' | 'onboarding_step_completed' | 'onboarding_step_skipped'): Observable<void> {
     return this.api.post<void>(`${this.invoiceUrl}events`, { stepName, eventType });
   }
+
+  seedIndustryDefaults(): Observable<void> {
+    return this.api.post<void>(`${this.invoiceUrl}seed-defaults`, {});
+  }
 }
