@@ -242,6 +242,32 @@
    }
 }
 
+.ob-step__time {
+   display: inline-flex;
+   align-items: center;
+   gap: 0.25rem;
+   font-size: 0.68rem;
+   color: #9DA2B3;
+   margin-top: 0.2rem;
+}
+
+.ob-step__badge {
+   display: inline-block;
+   font-size: 0.6rem;
+   font-weight: 600;
+   padding: 0.1rem 0.4rem;
+   border-radius: 10rem;
+   margin-left: 0.35rem;
+   vertical-align: middle;
+   text-transform: uppercase;
+   letter-spacing: 0.02em;
+
+   &--optional {
+      background: #F0F0FF;
+      color: #7C7CE0;
+   }
+}
+
 // ── Action ────────────────────────────────────────────────────────
 .ob-step__action {
    display: flex;
