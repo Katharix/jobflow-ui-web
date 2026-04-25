@@ -107,7 +107,8 @@
     "action": {
       "completed": "Done",
       "open": "Start",
-      "complete": "Complete step"
+      "complete": "Complete step",
+      "skipPayment": "Skip for now"
     },
     "stepCompletedTitle": "Step already completed",
     "stepLockedTitle": "Complete the previous step first",
@@ -637,6 +638,10 @@
     "invoices": {
       "title": "Invoices",
       "subtitle": "All invoices for your organization",
+      "paymentBanner": {
+        "message": "Connect a payment provider to collect payments directly from your invoices.",
+        "cta": "Unlock Payments"
+      },
       "metrics": {
         "total": "Total invoices",
         "totalNote": "Across all clients",

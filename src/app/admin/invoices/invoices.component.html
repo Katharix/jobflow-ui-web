@@ -17,6 +17,18 @@
   <div class="page-alert page-alert--danger">{{ error }}</div>
 }
 
+@if (showPaymentBanner && !paymentBannerDismissed) {
+  <div class="alert alert-warning d-flex align-items-center justify-content-between mb-3" role="alert">
+    <span>{{ 'admin.invoices.paymentBanner.message' | translate }}</span>
+    <div class="d-flex gap-2">
+      <a routerLink="/admin/connectedpayment" class="btn btn-warning btn-sm">
+        {{ 'admin.invoices.paymentBanner.cta' | translate }}
+      </a>
+      <button type="button" class="btn-close" aria-label="Dismiss" (click)="paymentBannerDismissed = true"></button>
+    </div>
+  </div>
+}
+
 @if (summary$ | async; as summaryVm) {
   <!-- KPI Metrics -->
   <div class="kpi-grid kpi-grid--5" role="list" aria-label="Invoice metrics">

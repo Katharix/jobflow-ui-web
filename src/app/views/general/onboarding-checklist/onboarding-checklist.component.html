@@ -107,6 +107,13 @@
                   </svg>
                 </span>
               }
+              @if (!step.isCompleted && isPaymentStep(step)) {
+                <button type="button" class="ob-step__skip btn btn-link btn-sm p-0 ms-2"
+                  (click)="onDeferPayment($event)"
+                  [attr.aria-label]="'onboarding.action.skipPayment' | translate">
+                  {{ 'onboarding.action.skipPayment' | translate }}
+                </button>
+              }
             </div>
 
           </li>

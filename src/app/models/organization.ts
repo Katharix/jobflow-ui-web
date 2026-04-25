@@ -31,6 +31,8 @@ export interface OrganizationDto {
     isSquareConnected?: boolean;
     isStripeConnected?: boolean;
     canAcceptPayments?: boolean;
+    paymentSetupDeferred?: boolean;
+    orgSize?: string;
 }
 
 export interface Organization {

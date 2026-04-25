@@ -79,4 +79,8 @@ export class OnboardingService {
   seedIndustryDefaults(): Observable<void> {
     return this.api.post<void>(`${this.invoiceUrl}seed-defaults`, {});
   }
+
+  deferPayment(): Observable<void> {
+    return this.api.post<void>(`${this.invoiceUrl}defer-payment`, {});
+  }
 }
