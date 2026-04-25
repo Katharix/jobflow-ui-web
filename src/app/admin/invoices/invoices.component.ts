@@ -110,6 +110,8 @@ export class InvoicesComponent implements OnInit, OnDestroy {
    isInvoiceOnboardingFlow = false;
    error: string | null = null;
    returnToCommandCenter = false;
+   showPaymentBanner = false;
+   paymentBannerDismissed = false;
 
    isCreateDrawerOpen = false;
    selectedJob: Job | null = null;
@@ -149,6 +151,10 @@ export class InvoicesComponent implements OnInit, OnDestroy {
    ngOnInit(): void {
       this.returnToCommandCenter = this.route.snapshot.queryParamMap.get('returnTo') === 'dashboard-command-center';
       this.isInvoiceOnboardingFlow = this.route.snapshot.queryParamMap.get('onboardingAction') === 'select-job-for-invoice';
+
+      this.orgContext.org$.pipe(take(1)).subscribe(org => {
+         this.showPaymentBanner = !!(org?.paymentSetupDeferred && !org?.canAcceptPayments);
+      });
 
       this.refreshLabels();
       this.buildInvoiceForm();

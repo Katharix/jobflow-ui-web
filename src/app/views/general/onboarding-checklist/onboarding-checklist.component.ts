@@ -239,4 +239,16 @@ export class OnboardingChecklistComponent implements OnChanges {
          queryParams: onboardingAction ? { onboardingAction } : undefined
       });
    }
+
+   isPaymentStep(step: OnboardingStepDto): boolean {
+      const text = `${step.key ?? ''} ${step.title ?? ''}`.toLowerCase();
+      return text.includes('payment') || text.includes('stripe') || text.includes('square');
+   }
+
+   onDeferPayment(event: Event): void {
+      event.stopPropagation();
+      this.onboardingService.deferPayment()
+         .pipe(catchError(() => EMPTY), takeUntilDestroyed(this.destroyRef))
+         .subscribe(() => this.load());
+   }
 }
