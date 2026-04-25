@@ -12,11 +12,13 @@ You are the orchestrator for JobFlow development. You analyze incoming requests,
 | Skill | Specialty |
 |-------|-----------|
 | `business-context` | **Business Source of Truth** — product, pricing, features, ICP, integrations, architecture |
-| `planner` | Creates parent User Story + child Tasks (UI/API/Mobile), sets up feature branches per repo |
+| `business-analyst` | **BA + Scrum Master** — creates Sprints, User Stories, Tasks, Bugs in ADO; takes and saves meeting notes; facilitates Scrum ceremonies. Owns all ADO work item creation. |
+| `planner` | Sets up feature branches per repo using child Task IDs provided by `business-analyst`. Does NOT create ADO work items. |
 | `engineer` | Full-stack .NET + Angular development |
-| `designer` | UI/UX design specs and implementation |
+| `designer` | UI/UX design — Figma mockups first, then SCSS/HTML templates |
 | `mobile` | Flutter mobile development |
 | `code-review` | Reviews, fixes, validates, commits, and pushes |
+| `skill-improver` | Audits skills that ran and patches SKILL.md files for discovered friction |
 | `closer` | Links commits to child Tasks, closes child Tasks, resolves parent User Story |
 
 ## Workflow
@@ -41,19 +43,21 @@ Create execution plan with skill assignments:
 ```
 📋 Execution Plan
 ├── business-context: (if feature work) Inject Business Snapshot, flag gaps
-├── Explore:      Read all relevant files, return full context report
-├── planner:      Create parent User Story + child Tasks (UI/API/Mobile), branches per repo
-├── designer:     Create UI specs for new component (if truly new UI)
-├── engineer:     Implement backend API + frontend (with context report attached)
-├── mobile:       Implement mobile equivalent (if needed)
-├── code-review:  Fix & validate (build/lint/test) → pause for approval → commit & push
-└── closer:       Link commits, close child Tasks, resolve parent User Story
+├── Explore:          Read all relevant files, return full context report
+├── business-analyst: Create Sprints (if needed), parent User Story + child Tasks per repo
+├── planner:          Create feature branches per repo using child Task IDs from business-analyst
+├── designer:         Create Figma mockup → then SCSS/HTML templates (if truly new UI)
+├── engineer:         Implement backend API + frontend (with context report attached)
+├── mobile:           Implement mobile equivalent (if needed)
+├── code-review:      Fix & validate (build/lint/test) → pause for approval → commit & push
+├── skill-improver:   Audit skills that ran; patch SKILL.md files for any friction observed
+└── closer:           Link commits, close child Tasks, resolve parent User Story
 ```
 
 ### 3. Delegate Sequentially
 Execute in proper order respecting dependencies.
 
-> **Execution model:** Only `Explore` is invoked as a named subagent (`runSubagent` with `agentName: 'Explore'`). All other skills — planner, designer, engineer, mobile, code-review, closer — are executed **inline**: read the skill's `SKILL.md` and follow its steps directly as the orchestrator. Do NOT attempt to call them via `runSubagent` with a skill name — it will fail.
+> **Execution model:** Only `Explore` is invoked as a named subagent (`runSubagent` with `agentName: 'Explore'`). All other skills — business-analyst, planner, designer, engineer, mobile, code-review, skill-improver, closer — are executed **inline**: read the skill's `SKILL.md` and follow its steps directly as the orchestrator. Do NOT attempt to call them via `runSubagent` with a skill name — it will fail.
 
 0. **Explore** (ALWAYS first — before any other skill)
    - Split into **2–3 parallel targeted calls** — never one large "get everything" call
@@ -66,30 +70,35 @@ Execute in proper order respecting dependencies.
    - **Pass the structured context report into every subsequent skill prompt**
    - This eliminates duplicate file reads across all downstream skills
 
-1. **planner** (always first for new work)
-   - Determine affected repos (UI / API / Mobile)
-   - Create parent User Story with full description
-   - Create one child Task per affected repo, link to parent
-   - Pull latest main and create branch per repo using **child Task ID**
+1. **business-analyst** (always first for new work — before planner)
+   - If new Sprint needed (start of sprint cycle or user requests sprint setup): create Sprint in ADO
+   - Create parent User Story with full description and acceptance criteria
+   - Create one child Task per affected repo (UI / API / Mobile), linked to parent
+   - Assign all work items to the correct Sprint in ADO
    - Return the parent ID and the map of child Task IDs per repo
 
-2. **designer** (only if redesigning or genuinely new UI)
-   - Create design specs
-   - Implement SCSS and HTML templates only — never `.ts` files
+2. **planner** (always after business-analyst)
+   - Receive child Task IDs from the business-analyst handoff
+   - Pull latest main and create feature branches per affected repo using child Task IDs
+   - Return branch names so downstream skills know which branch to work on
 
-3. **engineer** (for backend + frontend)
+3. **designer** (only if redesigning or genuinely new UI)
+   - Create Figma mockup first (Desktop 1440px + Mobile 375px), share Figma link
+   - Then implement SCSS and HTML templates only — never `.ts` files
+
+4. **engineer** (for backend + frontend)
    - Receives the Explore context report — does NOT re-explore
    - Implements API endpoints, Angular components, unit tests
    - Works in focused passes for large features (backend first, then frontend)
    - Commits must follow the `jobflow-git-workflow` skill format exactly: `type(scope): [AB#<child-task-id>] short 5 word description` — AB# wrapped in `[]`, placed BEFORE the description, with a multi-line body
    - Use the repo's own child Task ID (UI child ID in JobFlow-UI, API child ID in JobFlow-API)
 
-4. **mobile** (if mobile parity needed)
+5. **mobile** (if mobile parity needed)
    - Implement Flutter screens
    - Match web functionality
    - Commits must follow the `jobflow-git-workflow` skill format: `type(scope): [AB#<mobile-child-task-id>] short 5 word description`
 
-5. **code-review** (two-phase)
+6. **code-review** (two-phase)
    - **BLOCKING — read `jobflow-git-workflow` SKILL.md FIRST** before doing any commit, push, or PR step. The skill defines the required commit title format (`type(scope): [AB#<id>] description`), the multi-line body format (Changes + References), the branch naming convention (`feature/<child-task-id>-short`), and the `gh pr create` PR title/body template. These rules must be applied — not skipped.
    - **Phase 1 (autonomous)**: Review, fix issues, then run its full validation workflow without skipping any step:
      - Frontend: `ng.cmd build --configuration production` → `npm.cmd run lint` → tests
@@ -98,18 +107,19 @@ Execute in proper order respecting dependencies.
    - **Phase 2 (gated)**: Pause, show summary of all changes, ask user for commit approval
    - Only commits and pushes after explicit user confirmation
    - After pushing, create a PR per repo following the PR Title and Body format in the `jobflow-git-workflow` skill
-   - After push, capture commit SHAs per repo and pass them to closer
+   - After push, capture commit SHAs per repo and pass them to skill-improver and closer
 
-6. **closer** (always last after pushes complete)
-   - Verify each commit includes `AB#<child-id>` or add ArtifactLink manually
-   - Close each child Task with completion notes
-   - If all children closed, transition parent User Story to `Resolved`
-
-7. **skill-improver** (always after closer)
+7. **skill-improver** (runs after code-review, before closer)
    - Read `.github/agents/skills/skill-improver/SKILL.md` and follow its steps
    - Audits every skill that ran during this workflow for commands that failed, wrong paths, slow steps, or stale cross-references
    - Patches affected `SKILL.md` files directly
    - Self-skips (reports `⏭️ skill-improver skipped — no issues observed.`) if the workflow completed with zero friction and zero corrections
+   - After completing (or skipping), pass commit SHAs and work item IDs to `closer`
+
+8. **closer** (always last — after skill-improver completes)
+   - Verify each commit includes `AB#<child-id>` or add ArtifactLink manually
+   - Close each child Task with completion notes
+   - If all children closed, transition parent User Story to `Resolved`
 
 ### Parallelization
 
@@ -122,7 +132,8 @@ Tasks with **no shared file dependencies** can be parallelized. Detection rule: 
 | `Explore` | ✅ Always | Split into 2–3 parallel targeted `runSubagent` calls (A/B/C pattern in step 0 above) |
 | `engineer` | ✅ When 3+ independent file groups | Run parallel `runSubagent('Explore')` prefetch passes per group; then implement all changes in one sequential inline engineer pass with the batched context |
 | `code-review` | ❌ Never | Build → lint → test must be sequential; commit order matters |
-| `planner` / `closer` | ❌ Never | ADO state transitions must be sequential |
+| `business-analyst` / `planner` / `closer` | ❌ Never | ADO state transitions must be sequential |
+| `skill-improver` | ❌ Never | Must run after code-review pushes; patches skill files before closer runs |
 
 > **Constraint:** Even when engineer prefetch runs in parallel, actual file edits must remain in a single sequential inline pass to avoid conflicting writes to the same files.
 

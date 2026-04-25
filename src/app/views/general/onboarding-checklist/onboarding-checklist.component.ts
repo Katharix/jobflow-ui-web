@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EMPTY } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { OnboardingService, OnboardingStepDto } from './services/onboarding.service';
 
 const VISIBLE_COUNT = 3;
@@ -27,6 +29,8 @@ export class OnboardingChecklistComponent implements OnChanges {
    steps = signal<OnboardingStepDto[]>([]);
    expanded = signal(false);
    private completionSynced = false;
+   private prevCompletedKeys = new Set<string>();
+   private initialLoadDone = false;
 
    readonly completedCount = computed(() => this.steps().filter(s => s.isCompleted).length);
    readonly allStepsCompleted = computed(() => {
@@ -50,12 +54,31 @@ export class OnboardingChecklistComponent implements OnChanges {
       }
    }
 
+   private trackEvent(stepName: string, eventType: 'onboarding_step_started' | 'onboarding_step_completed' | 'onboarding_step_skipped'): void {
+      this.onboardingService.trackEvent(stepName, eventType)
+         .pipe(catchError(() => EMPTY), takeUntilDestroyed(this.destroyRef))
+         .subscribe();
+   }
+
    private load(): void {
       this.onboardingService
          .getChecklist(this.organizationId!)
          .pipe(takeUntilDestroyed(this.destroyRef))
          .subscribe(steps => {
-            this.steps.set(steps.sort((a, b) => a.order - b.order));
+            const sorted = steps.sort((a, b) => a.order - b.order);
+
+            if (this.initialLoadDone) {
+               for (const step of sorted) {
+                  if (step.isCompleted && !this.prevCompletedKeys.has(step.key)) {
+                     this.trackEvent(step.key, 'onboarding_step_completed');
+                  }
+               }
+            }
+
+            this.initialLoadDone = true;
+            this.prevCompletedKeys = new Set(sorted.filter(s => s.isCompleted).map(s => s.key));
+            this.steps.set(sorted);
+
             if (this.allStepsCompleted()) {
                this.allCompleted.emit();
 
@@ -188,6 +211,7 @@ export class OnboardingChecklistComponent implements OnChanges {
       if (!this.canOpenStep(step)) return;
       const route = this.getStepRoute(step);
       if (!route) return;
+      this.trackEvent(step.key, 'onboarding_step_started');
       const onboardingAction = this.getStepOnboardingAction(step);
       this.router.navigate([route], {
          queryParams: onboardingAction ? { onboardingAction } : undefined

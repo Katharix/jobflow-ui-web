@@ -50,7 +50,16 @@ See the `branding` skill for the full color system, typography, and logo usage r
 For every design task:
 
 1. **Analyze** - Review existing styles and component patterns
-2. **Spec** - Document the design approach:
+2. **Figma Mockup** - Before writing any code, create a Figma mockup:
+   - Open or create the JobFlow Figma file for the feature area
+   - Design at **Desktop (1440px)** and **Mobile (375px)** breakpoints
+   - Use the JobFlow component library: buttons, cards, form inputs, tables, badges — do not invent new components unless the design truly requires it
+   - Apply brand tokens: Primary Blue `#3F67DA`, Lavender `#8595D1`, Light BG `#FAFBFF`, Manrope typeface
+   - Name frames clearly: `Feature / ScreenName / Desktop` and `Feature / ScreenName / Mobile`
+   - Add Figma comments on every non-obvious design decision (spacing choice, color override, interaction note)
+   - Share the Figma link in the design spec output so Engineer and BA can reference it
+   - **Do not proceed to HTML/SCSS until the Figma mockup is complete** (or explicitly waived by the user)
+3. **Spec** - Document the design approach:
    - Layout structure
    - Color usage
    - Typography choices
