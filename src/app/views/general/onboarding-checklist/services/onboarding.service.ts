@@ -71,4 +71,8 @@ export class OnboardingService {
   completeOnboarding(): Observable<OrganizationDto> {
     return this.api.post<OrganizationDto>(`${this.invoiceUrl}complete`, {});
   }
+
+  trackEvent(stepName: string, eventType: 'onboarding_step_started' | 'onboarding_step_completed' | 'onboarding_step_skipped'): Observable<void> {
+    return this.api.post<void>(`${this.invoiceUrl}events`, { stepName, eventType });
+  }
 }
