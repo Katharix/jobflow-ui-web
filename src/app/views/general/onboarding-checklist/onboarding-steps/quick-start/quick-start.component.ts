@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PageHeaderComponent } from '../../../../../admin/dashboard/page-header/page-header.component';
 import {
@@ -20,6 +20,8 @@ import { ToastService } from '../../../../../common/toast/toast.service';
 export class OnboardingQuickStartComponent implements OnInit {
   private readonly onboardingService = inject(OnboardingService);
   private readonly toast = inject(ToastService);
+  private readonly ngZone = inject(NgZone);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   state: OnboardingQuickStartStateDto | null = null;
   selectedTrackKey = '';
@@ -93,16 +95,22 @@ export class OnboardingQuickStartComponent implements OnInit {
 
     this.onboardingService.getQuickStartState().subscribe({
       next: (state) => {
-        this.state = state;
-        this.selectedTrackKey = state.selectedTrackKey ?? state.tracks?.[0]?.key ?? '';
-        this.selectedPresetKey = state.selectedPresetKey
-          ?? state.recommendedPresetKey
-          ?? '';
-        this.loading = false;
+        this.ngZone.run(() => {
+          this.state = state;
+          this.selectedTrackKey = state.selectedTrackKey ?? state.tracks?.[0]?.key ?? '';
+          this.selectedPresetKey = state.selectedPresetKey
+            ?? state.recommendedPresetKey
+            ?? '';
+          this.loading = false;
+          this.cdr.detectChanges();
+        });
       },
       error: () => {
-        this.error = 'Unable to load quick-start options.';
-        this.loading = false;
+        this.ngZone.run(() => {
+          this.error = 'Unable to load quick-start options.';
+          this.loading = false;
+          this.cdr.detectChanges();
+        });
       }
     });
   }
