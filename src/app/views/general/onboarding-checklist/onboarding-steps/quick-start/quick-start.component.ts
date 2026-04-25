@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, NgZone, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 import { PageHeaderComponent } from '../../../../../admin/dashboard/page-header/page-header.component';
 import {
   OnboardingQuickStartPresetDto,
@@ -13,7 +14,7 @@ import { ToastService } from '../../../../../common/toast/toast.service';
 @Component({
   selector: 'app-onboarding-quick-start',
   standalone: true,
-  imports: [CommonModule, RouterLink, PageHeaderComponent],
+  imports: [CommonModule, RouterLink, LucideAngularModule, PageHeaderComponent],
   templateUrl: './quick-start.component.html',
   styleUrl: './quick-start.component.scss'
 })

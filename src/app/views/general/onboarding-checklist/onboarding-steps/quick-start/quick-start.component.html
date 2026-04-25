@@ -1,88 +1,135 @@
 <app-page-header
   title="Quick-start setup"
-  subtitle="Pick an onboarding track to set the order of your checklist. Optionally choose an industry preset to load suggested services and workflow labels."
+  subtitle="Pick an onboarding track to set the order of your checklist. Optionally choose an industry preset to pre-fill your Pricebook and workflow labels."
 ></app-page-header>
 
-<section class="quick-start">
+<section class="qs">
+
   @if (loading) {
-    <p class="quick-start__state">Loading quick-start options...</p>
+    <div class="qs__loading" role="status" aria-live="polite">
+      <span class="qs__spinner" aria-hidden="true"></span>
+      <p>Loading quick-start options…</p>
+    </div>
   }
+
   @if (error) {
-    <p class="quick-start__state quick-start__state--error">{{ error }}</p>
+    <div class="qs__error" role="alert">
+      <lucide-icon name="shield" aria-hidden="true"></lucide-icon>
+      <p>{{ error }}</p>
+    </div>
   }
 
   @if (!loading && !error && state) {
-    <section class="quick-start__section">
-      <div class="quick-start__section-header">
-        <div>
-          <h3>Choose your onboarding track</h3>
-          <p>Decide if you want to prioritize billing or operational setup first.</p>
+
+    <!-- Step 1: Track -->
+    <div class="qs__step">
+      <div class="qs__step-label">
+        <span class="qs__step-num" aria-hidden="true">01</span>
+        <div class="qs__step-text">
+          <h2 class="qs__step-title">Choose your onboarding track</h2>
+          <p class="qs__step-desc">Decide if you want to prioritize billing or operational setup first.</p>
         </div>
+        <span class="qs__badge qs__badge--required">Required</span>
       </div>
-      <div class="quick-start__grid">
+      <div class="qs__cards">
         @for (track of tracks; track track) {
           <button
             type="button"
-            class="quick-start__card"
-            [class.quick-start__card--selected]="isTrackSelected(track)"
+            class="qs__card"
+            [class.qs__card--selected]="isTrackSelected(track)"
+            [attr.aria-pressed]="isTrackSelected(track)"
             (click)="selectTrack(track)"
-            >
-            <h4>{{ track.title }}</h4>
-            <p>{{ track.description }}</p>
+          >
+            <div class="qs__card-icon">
+              <lucide-icon
+                [name]="track.key === 'get_paid_fast' ? 'banknote' : 'briefcase'"
+                aria-hidden="true"
+              ></lucide-icon>
+            </div>
+            <div class="qs__card-body">
+              <h3 class="qs__card-title">{{ track.title }}</h3>
+              <p class="qs__card-desc">{{ track.description }}</p>
+            </div>
             @if (isTrackSelected(track)) {
-              <span>Selected</span>
+              <span class="qs__card-check" aria-label="Selected">
+                <svg viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M1 5L4.5 8.5L11 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
             }
           </button>
         }
       </div>
-    </section>
-    <section class="quick-start__section">
-      <div class="quick-start__section-header">
-        <div>
-          <h3>Industry preset <span class="quick-start__optional">optional</span></h3>
-          <p>Load default services and workflow labels based on your industry. You can skip this or change it later.</p>
+    </div>
+
+    <!-- Step 2: Preset -->
+    <div class="qs__step">
+      <div class="qs__step-label">
+        <span class="qs__step-num" aria-hidden="true">02</span>
+        <div class="qs__step-text">
+          <h2 class="qs__step-title">Industry preset</h2>
+          <p class="qs__step-desc">Load default services and workflow labels based on your industry. You can skip this or change it later.</p>
         </div>
+        <span class="qs__badge qs__badge--optional">Optional</span>
       </div>
-      <div class="quick-start__grid">
+      <div class="qs__cards">
         @for (preset of presets; track preset) {
           <button
             type="button"
-            class="quick-start__card quick-start__card--preset"
-            [class.quick-start__card--selected]="isPresetSelected(preset)"
+            class="qs__card qs__card--preset"
+            [class.qs__card--selected]="isPresetSelected(preset)"
+            [attr.aria-pressed]="isPresetSelected(preset)"
             (click)="selectPreset(preset)"
-            >
-            <div class="quick-start__card-top">
-              <h4>{{ preset.title }}</h4>
-              <p>{{ preset.description }}</p>
+          >
+            <div class="qs__card-icon qs__card-icon--teal">
+              <lucide-icon name="house" aria-hidden="true"></lucide-icon>
             </div>
-            <ul class="quick-start__services">
-              @for (service of preset.defaultServices; track service) {
-                <li>
-                  <strong>{{ service.name }}</strong>
-                  <span>{{ service.unit }} · {{ service.price | currency }}</span>
-                </li>
-              }
-            </ul>
+            <div class="qs__card-body">
+              <h3 class="qs__card-title">{{ preset.title }}</h3>
+              <p class="qs__card-desc">{{ preset.description }}</p>
+            </div>
+            @if (preset.defaultServices.length) {
+              <ul class="qs__services" aria-label="Included services">
+                @for (service of preset.defaultServices; track service) {
+                  <li class="qs__service-row">
+                    <strong>{{ service.name }}</strong>
+                    <span>{{ service.unit }} · {{ service.price | currency }}</span>
+                  </li>
+                }
+              </ul>
+            }
             @if (isPresetSelected(preset)) {
-              <span>Selected</span>
+              <span class="qs__card-check" aria-label="Selected">
+                <svg viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M1 5L4.5 8.5L11 1.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
             }
           </button>
         }
       </div>
-    </section>
-    <div class="quick-start__footer">
+    </div>
+
+    <!-- Footer CTA -->
+    <div class="qs__footer">
       <button
         type="button"
-        class="btn btn-primary"
+        class="btn btn-primary qs__submit"
         [disabled]="!canApply"
         (click)="applyQuickStart()"
-        >
-        {{ applying ? 'Applying...' : 'Apply quick-start' }}
+      >
+        @if (applying) {
+          <span class="qs__spinner qs__spinner--sm" aria-hidden="true"></span>
+          Applying…
+        } @else {
+          Apply quick-start
+          <lucide-icon name="chevron-right" aria-hidden="true"></lucide-icon>
+        }
       </button>
-      <a class="btn btn-outline-secondary" routerLink="/admin">Back to dashboard</a>
+      <a class="qs__back-link" routerLink="/admin">Back to dashboard</a>
+      <p class="qs__note">Applying quick-start will add services to your Pricebook and update workflow labels. You can adjust them at any time.</p>
     </div>
-    <p class="quick-start__note">
-      Applying quick-start will add services to Pricebook and update workflow labels. You can adjust them later.
-    </p>
+
   }
+
 </section>
