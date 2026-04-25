@@ -291,6 +291,15 @@
       </span>
     </ng-template>
 
+    @if (!jobsLoading && items.length === 0) {
+      <app-empty-state
+        icon="briefcase"
+        headline="No jobs yet"
+        body="Create your first job to start scheduling work and tracking progress."
+        ctaLabel="New Job"
+        [ctaRoute]="'/admin/jobs'">
+      </app-empty-state>
+    }
     <app-jobflow-grid
       [data]="items"
       [columns]="columns"

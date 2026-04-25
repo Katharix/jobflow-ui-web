@@ -59,20 +59,15 @@
   </div>
 </div>
 
-<!-- CTA Card (zero-state only) -->
+<!-- Empty State (zero-state only) -->
 @if (items.length === 0) {
-  <div class="cta-card">
-    <div>
-      <p class="cta-card__eyebrow">{{ 'admin.estimates.cta.eyebrow' | translate }}</p>
-      <h3 class="cta-card__title">{{ 'admin.estimates.cta.title' | translate }}</h3>
-      <p class="cta-card__body">{{ 'admin.estimates.cta.subtitle' | translate }}</p>
-    </div>
-    <div class="cta-card__actions">
-      <button type="button" class="btn btn-primary" (click)="openNew()">
-        {{ 'admin.estimates.cta.button' | translate }}
-      </button>
-    </div>
-  </div>
+  <app-empty-state
+    icon="file-check"
+    headline="No estimates yet"
+    body="Create your first estimate to start sending quotes to customers."
+    ctaLabel="New Estimate"
+    [ctaAction]="openNew.bind(this)">
+  </app-empty-state>
 }
 
 <!-- Filter Bar -->

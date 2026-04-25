@@ -15,6 +15,7 @@ import {ToastService} from "../../common/toast/toast.service";
 import {Client} from "./models/customer";
 import {ModalComponent} from "../../views/shared/modal/modal.component";
 import {DeleteConfirmComponent} from "../../views/shared/delete-confirm/delete-confirm-component";
+import { EmptyStateComponent } from '../../common/empty-state/empty-state.component';
 import {CustomerCreateComponent} from "./customer-create/customer-create.component";
 import {formatPhone} from "../../common/utils/app-formaters";
 import {
@@ -29,7 +30,7 @@ import { NgbOffcanvas, NgbOffcanvasRef } from '@ng-bootstrap/ng-bootstrap';
 @Component({
    selector: 'app-jobflow-create-customer',
    standalone: true,
-   imports: [CommonModule, FormsModule, ReactiveFormsModule, JobflowGridComponent, CustomerCreateComponent, ModalComponent, DeleteConfirmComponent],
+   imports: [CommonModule, FormsModule, ReactiveFormsModule, JobflowGridComponent, CustomerCreateComponent, ModalComponent, DeleteConfirmComponent, EmptyStateComponent],
    templateUrl: './customer.component.html',
    styleUrls: ['./customer.component.scss'],
 })

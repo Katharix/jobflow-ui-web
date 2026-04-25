@@ -116,6 +116,15 @@
 </ng-template>
 
 <div class="content-card content-card--no-pad">
+@if (!listLoading && displayItems.length === 0) {
+  <app-empty-state
+    icon="file-text"
+    headline="No invoices yet"
+    body="Create your first invoice to start getting paid for your work."
+    ctaLabel="New Invoice"
+    [ctaAction]="openCreateInvoiceDrawer.bind(this)">
+  </app-empty-state>
+}
 <app-jobflow-grid
   [data]="displayItems"
   [columns]="columns"

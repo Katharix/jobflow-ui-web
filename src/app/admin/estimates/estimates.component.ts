@@ -11,6 +11,7 @@ import { EstimateService } from './services/estimate.service';
 import { EstimateFormComponent } from './estimate-form/estimate-form.component';
 import { Estimate, EstimateStatus } from './models/estimate';
 import { useNotifierHub, NotifierHubHandle } from '../services/useNotifierHub';
+import { EmptyStateComponent } from '../../common/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-estimates',
@@ -21,6 +22,7 @@ import { useNotifierHub, NotifierHubHandle } from '../services/useNotifierHub';
     TranslateModule,
     JobflowGridComponent,
     EstimateFormComponent,
+    EmptyStateComponent,
   ],
   templateUrl: './estimates.component.html',
   styleUrl: './estimates.component.scss',

@@ -91,6 +91,15 @@
       </div>
     </ng-template>
 
+    @if (!clientsLoading && totalClientCount === 0) {
+      <app-empty-state
+        icon="user-plus"
+        headline="No customers yet"
+        body="Add your first customer to start booking jobs and sending invoices."
+        ctaLabel="Add Customer"
+        [ctaRoute]="'/admin/clients/create'">
+      </app-empty-state>
+    }
     <app-jobflow-grid
       [data]="filteredItems"
       [columns]="columns"
