@@ -3,13 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {RouterLink} from '@angular/router';
-import {InputTextModule} from 'primeng/inputtext';
-import {TextareaModule} from 'primeng/textarea';
-import {FloatLabelModule} from 'primeng/floatlabel';
-import {ButtonModule} from 'primeng/button';
-import {MessageModule} from 'primeng/message';
-import {ColorBlockModule} from 'ngx-color/block';
-import {ColorTwitterModule} from 'ngx-color/twitter';
 import {LucideAngularModule} from 'lucide-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {OrganizationDto} from '../../models/organization';
@@ -18,12 +11,6 @@ import {FileUploadService} from './services/file-upload.service';
 import {OrganizationContextService} from '../../services/shared/organization-context.service';
 import {OrganizationBrandingService} from './services/organization-branding.service';
 
-interface ColorChangeEvent {
-   color: {
-      hex: string;
-   };
-}
-
 @Component({
    selector: 'app-branding',
    standalone: true,
@@ -31,13 +18,6 @@ interface ColorChangeEvent {
          CommonModule,
          RouterLink,
          ReactiveFormsModule,
-         InputTextModule,
-         TextareaModule,
-         FloatLabelModule,
-         ButtonModule,
-         MessageModule,
-         ColorBlockModule,
-         ColorTwitterModule,
          LucideAngularModule,
          TranslateModule
       ],
@@ -128,13 +108,13 @@ export class BrandingComponent implements OnInit {
       this.uploadedLogo = null;
    }
 
-   onPrimaryColorChange(event: ColorChangeEvent): void {
-      const hex = event.color.hex;
+   onPrimaryColorChange(event: Event): void {
+      const hex = (event.target as HTMLInputElement).value;
       this.brandingForm.patchValue({primaryColor: hex});
    }
 
-   onSecondaryColorChange(event: ColorChangeEvent): void {
-      const hex = event.color.hex;
+   onSecondaryColorChange(event: Event): void {
+      const hex = (event.target as HTMLInputElement).value;
       this.brandingForm.patchValue({secondaryColor: hex});
    }
 
