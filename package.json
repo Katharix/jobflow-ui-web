@@ -79,7 +79,7 @@
     "@angular/localize": "^21.2.7",
     "@playwright/test": "^1.56.1",
     "@types/canvas-confetti": "^1.9.0",
-    "@types/jasmine": "~5.1.0",
+    "@types/jasmine": "~6.0.0",
     "angular-eslint": "21.3.1",
     "eslint": "^9.39.1",
     "jasmine-core": "~5.2.0",
