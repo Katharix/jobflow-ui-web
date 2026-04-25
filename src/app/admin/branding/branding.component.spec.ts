@@ -88,12 +88,12 @@ describe('BrandingComponent', () => {
   });
 
   it('updates primary color from picker event', () => {
-    component.onPrimaryColorChange({ color: { hex: '#e91e63' } });
+    component.onPrimaryColorChange({ target: { value: '#e91e63' } } as unknown as Event);
     expect(component.brandingForm.value.primaryColor).toBe('#e91e63');
   });
 
   it('updates secondary color from picker event', () => {
-    component.onSecondaryColorChange({ color: { hex: '#9c27b0' } });
+    component.onSecondaryColorChange({ target: { value: '#9c27b0' } } as unknown as Event);
     expect(component.brandingForm.value.secondaryColor).toBe('#9c27b0');
   });
 
