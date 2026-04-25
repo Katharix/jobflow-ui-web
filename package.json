@@ -55,7 +55,7 @@
     "chart.js": "^4.5.1",
     "driver.js": "^1.4.0",
     "dropzone": "^6.0.0-beta.2",
-    "firebase": "^11.5.0",
+    "firebase": "^12.12.1",
     "highlight.js": "^11.11.1",
     "lucide-angular": "^0.522.0",
     "metismenujs": "^1.4.0",
