@@ -48,7 +48,8 @@ import {
    HelpCircle,
    CircleHelp,
    Sparkles,
-   X
+   X,
+   Layers
 } from 'lucide-angular';
 
 export const lucideProviders = importProvidersFrom(
@@ -107,6 +108,7 @@ export const lucideProviders = importProvidersFrom(
       HelpCircle,
       CircleHelp,
       Sparkles,
-      X
+      X,
+      Layers
    })
 );
