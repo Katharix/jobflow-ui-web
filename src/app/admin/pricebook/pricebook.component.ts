@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, inject } from '@angular/core';
 import {filter, distinctUntilChanged} from 'rxjs/operators';
 import {Subscription} from 'rxjs';
 
@@ -35,6 +35,7 @@ export class PriceBookComponent implements OnInit, OnDestroy {
    private toast = inject(ToastService);
    private modal = inject(ModalService);
    private route = inject(ActivatedRoute);
+   private cdr = inject(ChangeDetectorRef);
    private orgSub?: Subscription;
    private routeSub?: Subscription;
 
@@ -96,6 +97,7 @@ export class PriceBookComponent implements OnInit, OnDestroy {
          next: (cats) => {
             this.materialCategories = cats ?? [];
             this.loading = false;
+            this.cdr.detectChanges();
          },
          error: (e) => {
             // BaseApiService should already log/handle details; keep UI simple
