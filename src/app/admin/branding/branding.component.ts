@@ -114,11 +114,13 @@ export class BrandingComponent implements OnInit {
    onPrimaryColorChange(event: Event): void {
       const hex = (event.target as HTMLInputElement).value;
       this.brandingForm.patchValue({primaryColor: hex});
+      this.cdr.detectChanges();
    }
 
    onSecondaryColorChange(event: Event): void {
       const hex = (event.target as HTMLInputElement).value;
       this.brandingForm.patchValue({secondaryColor: hex});
+      this.cdr.detectChanges();
    }
 
    get primaryColor(): string {

@@ -50,7 +50,13 @@ import {
    Sparkles,
    X,
    Layers,
-   FileCheck
+   FileCheck,
+   Headphones,
+   ArrowLeft,
+   UserCheck,
+   PhoneOff,
+   CircleCheck,
+   MessageCirclePlus,
 } from 'lucide-angular';
 
 export const lucideProviders = importProvidersFrom(
@@ -111,6 +117,12 @@ export const lucideProviders = importProvidersFrom(
       Sparkles,
       X,
       Layers,
-      FileCheck
+      FileCheck,
+      Headphones,
+      ArrowLeft,
+      UserCheck,
+      PhoneOff,
+      CircleCheck,
+      MessageCirclePlus,
    })
 );
