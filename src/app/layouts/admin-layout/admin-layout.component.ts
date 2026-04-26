@@ -5,7 +5,6 @@ import {AdminSidebarComponent} from "./admin-sidebar/admin-sidebar.component";
 import {AdminNavbarComponent} from './admin-navbar/admin-navbar.component';
 import {AdminFooterComponent} from './admin-footer/admin-footer.component';
 import {filter} from 'rxjs';
-import { OnboardingWidgetComponent } from '../../common/onboarding-widget/onboarding-widget.component';
 import { HelpPanelComponent } from '../../common/help-panel/help-panel.component';
 import { FirstWinModalComponent } from '../../common/first-win-modal/first-win-modal.component';
 import { CelebrationModalComponent } from '../../common/celebration-modal/celebration-modal.component';
@@ -15,7 +14,7 @@ import { SetupCompanionComponent } from '../../common/setup-companion/setup-comp
 @Component({
    selector: 'app-admin-layout',
    standalone: true,
-   imports: [RouterOutlet, AdminNavbarComponent, AdminFooterComponent, AdminSidebarComponent, RouterModule, OnboardingWidgetComponent, HelpPanelComponent, FirstWinModalComponent, CelebrationModalComponent, SetupCompanionComponent],
+   imports: [RouterOutlet, AdminNavbarComponent, AdminFooterComponent, AdminSidebarComponent, RouterModule, HelpPanelComponent, FirstWinModalComponent, CelebrationModalComponent, SetupCompanionComponent],
    templateUrl: './admin-layout.component.html',
    styleUrl: './admin-layout.component.scss',
    encapsulation: ViewEncapsulation.None
