@@ -1,3 +1,4 @@
+import { ChangeDetectorRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { BrandingComponent } from './branding.component';
@@ -50,7 +51,8 @@ describe('BrandingComponent', () => {
         { provide: OrganizationBrandingService, useValue: brandingService },
         { provide: FileUploadService, useValue: uploadService },
         { provide: OrganizationContextService, useValue: { org$: orgSubject.asObservable() } },
-        { provide: TranslateService, useValue: translate }
+        { provide: TranslateService, useValue: translate },
+        { provide: ChangeDetectorRef, useValue: { detectChanges: jasmine.createSpy('detectChanges') } }
       ]
     });
 

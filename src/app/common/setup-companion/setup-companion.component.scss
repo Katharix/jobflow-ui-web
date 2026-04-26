@@ -1,11 +1,16 @@
 .setup-companion {
   position: fixed;
-  bottom: 128px; // above onboarding widget
-  left: 24px;
+  bottom: 80px;
+  right: 24px;
+  left: unset;
   z-index: 1040;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: flex-end;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
 
   &__fab {
     height: 48px;
