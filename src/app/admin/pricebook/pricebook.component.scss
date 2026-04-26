@@ -16,7 +16,6 @@
    margin: 0;
    border: 1px solid var(--bs-border-color);
    border-radius: 0.75rem;
-   overflow: hidden;
 }
 
 .pb-category-item {
@@ -28,8 +27,17 @@
    border-bottom: 1px solid var(--bs-border-color);
    transition: background 0.15s ease;
 
+   &:first-child {
+      border-radius: 0.75rem 0.75rem 0 0;
+   }
+
    &:last-child {
       border-bottom: none;
+      border-radius: 0 0 0.75rem 0.75rem;
+   }
+
+   &:first-child:last-child {
+      border-radius: 0.75rem;
    }
 
    &:hover {
