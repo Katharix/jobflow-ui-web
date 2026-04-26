@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
@@ -31,6 +31,7 @@ export class BrandingComponent implements OnInit {
    private uploadService = inject(FileUploadService);
    private translate = inject(TranslateService);
    private destroyRef = inject(DestroyRef);
+   private cdr = inject(ChangeDetectorRef);
 
    organization!: OrganizationDto;
    brandingForm!: FormGroup;
@@ -84,6 +85,8 @@ export class BrandingComponent implements OnInit {
                this.imageUrl = branding.logoUrl;
                this.logoPreview = branding.logoUrl;
             }
+
+            this.cdr.detectChanges();
          },
          error: (err: unknown) => {
             console.error(err);
