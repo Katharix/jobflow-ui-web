@@ -18,51 +18,197 @@
     <!-- Chat Panel -->
     @if (isOpen()) {
       <div class="setup-companion__panel">
-        <div class="setup-companion__header">
-          <div class="d-flex align-items-center gap-2">
-            <i-lucide name="sparkles" [size]="16" aria-hidden="true"></i-lucide>
-            <span class="fw-semibold">Flow <span class="fw-normal opacity-75">· Setup Guide</span></span>
+
+        <!-- ── AI mode ─────────────────────────────────────────────────── -->
+        @if (!isLiveMode) {
+          <div class="setup-companion__header">
+            <div class="d-flex align-items-center gap-2">
+              <i-lucide name="sparkles" [size]="16" aria-hidden="true"></i-lucide>
+              <span class="fw-semibold">Flow <span class="fw-normal opacity-75">· Setup Guide</span></span>
+            </div>
+            <button type="button" class="btn-close btn-close-white btn-sm" aria-label="Close" (click)="close()">
+              <span class="visually-hidden">Close</span>
+            </button>
           </div>
-          <button type="button" class="btn-close btn-close-white btn-sm" aria-label="Close" (click)="close()">
-            <span class="visually-hidden">Close</span>
-          </button>
-        </div>
 
-        <div class="setup-companion__body" #bodyRef>
-          @for (msg of messages(); track $index) {
-            <div class="setup-companion__bubble"
-                 [class.setup-companion__bubble--user]="msg.role === 'user'"
-                 [class.setup-companion__bubble--assistant]="msg.role === 'assistant'">
-              {{ msg.text }}
+          <div class="setup-companion__body" #bodyRef>
+            @for (msg of messages(); track $index) {
+              <div class="setup-companion__bubble"
+                   [class.setup-companion__bubble--user]="msg.role === 'user'"
+                   [class.setup-companion__bubble--assistant]="msg.role === 'assistant'">
+                {{ msg.text }}
+              </div>
+            }
+
+            @if (isLoading()) {
+              <div class="setup-companion__bubble setup-companion__bubble--assistant setup-companion__bubble--loading">
+                <span></span><span></span><span></span>
+              </div>
+            }
+          </div>
+
+          <div class="setup-companion__input-row">
+            <textarea
+              class="setup-companion__input"
+              rows="1"
+              placeholder="Ask a setup question…"
+              [(ngModel)]="inputText"
+              (keydown)="handleKeydown($event)"
+              [disabled]="isLoading()"
+              aria-label="Type your question"></textarea>
+            <button
+              class="setup-companion__send"
+              type="button"
+              (click)="send()"
+              [disabled]="!inputText.trim() || isLoading()"
+              aria-label="Send">
+              <span class="visually-hidden">Send</span>
+              <i-lucide name="send" [size]="16" aria-hidden="true"></i-lucide>
+            </button>
+          </div>
+        }
+
+        <!-- ── Live support mode ───────────────────────────────────────── -->
+        @if (isLiveMode) {
+          <div class="setup-companion__header">
+            <div class="d-flex align-items-center gap-2">
+              <i-lucide name="headphones" [size]="16" aria-hidden="true"></i-lucide>
+              <span class="fw-semibold">
+                @if (livePhase === 'live' && liveState()?.repName) {
+                  {{ liveState()?.repName }}
+                } @else {
+                  JobFlow Support
+                }
+              </span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              @if (livePhase === 'ended' || livePhase === 'validate') {
+                <button type="button" class="setup-companion__back-btn" (click)="backToAi()" aria-label="Back to AI assistant">
+                  <i-lucide name="arrow-left" [size]="14" aria-hidden="true"></i-lucide>
+                  <span>Back</span>
+                </button>
+              }
+              <button type="button" class="btn-close btn-close-white btn-sm" aria-label="Close" (click)="close()">
+                <span class="visually-hidden">Close</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- VALIDATE -->
+          @if (livePhase === 'validate') {
+            <div class="setup-companion__live-form">
+              <p class="setup-companion__live-intro">Please verify your details so a rep can follow up if needed.</p>
+              <div class="setup-companion__field">
+                <label class="setup-companion__label" for="sc-name">Full Name <span aria-hidden="true">*</span></label>
+                <input id="sc-name" type="text" class="setup-companion__input-field"
+                       [(ngModel)]="validationForm.name"
+                       required placeholder="Jane Smith" autocomplete="name" />
+              </div>
+              <div class="setup-companion__field">
+                <label class="setup-companion__label" for="sc-email">Email <span aria-hidden="true">*</span></label>
+                <input id="sc-email" type="email" class="setup-companion__input-field"
+                       [(ngModel)]="validationForm.email"
+                       required placeholder="jane@example.com" autocomplete="email" />
+              </div>
+              <div class="setup-companion__field">
+                <label class="setup-companion__label" for="sc-phone">Phone <span class="setup-companion__optional">(optional)</span></label>
+                <input id="sc-phone" type="tel" class="setup-companion__input-field"
+                       [(ngModel)]="validationForm.phone"
+                       placeholder="(555) 555-5555" autocomplete="tel" />
+              </div>
+              <div class="setup-companion__form-actions">
+                <button type="button" class="setup-companion__btn setup-companion__btn--ghost" (click)="cancelValidation()">Back</button>
+                <button type="button" class="setup-companion__btn setup-companion__btn--primary"
+                        [disabled]="!validationForm.name || !validationForm.email"
+                        (click)="submitValidation()">
+                  <i-lucide name="user-check" [size]="14" aria-hidden="true"></i-lucide>
+                  Connect Me
+                </button>
+              </div>
             </div>
           }
 
-          @if (isLoading()) {
-            <div class="setup-companion__bubble setup-companion__bubble--assistant setup-companion__bubble--loading">
-              <span></span><span></span><span></span>
+          <!-- WAITING -->
+          @if (livePhase === 'waiting') {
+            <div class="setup-companion__waiting">
+              <div class="setup-companion__waiting-anim" aria-hidden="true"></div>
+              <p class="fw-semibold mb-1">You're in the queue</p>
+              @if (liveState()?.queuePosition !== null) {
+                <p class="setup-companion__queue-pos">Position <strong>{{ liveState()?.queuePosition }}</strong></p>
+              }
+              @if (liveState()?.estimatedWait) {
+                <p class="setup-companion__queue-eta">Est. wait: {{ formatWait(liveState()!.estimatedWait!) }}</p>
+              }
+              <button class="setup-companion__btn setup-companion__btn--ghost setup-companion__btn--sm mt-3" (click)="endLiveSession()">
+                <i-lucide name="x" [size]="12" aria-hidden="true"></i-lucide>
+                Leave Queue
+              </button>
             </div>
           }
-        </div>
 
-        <div class="setup-companion__input-row">
-          <textarea
-            class="setup-companion__input"
-            rows="1"
-            placeholder="Ask a setup question…"
-            [(ngModel)]="inputText"
-            (keydown)="handleKeydown($event)"
-            [disabled]="isLoading()"
-            aria-label="Type your question"></textarea>
-          <button
-            class="setup-companion__send"
-            type="button"
-            (click)="send()"
-            [disabled]="!inputText.trim() || isLoading()"
-            aria-label="Send">
-            <span class="visually-hidden">Send</span>
-            <i-lucide name="send" [size]="16" aria-hidden="true"></i-lucide>
-          </button>
-        </div>
+          <!-- LIVE -->
+          @if (livePhase === 'live') {
+            <div class="setup-companion__body" #bodyRef>
+              @for (msg of liveState()!.messages; track msg.id) {
+                <div class="setup-companion__bubble"
+                     [class.setup-companion__bubble--user]="msg.sender === 'user'"
+                     [class.setup-companion__bubble--assistant]="msg.sender !== 'user'">
+                  @if (msg.content) { {{ msg.content }} }
+                  @if (msg.fileUrl) {
+                    <a [href]="msg.fileUrl" target="_blank" rel="noopener noreferrer" class="setup-companion__file-link">
+                      {{ msg.fileName }}
+                    </a>
+                  }
+                </div>
+              }
+              @if (liveState()?.isRepTyping) {
+                <div class="setup-companion__bubble setup-companion__bubble--assistant setup-companion__bubble--loading">
+                  <span></span><span></span><span></span>
+                </div>
+              }
+            </div>
+
+            <div class="setup-companion__input-row">
+              <textarea
+                class="setup-companion__input"
+                rows="1"
+                placeholder="Type a message…"
+                [(ngModel)]="liveMessageText"
+                (keydown)="onLiveKeydown($event)"
+                (ngModelChange)="onLiveInputChange()"
+                aria-label="Type your message"></textarea>
+              <button
+                class="setup-companion__send"
+                type="button"
+                (click)="sendLiveMessage()"
+                [disabled]="!liveMessageText.trim()"
+                aria-label="Send">
+                <span class="visually-hidden">Send</span>
+                <i-lucide name="send" [size]="16" aria-hidden="true"></i-lucide>
+              </button>
+            </div>
+            <div class="setup-companion__live-footer">
+              <button class="setup-companion__btn setup-companion__btn--danger-ghost setup-companion__btn--sm" (click)="endLiveSession()">
+                <i-lucide name="phone-off" [size]="12" aria-hidden="true"></i-lucide>
+                End Chat
+              </button>
+            </div>
+          }
+
+          <!-- ENDED -->
+          @if (livePhase === 'ended') {
+            <div class="setup-companion__ended">
+              <i-lucide name="circle-check" [size]="40" class="setup-companion__ended-icon" aria-hidden="true"></i-lucide>
+              <p class="fw-semibold mt-2">Chat Ended</p>
+              <p class="setup-companion__ended-msg">Thank you for contacting JobFlow Support!</p>
+              <button class="setup-companion__btn setup-companion__btn--primary mt-3" (click)="startNewChat()">
+                <i-lucide name="message-circle-plus" [size]="14" aria-hidden="true"></i-lucide>
+                New Chat
+              </button>
+            </div>
+          }
+        }
+
       </div>
     }
 

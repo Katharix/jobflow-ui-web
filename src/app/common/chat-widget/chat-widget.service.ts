@@ -190,6 +190,18 @@ export class ChatWidgetService implements OnDestroy {
     this.addBotMessage(BOT_GREETING);
   }
 
+  /**
+   * Called from SetupCompanionComponent when the user types an escalation
+   * keyword. Skips the bot pre-chat and goes straight to the contact form.
+   */
+  escalateToValidate(): void {
+    this.awaitingConfirm = false;
+    if (this.snapshot.phase === 'live' || this.snapshot.phase === 'waiting') {
+      return; // already in a live session — nothing to escalate
+    }
+    this.patch({ phase: 'validate', hasUnread: false });
+  }
+
   /** Call when user starts/stops typing to propagate to the rep */
   notifyTyping(isTyping: boolean): void {
     const { sessionId } = this.snapshot;

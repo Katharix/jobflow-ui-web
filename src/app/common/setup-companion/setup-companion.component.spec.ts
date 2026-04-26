@@ -8,12 +8,30 @@ import { SetupCompanionApiService } from '../../services/shared/setup-companion-
 import { OrganizationContextService } from '../../services/shared/organization-context.service';
 import { Router } from '@angular/router';
 import { OrganizationDto } from '../../models/organization';
+import { ChatWidgetService } from '../chat-widget/chat-widget.service';
+import { ChatWidgetState } from '../chat-widget/chat-widget.models';
 
 describe('SetupCompanionComponent', () => {
   let fixture: ComponentFixture<SetupCompanionComponent>;
   let component: SetupCompanionComponent;
   let apiSpy: jasmine.SpyObj<SetupCompanionApiService>;
   let orgSubject: BehaviorSubject<OrganizationDto | null>;
+  let chatWidgetStateSubject: BehaviorSubject<ChatWidgetState>;
+  let chatWidgetSpy: jasmine.SpyObj<ChatWidgetService>;
+
+  const defaultChatWidgetState: ChatWidgetState = {
+    phase: 'collapsed',
+    messages: [],
+    sessionId: null,
+    queuePosition: null,
+    estimatedWait: null,
+    repName: null,
+    userInfo: null,
+    isRepTyping: false,
+    hasUnread: false,
+    isUploading: false,
+    error: null,
+  };
 
   const orgWithOnboardingComplete: OrganizationDto = {
     id: 'org-1',
@@ -30,6 +48,16 @@ describe('SetupCompanionComponent', () => {
   beforeEach(async () => {
     apiSpy = jasmine.createSpyObj('SetupCompanionApiService', ['ask']);
     orgSubject = new BehaviorSubject<OrganizationDto | null>(null);
+    chatWidgetStateSubject = new BehaviorSubject<ChatWidgetState>(defaultChatWidgetState);
+    chatWidgetSpy = jasmine.createSpyObj<ChatWidgetService>(
+      'ChatWidgetService',
+      ['escalateToValidate', 'submitValidation', 'cancelValidation', 'sendMessage',
+       'notifyTyping', 'endSession', 'startNewChat', 'collapseWidget'],
+      {
+        state$: chatWidgetStateSubject.asObservable(),
+        snapshot: defaultChatWidgetState,
+      }
+    );
 
     await TestBed.configureTestingModule({
       imports: [SetupCompanionComponent],
@@ -37,6 +65,7 @@ describe('SetupCompanionComponent', () => {
         { provide: SetupCompanionApiService, useValue: apiSpy },
         { provide: OrganizationContextService, useValue: { org$: orgSubject.asObservable() } },
         { provide: Router, useValue: { url: '/admin/dashboard' } },
+        { provide: ChatWidgetService, useValue: chatWidgetSpy },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
