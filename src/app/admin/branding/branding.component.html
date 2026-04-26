@@ -63,7 +63,7 @@
                 <div class="swatch-display" [style.backgroundColor]="primaryColor">
                   <input type="color"
                          class="swatch-color-input"
-                         (input)="onPrimaryColorChange($event)"
+                         formControlName="primaryColor"
                          aria-label="Choose primary color" />
                 </div>
                 <div class="swatch-info">
@@ -78,7 +78,7 @@
                 <div class="swatch-display" [style.backgroundColor]="secondaryColor">
                   <input type="color"
                          class="swatch-color-input"
-                         (input)="onSecondaryColorChange($event)"
+                         formControlName="secondaryColor"
                          aria-label="Choose secondary color" />
                 </div>
                 <div class="swatch-info">

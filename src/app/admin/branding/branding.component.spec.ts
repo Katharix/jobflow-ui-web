@@ -89,14 +89,16 @@ describe('BrandingComponent', () => {
     expect(component.brandingForm.value.businessName).toBe('Acme Services');
   });
 
-  it('updates primary color from picker event', () => {
-    component.onPrimaryColorChange({ target: { value: '#e91e63' } } as unknown as Event);
+  it('updates primary color via form control', () => {
+    component.brandingForm.patchValue({ primaryColor: '#e91e63' });
     expect(component.brandingForm.value.primaryColor).toBe('#e91e63');
+    expect(component.primaryColor).toBe('#e91e63');
   });
 
-  it('updates secondary color from picker event', () => {
-    component.onSecondaryColorChange({ target: { value: '#9c27b0' } } as unknown as Event);
+  it('updates secondary color via form control', () => {
+    component.brandingForm.patchValue({ secondaryColor: '#9c27b0' });
     expect(component.brandingForm.value.secondaryColor).toBe('#9c27b0');
+    expect(component.secondaryColor).toBe('#9c27b0');
   });
 
   it('returns computed primaryColor getter', () => {
