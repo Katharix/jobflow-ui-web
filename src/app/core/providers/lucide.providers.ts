@@ -47,7 +47,8 @@ import {
    UploadCloud,
    HelpCircle,
    Sparkles,
-   X
+   X,
+   Layers
 } from 'lucide-angular';
 
 export const lucideProviders = importProvidersFrom(
@@ -105,6 +106,7 @@ export const lucideProviders = importProvidersFrom(
       UploadCloud,
       HelpCircle,
       Sparkles,
-      X
+      X,
+      Layers
    })
 );
