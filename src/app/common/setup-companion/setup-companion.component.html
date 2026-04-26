@@ -7,11 +7,11 @@
       type="button"
       aria-label="Open Flow, your setup companion"
       (click)="toggle()">
-      <span class="visually-hidden">Setup help</span>
       @if (isOpen()) {
         <i-lucide name="x" [size]="20" aria-hidden="true"></i-lucide>
       } @else {
-        <i-lucide name="help-circle" [size]="22" aria-hidden="true"></i-lucide>
+        <i-lucide name="sparkles" [size]="20" aria-hidden="true"></i-lucide>
+        <span class="setup-companion__fab-label">Ask Flow</span>
       }
     </button>
 
