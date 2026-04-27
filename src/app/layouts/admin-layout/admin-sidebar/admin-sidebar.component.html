@@ -104,41 +104,48 @@
     </li>
 
     <li class="sidebar-nav-item">
-      <div class="dropup-center dropend">
+      <div class="dropup">
         <button class="btn btn-primary sidebar-footer-btn"
           type="button"
           data-bs-toggle="dropdown"
+          aria-haspopup="true"
           aria-expanded="false">
           @if (isSidebarOpen) {
             <lucide-icon class="sidebar-link-icon me-2" name="network"></lucide-icon>
-            <span>{{ org?.organizationName || ('nav.organization' | translate) }}</span>
+            <span class="sidebar-footer-btn__label">{{ org?.organizationName || ('nav.organization' | translate) }}</span>
+            <lucide-icon class="sidebar-footer-btn__chevron ms-auto" name="chevron-up" [size]="14"></lucide-icon>
           } @else {
-            <lucide-icon class="sidebar-link-icon pl-8"
+            <lucide-icon class="sidebar-link-icon"
               name="building-2"
               [attr.title]="org?.organizationName || ('nav.organization' | translate)"></lucide-icon>
           }
         </button>
 
-        <ul class="dropdown-menu sidebar-drop-menu shadow-sm border-0 rounded-3 p-0 overflow-hidden">
+        <ul class="dropdown-menu sidebar-drop-menu p-0 overflow-hidden">
           <li class="drop-menu-header">
-            <lucide-icon class="me-1" name="network"></lucide-icon>
-            {{ org?.organizationName || ('nav.organization' | translate) }}
+            <div class="drop-menu-header__icon">
+              <lucide-icon name="network" [size]="16"></lucide-icon>
+            </div>
+            <div class="drop-menu-header__text">
+              <span class="drop-menu-header__label">Organization</span>
+              <span class="drop-menu-header__name">{{ org?.organizationName || ('nav.organization' | translate) }}</span>
+            </div>
           </li>
-          <li>
-            <hr class="dropdown-divider my-0">
-          </li>
-          <li class="drop-menu-item">
-            <a class="dropdown-item px-3" href="javascript:void(0);" (click)="openLogoutModal()">{{ 'nav.logout' | translate }}</a>
-          </li>
-          <li>
-            <hr class="dropdown-divider my-0">
-          </li>
+
           <li class="drop-menu-item">
             <a routerLink="/user-profile"
-              class="dropdown-item d-flex align-items-center justify-content-start px-3 py-2"
+              class="drop-menu-item__link"
               routerLinkActive="active"
               [routerLinkActiveOptions]="{ exact: true }">
+              <lucide-icon class="drop-menu-item__icon" name="user-round" [size]="15"></lucide-icon>
               <span>{{ 'nav.userProfile' | translate }}</span>
+            </a>
+          </li>
+
+          <li class="drop-menu-item drop-menu-item--danger">
+            <a class="drop-menu-item__link" href="javascript:void(0);" (click)="openLogoutModal()">
+              <lucide-icon class="drop-menu-item__icon" name="log-out" [size]="15"></lucide-icon>
+              <span>{{ 'nav.logout' | translate }}</span>
             </a>
           </li>
         </ul>
