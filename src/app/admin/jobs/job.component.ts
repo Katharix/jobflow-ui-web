@@ -1,4 +1,5 @@
 ﻿import {
+   AfterViewInit,
    Component,
    inject,
    OnDestroy,
@@ -53,7 +54,7 @@ import { NgbOffcanvas, NgbOffcanvasRef } from '@ng-bootstrap/ng-bootstrap';
    styleUrls: ['./job.component.scss'],
    templateUrl: './job.component.html'
 })
-export class JobComponent implements OnInit, OnDestroy {
+export class JobComponent implements OnInit, AfterViewInit, OnDestroy {
    private readonly jobPageSize = 50;
 
    private jobs = inject(JobsService);
@@ -87,6 +88,7 @@ export class JobComponent implements OnInit, OnDestroy {
    editingJob: Job | null = null;
    canAccessDispatch = false;
    private onboardingActionHandled = false;
+   private pendingOnboardingAction = false;
    private returnToCommandCenter = false;
    private suppressNextDrawerClosedHandler = false;
 
@@ -215,7 +217,7 @@ export class JobComponent implements OnInit, OnDestroy {
          if (this.onboardingActionHandled) return;
          if (params.get('onboardingAction') !== 'open-job-drawer') return;
 
-         this.openAddJob();
+         this.pendingOnboardingAction = true;
          this.onboardingActionHandled = true;
       });
 
@@ -249,6 +251,13 @@ export class JobComponent implements OnInit, OnDestroy {
          onAssignmentChanged: () => this.load(),
       });
       void this.notifierHub.connect();
+   }
+
+   ngAfterViewInit(): void {
+      if (this.pendingOnboardingAction) {
+         this.pendingOnboardingAction = false;
+         this.openAddJob();
+      }
    }
 
    ngOnDestroy(): void {
