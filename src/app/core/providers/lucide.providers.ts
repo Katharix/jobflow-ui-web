@@ -57,6 +57,8 @@ import {
    PhoneOff,
    CircleCheck,
    MessageCirclePlus,
+   LogOut,
+   ChevronUp,
 } from 'lucide-angular';
 
 export const lucideProviders = importProvidersFrom(
@@ -124,5 +126,7 @@ export const lucideProviders = importProvidersFrom(
       PhoneOff,
       CircleCheck,
       MessageCirclePlus,
+      LogOut,
+      ChevronUp,
    })
 );
