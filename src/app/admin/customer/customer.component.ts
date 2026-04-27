@@ -75,6 +75,7 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
    selectedClientName = '';
    showMissingEmailOnly = false;
    private onboardingActionHandled = false;
+   private pendingOnboardingAction = false;
    private returnToCommandCenter = false;
    private suppressNextDrawerClosedHandler = false;
    private importPollSub: Subscription | null = null;
@@ -216,13 +217,17 @@ export class CustomerComponent implements OnInit, AfterViewInit, OnDestroy {
          if (params.get('onboardingAction') !== 'open-client-drawer') return;
 
          this.returnToCommandCenter = params.get('returnTo') === 'dashboard-command-center';
-         this.openAddClient();
+         this.pendingOnboardingAction = true;
          this.onboardingActionHandled = true;
       });
    }
 
    ngAfterViewInit(): void {
       this.buildColumns();
+      if (this.pendingOnboardingAction) {
+         this.pendingOnboardingAction = false;
+         this.openAddClient();
+      }
       this.cdr.detectChanges();
    }
 
